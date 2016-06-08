@@ -1,0 +1,34 @@
+H323Filter-MIB DEFINITIONS ::= BEGIN
+
+        IMPORTS
+                enterprises,
+                OBJECT-TYPE,
+                Counter
+                        FROM RFC1155-SMI
+                internetServer
+                        FROM InternetServer-MIB;
+
+--      microsoft       OBJECT IDENTIFIER ::= { enterprises 311 }
+--      software        OBJECT IDENTIFIER ::= { microsoft 1 }
+--      internetServer  OBJECT IDENTIFIER ::= { software 7 }
+        WspServer       OBJECT IDENTIFIER ::= { internetServer 12 }
+        H323Statistics  OBJECT IDENTIFIER ::= { WspServer 2 }
+
+-- H323 Filter Statistics
+	NumTotalCalls OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of total calls for H323 Proxy Filter."
+		::= { H323Statistics 1 }
+	
+    NumActiveCalls OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of active calls for H323 Proxy Filter."
+		::= { H323Statistics 2 }
+
+END

@@ -1,0 +1,6110 @@
+------------------------------------------------------------------------
+-- ($Id: fore-switch.mib,v 1.953 1996/01/19 22:02:59 swbuild Exp $)
+-- Copyright 1993-1995 by Fore Systems, Inc.
+
+Fore-Switch-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	Counter, Gauge, IpAddress, TimeTicks 	FROM RFC1155-SMI
+	OBJECT-TYPE				FROM RFC1212
+	DisplayString				FROM RFC1213-MIB
+	TRAP-TYPE				FROM RFC1215
+	atmSwitch, SpansAddress, NsapPrefix	FROM Fore-Common-MIB
+	GeneralState				FROM Fore-Common-MIB
+	NsapAddr, EntryStatus,AtmSigProtocol	FROM Fore-Common-MIB;
+
+------------------------------------------------------------------------
+-- MIB Groups
+
+hardware		OBJECT IDENTIFIER ::= { atmSwitch 1 }
+asx			OBJECT IDENTIFIER ::= { hardware 1 }
+boardGroup		OBJECT IDENTIFIER ::= { asx 1 }
+moduleGroup		OBJECT IDENTIFIER ::= { asx 2 }
+
+-- old environment group {hardware 2} deprecated.
+
+timing			OBJECT IDENTIFIER ::= { hardware 3 }
+netmodTimingGroup	OBJECT IDENTIFIER ::= { timing 1 }
+	
+environment		OBJECT IDENTIFIER ::= { hardware 4 }
+alarmGroup		OBJECT IDENTIFIER ::= { environment 1}
+powerGroup		OBJECT IDENTIFIER ::= { environment 2 }
+fansGroup		OBJECT IDENTIFIER ::= { environment 3 }
+tempGroup		OBJECT IDENTIFIER ::= { environment 4 }
+cpuGroup		OBJECT IDENTIFIER ::= { environment 5 }
+mgmtGroup		OBJECT IDENTIFIER ::= { environment 6 }
+fabricGroup		OBJECT IDENTIFIER ::= { environment 7 }
+
+shmem			OBJECT IDENTIFIER ::= { hardware 5 }
+netmodShmemGroup	OBJECT IDENTIFIER ::= { shmem 1 }
+portShmemGroup		OBJECT IDENTIFIER ::= { shmem 2 }
+
+software		OBJECT IDENTIFIER ::= { atmSwitch 2 }
+asxd			OBJECT IDENTIFIER ::= { software 1 }
+switchGroup		OBJECT IDENTIFIER ::= { asxd 1 }
+portGroup		OBJECT IDENTIFIER ::= { asxd 2 }
+pathGroup		OBJECT IDENTIFIER ::= { asxd 3 }
+channelGroup		OBJECT IDENTIFIER ::= { asxd 4 }
+topologyGroup		OBJECT IDENTIFIER ::= { asxd 5 }
+signalingGroup  	OBJECT IDENTIFIER ::= { asxd 6 }
+spansGroup		OBJECT IDENTIFIER ::= { signalingGroup 1 }
+q2931Group              OBJECT IDENTIFIER ::= { signalingGroup 2 }
+q2931LayerGroup         OBJECT IDENTIFIER ::= { q2931Group 1 }
+swBoardGroup		OBJECT IDENTIFIER ::= { asxd 7 }
+swBoardTopologyGroup	OBJECT IDENTIFIER ::= { asxd 8 }
+nsapGroup               OBJECT IDENTIFIER ::= { asxd 9 }
+upcContractGroup        OBJECT IDENTIFIER ::= { asxd 10 }
+confTopologyGroup       OBJECT IDENTIFIER ::= { asxd 11 } 
+
+fsnmp			OBJECT IDENTIFIER ::= { software 2 }
+trapConfGroup		OBJECT IDENTIFIER ::= { fsnmp 1 }
+snmpConfGroup		OBJECT IDENTIFIER ::= { fsnmp 2 }
+--foreViewGroup { snmp 3 } deprecated
+--alarmGroup {snmp 4 } moved
+snmpAgentAddressGroup	OBJECT IDENTIFIER ::= { fsnmp 5 }
+
+
+------------------------------------------------------------------------
+-- The Board Group
+
+boardTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF BoardEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of ATM switch board information."
+	::= { boardGroup 1 }
+
+boardEntry OBJECT-TYPE
+	SYNTAX	BoardEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing ATM switch board information."
+	INDEX	{ boardIndex }
+	::= { boardTable 1 }
+
+BoardEntry ::=
+	SEQUENCE {
+		boardIndex		INTEGER,
+		boardVersion		INTEGER,
+		boardModel		INTEGER,
+		boardSerialNumber	INTEGER,
+		numberOfModules		INTEGER,
+		vpiLookupErrors		Counter,
+		vciLookupErrors		Counter,
+		boardControlPort	INTEGER
+	}
+
+boardIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this board within the ATM switch."
+	::= { boardEntry 1 }
+
+boardVersion OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM switch board version number in hex.
+		The version number is encoded into 6 hex digits.
+		For example, version 1.2.3 is decoded as 0x010203."
+	::= { boardEntry 2 }
+
+boardModel OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM switch board model number."
+	::= { boardEntry 3 }
+
+boardSerialNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM switch board serial number."
+	::= { boardEntry 4 }
+
+numberOfModules OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of network modules on this ATM switch board."
+	::= { boardEntry 5 }
+
+vpiLookupErrors OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of VPI lookup errors."
+	::= { boardEntry 6 }
+
+vciLookupErrors OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of VCI lookup errors."
+	::= { boardEntry 7 }
+
+boardControlPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object identifies the index for the control
+		port on this switch board."
+	::= { boardEntry 8 }
+
+------------------------------------------------------------------------
+
+numberOfBoards OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of switch boards on this ATM switch."
+	::= { boardGroup 2 }
+
+
+------------------------------------------------------------------------
+-- The Module Group
+
+moduleTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF ModuleEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of network module information."
+	::= { moduleGroup 1 }
+
+moduleEntry OBJECT-TYPE
+	SYNTAX	ModuleEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing network module information."
+	INDEX	{ moduleBoard, moduleNumber }
+	::= { moduleTable 1 }
+
+ModuleEntry ::=
+	SEQUENCE {
+		moduleBoard		INTEGER,
+		moduleNumber		INTEGER,
+		moduleName		DisplayString,
+		moduleSpeed		INTEGER,
+		moduleNumberOfPorts	INTEGER,
+		moduleUptime		TimeTicks,
+                moduleHwMajorRev        INTEGER,
+                moduleHwMinorRev        INTEGER
+	}
+
+moduleBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this board within the ATM switch."
+	::= { moduleEntry 1 }
+
+moduleNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this network module within the ATM switch."
+	::= { moduleEntry 2 }
+
+moduleName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE (0..63))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The type name of this network module within the ATM switch."
+	::= { moduleEntry 3 }
+
+moduleSpeed OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The speed of this network module within the ATM switch."
+	::= { moduleEntry 4 }
+
+moduleNumberOfPorts OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of ports on this network module."
+	::= { moduleEntry 5 }
+
+moduleUptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The length of time this network module has been up,
+		in hundredths of a second."
+	::= { moduleEntry 6 }
+
+moduleHwMajorRev OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The hardware major revision number of the network module."
+	::= { moduleEntry 7 }
+
+moduleHwMinorRev OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The hardware minor revision number of the network module."
+	::= { moduleEntry 8 }
+
+
+
+------------------------------------------------------------------------
+
+outputBufferTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF OutputBufferEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of output buffer information."
+	::= { moduleGroup 2 }
+
+outputBufferEntry OBJECT-TYPE
+	SYNTAX	OutputBufferEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing output buffer information."
+	INDEX	{ obufBoard, obufNumber, obufType }
+	::= { outputBufferTable 1 }
+
+OutputBufferEntry ::=
+	SEQUENCE {
+		obufBoard	INTEGER,
+		obufNumber	INTEGER,
+		obufType	INTEGER,
+		obufOperStatus	INTEGER,
+		obufBufferSize	INTEGER,
+		obufQueueLength	Gauge,
+		obufOverflows	Counter
+	}
+
+obufBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this output buffer's switch board."
+	::= { outputBufferEntry 1 }
+
+obufNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of the network module for this output buffer."
+	::= { outputBufferEntry 2 }
+
+obufType OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The Priority of this output buffer- 0 is lowest priority"
+	::= { outputBufferEntry 3 }
+
+obufOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			other(1),
+			enabled(2),
+			disabled(3)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The operational status of this output buffer."
+	::= { outputBufferEntry 4 }
+
+obufBufferSize OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The logical size of this output buffer, in cells."
+	::= { outputBufferEntry 5 }
+
+obufQueueLength OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells in this output buffer."
+	::= { outputBufferEntry 6 }
+
+obufOverflows OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells dropped because this output buffer
+		was full."
+	::= { outputBufferEntry 7 }
+
+------------------------------------------------------------------------
+
+hwPortTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF HwPortEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of hardware port information."
+	::= { moduleGroup 3 }
+
+hwPortEntry OBJECT-TYPE
+	SYNTAX	HwPortEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing hardware port information."
+	INDEX	{ hwPortBoard, hwPortModule, hwPortNumber }
+	::= { hwPortTable 1 }
+
+HwPortEntry ::=
+	SEQUENCE {
+		hwPortBoard		INTEGER,
+		hwPortModule		INTEGER,
+		hwPortNumber		INTEGER,
+		hwPortVersion		INTEGER,
+		hwPortModel		INTEGER,
+		hwPortOperStatus	INTEGER,
+		hwPortBufferSize	INTEGER,
+		hwPortQueueLength	Gauge,
+		hwPortOverflows		Counter,
+		hwPortErrors		Counter,
+		hwPortCarrier		INTEGER,
+		hwPortGlobalIndex	INTEGER,
+		hwPortName		DisplayString,
+		hwPortAdminStatus	INTEGER,
+		hwPortTAXILoopback	INTEGER
+	}
+
+hwPortBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The switch board index of this port."
+	::= { hwPortEntry 1 }
+
+hwPortModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The network module number of this port."
+	::= { hwPortEntry 2 }
+
+hwPortNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this port within its network module."
+	::= { hwPortEntry 3 }
+
+hwPortVersion OBJECT-TYPE
+	SYNTAX	INTEGER {
+                        generation-A(1),
+                        generation-B(2),
+                        generation-C(3)                    
+                }
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The generation of this network module.  In general, 
+                 generation A indicates the most original FORE Systems
+                 netmods.  Generation-B are intermediate DS3/E3/TAXI.
+                 Generation-C are shared-memory based netmos."
+	::= { hwPortEntry 4 }
+
+hwPortModel OBJECT-TYPE
+	SYNTAX	INTEGER {
+			model-TAXI-100(1),
+			model-TAXI-140(2),
+			model-DS3(3),
+			model-OC3(4),
+			model-8B10B(5),
+			model-6port-TAXI-100(6),
+			model-ASX(7),
+			model-OC12(8),
+			model-DS3-PDH(16),
+			model-E3(17),
+			model-J2(18),
+			model-DS1(19),
+			model-E1(20),
+			model-TP25(21)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The type of physical connection of this port. The model-ASX(7)
+		indicates this is the control port of the switch.
+                NOTE: as of 2/8/95 the elements model-6port-TAXI-100(6) and
+                      model-DS3-PDH(16) should no longer be used.  Use 
+                      the basic types model-TAXI-100(1) and model-DS3(3)
+                      to indicate these."
+	::= { hwPortEntry 5 }
+
+hwPortOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			other(1),
+			up(2),
+			down(3),
+			unused(4)	-- was loopback
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The operational status of this port. If a port was 
+		administered up (by hwPortAdminStatus), but the carrier 
+		or the framing bits were lost, the hwPortOperStatus 
+		indicates that the port is down(3). Otherwise, the 
+		hwPortOperStatus is up(2)."
+	::= { hwPortEntry 6 }
+
+hwPortBufferSize OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The logical size of this port's output buffer, in cells."
+	::= { hwPortEntry 7 }
+
+hwPortQueueLength OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells in this port's output buffer."
+	::= { hwPortEntry 8 }
+
+hwPortOverflows OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of seconds in which cells were dropped because 
+this port's output buffer was full."
+	::= { hwPortEntry 9 }
+
+hwPortErrors OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of seconds in which errored cells were dropped by this port."
+	::= { hwPortEntry 10 }
+
+hwPortCarrier OBJECT-TYPE
+	SYNTAX	INTEGER {
+			carrier(1),
+			noCarrier(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The presence or absence of carrier at this port."
+	::= { hwPortEntry 11 }
+
+hwPortGlobalIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The global index of this port within the ATM switch
+		as a whole. It corresponds to the port number
+		used in the software group of this MIB."
+	::= { hwPortEntry 12 }
+
+hwPortName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE(0..5))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"A textual description of the port indicating
+		the Board Network module and Port (BNP) identifiers.
+		The module is indicated by a letter (A-D), while
+		the board and the port are indicated by numbers."
+	::= { hwPortEntry 13 }
+
+hwPortAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The administrative state of the physical layer of this 
+		port. When a port is configured up(1), the physical layer 
+		is configured to process all physical layer events including
+		the transmission and reception of data (cells).  When a port
+		is configured down(2), the physical layer should be shut down 
+		and should ignore all physical layer events (e.g. cell reception, 
+		carrier loss, loss of framing, parity errors, etc.).  The 
+		operational status of a port is reflected in the
+		hwPortOperStatus object."
+	::= { hwPortEntry 14 }
+
+hwPortTAXILoopback OBJECT-TYPE
+	SYNTAX	INTEGER {
+			noLoopback(1), 
+			loopback(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This variable represents the loopback status of a TAXI port.
+		For non-TAXI ports (e.g. DS3/E3 or SONET) the loopback configuration
+		should be set in their specific tables."
+	DEFVAL { 1 }
+	::= { hwPortEntry 15 }
+
+------------------------------------------------------------------------
+-- The Environment Group
+
+-- Implementation of this group is mandatory
+-- for all ForeRunner switches that implement
+-- software access to environment state.
+
+------------------------------------------------------------------------
+-- The Switch Alarm Group
+
+swAlarmTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SwAlarmEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of switch alarm definitions and configuration."
+	::= { alarmGroup 1 }
+
+swAlarmEntry OBJECT-TYPE
+	SYNTAX	SwAlarmEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing switch alarm definitions."
+	INDEX	{ swAlarmType }
+	::= { swAlarmTable 1 }
+
+SwAlarmEntry ::=
+	SEQUENCE {
+		swAlarmType		INTEGER,
+		swAlarmStatus		INTEGER,
+		swAlarmMinorCategory	INTEGER,
+		swAlarmMajorCategory	INTEGER,
+		swAlarmReset		INTEGER
+	}
+
+swAlarmType OBJECT-TYPE
+	SYNTAX INTEGER {
+			powerSupplyInputFailed(1),
+			powerSupplyOutputFailed(2),
+			fanBankFailed(3),
+			tempSensorOverTemp(4),
+			linkFailed(5),
+			spansFailed(6)
+		}
+	ACCESS 	read-only
+	STATUS 	mandatory
+	DESCRIPTION
+		"The type of the alarm."
+	::= { swAlarmEntry 1 }
+
+swAlarmStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			active(1),
+			inactive(2)
+		}
+	ACCESS 	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this alarm entry. An alarm becomes
+		active if the underlying condition is detected.
+		For power supplies, the input failed alarm condition
+		is asserted if the input voltage is not within
+		the nominal range for the supply. This does not 
+		necessarily mean that an ouput failure will result.
+		A power supply output failure condition is asserted
+		if any power supply is failing or if it is physically
+		removed. Power supply output alarms are only applicable
+		to switches with multiple power supplies. Fan bank
+		and temperature sensor failures are applicable only
+		to switches with the appropriate sensing capabilities.
+		Link and spans failures are applicable to all switches."
+	::= { swAlarmEntry 2 }
+
+swAlarmMinorCategory OBJECT-TYPE
+	SYNTAX	INTEGER {
+			enabled(1),
+			disabled(2)
+		}
+	ACCESS 	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates whether a minor alarm is triggered
+		when this event occurs."
+	::= { swAlarmEntry 3 }
+
+swAlarmMajorCategory OBJECT-TYPE
+	SYNTAX	INTEGER {
+			enabled(1),
+			disabled(2)
+		}
+	ACCESS 	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates whether a major alarm is triggered
+		when this event occurs."
+	::= { swAlarmEntry 4 }
+
+swAlarmReset OBJECT-TYPE
+	SYNTAX INTEGER
+	ACCESS read-write
+	STATUS mandatory
+	DESCRIPTION
+		"The manager may set this to the value zero to cancel
+		 a current alarm. This is useful for silencing alarms
+		 triggered via edge detection. If this variable is
+	 	 readable, then the alarm is resettable."
+	::= { swAlarmEntry 5 }
+
+------------------------------------------------------------------------
+
+swAlarmMajorRelayState OBJECT-TYPE
+	SYNTAX	INTEGER {
+			on(1),
+			off(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates the current state of the major alarm 
+		relay. If one or more of the alarms (swAlarmType) that are 
+		defined major (swAlarmMajorCategory) are currently active 
+		(swAlarmStatus), this object will be on(1)."
+	::= { alarmGroup 2 }
+
+
+swAlarmMinorRelayState OBJECT-TYPE
+	SYNTAX	INTEGER {
+			on(1),
+			off(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates the current state of the minor alarm 
+		relay. Ifone or mote of the alarms (swAlarmType) that are 
+		defined minor (swAlarmMinorCategory) are currently active 
+		(swAlarmStatus), this object will be on(1)."
+	::= { alarmGroup 3 }
+
+------------------------------------------------------------------------
+-- The Power Supply Group
+
+envMaxNumberOfPowerSupplies OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of power supplies that can be installed
+		on this ATM switch."
+	::= { powerGroup 1 }
+
+envNumberOfPowerSupplies OBJECT-TYPE
+	SYNTAX  INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of power supply entries in the power
+		 supply table. This is the number of power supplies
+		 actually present."
+	::= { powerGroup 2 }
+
+envPowerSupplyTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF EnvPowerSupplyEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of power supply information."
+	::= { powerGroup 3 }
+
+envPowerSupplyEntry OBJECT-TYPE
+	SYNTAX	EnvPowerSupplyEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing power supply information."
+	INDEX	{ envPowerSupplyIndex }
+	::= { envPowerSupplyTable 1 }
+
+EnvPowerSupplyEntry ::=
+	SEQUENCE {
+		envPowerSupplyIndex		INTEGER,
+		envPowerSupplyType		INTEGER,
+		envPowerSupplyInputState	GeneralState,
+		envPowerSupplyOutputState	GeneralState,
+		envPowerSupplySerialNumber	INTEGER,
+		envPowerSupplyVersion		INTEGER
+	}
+
+envPowerSupplyIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this power supply."
+	::= { envPowerSupplyEntry 1 }
+
+envPowerSupplyType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			psUnknown(1),
+    			psAutoRangeAC(4),
+    			ps48VDC(5),
+			psRM1000HA(6)	
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The type of this power supply."
+	::= { envPowerSupplyEntry 2 }
+
+envPowerSupplyInputState OBJECT-TYPE
+	SYNTAX	GeneralState
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The state of the input voltage to this power supply."
+	::= { envPowerSupplyEntry 3 }
+
+envPowerSupplyOutputState OBJECT-TYPE
+	SYNTAX	GeneralState
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of the output of this power supply. In case 
+		there are several output supplies (like +5V, +12V, -12V)
+		this object indicates the aggregate state of all outputs."
+	::= { envPowerSupplyEntry 4 }
+
+envPowerSupplySerialNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The serial number of this power supply, if available."
+	::= { envPowerSupplyEntry 5 }
+
+envPowerSupplyVersion OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The version of this power supply, if available."
+	::= { envPowerSupplyEntry 6 }
+
+
+------------------------------------------------------------------------
+-- The Fans Group
+
+envNumberOfFanBanks OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of fan banks on this ATM switch."
+	::= { fansGroup 1 }
+
+envFanBanksTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF EnvFanBanksEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of fan bank information."
+	::= { fansGroup 2 }
+
+envFanBanksEntry OBJECT-TYPE
+	SYNTAX	EnvFanBanksEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing fan bank information."
+	INDEX	{ envFanBankIndex }
+	::= { envFanBanksTable 1 }
+
+EnvFanBanksEntry ::=
+	SEQUENCE {
+		envFanBankIndex		INTEGER,
+		envFanBankState		GeneralState
+	}
+
+envFanBankIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this fan bank."
+	::= { envFanBanksEntry 1 }
+
+envFanBankState OBJECT-TYPE
+	SYNTAX	GeneralState
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of the fan bank."
+	::= { envFanBanksEntry 3 }
+		
+------------------------------------------------------------------------
+-- The Temperature Sensors Group
+
+-- Implementation of this group is mandatory
+-- for all ForeRunner switches that implement
+-- software access to temperature sensors information.
+
+envNumberOfTempSensors OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of temperature sensors 
+		installed on this ATM switch."
+	::= { tempGroup 1 }
+
+envTempSensorsTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF EnvTempSensorsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of temperature sensors information."
+	::= { tempGroup 2 }
+
+envTempSensorsEntry OBJECT-TYPE
+	SYNTAX	EnvTempSensorsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing temperature sensor information."
+	INDEX	{ envTempSensorIndex }
+	::= { envTempSensorsTable 1 }
+
+EnvTempSensorsEntry ::=
+	SEQUENCE {
+		envTempSensorIndex		INTEGER,
+		envTempSensorState		INTEGER
+	}
+
+envTempSensorIndex OBJECT-TYPE
+	SYNTAX	INTEGER {
+			enclosure(1),
+			power-supply-A(2),
+			power-supply-B(3)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this temperature sensor. The value of
+		 the index provides an indication of the location
+		 and function of the temperature sensor. The set
+		 of temperature sensors may vary by switch type."
+	::= { envTempSensorsEntry 1 }
+
+envTempSensorState OBJECT-TYPE
+	SYNTAX	INTEGER {
+			normal(1),
+			overTemp(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The temperature state of this sensor."
+	::= { envTempSensorsEntry 2 }
+		
+
+------------------------------------------------------------------------
+-- The CPU Group
+
+-- Implementation of this group is mandatory
+-- for all ForeRunner switches that implement
+-- software access to CPU state information.
+
+envMaxNumberOfCPUs OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of CPUs that can be installed on 
+		this ATM switch."
+	::= { cpuGroup 1 }
+
+envNumberOfCPUs OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number entries in the CPU table."
+	::= { cpuGroup 2 }
+
+envCPUsTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF EnvCPUsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of CPU information."
+	::= { cpuGroup 3 }
+
+envCPUsEntry OBJECT-TYPE
+	SYNTAX	EnvCPUsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing CPU information."
+	INDEX	{ envCpuBoard, envCpuSlot }
+	::= { envCPUsTable 1 }
+
+EnvCPUsEntry ::=
+	SEQUENCE {
+		envCpuBoard		INTEGER,
+		envCpuSlot		INTEGER,
+		envCpuType		INTEGER,
+		envCPUState		GeneralState
+	}
+
+envCpuBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The board index of this CPU."
+	::= { envCPUsEntry 1 }
+
+envCpuSlot OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The slot index of this CPU."
+	::= { envCPUsEntry 2 }
+
+envCpuType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			other(1),
+			sun4e(2),
+			sun4c(3),
+			1(4),
+			i960(5)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The type of this CPU."
+	::= { envCPUsEntry 3 }
+
+envCPUState OBJECT-TYPE
+	SYNTAX	INTEGER {
+			normal(1),
+			fail(2),
+			standby(3),
+			boot(4)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The state of the processor."
+	::= { envCPUsEntry 4 }
+		
+------------------------------------------------------------------------
+-- The Mgmt Group
+-- This group provides information about the management station
+-- board, on those switches with management station support.
+
+envMgmtBoardType OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The board type of the management station."
+	::= { mgmtGroup 1 }
+
+envMgmtBoardRevision OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The board revision number of the management station."
+	::= { mgmtGroup 2 }
+
+envMgmtBoardSerialNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The serial number of the management station board."
+	::= { mgmtGroup 3 }
+
+------------------------------------------------------------------------
+-- Fabric Group
+-- This group provides environmental information about individual
+-- switch fabrics. This may or may not be supported on all switches.
+
+envFabricAlarmTripTemperature OBJECT-TYPE
+	SYNTAX  INTEGER
+	ACCESS	read-write
+	STATUS  mandatory
+	DESCRIPTION
+		"The temperature threshold in degrees C at which a
+		 fabric temperature alarm will be raised."
+	::= {fabricGroup 1}
+
+envFabricAlarmResetTemperature OBJECT-TYPE
+	SYNTAX  INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The temperature in degrees C at which a fabric
+		 temperature alarm will be cancelled."
+	::= {fabricGroup 2}
+
+envFabricTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF EnvFabricEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of fabric environmental information"
+	::= { fabricGroup 3 }
+
+envFabricEntry OBJECT-TYPE
+	SYNTAX	EnvFabricEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table containing fabric environmental information"
+	INDEX	{ envFabricIndex }
+	::= { envFabricTable 1 }
+
+EnvFabricEntry ::=
+	SEQUENCE {
+		envFabricIndex			INTEGER,
+		envFabricTemperature		INTEGER,
+		envFabricTemperatureState 	INTEGER
+	}
+
+envFabricIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of the fabric"
+	::= { envFabricEntry 1 }
+
+envFabricTemperature OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The temperature measured at the fabric, in degrees C"
+	::= { envFabricEntry 2 }
+
+envFabricTemperatureState OBJECT-TYPE
+	SYNTAX	INTEGER {
+			normal(1),
+			overTemp(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The software state of this fabric temperature
+		 sensor. This will indicate `normal' until the
+		 sensor temperature reaches the current trip
+		 threshold. It will then indicate `overTemp'
+		 until the temperature reaches the current reset
+		 threshold (or until the switch fabric is restarted)."
+	::= { envFabricEntry 3}
+
+------------------------------------------------------------------------
+-- The Distributed Timing Group
+
+-- Implementation of this table is mandatory for all hardware
+-- that support distributed timing.
+
+netmodTimingTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF NetmodTimingEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of network modules timing information. Implementation
+		of this table is mandatory if the network module hardware 
+		supports distributed timing."
+	::= { netmodTimingGroup 1 }
+
+netmodTimingEntry OBJECT-TYPE
+	SYNTAX	NetmodTimingEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing network modeul timing information."
+	INDEX	{ ntBoard, ntModule }
+	::= { netmodTimingTable 1 }
+
+NetmodTimingEntry ::=
+	SEQUENCE {
+		ntBoard				INTEGER,
+		ntModule			INTEGER,
+		ntPrimaryRecoveredClock		INTEGER,
+		ntSecondaryRecoveredClock	INTEGER,
+		ntPrimaryExportClock		INTEGER,
+		ntSecondaryExportClock		INTEGER,
+		ntGlobalClock			INTEGER,
+		ntExportClockOperStatus		INTEGER,
+		ntPrimaryImportClock		INTEGER,
+		ntSecondaryImportClock		INTEGER,
+		ntImportClockOperStatus		INTEGER
+	}
+
+ntBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this board within the ATM switch."
+	::= { netmodTimingEntry 1 }
+
+ntModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this network module within the switch board."
+	::= { netmodTimingEntry 2 }
+
+ntPrimaryRecoveredClock OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The port number on this network module that provides the 
+		primary 8KHz reference clock from its received signal."
+	::= { netmodTimingEntry 3 }
+
+ntSecondaryRecoveredClock OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The port number on this network module that provides the 
+		secondary 8KHz reference clock from its received signal."
+	::= { netmodTimingEntry 4 }
+
+ntPrimaryExportClock OBJECT-TYPE
+	SYNTAX	INTEGER {
+			primaryRecoveredClock(1),
+			crystalClock(2),
+			noClock(3)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The primary 8KHz clock exported by this network module.
+		The exported clock may be used as the network module global 
+		clock, which in turn, may be used by all ports that link their
+		transmit clock to the network module global clock. The noClock
+		option is valid only for tp25 (25mb) netmods."
+	::= { netmodTimingEntry 5 }
+
+ntSecondaryExportClock OBJECT-TYPE
+	SYNTAX	INTEGER {
+			secondaryRecoveredClock(1),
+			crystalClock(2),
+			noClock(3)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The secondary 8KHz clock exported by this network module.
+		The exported clock may be used as the network module global 
+		clock. The secondary exported clock will be used if the 
+		primary exported clock is not available. The noClock option
+		is valid only for tp25 (25mb) netmods."
+	::= { netmodTimingEntry 6 }
+
+ntGlobalClock OBJECT-TYPE
+	SYNTAX	INTEGER {
+			exportClock(1),
+			importClock(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The global 8KHz clock that is available to every port on this
+		network module, when the port links its trasnmit clock to the
+		network module global clock."
+	::= { netmodTimingEntry 7 }
+
+ntExportClockOperStatus OBJECT-TYPE
+        SYNTAX  INTEGER {
+                        primaryClock(1),
+                        secondaryClock(2),
+			crystalClock(3)
+                }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "The currently active 8KHz clock configuration. The tertiaryClock(3)
+		is determined by the switch control software if both the primary
+		and secondary clocks are not available."
+        ::= { netmodTimingEntry 8 }
+
+ntPrimaryImportClock OBJECT-TYPE
+	SYNTAX	INTEGER {
+			netmodAExportClock(1),
+			netmodBExportClock(2),
+			netmodCExportClock(3),
+			netmodDExportClock(4)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The primary 8kHz clock imported by this network module.
+		The imported clock may be used as the network module global 
+		clock, which in turn, may be used by all ports that link their
+		transmit clock to the network module global clock."
+	::= { netmodTimingEntry 9 }
+
+ntSecondaryImportClock OBJECT-TYPE
+	SYNTAX	INTEGER {
+			netmodAExportClock(1),
+			netmodBExportClock(2),
+			netmodCExportClock(3),
+			netmodDExportClock(4)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The secondary 8kHz clock imported by this network module.
+		The imported clock may be used as the network module global 
+		clock. The secondary imported clock will be used if the 
+		primary imported clock is not available."
+	::= { netmodTimingEntry 10 }
+
+
+ntImportClockOperStatus OBJECT-TYPE
+        SYNTAX  INTEGER {
+                        primaryClock(1),
+                        secondaryClock(2),
+			netmodExportClock(3)
+                }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "The currently active 8kHz import clock configuration. The
+		tertiaryClock(3) is determined by the switch control software
+		if both the primary and secondary clocks are not available."
+        ::= { netmodTimingEntry 11 }
+
+------------------------------------------------------------------------
+-- The Shared Memory Group
+
+-- Implementation of this group is mandatory for all hardware
+-- that support shared memory network modules.
+
+shmemConfTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF ShmemConfEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table for shared memory network modules configuration. 
+		Implementation of this table is mandatory if at least
+		one of the network modules' hardware is based on shared 
+		memory. The user should walk this table and select the
+		shared memory configuration that suits his/her needs.
+		The selection is done in the specific network module 
+		shared memory configuration entry (netmodShmemTable)."
+	::= { netmodShmemGroup 1 }
+
+shmemConfEntry OBJECT-TYPE
+	SYNTAX	ShmemConfEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing shared memory network module 
+		configuration information."
+	INDEX	{ shmemConfIndex }
+	::= { shmemConfTable 1 }
+
+ShmemConfEntry ::=
+	SEQUENCE {
+		shmemConfIndex		INTEGER,
+		shmemUcastConnections	INTEGER,
+		shmemMcastConnections	INTEGER,
+		shmemVpiVciLists	INTEGER,
+		shmemCellsBuffers	INTEGER,
+		shmemConfName		DisplayString
+	}
+
+shmemConfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this shared memory configuration."
+	::= { shmemConfEntry 1 }
+
+shmemUcastConnections OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of unicast connections that is
+		supported by this shared memory configuration."
+	::= { shmemConfEntry 2 }
+
+shmemMcastConnections OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of multicast connections that is
+		supported by this shared memory configuration."
+	::= { shmemConfEntry 3 }
+
+shmemVpiVciLists OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The memory allocated for VPI/VCI lists (which is used
+		for multicast connections) by this shared memory 
+		configuration."
+	::= { shmemConfEntry 4 }
+
+shmemCellsBuffers OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells buffers that is supported by 
+		this shared memory configuration."
+	::= { shmemConfEntry 5 }
+
+shmemConfName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The name of this shared memory configuration."
+	::= { shmemConfEntry 6 }
+
+
+------------------------------------------------------------------------
+
+netmodShmemTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF NetmodShmemEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table for shared memory network modules configuration. 
+		Implementation of this table is mandatory if the network 
+		module hardware is based on shared memory."
+	::= { netmodShmemGroup 2 }
+
+netmodShmemEntry OBJECT-TYPE
+	SYNTAX	NetmodShmemEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing shared memory network module 
+		configuration information."
+	INDEX	{ nshmemBoard, nshmemModule }
+	::= { netmodShmemTable 1 }
+
+NetmodShmemEntry ::=
+	SEQUENCE {
+		nshmemBoard			INTEGER,
+		nshmemModule			INTEGER,
+		nshmemConfRow			INTEGER,
+		nshmemConfSharedMemory		INTEGER,
+		nshmemCurrentUcastConnections	Gauge,
+		nshmemCurrentMcastConnections	Gauge,
+		nshmemCurrentVpiVciLists	Gauge,
+		nshmemCurrentCellsBuffers	Gauge,
+		nshmemCurrentSharedMemory	Gauge,
+		nshmemConfAal5PacketDrop	INTEGER,
+                nshmemAssertXACPT               INTEGER
+	}
+
+nshmemBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this board within the ATM switch."
+	::= { netmodShmemEntry 1 }
+
+nshmemModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this network module within the switch board."
+	::= { netmodShmemEntry 2 }
+
+nshmemConfRow OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This object identify the row in the shared memory 
+		configuration table that was selected for this network 
+		module."
+	::= { netmodShmemEntry 3 }
+
+nshmemConfSharedMemory OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The amount of memory that was configured for this 
+		network module given all the user requirements as
+		specified in the selected shared memory configuration
+		row."
+	::= { netmodShmemEntry 4 }
+
+nshmemCurrentUcastConnections OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current number of unicast connections active
+		on this shared memory network module."
+	::= { netmodShmemEntry 5 }
+
+nshmemCurrentMcastConnections OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current number of multicast connections active
+		on this shared memory network module."
+	::= { netmodShmemEntry 6 }
+
+nshmemCurrentVpiVciLists OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current number of VPI/VCI lists active
+		on this shared memory network module."
+	::= { netmodShmemEntry 7 }
+
+nshmemCurrentCellsBuffers OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current number cells buffers active
+		on this shared memory network module."
+	::= { netmodShmemEntry 8 }
+
+nshmemCurrentSharedMemory OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current value of the used shared memory
+		on this network module."
+	::= { netmodShmemEntry 9 }
+
+nshmemConfAal5PacketDrop OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The AAL5 packet drop threshold in number of cells.
+		The switch software provides a reasonable default, 
+		however, the user may wish to change this value 
+		according to the type of traffic and size of packets
+		being transmitted on the network."
+	::= { netmodShmemEntry 10 }
+
+nshmemAssertXACPT OBJECT-TYPE
+        SYNTAX INTEGER {
+                clearXACPT (1),
+                assertXACPT (2)
+                }
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "This variable establishes the setting fo the XACPT bit 
+                 in the fs200sm main control register (section 3.1).
+                 This bit determines whether the signal XACPT is 
+                 asserted whenever the shared memory is full.  XACPT
+                 prevents the switch from sending cells to the network 
+                 module.  This bit takes advantage of any buffers on the 
+                 switch to reduce cell loss, but it should not be used
+                 if guaranteed cell delay is being provided to high
+                 priority cells."
+        ::= { netmodShmemEntry 11 }
+
+------------------------------------------------------------------------
+
+portShmemConfTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF PortShmemConfEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table for shared memory network modules configuration
+		that is specified on a port basis. Implementation of this 
+		table is mandatory if the network module hardware is based 
+		on shared memory."
+	::= { portShmemGroup 1 }
+
+portShmemConfEntry OBJECT-TYPE
+	SYNTAX	PortShmemConfEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing port configuration information
+		for shared memory network modules."
+	INDEX	{ pshmemConfBoard, pshmemConfModule, pshmemConfPort  }
+	::= { portShmemConfTable 1 }
+
+PortShmemConfEntry ::=
+	SEQUENCE {
+		pshmemConfBoard		INTEGER,
+		pshmemConfModule	INTEGER,
+		pshmemConfPort		INTEGER,
+		pshmemMaxCDVforCBR	INTEGER,
+		pshmemMaxCDVforVBR	INTEGER,
+		pshmemQsizeforABR	INTEGER,
+		pshmemEfciOnABR		INTEGER,
+		pshmemEfciOffABR	INTEGER,
+		pshmemQsizeforCBR	INTEGER,
+		pshmemQsizeforVBR	INTEGER
+	}
+
+pshmemConfBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this board within the ATM switch."
+	::= { portShmemConfEntry 1 }
+
+pshmemConfModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this network module within the switch board."
+	::= { portShmemConfEntry 2 }
+
+pshmemConfPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this port within the switch board and 
+		network module."
+	::= { portShmemConfEntry 3 }
+
+pshmemMaxCDVforCBR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum transmitting CDV (Cell Delay Variation) in
+		microseconds for CBR (Constant Bit Rate) traffic."
+	::= { portShmemConfEntry 4 }
+
+pshmemMaxCDVforVBR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum transmitting CDV (Cell Delay Variation) in
+		microseconds for VBR (Variable Bit Rate) traffic."
+	::= { portShmemConfEntry 5 }
+
+pshmemQsizeforABR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The dedicated queue size in cells for ABR (Available 
+		Bit Rate) and UBR (Unspecified Bit rate) types of traffic."
+	::= { portShmemConfEntry 6 }
+
+pshmemEfciOnABR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The treshold on which the EFCI (Explicit Forward Congestion 
+		Indication) bit is turned on for ABR (Available Bit Rate) and 
+		UBR (Unspecified Bit rate) traffic."
+	::= { portShmemConfEntry 7 }
+
+pshmemEfciOffABR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The treshold on which the EFCI (Explicit Forward Congestion 
+		Indication) bit is turned off for ABR (Available Bit Rate) and 
+		UBR (Unspecified Bit rate) traffic."
+	::= { portShmemConfEntry 8 }
+
+pshmemQsizeforCBR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The dedicated queue size in cells for CBR (Constant
+		Bit Rate) traffic."
+	::= { portShmemConfEntry 9 }
+
+pshmemQsizeforVBR OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The dedicated queue size in cells for VBR (Variable
+		Bit Rate) traffic."
+	::= { portShmemConfEntry 10 }
+
+
+
+------------------------------------------------------------------------
+
+portShmemTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF PortShmemEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table for current state of port on shared memory network 
+		modules. Implementation of this table is mandatory if the 
+		network module hardware is based on shared memory."
+	::= { portShmemGroup 2 }
+
+portShmemEntry OBJECT-TYPE
+	SYNTAX	PortShmemEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing current port configuration 
+		information for shared memory network modules."
+	INDEX	{ pshmemBoard, pshmemModule, pshmemPort, pshmemPriority  }
+	::= { portShmemTable 1 }
+
+PortShmemEntry ::=
+	SEQUENCE {
+		pshmemBoard			INTEGER,
+		pshmemModule			INTEGER,
+		pshmemPort			INTEGER,
+		pshmemPriority			INTEGER,
+		pshmemClpThreshold		INTEGER,
+		pshmemDedicatedQsize		INTEGER,
+		pshmemCurrentQsize		INTEGER,
+		pshmemTxCells			Counter,
+		pshmemLostCells			Counter
+	}
+
+pshmemBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this board within the ATM switch."
+	::= { portShmemEntry 1 }
+
+pshmemModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this network module within the switch board."
+	::= { portShmemEntry 2 }
+
+pshmemPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this port within the switch board and 
+		network module."
+	::= { portShmemEntry 3 }
+
+pshmemPriority OBJECT-TYPE
+	SYNTAX	INTEGER {
+			priority-ABR-UBR(1),
+			priority-VBR(2),
+			priority-CBR(3)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The traffic type."
+	::= { portShmemEntry 4 }
+
+pshmemClpThreshold OBJECT-TYPE
+	SYNTAX	INTEGER 
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The threshold level in number of cells in which CLP=1 
+		cells will be dropped."
+	::= { portShmemEntry 5 }
+
+pshmemDedicatedQsize OBJECT-TYPE
+	SYNTAX	INTEGER 
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The dedicated queue size for this type of traffic as
+		was calculated by the switch software. The dedicated
+		queue size is determined by the configured maximum CDV 
+		(Cell Delay Variation) for CBR (Constant Bit Rate and
+		VBR (Variable Bit Rate) as well as the configurable
+		queue size for ABR (Available Bit Rate) and UBR 
+		(Unspecified Bit Rate) traffic."
+	::= { portShmemEntry 6 }
+
+pshmemCurrentQsize OBJECT-TYPE
+	SYNTAX	INTEGER 
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current size of the queue."
+	::= { portShmemEntry 7 }
+
+pshmemTxCells OBJECT-TYPE
+	SYNTAX	Counter 
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells that were transmitted 
+		for this port and priority queue."
+	::= { portShmemEntry 8 }
+
+pshmemLostCells OBJECT-TYPE
+	SYNTAX	Counter 
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells that were lost for this port 
+		and priority queue."
+	::= { portShmemEntry 9 }
+
+
+
+------------------------------------------------------------------------
+-- The Switch Group
+
+hardwareVersion OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The version of the ATM switch hardware in hex. 
+		The version number is encoded into 6 hex digits.
+		For example, version 1.2.3 is decoded as 0x010203."
+	::= { switchGroup 1 }
+
+softwareVersion OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The version of the ATM switch control software in hex.
+		The version number is encoded into 6 hex digits. For example, 
+		version 1.2.3 is encoded as 0x010203."
+	::= { switchGroup 2 }
+
+maxPaths OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of input VPIs (Virtual Path Identifies)."
+	::= { switchGroup 3 }
+
+maxChannels OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of input VCIs (Virtual Channel Identifiers)."
+	::= { switchGroup 4 }
+
+atmAddress OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The address of this ATM switch."
+	::= { switchGroup 5 }
+
+uptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The length of time this ATM switch has been up,
+		in hundredths of a second."
+	::= { switchGroup 6 }
+
+switchCDV OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	deprecated
+	DESCRIPTION
+		"The switch Cell Delay Variation (CDV) specified in 
+		microseconds, indicates the time window in which a cell 
+		may be received on a connection and be accepted. A cell 
+		that is received on a connection outside the CDV window 
+		will be tagged or dropped as indicated by the 
+		switchPolicingAction object. The switchCDV is the default 
+		CDV for all the connections on this switch. Individual
+		connections can be set to explicitly override this value."
+	::= { switchGroup 7 }
+
+switchPolicingAction OBJECT-TYPE
+	SYNTAX	INTEGER {
+			tag(1),
+			drop(2)
+		}
+	ACCESS	read-write
+	STATUS	deprecated
+	DESCRIPTION
+		"This object indicates the action the switch will take in case 
+		of bandwidth violation. The switchPolicingAction is the default
+		policing action for all the connections on this switch. 
+		Individual connections can be set to explicitly override this 
+		default action."
+	::= { switchGroup 8 }
+
+softwareVersionText OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The version of the ATM switch control software. This object
+		provides text information about the internal software configuration 
+		that was used when the switch control software was built."
+	::= { switchGroup 9 }
+
+switchType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			asx100(1),
+			asx200(2),
+			asx200wg(4),
+			asx200bx(5),
+			asx200bxe(6),
+			cabletron9A000(7),
+                        asx1000(8)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object identifies the switch type."
+	::= { switchGroup 10 }
+
+-- switchGroup 11 has been deprecated
+
+switchReservedPMPMinVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The minimum VCI that is reserved for PMP connections."
+	::= { switchGroup 12 }
+
+switchReservedPMPMaxVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum VCI that is reserved for PMP connections."
+	::= { switchGroup 13 }
+
+-----------------------------------------------------------------------
+--confTopologyGroup
+
+confTopoHelloInterval  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the time interval in milli seconds between
+                 successive Hello Indication messages sent by SPANS"
+        ::= { confTopologyGroup 1 }
+
+confTopoNsapIndInterval  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the time interval in milli seconds between
+                 successive NSAP Indication messages sent by SPANS"
+        ::= { confTopologyGroup 2 }
+
+
+confTopoStaticUpdateInterval  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the time interval in milli seconds between
+                 successive refreshes of NSAP static routes in the
+                 NSAP topology"
+        ::= { confTopologyGroup 3 }
+
+confTopoMaxHopCount  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the upper limit on the number of hops
+                 in the source routes computed by the NSAP router"
+        ::= { confTopologyGroup 4 }
+
+confTopoACRPropMult  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the proportional multiplier expressed as
+                 a percentage of Available Cell Rate (ACR). If the
+                 percentage change of the ACR of any given link in  
+                 the NSAP topology exceeds this threshold, then the
+                 change is deemed significant"
+        ::= { confTopologyGroup 5 }
+
+confTopoMinThresh  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the capacity value in Cells per second of the
+                 minimum value that the threshold value for determining
+                 the significant change can take. This minimum value is
+                 used to ensure that the threshold for determining 
+                 significant changes to ACR does not become a very small
+                 value in cases where  product of the ACR and the 
+                 proportional multiplier is a very small number."
+        ::= { confTopologyGroup 6 }
+
+confTopoMinVCAvail  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the minimum number of VCs that should be available
+                on a link before the state of the link changes from VCs-not-
+                available to VCs-available. This state is propagated in the
+                link state information. The state changes from VCs-available 
+                to VCs-not-available when the number of VCs available becomes
+                zero from a non-zero value."
+        ::= { confTopologyGroup 7 }
+
+confTopoSpansAreaID  OBJECT-TYPE
+        SYNTAX   INTEGER 
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This is the ID of the Area in the SPANS routing
+                hierarchy to which this switch belongs. This number 
+                goes into the most significant byte of the SPANS ATM
+                address"
+        ::= { confTopologyGroup 8 }
+        
+confTopoSpansBorderSwitch OBJECT-TYPE
+        SYNTAX   INTEGER {
+                        enabled(1),
+                        disabled(2)
+                 }       
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This variable indicates wherher this switch is
+                configured to operate as a SPANS-NNI Border Switch or not"
+        ::= { confTopologyGroup 9 }
+
+confTopoSwitchPrefix OBJECT-TYPE
+	SYNTAX	NsapPrefix
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The default NSAP (Network Service Access Point) prefix for 
+		this ATM switch. The NSAP prefix will be used in the ILMI 
+		address registration message as well as the 'hello-indication'
+		SPANS-NNI message."
+	::= { confTopologyGroup 10 }
+
+confTopoSwitchPrefixMask OBJECT-TYPE
+        SYNTAX   INTEGER
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This mask gives the number of leading bits in the above
+                prefix to be used to aggregate the addresses that belong to
+                the switch in SPANS-PNNI alias FORE-PNNI"
+	::= { confTopologyGroup 11 }
+
+confTopoPeerGroupMask OBJECT-TYPE
+        SYNTAX   INTEGER
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This mask gives the number of the leading bits in the above
+                prefix to be used to aggregate the addresses that belong to
+                the peer group containing this switch in SPANS-PNNI alias       
+                FORE-PNNI"
+	::= { confTopologyGroup 12 }
+
+confTopoSpansPnniBorderSwitch OBJECT-TYPE
+        SYNTAX   INTEGER {
+                        enabled(1),
+                        disabled(2)
+                 }       
+        ACCESS   read-write
+        STATUS   mandatory
+        DESCRIPTION
+                "This variable indicates whether this switch is
+                configured to operate as a SPANS-PNNI Border Switch or not"
+        ::= { confTopologyGroup 13 }
+        
+------------------------------------------------------------------------
+-- The Port Group
+
+numberOfPorts OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of ports on this ATM switch."
+	::= { portGroup 1 }
+
+portTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF PortEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of information about the ports on this ATM switch."
+	::= { portGroup 2 }
+
+portEntry OBJECT-TYPE
+	SYNTAX	PortEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing port information."
+	INDEX	{ portNumber }
+	::= { portTable 1 }
+
+PortEntry ::=
+	SEQUENCE {
+		portNumber		INTEGER,
+		portAdminStatus		INTEGER,
+		portOperStatus		INTEGER,
+		portTime		TimeTicks,
+		portRemoteAtmAddress	SpansAddress,
+		portRemoteIpAddress	IpAddress,
+
+		portMaxPathsIn		INTEGER,
+		portNumPathsIn		Gauge,
+		portMaxBandwidthIn	INTEGER,
+		portAllocBandwidthIn	Gauge,
+		portUsedBandwidthIn	Gauge,
+		portReceivedCells	Counter,
+
+		portMaxPathsOut		INTEGER,
+		portNumPathsOut		Gauge,
+		portMaxBandwidthOut	INTEGER,
+		portAllocBandwidthOut	Gauge,
+		portUsedBandwidthOut	Gauge,
+		portTransmittedCells	Counter,
+
+		portHwBoard		INTEGER,
+		portHwModule		INTEGER,
+		portHwNumber		INTEGER,
+
+		portILMIRemoteIpAddress	IpAddress,
+
+                portCDVT                INTEGER,
+		portInputPolicingStatus	INTEGER,
+                portVbrOverbooking      INTEGER,
+                portVbrBufferOverb      INTEGER
+	}
+
+portNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port."
+	::= { portEntry 1 }
+
+portAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			unused(1),
+			down(2),
+			up(3)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The desired state of this port.  The up(3) state
+		indicates that SPANS (Simple Protocol for ATM Network Signalling), 
+		FORE's link signalling protocol, is used to determine the 
+		operational status of the port. The down(2) state dictates 
+		that the operational status of the port should not be determined 
+		by SPANS."
+	::= { portEntry 2 }
+
+portOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current operational state of this port,
+		as determined either by administrative action,
+		when the value of portAdminStatus is down(2),
+		or by SPANS (Simple Protocol for ATM Network Signalling), 
+		FORE's link signalling protocol, when the value of
+		porAdminStatus is up(3)."
+	::= { portEntry 3 }
+
+portTime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The length of time this port has been in its current state,
+		in hundredths of a second."
+	::= { portEntry 4 }
+
+portRemoteAtmAddress OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the entity connected to this port."
+	::= { portEntry 5 }
+
+portRemoteIpAddress OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The IP address of the entity connected to this port."
+	::= { portEntry 6 }
+
+portMaxPathsIn OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of incoming virtual paths
+		supported by this port."
+	::= { portEntry 7 }
+
+portNumPathsIn OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of incoming virtual paths on this port."
+	::= { portEntry 8 }
+
+portMaxBandwidthIn OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum incoming bandwidth of this port,
+		in cells per second."
+	::= { portEntry 9 }
+
+portAllocBandwidthIn OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated incoming bandwidth of this port,
+		in cells per second."
+	::= { portEntry 10 }
+
+portUsedBandwidthIn OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	deprecated
+	DESCRIPTION
+		"The incoming bandwidth being used on this port,
+		in cells per second."
+	::= { portEntry 11 }
+
+portReceivedCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells received on this port."
+	::= { portEntry 12 }
+
+portMaxPathsOut OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of outgoing virtual paths
+		supported by this port."
+	::= { portEntry 13 }
+
+portNumPathsOut OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of outgoing virtual paths on this port."
+	::= { portEntry 14 }
+
+portMaxBandwidthOut OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum outgoing bandwidth of this port,
+		in cells per second."
+	::= { portEntry 15 }
+
+portAllocBandwidthOut OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated outgoing bandwidth of this port,
+		in cells per second."
+	::= { portEntry 16 }
+
+portUsedBandwidthOut OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	deprecated
+	DESCRIPTION
+		"The outgoing bandwidth being used on this port,
+		in cells per second."
+	::= { portEntry 17 }
+
+portTransmittedCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells transmitted on this port."
+	::= { portEntry 18 }
+
+portHwBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The hardware board number of this port."
+	::= { portEntry 19 }
+
+portHwModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The hardware module number of this port. For a control port 
+		(a software port), the value of this object is the maximun 
+		number of hardware modules plus one."
+	::= { portEntry 20 }
+
+portHwNumber OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The hardware port number of this port. For a control port 
+		(a software port), the value of this object is 0."
+	::= { portEntry 21 }
+
+portILMIRemoteIpAddress OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The IP address of the entity connected to this port that
+		was discovered using ILMI on path 0. If there is no q2931
+		siganlling path on VPI 0 that uses ILMI, the value of this
+		object is 255.255.255.255."
+	::= { portEntry 22 }
+
+portCDVT OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "The Cell Delay Variation Tolerance associated with this 
+                 physical port.  Connections take their default value 
+                 for CDVT from the input side port."
+        ::= { portEntry 23 }               
+
+portInputPolicingStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			enabled(1),
+			disabled(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The state of policing on this input port.  Enabled(1)
+		 forces every connection on this input port to be policed.
+		 Disabled(2) turns policing off for every connection on
+		 this input port."
+	::= { portEntry 24 }
+
+portVbrOverbooking OBJECT-TYPE
+	SYNTAX	INTEGER (1..500)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The percentage of overbooking for VBR connections.
+                The default value is 100 (no overbooking)." 
+	::= { portEntry 25 }
+
+portVbrBufferOverb OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The percentage of buffer overbooking for VBR connections.
+                The default value is 100 (no overbooking)." 
+	::= { portEntry 26 }
+
+------------------------------------------------------------------------
+-- The Path Group
+
+pathTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF PathEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of information about the virtual paths
+		passing through this ATM switch."
+	::= { pathGroup 1 }
+
+pathEntry OBJECT-TYPE
+	SYNTAX	PathEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing path information."
+	INDEX	{ pathPort, pathVPI }
+	::= { pathTable 1 }
+
+PathEntry ::=
+	SEQUENCE {
+		pathPort		INTEGER,
+		pathVPI			INTEGER,
+		pathStatus		EntryStatus,
+		pathNumOutputs		Gauge,
+		pathMaxChannels		INTEGER,
+		pathNumChannels		Gauge,
+		pathMaxBandwidth	INTEGER,
+		pathAllocBandwidth	Gauge,
+		pathUsedBandwidth	Gauge,
+		pathCells		Counter,
+		pathUptime		TimeTicks,
+		pathSigProtocol		AtmSigProtocol,
+		pathRejectedCells	Counter
+	}
+
+pathPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input port 
+		of this path and is the same as the portNumber."
+	::= { pathEntry 1 }
+
+pathVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The input VPI (Virtual Path Identifier) of this path."
+	::= { pathEntry 2 }
+
+pathStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this path entry."
+	::= { pathEntry 3 }
+
+pathNumOutputs OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of output ports to which this path is routed."
+	::= { pathEntry 4 }
+
+pathMaxChannels OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of virtual channels that
+		can be allocated on this path."
+	::= { pathEntry 5 }
+
+pathNumChannels OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of virtual channels currently allocated
+		on this path."
+	::= { pathEntry 6 }
+
+pathMaxBandwidth OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum bandwidth of this path, in cells per second."
+	::= { pathEntry 7 }
+
+pathAllocBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated bandwidth of this path, in cells per second."
+	::= { pathEntry 8 }
+
+pathUsedBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	deprecated
+	DESCRIPTION
+		"The bandwidth being used on this path, in cells per second."
+	::= { pathEntry 9 }
+
+pathCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells transferred over this path."
+	::= { pathEntry 10 }
+
+pathUptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The time since this path was created,
+		in hundredths of a second."
+	::= { pathEntry 11 }
+
+pathSigProtocol OBJECT-TYPE
+	SYNTAX	AtmSigProtocol
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The signaling protocol that created this path."
+	::= { pathEntry 12 }
+
+pathRejectedCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells over this path that were rejected 
+		(tagged or dropped as indicated by the PolicingAction object)
+		by the hardware due to traffic violation." 
+	::= { pathEntry 13 }
+
+------------------------------------------------------------------------
+
+pathRouteTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF PathRouteEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of information about the routing of paths through
+		this ATM switch."
+	::= { pathGroup 2 }
+
+pathRouteEntry OBJECT-TYPE
+	SYNTAX	PathRouteEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing path route information."
+	INDEX	{ pathrInputPort, pathrInputVPI, pathrOutputPort, pathrOutputVPI }
+	::= { pathRouteTable 1 }
+
+PathRouteEntry ::=
+	SEQUENCE {
+		pathrInputPort		INTEGER,
+		pathrInputVPI		INTEGER,
+		pathrOutputPort		INTEGER,
+		pathrOutputVPI		INTEGER,
+		pathrStatus		EntryStatus,
+		pathrMaxBandwidth	INTEGER,
+		pathrAllocBandwidth	Gauge,
+		pathrCells		Counter,
+		pathrUptime		TimeTicks,
+		pathrSigProtocol	AtmSigProtocol,
+		pathrRejectedCells	Counter,
+		pathrTrafficShapeVPI	INTEGER,
+		pathrUpcContract	INTEGER
+	}
+
+pathrInputPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input port 
+		of this path and is the same as the portNumber."
+	::= { pathRouteEntry 1 }
+
+pathrInputVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The input VPI  (Virtual Path Identifier) of this path."
+	::= { pathRouteEntry 2 }
+
+pathrOutputPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output port 
+		of this path and is the same as the portNumber."
+	::= { pathRouteEntry 3 }
+
+pathrOutputVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The output VPI  (Virtual Path Identifier) of this path."
+	::= { pathRouteEntry 4 }
+
+pathrStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this path entry."
+	::= { pathRouteEntry 5 }
+
+pathrMaxBandwidth OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum bandwidth of this path, in cells per second."
+	::= { pathRouteEntry 6 }
+
+pathrAllocBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated bandwidth of this path, in cells per second."
+	::= { pathRouteEntry 7 }
+
+pathrCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells transferred over this path."
+	::= { pathRouteEntry 8 }
+
+pathrUptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The time since this path was created,
+		in hundredths of a second."
+	::= { pathRouteEntry 9 }
+
+pathrSigProtocol OBJECT-TYPE
+	SYNTAX	AtmSigProtocol
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The signaling protocol that created this path."
+	::= { pathRouteEntry 10 }
+
+pathrRejectedCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells over this through path that 
+		were rejected by the hardware due to traffic violation." 
+	::= { pathRouteEntry 11 }
+
+pathrTrafficShapeVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The VPI of shaped cells"
+	::= { pathRouteEntry 12 }
+
+pathrUpcContract OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The UPC contract that will be used to police this through
+		path.  This is the number of the row in the upcContractTable."
+	::= { pathRouteEntry 13 }
+
+------------------------------------------------------------------------
+
+outputPathTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF OutputPathEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of information about the virtual paths
+		originating at this ATM switch."
+	::= { pathGroup 3 }
+
+outputPathEntry OBJECT-TYPE
+	SYNTAX	OutputPathEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing output path information."
+	INDEX	{ opathPort, opathVPI }
+	::= { outputPathTable 1 }
+
+OutputPathEntry ::=
+	SEQUENCE {
+		opathPort		INTEGER,
+		opathVPI		INTEGER,
+		opathStatus		EntryStatus,
+		opathMaxChannels	INTEGER,
+		opathNumChannels	Gauge,
+		opathMaxBandwidth	INTEGER,
+		opathAllocBandwidth	Gauge,
+		opathUsedBandwidth	Gauge,
+		opathCells		Counter,
+		opathUptime		TimeTicks,
+		opathSigProtocol	AtmSigProtocol,
+		opathRejectedCells	Counter,
+		opathTrafficShapeVPI	INTEGER,
+                opathVbrOverbooking     INTEGER,
+                opathVbrBufferOverb     INTEGER
+	}
+
+opathPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output port 
+		of this path and is the same as the portNumber."
+	::= { outputPathEntry 1 }
+
+opathVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The VPI  (Virtual Path Identifier) of this path."
+	::= { outputPathEntry 2 }
+
+opathStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this path entry."
+	::= { outputPathEntry 3 }
+
+opathMaxChannels OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of virtual channels that
+		can be allocated on this path."
+	::= { outputPathEntry 4 }
+
+opathNumChannels OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of virtual channels currently allocated
+		on this path."
+	::= { outputPathEntry 5 }
+
+opathMaxBandwidth OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum bandwidth of this path, in cells per second."
+	::= { outputPathEntry 6 }
+
+opathAllocBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated bandwidth of this path, in cells per second."
+	::= { outputPathEntry 7 }
+
+opathUsedBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	deprecated
+	DESCRIPTION
+		"The bandwidth used on this path, in cells per second."
+	::= { outputPathEntry 8 }
+
+opathCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells transmitted on this path."
+	::= { outputPathEntry 9 }
+
+opathUptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The time since this path was created,
+		in hundredths of a second."
+	::= { outputPathEntry 10 }
+
+opathSigProtocol OBJECT-TYPE
+	SYNTAX	AtmSigProtocol
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The signaling protocol that created this path."
+	::= { outputPathEntry 11 }
+
+opathRejectedCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells on this output path that were 
+		rejected (tagged or dropped as indicated by the PolicingAction
+		object) by the hardware due to traffic violation."
+	::= { outputPathEntry 12 }
+
+opathTrafficShapeVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The VPI of shaped cells"
+	::= { outputPathEntry 13 }
+
+opathVbrOverbooking OBJECT-TYPE
+	SYNTAX	INTEGER (1..500)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The percentage of overbooking for VBR connections.
+                The default value is 100 (no overbooking)." 
+	::= { outputPathEntry 14 }
+
+opathVbrBufferOverb OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The percentage of buffer overbooking for VBR connections.
+                The default value is 100 (no overbooking)." 
+	::= { outputPathEntry 15 }
+
+------------------------------------------------------------------------
+-- The Channel Group
+
+fchannelTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF ChannelEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of information about the virtual channels
+		passing through this ATM switch."
+	::= { channelGroup 1 }
+
+fchannelEntry OBJECT-TYPE
+	SYNTAX	ChannelEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing channel information."
+	INDEX	{ chanPort, chanVPI, chanVCI }
+	::= { fchannelTable 1 }
+
+ChannelEntry ::=
+	SEQUENCE {
+		chanPort		INTEGER,
+		chanVPI			INTEGER,
+		chanVCI			INTEGER,
+		chanStatus		EntryStatus,
+		chanNumOutputs		Gauge,
+		chanAllocBandwidth	Gauge,
+		chanUsedBandwidth	Gauge,
+		chanCells		Counter,
+		chanUptime		TimeTicks,
+		chanSigProtocol		AtmSigProtocol,
+		chanRejectedCells	Counter,
+		chanCDV			INTEGER,
+		chanPolicingAction	INTEGER,
+		chanUpcContract		INTEGER
+	}
+
+chanPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input port 
+		of this channel and is the same as the pathPort and 
+		portNumber."
+	::= { fchannelEntry 1 }
+
+chanVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input VPI 
+		(Virtual Path Identifier) of this channel, and is the
+		same as the pathVPI."
+	::= { fchannelEntry 2 }
+
+chanVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The input VCI (Virtual Channel Identifier) of this channel."
+	::= { fchannelEntry 3 }
+
+chanStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this channel entry."
+	::= { fchannelEntry 4 }
+
+chanNumOutputs OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of output ports to which this channel is routed."
+	::= { fchannelEntry 5 }
+
+chanAllocBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated bandwidth of this channel, in cells per second."
+	::= { fchannelEntry 6 }
+
+chanUsedBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	deprecated
+	DESCRIPTION
+		"The bandwidth used on this channel, in cells per second."
+	::= { fchannelEntry 7 }
+
+chanCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells transferred on this channel."
+	::= { fchannelEntry 8 }
+
+chanUptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The time since this channel was created,
+		in hundredths of a second."
+	::= { fchannelEntry 9 }
+
+chanSigProtocol OBJECT-TYPE
+	SYNTAX	AtmSigProtocol
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The signaling protocol that created this channel."
+	::= { fchannelEntry 10 }
+
+chanRejectedCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of cells on this channel that were rejected
+		(tagged or dropped as indicated by the PolicingAction object)
+		by the hardware due to traffic violation."
+	::= { fchannelEntry 11 }
+
+chanCDV OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The channel Cell Delay Variation Tolerance (CDV),
+		specified in microseconds, indicates the time window
+		in which a cell may be received on a channel and be
+		accepted. A cell that is received on a channel outside
+		the CDV window will be dropped or tagged, based on the
+		value of chanPolicingAction. The chanCDV value 
+		overrides the default value inherited from the link."
+	::= { fchannelEntry 12 }
+
+chanPolicingAction OBJECT-TYPE
+	SYNTAX	INTEGER {
+			tag(1),
+			drop(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates the action the switch 
+		will take in case of bandwidth violation on this
+		channel."
+	::= { fchannelEntry 13 }
+
+chanUpcContract OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The UPC contract that will be used to police this channel.
+		This is the number of the row in the upcContractTable."
+	::= { fchannelEntry 14 }
+
+------------------------------------------------------------------------
+
+channelRouteTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF ChannelRouteEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of information about the routing of channels through
+		this ATM switch."
+	::= { channelGroup 2 }
+
+channelRouteEntry OBJECT-TYPE
+	SYNTAX	ChannelRouteEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing channel route information."
+	INDEX	{ chanrInputPort, chanrInputVPI, chanrInputVCI,
+		  chanrOutputPort, chanrOutputVPI, chanrOutputVCI }
+	::= { channelRouteTable 1 }
+
+ChannelRouteEntry ::= SEQUENCE {
+	chanrInputPort		INTEGER,
+	chanrInputVPI		INTEGER,
+	chanrInputVCI		INTEGER,
+	chanrOutputPort		INTEGER,
+	chanrOutputVPI		INTEGER,
+	chanrOutputVCI		INTEGER,
+	chanrStatus		EntryStatus,
+	chanrSigProtocol	AtmSigProtocol
+}
+
+chanrInputPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input port 
+		of this channel and is the same as the chanPort, 
+		pathPort, and portNumber."
+	::= { channelRouteEntry 1 }
+
+chanrInputVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input VPI 
+		(Virtual Path Identifier) of this channel, and is the
+		same as the chanVPI, and pathVPI."
+	::= { channelRouteEntry 2 }
+
+chanrInputVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input VCI 
+		(Virtual Channel Identifier) of this channel, and 
+		is the same as chanVCI."
+	::= { channelRouteEntry 3 }
+
+chanrOutputPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output port 
+		of this channel and is the same as the opathPort, 
+		and portNumber."
+	::= { channelRouteEntry 4 }
+
+chanrOutputVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output VPI
+		(Virtual Path Identifier) of this channel and is the 
+		same as the opathVPI."
+	::= { channelRouteEntry 5 }
+
+chanrOutputVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The output VCI (Virtual Channel Identifier) of this channel."
+	::= { channelRouteEntry 6 }
+
+chanrStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this channel entry."
+	::= { channelRouteEntry 7 }
+
+chanrSigProtocol OBJECT-TYPE
+	SYNTAX	AtmSigProtocol
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The signaling protocol that created this channel."
+	::= { channelRouteEntry 8 }
+
+
+------------------------------------------------------------------------
+-- The Topology Group
+
+numberOfLinks OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Current number of links known by this ATM switch."
+	::= { topologyGroup 1 }
+
+linkTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF LinkEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of links describing this switch's view
+		of the ATM network topology."
+	::= { topologyGroup 2 }
+
+linkEntry OBJECT-TYPE
+	SYNTAX	LinkEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing link information."
+	INDEX	{ linkSrc, linkDest }
+	::= { linkTable 1 }
+
+LinkEntry ::=
+	SEQUENCE {
+		linkSrc		SpansAddress,
+		linkDest	SpansAddress,
+		linkCapacity	INTEGER,
+		linkAge		INTEGER
+	}
+
+linkSrc OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the source switch of this link."
+	::= { linkEntry 1 }
+
+linkDest OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the destination switch of this link."
+	::= { linkEntry 2 }
+
+linkCapacity OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The free capacity of this link in kilobits per second."
+	::= { linkEntry 3 }
+
+linkAge OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The freshness of this link information. The actual 
+		value has no units associated with it. It should be 
+		used for comparison."
+	::= { linkEntry 4 }
+
+------------------------------------------------------------------------
+-- The Signaling Group
+
+-- The SPANS Group
+
+sigPathTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SigPathEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of general information about the signaling path."
+	::= { spansGroup 1 }
+
+sigPathEntry OBJECT-TYPE
+	SYNTAX	SigPathEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing signaling path information, 
+		indexed by port and path."
+	INDEX	{ sigPathPort, sigPathVPI }
+	::= { sigPathTable 1 }
+
+SigPathEntry ::= SEQUENCE {
+	sigPathPort		INTEGER,
+	sigPathVPI		INTEGER,
+	sigPathVCI		INTEGER,
+	sigPathClsVCI		INTEGER,
+	sigPathAdminStatus	INTEGER,
+	sigPathOperStatus	INTEGER,
+	sigPathEntryStatus	EntryStatus,
+	sigPathAALType		INTEGER,
+	sigPathCDV 		INTEGER,
+	sigPathPolicingAction 	INTEGER,
+	sigPathRemoteAtmAddress	SpansAddress,
+	sigPathRemoteIpAddress	IpAddress,
+	sigPathType		INTEGER,
+        sigPathClsUpcContract   INTEGER,
+        sigPathSigReservedBW    INTEGER,
+	sigPathMinVCI		INTEGER,
+	sigPathMaxVCI		INTEGER
+}
+
+sigPathPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port 
+		of this signalling path, and is the same as the 
+		portNumber."
+	::= { sigPathEntry 1 }
+
+sigPathVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The VPI (Virtual Path Identifier) of this signaling path."
+	::= { sigPathEntry 2 }
+
+sigPathVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The VCI (Virtual Channel Identifier) of the signaling 
+		channel within the signaling path."
+	::= { sigPathEntry 3 }
+
+sigPathClsVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The VCI (Virtual Channel Identifier) of the connectionless
+		channel within the signaling path."
+	::= { sigPathEntry 4 }
+
+sigPathAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The desired state of this signaling channel. The up(1) state
+		dictates that SPANS (Simple Protocol for ATM Network Siganlling)
+		messages are used for signalling. The down(2) state dictates 
+		the SPANS protocol is not used for signalling."
+	::= { sigPathEntry 5 }
+
+sigPathOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current operational state of this signaling channel,
+		as determined either by administrative action, when the
+		value of sigPathAdminStatus is down(2), or by a link
+		monitoring protocol, when the value of sigPathAdminStatus
+		is up(1)."
+	::= { sigPathEntry 6 }
+
+sigPathEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this signaling path entry."
+	::= { sigPathEntry 7 }
+
+sigPathAALType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			type34(1),
+			type5(2) 
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The AAL (ATM Adaptation LAyer) type that is used by this 
+		signaling path."
+	::= { sigPathEntry 8 }
+
+sigPathCDV OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The signalling path Cell Delay Variation (CDV) specified
+		in microseconds, indicates the time window in which 
+		a cell may be received on a signalling channel and be 
+		accepted. A cell that is received on a channel outside the
+		CDV window will be dropped. The sigPathCDV value 
+		overrides the default value of switchCDV."
+	::= { sigPathEntry 9 }
+
+sigPathPolicingAction OBJECT-TYPE
+	SYNTAX	INTEGER {
+			tag(1),
+			drop(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates the action the switch 
+		will take in case of bandwidth violation on 
+		a signalling channel. The value set here overrides 
+		the default value of switchPolicingAction."
+	::= { sigPathEntry 10 }
+
+sigPathRemoteAtmAddress OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the entity connected to this 
+		signalling path."
+	::= { sigPathEntry 11 }
+
+sigPathRemoteIpAddress OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The IP address of the entity connected to this 
+		signalling path."
+	::= { sigPathEntry 12 }
+
+sigPathType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			uni(1),
+			nni(2) 
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The type of the signalling path connection. uni(1) 
+		(User Network Interface) means that there is a host on 
+		remote side, while nni(2) (Network Network Interface) 
+		means there is another switch, that speaks SPANS, on 
+		the remote side."
+	::= { sigPathEntry 13 }
+
+sigPathClsUpcContract OBJECT-TYPE
+        SYNTAX  INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "The UPC contract that will be used to police the
+                 connectionless VC.  This is the number of a row in
+                 the upcContractTable"
+	::= { sigPathEntry 14 }
+	
+sigPathSigReservedBW OBJECT-TYPE
+        SYNTAX  INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "Bandwidth reserved for the SPANS Signaling VC, in 
+                 cells/sec."
+	::= { sigPathEntry 15 }
+	
+sigPathMinVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The minimum configured VCI (Virtual Channel Identifier)
+		 that can be used for SVCs (Signalled Virtual Circuits)."
+	::= { sigPathEntry 16 }
+
+sigPathMaxVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum configured VCI (Virtual Channel Identifier)
+		 that can be used for SVCs (Signalled Virtual Circuits)."
+	::= { sigPathEntry 17 }
+
+------------------------------------------------------------------------
+
+sigPathStatsTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SigPathStatsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of statistics about the signaling path."
+	::= { spansGroup 2 }
+
+sigPathStatsEntry OBJECT-TYPE
+	SYNTAX	SigPathStatsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing signaling path statistics, 
+		indexed by port and path."
+	INDEX	{ sigPathStatsPort, sigPathStatsVPI }
+	::= { sigPathStatsTable 1 }
+
+SigPathStatsEntry ::= SEQUENCE {
+	sigPathStatsPort		INTEGER,
+	sigPathStatsVPI			INTEGER,
+	sigPathVCCs			Gauge,
+	sigPathRestarts			Counter,
+	sigPathCallsCompletions		Counter,
+	sigPathCallsFailures		Counter,
+	sigPathCallsRejections		Counter,
+	sigPathSpansTransmittedMessages	Counter,
+	sigPathSpansReceivedMessages	Counter,
+	sigPathClsTransmittedMessages	Counter,
+	sigPathClsReceivedMessages	Counter
+}
+
+sigPathStatsPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port 
+		of this signalling path, and is the same as  
+		sigPathPort."
+	::= { sigPathStatsEntry 1 }
+
+sigPathStatsVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the VPI (Virtual
+		Path Identifier) of this signaling path statistics entry,
+		and is the same as sigPathVPI."
+	::= { sigPathStatsEntry 2 }
+
+sigPathVCCs OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of Virtual Channel Connections (VCCs) on this 
+		signaling path."
+	::= { sigPathStatsEntry 3 }
+
+sigPathRestarts OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of times the switch has lost and regained 
+		contact with the remote signaling entity on this path."
+	::= { sigPathStatsEntry 4 }
+
+sigPathCallsCompletions OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of successfully completed calls on this 
+		signaling path."
+	::= { sigPathStatsEntry 5 }
+
+sigPathCallsFailures OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of call failures on this signaling path."
+	::= { sigPathStatsEntry 6 }
+
+sigPathCallsRejections OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of connections on this signaling path that were 
+		rejected by the far end."
+	::= { sigPathStatsEntry 7 }
+
+sigPathSpansTransmittedMessages OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The total number of SPANS messages that have been transmitted 
+		over this signalling path."
+	::= { sigPathStatsEntry 8 }
+
+sigPathSpansReceivedMessages OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The total number of SPANS messages that have been received on 
+		this signalling path."
+	::= { sigPathStatsEntry 9 }
+
+sigPathClsTransmittedMessages OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The total number of connectionless messages that have been 
+		transmitted over this signalling path."
+	::= { sigPathStatsEntry 10 }
+
+sigPathClsReceivedMessages OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The total number of connectionless messages that have been 
+		received on this signalling path."
+	::= { sigPathStatsEntry 11 }
+
+
+------------------------------------------------------------------------
+
+spvcSrcNumberOfSPVCs	OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of SPVCs (Smart Permanent Virtual Circuits) 	
+		that are going out of this switch (i.e. this switch is
+		their source)."
+	::= {spansGroup 3}
+
+spvcSrcTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SpvcSrcEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"This table contains information about SPVCs (Smart
+		Permanent Virtual Circuits) that their source is 
+		this switch."
+	::= { spansGroup 4 }
+
+spvcSrcEntry OBJECT-TYPE
+	SYNTAX	SpvcSrcEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing source SPVC (Smart
+		Permanent Virtual Circuits) information."
+	INDEX	{ spvcSrcSpvcId }
+	::= { spvcSrcTable 1 }
+
+SpvcSrcEntry ::= SEQUENCE {
+		spvcSrcSpvcId		INTEGER,
+		spvcSrcSwitchAddr	SpansAddress,
+		spvcSrcDestSpvcId	INTEGER,
+		spvcSrcDestSwitchAddr	SpansAddress,
+		spvcSrcInPort		INTEGER,
+		spvcSrcInVPI		INTEGER,
+		spvcSrcInVCI		INTEGER,
+		spvcSrcAllocBandwidth	Gauge,
+		spvcSrcUpTime		TimeTicks,
+		spvcSrcStatus		INTEGER,
+		spvcSrcEntryStatus	EntryStatus
+	}
+
+spvcSrcSpvcId OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object uniquely identify 
+		the SPVC (Smart Permanent Virtual Circuits) that 
+		this switch is its source."
+	::= { spvcSrcEntry 1 }
+
+spvcSrcSwitchAddr OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the source switch."
+	::= { spvcSrcEntry 2 }
+
+spvcSrcDestSpvcId OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The SPVC (Smart Permanent Virtual Circuits) 
+		identifier at the destination switch.
+		This object should match the spvcDestSpvcId at
+		the destination switch."
+	::= { spvcSrcEntry 3 }
+
+spvcSrcDestSwitchAddr OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the destination switch."
+	::= { spvcSrcEntry 4 }
+
+spvcSrcInPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input port 
+		of this SPVC (Smart Permanent Virtual Circuits), and 
+		is the same as the chanrInputPort, chanPort, pathPort, 
+		and portNumber."
+	::= { spvcSrcEntry 5 }
+
+spvcSrcInVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input VPI 
+		(Virtual Path Identifier) of this SPVC (Smart Permanent 
+		Virtual Circuits), and is the same as the chanrInputVPI, 
+		chanVPI, pathVPI."
+	::= { spvcSrcEntry 6 }
+
+spvcSrcInVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the input VCI
+		(Virtual Channel Identifier) of this SPVC (Smart 
+		Permanent Virtual Circuits), and is the 
+		same as the chanrInputVCI."
+	::= { spvcSrcEntry 7 }
+
+spvcSrcAllocBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated bandwidth of this SPVC (Smart Permanent 
+		Virtual Circuits)."
+	::= { spvcSrcEntry 8 }
+
+spvcSrcUpTime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The time since this SPVC (Smart Permanent Virtual 
+		Circuits) was created in hundredths of a second."
+	::= { spvcSrcEntry 9 }
+
+spvcSrcStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this SPVC (Smart Permanent Virtual 
+		Circuits)."
+	::= { spvcSrcEntry 10 }
+
+spvcSrcEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this SPVC (Smart Permanent Virtual 
+		Circuits) entry."
+	::= { spvcSrcEntry 11 }
+
+------------------------------------------------------------------------
+
+spvcDestNumberOfSPVCs	OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of SPVCs (Smart Permanent Virtual Circuits) 	
+		that are coming into this switch (i.e. this switch is
+		their destination)."
+	::= {spansGroup 5}
+
+spvcDestTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SpvcDestEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"This table contains information about SPVCs (Smart
+		Permanent Virtual Circuits) that their destination is 
+		this switch."
+	::= { spansGroup 6 }
+
+spvcDestEntry OBJECT-TYPE
+	SYNTAX	SpvcDestEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing destination SPVC (Smart
+		Permanent Virtual Circuits) information."
+	INDEX	{ spvcDestSpvcId }
+	::= { spvcDestTable 1 }
+
+SpvcDestEntry ::= SEQUENCE {
+		spvcDestSpvcId		INTEGER,
+		spvcDestSwitchAddr	SpansAddress,
+		spvcDestSrcSpvcId	INTEGER,
+		spvcDestSrcSwitchAddr	SpansAddress,
+		spvcDestOutPort		INTEGER,
+		spvcDestOutVPI		INTEGER,
+		spvcDestOutVCI		INTEGER,
+		spvcDestAllocBandwidth	Gauge,
+		spvcDestUpTime		TimeTicks,
+		spvcDestStatus		INTEGER,
+		spvcDestEntryStatus	EntryStatus
+	}
+
+spvcDestSpvcId OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object uniquely identify 
+		the SPVC (Smart Permanent Virtual Circuits) that 
+		this switch is its destination. The range of this 
+		object is [1..spvcDestNumberOfSPVCs]."
+	::= { spvcDestEntry 1 }
+
+spvcDestSwitchAddr OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of this (the destination) switch."
+	::= { spvcDestEntry 2 }
+
+spvcDestSrcSpvcId OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The SPVC (Smart Permanent Virtual Circuits) 
+		identifier at the source switch. This object 
+		should match the spvcSrcSpvcId at the source 
+		switch."
+	::= { spvcDestEntry 3 }
+
+spvcDestSrcSwitchAddr OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the source switch."
+	::= { spvcDestEntry 4 }
+
+spvcDestOutPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output port 
+		of this SPVC (Smart Permanent Virtual Circuits) 
+		and is the same as the chanrOutputPort, 
+		opathPort, and portNumber."
+	::= { spvcDestEntry 5 }
+
+spvcDestOutVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output VPI 
+		(Virtual Path Identifier) of this SPVC (Smart Permanent 
+		Virtual Circuits), and is the same as the chanrOutputVPI, 
+		and opathVPI."
+	::= { spvcDestEntry 6 }
+
+spvcDestOutVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the output VCI
+		(Virtual Channel Identifier) of this SPVC (Smart 
+		Permanent Virtual Circuits), and is the 
+		same as the chanrOutputVCI."
+	::= { spvcDestEntry 7 }
+
+spvcDestAllocBandwidth OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The allocated bandwidth of this SPVC (Smart Permanent 
+		Virtual Circuits)."
+	::= { spvcDestEntry 8 }
+
+spvcDestUpTime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The time since this SPVC (Smart Permanent Virtual 
+		Circuits) was created in hundredths of a second."
+	::= { spvcDestEntry 9 }
+
+spvcDestStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this SPVC (Smart Permanent Virtual 
+		Circuits)."
+	::= { spvcDestEntry 10 }
+
+spvcDestEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this SPVC (Smart Permanent Virtual 
+		Circuits) entry."
+	::= { spvcDestEntry 11 }
+
+------------------------------------------------------------------------
+
+-- The Q2931 Group
+
+-- The implementation of the group is mandatory for
+-- FORE switches that supports Q2931 signalling.
+
+-- The Q2931 Layer Group
+
+q2931AdminTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF Q2931AdminEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of general information about the Q2931 signaling path."
+	::= { q2931LayerGroup 1 }
+
+q2931AdminEntry OBJECT-TYPE
+	SYNTAX	Q2931AdminEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing Q2931Admin signaling administration information, 
+		indexed by port and path."
+	INDEX	{ q2931AdminPort, q2931AdminVPI }
+	::= { q2931AdminTable 1 }
+
+Q2931AdminEntry ::= SEQUENCE {
+	q2931AdminPort			INTEGER,
+	q2931AdminVPI			INTEGER,
+	q2931AdminVCI			INTEGER,
+	q2931AdminStatus		INTEGER,
+	q2931OperStatus			INTEGER,
+	q2931SSCOPOperStatus		INTEGER,
+	q2931ILMIAdminStatus		INTEGER,
+	q2931ILMIOperStatus		INTEGER,
+	q2931AdminAALType		INTEGER,
+	q2931AdminUNISide		INTEGER,
+	q2931AdminConfigType		INTEGER,
+	q2931AdminOperType		INTEGER,
+	q2931AdminEntryStatus		EntryStatus,
+	q2931AdminRemoteIpAddress	IpAddress,
+        q2931SigReservedBW              INTEGER,
+        q2931ILMIReservedBW             INTEGER,
+	q2931ILMIAdminVCI		INTEGER,
+	q2931AdminMinVCI		INTEGER,
+	q2931AdminMaxVCI		INTEGER,
+	q2931MinVCI			INTEGER,
+	q2931MaxVCI			INTEGER
+}
+
+q2931AdminPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port 
+		of this signalling path, and is the same as the 
+		portNumber."
+	::= { q2931AdminEntry 1 }
+
+q2931AdminVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The VPI (Virtual Path Identifier) of this signaling path."
+	::= { q2931AdminEntry 2 }
+
+q2931AdminVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The VCI (Virtual Channel Identifier) of the signaling 
+		channel within the signaling path."
+	::= { q2931AdminEntry 3 }
+
+q2931AdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The desired state of this signaling channel. The up(1) state
+		dictates that Q2931 messages are used for signalling. The down(2) 
+		state dictates that Q2931 protocol is not used for signalling."
+	::= { q2931AdminEntry 4 }
+
+q2931OperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current operational state of this signaling channel,
+		as determined either by administrative action, when the
+		value of q2931AdminStatus is down(2), or by a link
+		monitoring protocol, when the value of q2931AdminStatus
+		is up(1)."
+	::= { q2931AdminEntry 5 }
+
+q2931SSCOPOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current operational state of the underlying SSCOP 
+		(Service Specific Connection Orientedd Protocol) on this 
+		channel. SSCOP's function is to provide a reliable data 
+		link layer for the exchange of Q.2931 signalling messages. 
+		The value up(1) reflects the value dataTransReady(4) for 
+		the SSCOPOperStatus object in the SSCOP Administration 
+		table (sscopAdminTable). All other values of that object
+		are reflected as the value down(2) for this object."
+	::= { q2931AdminEntry 6 }
+
+q2931ILMIAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The desired state of the underlying ILMI (Interim Local 
+		Manageemnt Interface) status and configuration channel. 
+		The up(1) state dictates that ILMI messages are used for 
+		status and configuration information. The down(2) state 
+		dictates that ILMI protocol is not used."
+	::= { q2931AdminEntry 7 }
+
+q2931ILMIOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current operational state of the underlying ILMI 
+		(Interim Local Manageemnt Interface) status and configuration 
+		channel, as determined either by administrative action, when 
+		the value of q2931ILMIAdminStatus is down(2), or by a link
+		monitoring protocol, when the value of q2931ILMIAdminStatus
+		is up(1)."
+	::= { q2931AdminEntry 8 }
+
+q2931AdminAALType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			type34(1),
+			type5(2) 
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The AAL (ATM Adaptation Layer) type that is used by this 
+		Q2931 signaling path."
+	::= { q2931AdminEntry 9 }
+
+q2931AdminUNISide OBJECT-TYPE
+	SYNTAX	INTEGER {
+			user(1),
+			network(2) 
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This object detemines the role this port takes in the
+		UNI (User Network Interface). If this port is connected
+		to a host via the private UNI, this port is on the network(2) 
+		side of the UNI, whilst if this port is connected to the 
+		Public UNI the port may be required to be the user(1) side 
+		of the connection."
+	::= { q2931AdminEntry 10 }
+
+q2931AdminConfigType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			publicUNI(1),
+			auto(2),
+			iisp(3)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The configuration of the UNI (User Network Interface)
+		at initialization. Configuring the UNI to publicUNI(1)
+		means that this link will be used between the switch and
+		a public switch. Configuring the UNI to auto(2) means that
+		the operational type will be determined dynamically. 
+		Configuring the UNI to iisp(3) (Interim Inter-Switch
+		Signalling Protocol) indicates that this link is used for 
+		static routing NNI (Network to Network Interface)."
+	::= { q2931AdminEntry 11 }
+
+q2931AdminOperType OBJECT-TYPE
+	SYNTAX	INTEGER {
+			publicUNI(1),
+			privateUNI(2),
+			iisp(3),
+			spansNNI(4)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The operational configuration of the UNI (User Network 
+		Interface). publicUNI(1) is used between the switch and
+		a public switch. privateUNI(2) is used between the switch
+		and a host. IISP, iisp(3), stands for Interim Inter-Switch 
+		Signalling Protocol, is used between two switches using
+		static routing. And spansNNI(4) is used between two switches 
+		using SPANS mapping messages for dynamic routing. If the 
+		q2931AdminConfigType is set to auto(2), the value of this 
+		object may be either privateUNI(2), or spansNNI(4)."
+	::= { q2931AdminEntry 12 }
+
+q2931AdminEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this signaling path entry. Setting this object
+		to invalid(4) causes the q2931 path to be destroyed."
+	::= { q2931AdminEntry 13 }
+
+q2931AdminRemoteIpAddress OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The IP address of the entity connected to this q2931
+		signalling path. The remote IP address is derived using
+		ILMI on this interface."
+	::= { q2931AdminEntry 14 }
+
+q2931SigReservedBW OBJECT-TYPE
+        SYNTAX  INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "Bandwidth reserved for the UNI Signaling VC, in 
+                 cells/sec."
+	::= { q2931AdminEntry 15 }
+	
+q2931ILMIReservedBW OBJECT-TYPE
+        SYNTAX  INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "Bandwidth reserved for the UNI ILMI VC, in 
+                 cells/sec."
+	::= { q2931AdminEntry 16 }
+	
+q2931ILMIAdminVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The VCI (Virtual Channel Identifier) of the ILMI
+		 signalling channel."
+	::= { q2931AdminEntry 17 }
+
+q2931AdminMinVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The minimum configured VCI (Virtual Channel Identifier)
+		 used for SVCs (Signalling Virtual Circuits)."
+	::= { q2931AdminEntry 18 }
+
+q2931AdminMaxVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum configured VCI (Virtual Channel Identifier)
+		 used for SVCs (Signalling Virtual Circuits)."
+	::= { q2931AdminEntry 19 }
+
+q2931MinVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The minimum actual VCI (Virtual Channel Identifier)
+		 used for SVCs (Signalling Virtual Circuits)."
+	::= { q2931AdminEntry 20 }
+
+q2931MaxVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum actual VCI (Virtual Channel Identifier)
+		 used for SVCs (Signalling Virtual Circuits)."
+	::= { q2931AdminEntry 21 }
+
+------------------------------------------------------------------------
+
+
+q2931StatsTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF Q2931StatsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of statistics about the Q2931 signaling path."
+	::= { q2931LayerGroup 2 }
+
+q2931StatsEntry OBJECT-TYPE
+	SYNTAX	Q2931StatsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing signaling path statistics, 
+		indexed by port and path."
+	INDEX	{ q2931StatsPort, q2931StatsVPI }
+	::= { q2931StatsTable 1 }
+
+Q2931StatsEntry ::= SEQUENCE {
+	q2931StatsPort		INTEGER,
+	q2931StatsVPI			INTEGER,
+	q2931VCCs			Gauge,
+	q2931Restarts			Counter,
+	q2931CallsCompletions		Counter,
+	q2931CallsFailures		Counter,
+	q2931CallsRejections		Counter,
+	q2931TransmittedMessages	Counter,
+	q2931ReceivedMessages		Counter
+}
+
+q2931StatsPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port 
+		of this signalling path, and is the same as  
+		q2931Port."
+	::= { q2931StatsEntry 1 }
+
+q2931StatsVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the VPI (Virtual
+		Path Identifier) of this signaling path statistics entry,
+		and is the same as q2931VPI."
+	::= { q2931StatsEntry 2 }
+
+q2931VCCs OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of Virtual Channel Connections (VCCs) on this 
+		signaling path."
+	::= { q2931StatsEntry 3 }
+
+q2931Restarts OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of times the switch has lost and regained 
+		contact with the remote signaling entity on this path."
+	::= { q2931StatsEntry 4 }
+
+q2931CallsCompletions OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of successfully completed calls on this 
+		signaling path."
+	::= { q2931StatsEntry 5 }
+
+q2931CallsFailures OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of call failures on this signaling path."
+	::= { q2931StatsEntry 6 }
+
+q2931CallsRejections OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of connections on this signaling path that were 
+		rejected by the far end."
+	::= { q2931StatsEntry 7 }
+
+q2931TransmittedMessages OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The total number of Q2931 messages that have been transmitted 
+		over this signalling path."
+	::= { q2931StatsEntry 8 }
+
+q2931ReceivedMessages OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The total number of Q2931 messages that have been received on 
+		this signalling path."
+	::= { q2931StatsEntry 9 }
+
+
+------------------------------------------------------------------------
+-- The NSAP Routing Group
+
+-- Implementation of this group is mandatory
+-- for all asxd applications that support
+-- NSAP routing.
+
+
+nsapNetworkPrefixTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF NsapNetworkPrefixEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table of Network Prefix addresses"
+        ::= { nsapGroup 1 }
+
+nsapNetworkPrefixEntry OBJECT-TYPE
+	SYNTAX	NsapNetworkPrefixEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"An entry in the Network Prefix table."
+	INDEX	{ nsapNetworkPrefixPort, nsapNetworkPrefixVPI, nsapNetworkPrefixValue } 
+	::= { nsapNetworkPrefixTable 1 }
+
+NsapNetworkPrefixEntry ::= SEQUENCE {
+	nsapNetworkPrefixPort		INTEGER,
+	nsapNetworkPrefixVPI		INTEGER,
+	nsapNetworkPrefixValue		NsapPrefix,
+	nsapNetworkPrefixStatus		EntryStatus
+}
+
+nsapNetworkPrefixPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port 
+		of this signalling path, and is the same as  
+		nsapPort."
+	::= { nsapNetworkPrefixEntry 1 }
+
+nsapNetworkPrefixVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the VPI (Virtual
+		Path Identifier) of this signaling path statistics entry,
+		and is the same as nsapVPI."
+	::= { nsapNetworkPrefixEntry 2 }
+
+nsapNetworkPrefixValue  OBJECT-TYPE
+        SYNTAX  NsapPrefix
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+		"The network prefix for ATM addresses which is in 	
+		effect on the user-side of the ATM UNI port."
+        ::= { nsapNetworkPrefixEntry 3 }
+
+nsapNetworkPrefixStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this Network Prefix entry. Setting this object
+		to invalid(4) causes this Network to disappear."
+	::= { nsapNetworkPrefixEntry 4 }
+
+
+------------------------------------------------------------------------
+-- 
+-- nsapAddrAdminTable OBJECT-TYPE
+--        SYNTAX  SEQUENCE OF NsapAddrAdminEntry
+--        ACCESS  not-accessible
+--        STATUS  deprecated
+--        DESCRIPTION
+--                "A table for NSAP (Network Service Access Point) address
+--		administration."
+--        ::= { nsapGroup 2 }
+-- 
+------------------------------------------------------------------------
+
+nsapTopologyTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF NsapTopologyEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table for NSAP (Network Service Access Point) topology, 
+		based on NSAP routing."
+        ::= { nsapGroup 3 }
+
+nsapTopologyEntry OBJECT-TYPE
+	SYNTAX	NsapTopologyEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"An entry in the NSAP (Network Service Access Point) topology
+		table."
+	INDEX	{ nsapTopoBoard, nsapTopoLinkSrc, nsapTopoLinkSrcMask, nsapTopoLinkSrcPort,
+		  nsapTopoLinkDest, nsapTopoLinkDestMask, nsapTopoLinkDestPort }
+	::= { nsapTopologyTable 1 }
+
+NsapTopologyEntry ::= SEQUENCE {
+	nsapTopoBoard			INTEGER,
+	nsapTopoLinkSrc			NsapAddr,
+	nsapTopoLinkSrcMask		INTEGER,
+	nsapTopoLinkSrcPort		INTEGER,
+	nsapTopoLinkDest		NsapAddr,
+	nsapTopoLinkDestMask		INTEGER,
+	nsapTopoLinkDestPort		INTEGER,
+	nsapTopoLinkCost		INTEGER,
+	nsapTopoLinkUbrVCs		Gauge,
+	nsapTopoLinkCbrCapacity		INTEGER,
+	nsapTopoLinkCbrFifo		INTEGER,
+	nsapTopoLinkVbrCapacity		INTEGER,
+	nsapTopoLinkVbrFifo		INTEGER,
+	nsapTopoLinkOrig		INTEGER,
+	nsapTopoLinkCapabilitySet	INTEGER,
+	nsapTopoLinkFreshness		INTEGER
+}
+
+nsapTopoBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of the switch board within the ATM switch cluster.
+		This object is the same as the swBoardIndex."
+	::= { nsapTopologyEntry 1 }
+
+nsapTopoLinkSrc OBJECT-TYPE
+	SYNTAX	NsapAddr
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the source NSAP 
+		(Network Service Access Point) address of this link."
+	::= { nsapTopologyEntry 2 }
+
+nsapTopoLinkSrcMask OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the mask that is
+		used for the link source NSAP (Network Service Access Point)
+		address. The mask identifies the number of bits in the
+		NSAP address that are valid. The value of the mask object
+		is in the range 0-160 (160 bits is the size of an NSAP 
+		address)."
+	::= { nsapTopologyEntry 3 }
+
+nsapTopoLinkSrcPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object identifies the logical port of the link source.
+		On a switch, a logical port is composed by a physical port 
+		and a virtual path identifier."
+	::= { nsapTopologyEntry 4 }
+
+nsapTopoLinkDest OBJECT-TYPE
+	SYNTAX	NsapAddr
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the destination NSAP 
+		(Network Service Access Point) address of this link."
+	::= { nsapTopologyEntry 5 }
+
+nsapTopoLinkDestMask OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the mask that is
+		used for the link destination NSAP (Network Service Access 
+		Point) address. The mask identifies the number of bits in the
+		NSAP address that are valid. The value of the mask object
+		is in the range 0-160 (160 bits is the size of an NSAP 
+		address)."
+	::= { nsapTopologyEntry 6 }
+
+nsapTopoLinkDestPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object identifies the logical port of the link destination.
+		On a switch, a logical port is composed by a physical port 
+		and a virtual path identifier."
+	::= { nsapTopologyEntry 7 }
+
+nsapTopoLinkCost OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The routing metric for this link."
+	::= { nsapTopologyEntry 8 }
+
+nsapTopoLinkUbrVCs OBJECT-TYPE
+	SYNTAX	Gauge
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of active UBR (Unspecified Bit Rate) VCs
+		(Virtual Connections) over this link."
+	::= { nsapTopologyEntry 9 }
+
+nsapTopoLinkCbrCapacity OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The available capacity for additional CBR (Constant Bit Rate)
+		connections. The available capacity is measured in Kbps."
+	::= { nsapTopologyEntry 10 }
+
+nsapTopoLinkCbrFifo OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The size of the FIFO queue that is used for transmitting CBR 
+		(Constant Bit Rate) traffic. The size of the fifo is measured
+		in number of cells."
+	::= { nsapTopologyEntry 11 }
+
+nsapTopoLinkVbrCapacity OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The available capacity for additional VBR (Variable Bit Rate)
+		connections. The available capacity is measured in Kbps."
+	::= { nsapTopologyEntry 12 }
+
+nsapTopoLinkVbrFifo OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The size of the FIFO queue that is used for transmitting VBR 
+		(Variable Bit Rate) traffic. The size of the fifo is measured
+		in number of cells."
+	::= { nsapTopologyEntry 13 }
+
+nsapTopoLinkOrig OBJECT-TYPE
+	SYNTAX	INTEGER {
+			static-route(1),
+			spans-pnni(2),
+			ilmi-registered(3),
+			pnni(4),
+			external(5)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The source of this route information."
+	::= { nsapTopologyEntry 14 }
+
+nsapTopoLinkCapabilitySet OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"A bitmap indicate the capabilities of this link. For example,
+		whether the link support ABR (Available Bit Rate) traffic."
+	::= { nsapTopologyEntry 15 }
+
+nsapTopoLinkFreshness OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object indicates the freshness (or staleness) of this 
+		NSAP (Network Service Access Point) link. As the number increases,
+		the link becomes stale."
+	::= { nsapTopologyEntry 16 }
+
+
+------------------------------------------------------------------------
+
+
+nsapStaticRouteTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF NsapStaticRouteEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table for static NSAP (Network Service Access Point) route
+		administration."
+        ::= { nsapGroup 4 }
+
+nsapStaticRouteEntry OBJECT-TYPE
+	SYNTAX	NsapStaticRouteEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"An entry in the NSAP (Network Service Access Point) static route
+		administration table."
+	INDEX	{ nsapStaticRouteAddress, nsapStaticRouteMask, 
+                  nsapStaticRoutePort, nsapStaticRouteVPI }
+	::= { nsapStaticRouteTable 1 }
+
+NsapStaticRouteEntry ::= SEQUENCE {
+	nsapStaticRouteAddress		NsapAddr,
+	nsapStaticRouteMask		INTEGER,
+	nsapStaticRoutePort		INTEGER,
+	nsapStaticRouteVPI		INTEGER,
+	nsapStaticRouteCost		INTEGER,
+        nsapStaticRouteMaxCbrCap        INTEGER,
+        nsapStaticRouteMaxVbrCap        INTEGER,
+        nsapStaticRouteAbrSupport       INTEGER,
+        nsapStaticRouteEpdSupport       INTEGER,
+	nsapStaticRouteStatus		EntryStatus
+}
+
+nsapStaticRouteAddress OBJECT-TYPE
+	SYNTAX	NsapAddr
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the destination NSAP address"
+	::= { nsapStaticRouteEntry 1 }
+
+nsapStaticRouteMask OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the mask that is 
+		used for this NSAP (Network Service Access Point) address."
+	::= { nsapStaticRouteEntry 2 }
+
+nsapStaticRoutePort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the port through which 
+		this NSAP (Network Service Access Point) address can be
+		reached."
+	::= { nsapStaticRouteEntry 3 }
+
+nsapStaticRouteVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the path through which 
+		this NSAP (Network Service Access Point) address can be
+		reached."
+	::= { nsapStaticRouteEntry 4 }
+
+nsapStaticRouteCost OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the cost 
+                 associated with this Static Route. This cost is
+                 to be used as a metric while routing"
+	::= { nsapStaticRouteEntry 5 }
+
+nsapStaticRouteMaxCbrCap OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the maximum capacity
+                 available on this route for CBR connections"
+	::= { nsapStaticRouteEntry 6 }
+
+nsapStaticRouteMaxVbrCap OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value of this object identifies the maximum capacity
+                 available on this route for VBR connections"
+	::= { nsapStaticRouteEntry 7 }
+
+nsapStaticRouteAbrSupport OBJECT-TYPE
+	SYNTAX	INTEGER {
+                          supported (1),
+                          unsupported (2)
+                        }
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value identifies the capability to support
+                 ABR traffic on this route"               
+	::= { nsapStaticRouteEntry 8 }
+
+nsapStaticRouteEpdSupport OBJECT-TYPE
+	SYNTAX	INTEGER {
+                          supported (1),
+                          unsupported (2)
+                        }
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The value identifies the capability to support
+                 Early Packet Discard (EPD) on this route"                              
+	::= { nsapStaticRouteEntry 9 }
+
+
+nsapStaticRouteStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this NSAP (Network Service Access Point) address.
+		Setting this object to invalid(4) causes this NSAP address to 
+		disappear."
+	::= { nsapStaticRouteEntry 10 }
+
+
+----------------------------------------------------------------------------
+
+-- The UPC Configuration Group
+
+-- This table contains a variable number of valid, user defined UPC 
+-- traffic policing contracts.  Other tables, for instance the SPANS
+-- sigPathTable, can use this table as a common place for retrieving 
+-- valid traffic contracts.  SPANS looks into this table to find the 
+-- traffic contract to be used for policing the connectionless VC.
+
+
+upcContractTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF UpcContractEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+                "A table of user defined UPC traffic contracts."
+	::= { upcContractGroup 1 }
+
+upcContractEntry OBJECT-TYPE
+	SYNTAX	UpcContractEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+                "A table entry containing a user defined UPC traffic contract."
+	INDEX	{ upcContractKey }
+	::= { upcContractTable 1 }
+
+UpcContractEntry ::=
+	SEQUENCE {
+		upcContractKey		INTEGER,
+                upcContractEntryStatus      EntryStatus,
+		upcContractPCR01		INTEGER,
+		upcContractSCR01		INTEGER,
+		upcContractMBS01		INTEGER,
+		upcContractPCR0		INTEGER,
+		upcContractSCR0		INTEGER,
+		upcContractMBS0		INTEGER,
+                upcContractCDVT                INTEGER,
+                upcContractTagReq           INTEGER,
+                upcContractAal5Epd          INTEGER,
+		upcContractName		DisplayString
+	}
+
+upcContractKey OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The key of this UPC configuration."
+	::= { upcContractEntry 1 }
+
+upcContractEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The SNMP status of this upcContract entry."
+	::= { upcContractEntry 2 }
+
+upcContractPCR01 OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The peak cell rate (cells/sec) for cell loss priority 0+1"
+	::= { upcContractEntry 3 }
+
+upcContractSCR01 OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The sustained cell rate (cells/sec) for cell loss priority 0+1"
+	::= { upcContractEntry 4 }
+
+upcContractMBS01 OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum burst size (cells) for cell loss priority 0+1"
+	::= { upcContractEntry 5 }
+
+upcContractPCR0 OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The peak cell rate (cells/sec) for cell loss priority 0"
+	::= { upcContractEntry 6 }
+
+
+upcContractSCR0 OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The sustained cell rate (cells/sec) for cell loss priority 0"
+	::= { upcContractEntry 7 }
+
+upcContractMBS0 OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum burst size (cells) for cell loss priority 0."
+	::= { upcContractEntry 8 }
+
+upcContractCDVT OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "The Cell Delay Variation Tolerance associated with PCR's."
+        ::= { upcContractEntry 9 }               
+
+upcContractTagReq OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "Should we tag (instead of drop) non-compliant CLP=0 cells?."
+        ::= { upcContractEntry 10 }
+
+upcContractAal5Epd OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "Should we do AAL5 EPD on this connection?."
+        ::= { upcContractEntry 11 }
+
+upcContractName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE (0..19))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The name associated with this UPC traffic contract."
+	::= { upcContractEntry 12 }
+
+
+------------------------------------------------------------------------
+
+-- The Switch Board Group
+
+swBoardTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SwBoardEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of ATM switch cluster configuration information."
+	::= { swBoardGroup 1 }
+
+swBoardEntry OBJECT-TYPE
+	SYNTAX	SwBoardEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing ATM switch cluster information,
+		index by the switch board."
+	INDEX	{ swBoardIndex }
+	::= { swBoardTable 1 }
+
+SwBoardEntry ::=
+	SEQUENCE {
+		swBoardIndex		INTEGER,
+		swBoardMaxPaths		INTEGER,
+		swBoardMaxChannels	INTEGER,
+		swBoardAtmAddress	SpansAddress,
+		swBoardUptime		TimeTicks,
+		swBoardCDV		INTEGER,
+		swBoardPolicingAction	INTEGER,
+		swBoardNsapPrefix	NsapPrefix,
+                swBoardClockScalingFactor  INTEGER,
+                swBoardDebugMode        INTEGER,
+		swBoardMulticastMode	INTEGER
+	}
+
+swBoardIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this switch board within the ATM switch cluster."
+	::= { swBoardEntry 1 }
+
+swBoardMaxPaths OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of input VPIs (Virtual Path Identifier)
+		on this switch board."
+	::= { swBoardEntry 2 }
+
+swBoardMaxChannels OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The maximum number of input VCIs (Virtual Channel Identifiers)
+		on this switch board."
+	::= { swBoardEntry 3 }
+
+swBoardAtmAddress OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The address of this ATM switch board."
+	::= { swBoardEntry 4 }
+
+swBoardUptime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The length of time this ATM switch board has been up,
+		in hundredths of a second."
+	::= { swBoardEntry 5 }
+
+swBoardCDV OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	deprecated
+	DESCRIPTION
+		"The switch board Cell Delay Variation (CDV) specified
+		in microseconds, indicates the time window in which 
+		a cell may be received on a connection and be accepted. 
+		A cell that is received on a connection outside the
+		CDV window will be tagged or dropped as indicated by the
+		swBoardPolicingAction object. The boardCDV is the default
+		CDV for all the connection on this switch board. Individual
+		connections can be set to explicitly override this value."
+	::= { swBoardEntry 6 }
+
+swBoardPolicingAction OBJECT-TYPE
+	SYNTAX	INTEGER {
+			tag(1),
+			drop(2)
+		}
+	ACCESS	read-write
+	STATUS	deprecated
+	DESCRIPTION
+		"This object indicates the action the switch board will take 
+		in case of bandwidth violation. The swBoardPolicingAction is 
+		the default policing action for all the connections on this 
+		switch board. Individual connections can be set to explicitly
+		override this default action."
+	::= { swBoardEntry 7 }
+
+swBoardNsapPrefix OBJECT-TYPE
+	SYNTAX	NsapPrefix
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The default NSAP (Network Service Access Point) prefix for 
+		this ATM switch board. The NSAP prefix will be used in the 
+		ILMI address registration message as well as the 'hello-indication'
+		SPANS-NNI message."
+	::= { swBoardEntry 8 }
+
+swBoardClockScalingFactor OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "This specifies the value written into the switch boards
+                Time Scaling Factor register.  See Sec. 3.2.1 for more info.
+                The Time Scaling Factor is an 8-bit register that determines
+                the number of 25ns clock cycles that occur between 
+                increments of the Time and Interrupt Timer Reigsters.  
+                Increasing the Time Scale Factor increases the burst 
+                tolerance that can be represented by the policer (in multiples
+                of .838 seconds) while reducing the precision of the policer
+                by a similar factor."
+	::= { swBoardEntry 9 }
+
+swBoardDebugMode OBJECT-TYPE
+        SYNTAX  INTEGER {
+                        off(0),
+                        on(1)
+                }
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "This object indicates whether or not debugging services are
+                available via TCP port 6532 for this switch."
+        ::= { swBoardEntry 10 }
+
+swBoardMulticastMode OBJECT-TYPE
+	SYNTAX	INTEGER {
+			non-extended(1),
+			extended(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This object identifies the mode in which this ATM
+		switch board is operating.  Extended-mode provides
+		greater flexibility when selecting VCI for point to
+		multipoint connections.  Non-extended (mixed) mode
+		is more restrictive.  If any series A or B netmods
+		are present, the switch board should operate in
+		non-extended mode."
+	::= { swBoardEntry 11 }
+
+------------------------------------------------------------------------
+-- The Switch Board Topology Group
+
+swBoardTopoTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SwBoardTopoEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of switch board topology general information."
+	::= { swBoardTopologyGroup 1 }
+
+swBoardTopoEntry OBJECT-TYPE
+	SYNTAX	SwBoardTopoEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing switch board topology information."
+	INDEX	{ swBoardTopoIndex }
+	::= { swBoardTopoTable 1 }
+
+SwBoardTopoEntry ::=
+	SEQUENCE {
+		swBoardTopoIndex		INTEGER,
+		swBoardTopoNumberOfLinks	INTEGER
+	}
+
+swBoardTopoIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this switch board within the ATM switch cluster.
+		This object should be the same as the swBoardIndex."
+	::= { swBoardTopoEntry 1 }
+
+swBoardTopoNumberOfLinks OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Current number of inter-switch links known by 
+		this switch board."
+	::= { swBoardTopoEntry 2 }
+
+
+------------------------------------------------------------------------
+
+swBoardLinkTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SwBoardLinkEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of ATM links that are known to a given 
+		switch board in the switch cluster. If all boards in 
+		the switch cluster are interconnected, all 
+		swBoardLinkEntries will be identical."
+	::= { swBoardTopologyGroup 2 }
+
+swBoardLinkEntry OBJECT-TYPE
+	SYNTAX	SwBoardLinkEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing link information
+		known to a given switch board."
+	INDEX	{ swBoardLinkIndex, swBoardLinkSrc, swBoardLinkDest }
+	::= { swBoardLinkTable 1 }
+
+SwBoardLinkEntry ::=
+	SEQUENCE {
+		swBoardLinkIndex	INTEGER,
+		swBoardLinkSrc		SpansAddress,
+		swBoardLinkDest		SpansAddress,
+		swBoardLinkCapacity	INTEGER,
+		swBoardLinkAge		INTEGER
+	}
+
+swBoardLinkIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this switch board within the ATM switch cluster.
+		This object should be the same as the swBoardIndex."
+	::= { swBoardLinkEntry 1 }
+
+swBoardLinkSrc OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the source switch of this link."
+	::= { swBoardLinkEntry 2 }
+
+swBoardLinkDest OBJECT-TYPE
+	SYNTAX	SpansAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the destination switch of this link."
+	::= { swBoardLinkEntry 3 }
+
+swBoardLinkCapacity OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The free capacity of this link in kilobits per second."
+	::= { swBoardLinkEntry 4 }
+
+swBoardLinkAge OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The freshness of the information about this link. The 
+		actual value has no units associated with it. It should be 
+		used for comparison."
+	::= { swBoardLinkEntry 5 }
+
+------------------------------------------------------------------------
+-- The Traps Configuration Group
+
+trapNumberOfDest OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The current number of configured trap destinations. 
+		All traps are sent to all destinations."
+	::= { trapConfGroup 1 }
+
+trapDestTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TrapDestEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of destinations to which the agent sends traps."
+	::= { trapConfGroup 2 }
+
+trapDestEntry OBJECT-TYPE
+	SYNTAX	TrapDestEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing address of a management station, 
+		to which the agent sends traps."
+	INDEX	{ trapDest }
+	::= { trapDestTable 1 }
+
+TrapDestEntry ::=
+	SEQUENCE {
+		trapDest	IpAddress,
+		trapDestStatus	EntryStatus
+	}
+
+trapDest OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Address to which the agent sends traps. Usually a network
+		management station sets this address to itself."
+	::= { trapDestEntry 1 }
+
+trapDestStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this trap destination entry."
+	::= { trapDestEntry 2 }
+
+------------------------------------------------------------------------
+-- The SNMP Configuration Databse Group
+
+snmpReconfigure OBJECT-TYPE
+	SYNTAX	INTEGER {
+		disable (1),
+		enable (2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The SNMP agent will reset itself and reconfigure its 
+		database from the default database when this variable 
+		is set to enable(2). After reconfiguring is done, the 
+		value of this object is disable(1). 
+		Note that enabling snmpReconfigure will end up with 
+		a loss of the entire ATM configuration."
+	::= { snmpConfGroup 1 }
+
+snmpReadCommunity OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The community string used for SNMP (v1) read operations, 
+		i.e. get and getnext requests."
+	::= { snmpConfGroup 2 }
+
+snmpWriteCommunity OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	ACCESS	write-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The community string used for SNMP (v1) write operations,
+		i.e. set requests."
+	::= { snmpConfGroup 3 }
+
+snmpWarmStart OBJECT-TYPE
+	SYNTAX	INTEGER {
+		disable (1),
+		enable (2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The SNMP agent will reset the switch, and restart the
+		switch control software using the existing configuration 
+		database when this variable is set to enable(2). After the
+		warm start, the	value of this object is disable(1). A 
+		warmStart trap is sent after the switch control software
+		restarts."
+	::= { snmpConfGroup 4 }
+
+snmpColdStart OBJECT-TYPE
+	SYNTAX	INTEGER {
+		disable (1),
+		enableResetATMconf (2),
+		enableResetAllConf (3)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The SNMP agent will reset the configuration database for 
+		all ATM related configuration objects, and reboot the switch, 
+		when this variable is set to enableResetAtmConf(2). When the 
+		value of this variable is set to enableResetAllConf(3), all 
+		configuration objects, including ATM and IP objects will be 
+		removed, and the switch will be rebooted. A coldStart trap 
+		is sent just before the trap destination table is removed. 
+		After the cold start, the value of this object is disable(1)."
+	::= { snmpConfGroup 5 }
+
+------------------------------------------------------------------------
+-- The SNMP agent address group.
+-- 
+-- This group provides addressing information to SNMP managers, to allow
+-- those managers to discover related SNMP agents within the same enclosure.
+
+snmpThisAgentBoardNumber OBJECT-TYPE
+	SYNTAX INTEGER (1..4)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The instance of this agent type within the
+		 enclosure; typically a board number."
+	::= { snmpAgentAddressGroup 1 }
+
+snmpAgentTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SnmpAgentEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of SNMP agent IP addresses. Each entry
+		 in this table represents an IP address which may
+		 be used to reach the associated SNMP agent,
+		 assuming appropriate network connectivity."
+	::= { snmpAgentAddressGroup 2 }
+
+snmpAgentEntry OBJECT-TYPE
+	SYNTAX	SnmpAgentEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing the identity and address of
+		 an SNMP agent."
+	INDEX	{ snmpAgentBoardNumber, snmpAgentInterface }
+	::= { snmpAgentTable 1 }
+
+SnmpAgentEntry ::=
+	SEQUENCE {
+		snmpAgentBoardNumber	INTEGER,
+		snmpAgentInterface	INTEGER,
+		snmpAgentAddress	IpAddress
+	}
+
+snmpAgentBoardNumber OBJECT-TYPE
+	SYNTAX  INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of the SNMP agent within this
+	 	 enclosure. This generally corresponds to a
+		 board number."
+	::= { snmpAgentEntry 1 }
+
+snmpAgentInterface OBJECT-TYPE
+	SYNTAX  INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"An interface number associated with the 
+		 agent IP address. This number is for tabulation
+		 purposes only, and has no other significance."
+	::= { snmpAgentEntry 2 }
+
+snmpAgentAddress OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The IP address of the identified SNMP agent."
+	::= { snmpAgentEntry 3 }
+
+------------------------------------------------------------------------
+-- The Switch Traps
+
+-- The enterprise specific traps that are supported by the ATM switch
+-- in addition to the generic traps.
+
+asxSwLinkDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { portNumber, hwPortName }
+	DESCRIPTION
+		"An asxSwLinkDown trap signifies that the sending protocol 
+		entity recognizes a failure in one of ATM Switch links that 
+		is connected to another switch."
+	::= 0
+
+asxSwLinkUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { portNumber, hwPortName }
+	DESCRIPTION
+		"An asxSwLinkUp trap signifies that the sending protocol 
+		entity recognizes that one of the ATM Switch links that 
+		is connected to another switch has come up."
+	::= 1
+
+asxHostLinkDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { portNumber, hwPortName }
+	DESCRIPTION
+		"An asxHostLinkDown trap signifies that the sending protocol 
+		entity recognizes a failure in one of ATM Switch links that 
+		is connected to a host."
+	::= 2
+
+asxHostLinkUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { portNumber, hwPortName }
+	DESCRIPTION
+		"An asxHostLinkUp trap signifies that the sending protocol 
+		entity recognizes that one of the ATM Switch links that is 
+		connected to a host has come up."
+	::= 3
+
+asxNetModuleDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { moduleBoard, moduleNumber }
+	DESCRIPTION
+		"An asxNetModuleDown trap signifies that the sending protocol 
+		entity recognizes a failure in one of ATM Switch network 
+		modules, that is identified by the board and the module numbers. 
+		This is probably caused by a hot-swap of a network module."
+	::= 4
+
+asxNetModuleUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { moduleBoard, moduleNumber }
+	DESCRIPTION
+		"An asxNetModuleUp trap signifies that the sending protocol 
+		entity recognizes a new operational ATM Switch network modules, 
+		that is identified by the board and the module numbers. This is 
+		probably caused by a hot-swap of a network module."
+	::= 5
+
+asxPsInputDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envPowerSupplyIndex }
+	DESCRIPTION
+		"This trap alerts that one ATM switch power supply failed
+		due to failure in the input voltage. The power supply that 
+		failed is identified by the power supply index. Note that 
+		an input voltage may be out of spec and may not cause a power
+		supply failure if high loads are not applied."
+	::= 6
+
+asxPsInputUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envPowerSupplyIndex }
+	DESCRIPTION
+		"This trap alerts that one ATM switch power supply that had
+		an AC input failure is up. The power supply that is back up
+		is identified by the power supply index."
+	::= 7
+
+-- trap asxAllPsInputUp { atmSwitch 8 } was deprecated
+
+asxPsOutputDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envPowerSupplyIndex }
+	DESCRIPTION
+		"This trap alerts that one ATM switch power supply output
+		or the power supply was physically removed. The power
+		supply that failed is identified by the power supply 
+		index."
+	::= 9
+
+asxPsOutputUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envPowerSupplyIndex }
+	DESCRIPTION
+		"This trap alerts that one ATM switch power supply that had
+		an output failure or was removed is now up. The power supply
+		that is back up is identified by the power supply index."
+	::= 10
+
+-- traps { atmSwitch 11 - 17 } for different power supplies outputs failures
+-- and recovery were deprecated. 
+-- traps { atmSwitch 18 - 21 } for PS over temperature and regular temperature
+-- were deprecated.
+
+asxFanBankDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envFanBankIndex }
+	DESCRIPTION
+		"This trap alerts that one ATM switch fan bank failed. The 
+		fan bank that failed is identified by the fan bank index."
+	::= 22
+
+asxFanBankUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envFanBankIndex }
+	DESCRIPTION
+		"This trap alerts that one ATM switch fan bank is up. The 
+		fan bank that is back up is identified by the fan bank index."
+	::= 23
+
+-- traps { atm Switch 24 - 25 } for fans were deprecated.
+-- traps { atmSwitch 26 - 27 } for enclosure temperature were deprecated.
+
+asxLinkDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap alerts that the link that is identified by the
+		tuple {hwPortBoard, hwPortModule, hwPortNumber} was 
+		configured up but lost its carrier (or the framing bit) and 
+		is currently down."
+	::= 28
+
+asxLinkUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap alerts that the link that is identified by the
+		tuple {hwPortBoard, hwPortModule, hwPortNumber} is back up."
+	::= 29
+
+asxSpansDown TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, sigPathPort, sigPathVPI }
+	DESCRIPTION
+		"This trap alerts that the SPANS signalling on the link 
+		that is identified by the sigPathPort and sigPathVPI failed."
+	::= 30
+
+asxSpansUp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, sigPathPort, sigPathVPI }
+	DESCRIPTION
+		"This trap alerts that the SPANS signalling on the link 
+		that is identified by the sigPathPort and sigPathVPI is up."
+	::= 31
+
+asxTempSensorOverTemp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envTempSensorIndex }
+	DESCRIPTION
+		"This trap alerts that one of the temperature sensors indicates
+		over temperature. The temperature sensor is identified by the
+		temperature sensor index."
+	::= 32
+
+asxTempSensorRegularTemp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envTempSensorIndex }
+	DESCRIPTION
+		"This trap alerts that one of the temperature sensors indicates
+		regular temperature. The temperature sensor is identified by the
+		temperature sensor index."
+	::= 33
+
+asxFabricTemperatureOverTemp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envFabricIndex }
+	DESCRIPTION
+		"This trap alerts that one of the temperature sensors indicates
+		over temperature. The temperature sensor is identified by the
+		temperature sensor index."
+	::= 34
+
+asxFabricTemperatureRegularTemp TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { envFabricIndex }
+	DESCRIPTION
+		"This trap alerts that one of the temperature sensors indicates
+		regular temperature. The temperature sensor is identified by the
+		temperature sensor index."
+	::= 35
+
+asxSonetLOSon TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified SONET port is
+                experiencing Loss Of Signal.  Bellcore Document
+                TA-NWT-000253 Section 6.3.1.1.1 states that... A SONET
+                NE shall declare a LOS failure when the LOS defect
+                persists for 2.5 (+- .5) seconds, or when a LOS defect
+                is present and the criteria for LOF failure
+                declaration have been met."
+	::= 36
+
+asxSonetLOSoff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+
+                "This trap indicates that the LOS condition identified
+                by trap asxSonetLOSon has been cleared."
+	::= 37
+
+asxSonetPathLabelOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+        	"This trap indicates that the specified SONET port is
+                receiving and errored C2 Path Label byte.  Reference Bellcore
+                Document TA-NWT-000253 Section 3.3.2.3 and 6.3.1.1.8 the Path
+                Label (C2) byte should have the value 0x13."
+	::= 38
+
+asxSonetPathLabelOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+
+                "This trap indicates that the Errored Path Label (C2) byte
+                error condition signaled by the asxSonetPathLabelOn trap has
+                been cleared."
+	::= 39
+
+asxSonetLineAISon TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified SONET port is 
+                receiving a Line level Alarm Indication Signal from the 
+                far-end equipment."            
+	::= 40
+
+asxSonetLineAISoff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the Line AIS error condition 
+                signaled by the asxSonetLineAISon trap has been cleared."
+	::= 41
+
+
+asxDS3FERFOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS3 port is 
+                in the DS3 Yellow Alarm or FERF state.  The FERF or DS3 Yellow 
+		alarm is declared if either OOF(LOF), LOS or AIS is detected 
+		and persists for 2.5+- .5 seconds."
+	::= 42
+
+
+asxDS3FERFOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS3 port is 
+                no longer in the FERF or DS3 Yellow Alarm state."
+	::= 43
+
+asxDS3PLCPYellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS3 port is 
+                in the PLCP Yellow Alarm state.  The Yellow alarm is declared
+                if PLCP LOF is detected and persists for 2.5+- .5 seconds."
+	::= 44
+
+
+asxDS3PLCPYellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS3 port is 
+                no longer in the PLCP Yellow Alarm state."
+	::= 45
+
+asxDS3PLCPYellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS3 port has 
+		 detected incoming Yellow Alarm."
+	::= 46
+
+asxDS3PLCPYellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS3 port has
+		detected clearance of incoming Yellow Alarm."
+	::= 47 
+
+asxDS3PLCPLOFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS3 port has
+		 detected incoming LOF Alarm."
+	::= 48
+	
+asxDS3PLCPLOFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS3 port has
+		 detected clearance of incoming LOF Alarm."
+	::= 49
+
+asxDS3LOFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Loss Of Frame(LOF) is detected on
+		 the incoming signal."
+	::= 50
+
+asxDS3LOFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Loss Of Frame is cleared on
+		 the incoming signal."
+	::= 51
+
+asxDS3AISDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that AIS Alarm is detected on
+		 the incoming signal."
+	::= 52
+
+asxDS3AISCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that AIS Alarm is cleared on
+		 the incoming signal."
+	::= 53
+
+asxDS3YellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the Yellow Alarm is being detected 
+                 on the incoming signal."
+	::= 54
+
+asxDS3YellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Yellow alarm has cleared on
+		 the incoming signal."
+	::= 55
+
+asxDS1YellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS1 port is 
+                in the Yellow Alarm state.  The Yellow alarm is declared
+                if either OOF or AIS is detected and persists for 
+                2.5+- .5 seconds."
+	::= 56
+
+asxDS1YellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS1 port is 
+                no longer in the Yellow Alarm state."
+	::= 57
+
+asxDS1PLCPYellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS1 port is 
+                in the PLCP Yellow Alarm state.  The Yellow alarm is declared
+                if PLCP LOF is detected and persists for 2.5+- .5 seconds."
+	::= 58
+
+asxDS1PLCPYellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified DS1 port is 
+                no longer in the PLCP Yellow Alarm state."
+	::= 59
+
+asxDS1PLCPYellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS1 port has 
+		 detected incoming Yellow Alarm."
+	::= 60
+
+asxDS1PLCPYellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS1 port has
+		detected clearance of incoming Yellow Alarm."
+	::= 61 
+
+asxDS1PLCPLOFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS1 port has
+		 detected incoming LOF Alarm."
+	::= 62
+	
+asxDS1PLCPLOFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified DS1 port has
+		 detected clearance of incoming LOF Alarm."
+	::= 63
+
+asxDS1YellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Yellow Alarm is detected on
+		 the incoming signal."
+	::= 64
+
+asxDS1YellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Yellow Alarm is cleared on
+		 the incoming signal."
+	::= 65
+
+asxDS1AISDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that AIS Alarm is detected on
+		 the incoming signal."
+	::= 66
+
+asxDS1AISCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that AIS Alarm is cleared on
+		 the incoming signal."
+	::= 67
+
+asxDS1LOSDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LOS Alarm is detected on
+		 the incoming signal."
+	::= 68
+
+asxDS1LOSCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LOS Alarm is cleared on
+		 the incoming signal."
+	::= 69
+
+asxDS1LOFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LOF Alarm is detected on
+		 the incoming signal."
+	::= 70
+
+asxDS1LOFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LOF Alarm is cleared on
+		 the incoming signal."
+	::= 71
+
+
+-- two new DS3 traps
+
+asxDS3FERFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that FERF Alarm is detected on
+		 the incoming signal."
+	::= 74
+
+asxDS3FERFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that FERF Alarm is cleared on
+		 the incoming signal."
+	::= 75
+
+
+asxE3YellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E3 port is 
+                in the Yellow Alarm state.  The Yellow alarm is declared
+                if either OOF (when in G.751) or LCD (when in G.832) 
+                is detected and persists for 2.5+- .5 seconds."
+	::= 76
+
+asxE3YellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E3 port is 
+                no longer in the Yellow Alarm state."
+	::= 77
+
+asxE3YellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the Yellow Alarm is being detected 
+                 on the incoming signal."
+	::= 78
+
+asxE3YellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Yellow alarm has cleared on
+		 the incoming signal."
+	::= 79
+
+asxE3OOFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Out Of Frame (OOF) is detected on
+		 the incoming signal."
+	::= 80
+
+asxE3OOFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Loss Of Frame is cleared on
+		 the incoming signal."
+	::= 81
+
+asxE3LCDDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LCD Alarm is detected on
+		 the incoming signal."
+	::= 82
+
+asxE3LCDCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LCD Alarm is cleared on
+		 the incoming signal."
+	::= 83
+
+asxE3PLCPYellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E3 port is 
+                in the PLCP Yellow Alarm state.  The Yellow alarm is declared
+                if PLCP LOF is detected and persists for 2.5+- .5 seconds."
+	::= 84
+
+asxE3PLCPYellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E3 port is 
+                no longer in the PLCP Yellow Alarm state."
+	::= 85
+
+asxE3PLCPYellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified E3 port has 
+		 detected incoming Yellow Alarm."
+	::= 86
+
+asxE3PLCPYellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified E3 port has
+		detected clearance of incoming Yellow Alarm."
+	::= 87 
+
+asxE1YellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E1 port is 
+                in the Yellow Alarm state.  The Yellow alarm is declared
+                if either OOF (when in G.751) or LCD (when in G.832) 
+                is detected and persists for 2.5+- .5 seconds."
+	::= 88
+
+asxE1YellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E1 port is 
+                no longer in the Yellow Alarm state."
+	::= 89
+
+asxE1YellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the Yellow Alarm is being detected 
+                 on the incoming signal."
+	::= 90
+
+asxE1YellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that Yellow alarm has cleared on
+		 the incoming signal."
+	::= 91
+
+asxE1LOFDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LOF is being detected on
+		 the incoming signal."
+	::= 92
+
+asxE1LOFCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that LOF is cleared on
+		 the incoming signal."
+	::= 93
+
+asxE1PLCPYellowOn TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E1 port is 
+                in the PLCP Yellow Alarm state.  The Yellow alarm is declared
+                if PLCP LOF is detected and persists for 2.5+- .5 seconds."
+	::= 94
+
+asxE1PLCPYellowOff TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+                "This trap indicates that the specified E1 port is 
+                no longer in the PLCP Yellow Alarm state."
+	::= 95
+
+asxE1PLCPYellowDetected TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES {  hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified E1 port has 
+		 detected incoming Yellow Alarm."
+	::= 96
+
+asxE1PLCPYellowCleared TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, hwPortBoard, hwPortModule, hwPortNumber }
+	DESCRIPTION
+		"This trap indicates that the specified E1 port has
+		detected clearance of incoming Yellow Alarm."
+	::= 97
+
+
+-- end of netmod trap region
+
+
+-- begin asxd trap region 1024 ->
+
+asxOutputQueueCongested TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, pshmemPriority }
+	DESCRIPTION
+		"This trap indicates that the output queue for the
+		given priority has exceeded its dedicated length,
+		and has begun overflowing into the shared buffer
+		space on the netmod."
+	::= 1024
+
+asxOutputQueueCellLoss TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { hwPortName, pshmemPriority }
+	DESCRIPTION
+		"This trap indicates that the output queue for the
+		given priority has overflowed and cells have been
+		dropped."
+	::= 1025
+
+asxExtendedModeViolation TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { moduleBoard, moduleNumber }
+	DESCRIPTION
+		"This trap indicates that a series A or B network
+		 module was inserted into a switch board running
+		 in extended mode."
+	::= 1026
+
+asxNonextendedModeWarning TRAP-TYPE
+	ENTERPRISE atmSwitch
+	VARIABLES { moduleBoard, moduleNumber }
+	DESCRIPTION
+		"This trap indicates that a series C or greater network
+		 module was inserted into a switch board running
+		 in non-extended mode."
+	::= 1027
+END

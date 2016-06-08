@@ -1,0 +1,1260 @@
+-- The VESUBIO proprietary MIB Ver 1.5                2002/01/18
+
+VESUBIO-MIB	DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        IpAddress , TimeTicks ,
+        MODULE-IDENTITY , OBJECT-TYPE			FROM SNMPv2-SMI
+        DisplayString, MacAddress, RowStatus	FROM SNMPv2-TC
+        compaq-mgmt                      		FROM COMPAQ-ID-REC-MIB;
+		
+    swL2MgmtMIB MODULE-IDENTITY
+	    LAST-UPDATED "0007150000Z"
+	    ORGANIZATION "COMPAQ, Inc."
+	    CONTACT-INFO
+	        "   COMPAQ Customer Service
+
+		    Postal: 
+
+		       Tel: 
+
+		    E-mail: "
+	    DESCRIPTION
+		    "The Structure of Layer 2 Network Management Information for the
+		    COMPAQ enterprise."
+        ::= { compaq-mgmt 2}
+
+		  VlanId					::= INTEGER (1..4094)
+
+          swL2BwMgmt				OBJECT IDENTIFIER ::= { swL2MgmtMIB 1 }
+          swL2CosMgmt				OBJECT IDENTIFIER ::= { swL2MgmtMIB 3 }
+          swL2PortSecurityMgmt		OBJECT IDENTIFIER ::= { swL2MgmtMIB 4 }
+          swL2DevMgmt				OBJECT IDENTIFIER ::= { swL2MgmtMIB 5 }
+          swL2PortMgmt				OBJECT IDENTIFIER ::= { swL2MgmtMIB 6 }
+          swL2PriorityMgmt			OBJECT IDENTIFIER ::= { swL2MgmtMIB 7 }
+          swL2STPMgmt				OBJECT IDENTIFIER ::= { swL2MgmtMIB 8 }
+          
+-- ********************************************************************
+--        swL2BwMgmt               OBJECT IDENTIFIER ::= { swL2MgmtMIB 1 }
+-- ********************************************************************
+
+          swL2BwMgmtFEPortUnitBandwidth OBJECT-TYPE
+              SYNTAX  INTEGER (0..65535)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the represented bandwidth for each unit if the counting type
+                      is for Fast Ethernet ports."
+              ::= { swL2BwMgmt 1 }
+
+          swL2BwMgmtGEPortUnitBandwidth OBJECT-TYPE
+              SYNTAX  INTEGER (0..65535)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the represented bandwidth for each unit if the counting type
+                      is for Gigabit Ethernet ports."
+              ::= { swL2BwMgmt 2 }
+
+    -- *******************************************************
+
+          swL2IngrPortBwControl   OBJECT IDENTIFIER ::= { swL2BwMgmt 3 }
+
+          swL2IngrPortBwCtrlCurrentTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2IngrPortBwCtrlCurrentEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A table that contains the current control information about the ingress
+                      bandwidth of port"
+              ::= { swL2IngrPortBwControl 1 }
+
+          swL2IngrPortBwCtrlCurrentEntry OBJECT-TYPE
+              SYNTAX  SwL2IngrPortBwCtrlCurrentEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2IngrPortBwCtrlCurrentTable."
+              INDEX   { swL2IngrPortBwCtrlCurPort }
+              ::= { swL2IngrPortBwCtrlCurrentTable 1 }
+
+          SwL2IngrPortBwCtrlCurrentEntry ::=
+              SEQUENCE {
+                  swL2IngrPortBwCtrlCurPort
+                      INTEGER,
+                  swL2IngrPortBwCtrlCurPortCountType
+                      INTEGER,
+                  swL2IngrPortBwCtrlCurPortNwayStatus
+                      INTEGER,
+                  swL2IngrPortBwCtrlCurUnit
+                      INTEGER,
+                  swL2IngrPortBwCtrlCurRate
+                      INTEGER
+              }
+
+          swL2IngrPortBwCtrlCurPort OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the port to limit ingress bandwidth."
+              ::= { swL2IngrPortBwCtrlCurrentEntry 1 }
+
+          swL2IngrPortBwCtrlCurPortCountType OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          fastEthernetPort(1),
+                          gigabitEthernetPort(2)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the counting type of port. All the regular ports have
+                      the type fastEthernetPort, and the others have the type
+                      gigabitEthernetPort. If counting type is fastEthernetPort, the
+                      limited bandwidth will be that swL2IngrPortBwCtrlCurUnit times
+                      swL2BwMgmtFEPortUnitBandwidth. If counting type is
+                      gigabitEthernetPort, the limited bandwidth will be that
+                      swL2IngrPortBwCtrlCurUnit times swL2BwMgmtGEPortUnitBandwidth."
+              ::= { swL2IngrPortBwCtrlCurrentEntry 2 }
+
+          swL2IngrPortBwCtrlCurPortNwayStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          half-10Mbps(2),
+                          full-10Mbps(3),
+                          half-100Mbps(4),
+                          full-100Mbps(5),
+                          half-1Gigabps(6),
+                          full-1Gigabps(7)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates speed and duplex mode of port."
+              ::= { swL2IngrPortBwCtrlCurrentEntry 3 }
+
+          swL2IngrPortBwCtrlCurUnit OBJECT-TYPE
+              SYNTAX  INTEGER (1..127)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the current units for the limitation of ingress bandwidth
+                      of port."
+              ::= { swL2IngrPortBwCtrlCurrentEntry 4 }
+
+          swL2IngrPortBwCtrlCurRate OBJECT-TYPE
+              SYNTAX  INTEGER (1..2147483647)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the limitation of forwarding bandwidth in kilobyte. The value
+                      should be that swL2IngrPortBwCtrlCurUnit times swL2BwMgmtFEPortUnitBandwidth,
+                      if counting type is fastEthernetPort, or swL2BwMgmtGEPortUnitBandwidth, if
+                      counting type is gigabitEthernetPort."
+              ::= { swL2IngrPortBwCtrlCurrentEntry 5 }
+
+    -- *******************************************************
+
+          swL2IngrPortBwCtrlRefreshTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2IngrPortBwCtrlRefreshEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A table that contains the control information about the ingress
+                      bandwidth of port. And this table will be applied to be
+                      swL2IngrPortBwCtrlCurrentTable after system reboot."
+              ::= { swL2IngrPortBwControl 2 }
+
+          swL2IngrPortBwCtrlRefreshEntry OBJECT-TYPE
+              SYNTAX  SwL2IngrPortBwCtrlRefreshEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2IngrPortBwCtrlRefreshTable."
+              INDEX   { swL2IngrPortBwCtrlRefPort }
+              ::= { swL2IngrPortBwCtrlRefreshTable 1 }
+
+          SwL2IngrPortBwCtrlRefreshEntry ::=
+              SEQUENCE {
+                  swL2IngrPortBwCtrlRefPort
+                      INTEGER,
+                  swL2IngrPortBwCtrlRefPortCountType
+                      INTEGER,
+                  swL2IngrPortBwCtrlRefPortNwayStatus
+                      INTEGER,
+                  swL2IngrPortBwCtrlRefRequestUnit
+                      INTEGER,
+                  swL2IngrPortBwCtrlRefRate
+                      INTEGER,
+                  swL2IngrPortBwCtrlRefStatus
+                      INTEGER
+              }
+
+          swL2IngrPortBwCtrlRefPort OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the port to limit ingress bandwidth."
+              ::= { swL2IngrPortBwCtrlRefreshEntry 1 }
+
+          swL2IngrPortBwCtrlRefPortCountType OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          fastEthernetPort(1),
+                          gigabitEthernetPort(2)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the counting type of port. All the regular ports have
+                      the type fastEthernetPort, and the others have the type
+                      gigabitEthernetPort. If counting type is fastEthernetPort, the
+                      limited bandwidth will be that swL2IngrPortBwCtrlRefRequestUnit
+                      times swL2BwMgmtFEPortUnitBandwidth. If counting type is
+                      gigabitEthernetPort, the limited bandwidth will be that
+                      swL2IngrPortBwCtrlRefRequestUnit times swL2BwMgmtGEPortUnitBandwidth."
+              ::= { swL2IngrPortBwCtrlRefreshEntry 2 }
+
+          swL2IngrPortBwCtrlRefPortNwayStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          half-10Mbps(2),
+                          full-10Mbps(3),
+                          half-100Mbps(4),
+                          full-100Mbps(5),
+                          half-1Gigabps(6),
+                          full-1Gigabps(7)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates speed and duplex mode of port."
+              ::= { swL2IngrPortBwCtrlRefreshEntry 3 }
+
+          swL2IngrPortBwCtrlRefRequestUnit OBJECT-TYPE
+              SYNTAX  INTEGER (1..127)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the requested units for the limitation of ingress bandwidth
+                      of port."
+              ::= { swL2IngrPortBwCtrlRefreshEntry 4 }
+
+          swL2IngrPortBwCtrlRefRate OBJECT-TYPE
+              SYNTAX  INTEGER (1..2147483647)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the limitation of forwarding bandwidth in kilobyte. The value
+                      should be that swL2IngrPortBwCtrlRefRequestUnit times
+                      swL2BwMgmtFEPortUnitBandwidth, if counting type is fastEthernetPort,
+                      or swL2BwMgmtGEPortUnitBandwidth, if counting type is gigabitEthernetPort."
+              ::= { swL2IngrPortBwCtrlRefreshEntry 5 }
+
+          swL2IngrPortBwCtrlRefStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          create-for-refresh(1),
+                          destroy(2)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Status of this entry. All the existed entries will return create-for-refresh(1). An
+                      entry will be create if this object is set to create-for-refresh(1) and not existed.
+                      If this object is set to destroy(2), this entry will be deleted."
+              ::= { swL2IngrPortBwCtrlRefreshEntry 6 }
+
+    -- *******************************************************
+
+          swL2EgressPortBwControl   OBJECT IDENTIFIER ::= { swL2BwMgmt 4 }
+
+          swL2EgressPortBwCtrlCurrentTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2EgressPortBwCtrlCurrentEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A table that contains the current control information about the egress
+                      bandwidth of port"
+              ::= { swL2EgressPortBwControl 1 }
+
+          swL2EgressPortBwCtrlCurrentEntry OBJECT-TYPE
+              SYNTAX  SwL2EgressPortBwCtrlCurrentEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2EgressPortBwCtrlCurrentTable."
+              INDEX   { swL2EgressPortBwCtrlCurPort }
+              ::= { swL2EgressPortBwCtrlCurrentTable 1 }
+
+          SwL2EgressPortBwCtrlCurrentEntry ::=
+              SEQUENCE {
+                  swL2EgressPortBwCtrlCurPort
+                      INTEGER,
+                  swL2EgressPortBwCtrlCurPortCountType
+                      INTEGER,
+                  swL2EgressPortBwCtrlCurPortNwayStatus
+                      INTEGER,
+                  swL2EgressPortBwCtrlCurUnit
+                      INTEGER,
+                  swL2EgressPortBwCtrlCurRate
+                      INTEGER
+              }
+
+          swL2EgressPortBwCtrlCurPort OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the port to limit egress bandwidth."
+              ::= { swL2EgressPortBwCtrlCurrentEntry 1 }
+
+          swL2EgressPortBwCtrlCurPortCountType OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          fastEthernetPort(1),
+                          gigabitEthernetPort(2)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the counting type of port. All the regular ports have
+                      the type fastEthernetPort, and the others have the type
+                      gigabitEthernetPort. If counting type is fastEthernetPort, the
+                      limited bandwidth will be that swL2EgressPortBwCtrlCurUnit times
+                      swL2BwMgmtFEPortUnitBandwidth. If counting type is
+                      gigabitEthernetPort, the limited bandwidth will be that
+                      swL2EgressPortBwCtrlCurUnit times swL2BwMgmtGEPortUnitBandwidth."
+              ::= { swL2EgressPortBwCtrlCurrentEntry 2 }
+
+          swL2EgressPortBwCtrlCurPortNwayStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          half-10Mbps(2),
+                          full-10Mbps(3),
+                          half-100Mbps(4),
+                          full-100Mbps(5),
+                          half-1Gigabps(6),
+                          full-1Gigabps(7)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates speed and duplex mode of port."
+              ::= { swL2EgressPortBwCtrlCurrentEntry 3 }
+
+          swL2EgressPortBwCtrlCurUnit OBJECT-TYPE
+              SYNTAX  INTEGER (1..127)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the current units for the limitation of egress bandwidth
+                      of port."
+              ::= { swL2EgressPortBwCtrlCurrentEntry 4 }
+
+          swL2EgressPortBwCtrlCurRate OBJECT-TYPE
+              SYNTAX  INTEGER (1..2147483647)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the limitation of forwarding bandwidth in kilobyte. The value
+                      should be that swL2EgressPortBwCtrlCurUnit times swL2BwMgmtFEPortUnitBandwidth,
+                      if counting type is fastEthernetPort, or swL2BwMgmtGEPortUnitBandwidth,
+                      if counting type is gigabitEthernetPort."
+              ::= { swL2EgressPortBwCtrlCurrentEntry 5 }
+
+    -- *******************************************************
+
+          swL2EgressPortBwCtrlRefreshTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2EgressPortBwCtrlRefreshEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A table that contains the control information about the ingress
+                      bandwidth of port. And this table will be applied to be
+                      swL2EgressPortBwCtrlCurrentTable after system reboot."
+              ::= { swL2EgressPortBwControl 2 }
+
+          swL2EgressPortBwCtrlRefreshEntry OBJECT-TYPE
+              SYNTAX  SwL2EgressPortBwCtrlRefreshEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2EgressPortBwCtrlRefreshTable."
+              INDEX   { swL2EgressPortBwCtrlRefPort }
+              ::= { swL2EgressPortBwCtrlRefreshTable 1 }
+
+          SwL2EgressPortBwCtrlRefreshEntry ::=
+              SEQUENCE {
+                  swL2EgressPortBwCtrlRefPort
+                      INTEGER,
+                  swL2EgressPortBwCtrlRefPortCountType
+                      INTEGER,
+                  swL2EgressPortBwCtrlRefPortNwayStatus
+                      INTEGER,
+                  swL2EgressPortBwCtrlRefRequestUnit
+                      INTEGER,
+                  swL2EgressPortBwCtrlRefRate
+                      INTEGER,
+                  swL2EgressPortBwCtrlRefStatus
+                      INTEGER
+              }
+
+          swL2EgressPortBwCtrlRefPort OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the port to limit egress bandwidth."
+              ::= { swL2EgressPortBwCtrlRefreshEntry 1 }
+
+          swL2EgressPortBwCtrlRefPortCountType OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          fastEthernetPort(1),
+                          gigabitEthernetPort(2)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the counting type of port. All the regular ports have
+                      the type fastEthernetPort, and the others have the type
+                      gigabitEthernetPort. If counting type is fastEthernetPort, the
+                      limited bandwidth will be that swL2EgressPortBwCtrlRefRequestUnit
+                      times swL2BwMgmtFEPortUnitBandwidth. If counting type is
+                      gigabitEthernetPort, the limited bandwidth will be that
+                      swL2EgressPortBwCtrlRefRequestUnit times swL2BwMgmtGEPortUnitBandwidth."
+              ::= { swL2EgressPortBwCtrlRefreshEntry 2 }
+
+          swL2EgressPortBwCtrlRefPortNwayStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          half-10Mbps(2),
+                          full-10Mbps(3),
+                          half-100Mbps(4),
+                          full-100Mbps(5),
+                          half-1Gigabps(6),
+                          full-1Gigabps(7)
+                      }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates speed and duplex mode of port."
+              ::= { swL2EgressPortBwCtrlRefreshEntry 3 }
+
+          swL2EgressPortBwCtrlRefRequestUnit OBJECT-TYPE
+              SYNTAX  INTEGER (1..127)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the requested units for the limitation of egress bandwidth
+                      of port."
+              ::= { swL2EgressPortBwCtrlRefreshEntry 4 }
+
+          swL2EgressPortBwCtrlRefRate OBJECT-TYPE
+              SYNTAX  INTEGER (1..2147483647)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the limitation of forwarding bandwidth in kilobyte. The value
+                      should be that swL2EgressPortBwCtrlRefRequestUnit times
+                      swL2BwMgmtFEPortUnitBandwidth, if counting type is fastEthernetPort,
+                      or swL2BwMgmtGEPortUnitBandwidth, if counting type is gigabitEthernetPort."
+              ::= { swL2EgressPortBwCtrlRefreshEntry 5 }
+
+          swL2EgressPortBwCtrlRefStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          create-for-refresh(1),
+                          destroy(2)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Status of this entry. All the existed entries will return create-for-refresh(1). An
+                      entry will be create if this object is set to create-for-refresh(1) and not existed.
+                      If this object is set to destroy(2), this entry will be deleted."
+              ::= { swL2EgressPortBwCtrlRefreshEntry 6 }
+
+    -- *******************************************************
+
+          swL2GrpAddrFltrMode OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          forwardAllGrpAddr(2),
+                          forwardAllUnregGrpAddr(3),
+                          filterAllUnregGrpAddr(4)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the filtering mode for all ports.
+                      In forwardAllGrpAddr(2) mode - forward all group address,
+                      		all frames destined for group MAC addresses are forwarded according
+                      		to the VLAN rules.
+                      In forwardAllUnregGrpAddr(3) mode - forward all unregistered group addresses,
+                      		if the Group MAC Address Registration entries exist in the Multicast Table,
+                      		frames destined for the corresponding group MAC addresses will be forwarded,
+                      		only on ports identified in the member port set, which is identified by the
+                      		Port Bitmap. The Untagged Bitmap is also used to send tagged packets on the
+                      		member ports. On the other hand, if the Group MAC Address does not exist in
+                      		the Multicast Table, the filtering mechanism of forwardAllGrpAddr(2) mode is
+                      		used.
+                      In filterAllUnregGrpAddr(4) mode - filter all unregistered group addresses,
+                      		frames destined for group MAC addresses are forwarded only if such forwarding
+                      		is explicity permitted by a Group Address entry in the Multicast Table. In
+                      		other words, if the Group MAC Address exists in the Multicast table, then the
+                      		packets are forwarded using the Port Bitmap and the Untagged Bitmap from
+                      		that entry. Otherwise, the packets are dropped."
+              ::= { swL2MgmtMIB 2 }
+
+-- ********************************************************************
+--        swL2CosMgmt               OBJECT IDENTIFIER ::= { swL2MgmtMIB 3 }
+-- ********************************************************************
+
+          swL2CosScheduleMethod OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          strict(2),
+                          roundRobin(3)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the scheduling mechanism for CoS queues.
+                      In strict(2) mode - packet process will start from highest CoS queue for a given
+                      					  port, then moves on to the next lower CoS queue while the
+                      					  higher CoS queue is empty packet.
+                      In roundRobin(3) mode - packet process will start from highest CoS queue for a given
+                      					      port, then moves on to the next lower CoS queue after sending
+                      					      swL2CosMaxPackets or when the higher CoS queue is empty packet."
+              ::= { swL2CosMgmt 1 }
+
+          swL2CosControlTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2CosControlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      ""
+              ::= { swL2CosMgmt 2 }
+
+          swL2CosControlEntry OBJECT-TYPE
+              SYNTAX  SwL2CosControlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2CosControlTable."
+              INDEX   { swL2CosQueueIndex }
+              ::= { swL2CosControlTable 1 }
+
+          SwL2CosControlEntry ::=
+              SEQUENCE {
+                  swL2CosQueueIndex
+                      INTEGER,
+                  swL2CosMaxPackets
+                      INTEGER,
+                  swL2CosMaxLatency
+                      INTEGER
+              }
+
+          swL2CosQueueIndex OBJECT-TYPE
+              SYNTAX  INTEGER (1..8)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates CoS Queue."
+              ::= { swL2CosControlEntry 1 }
+
+          swL2CosMaxPackets OBJECT-TYPE
+              SYNTAX  INTEGER (0..255)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates maximum packet count for a CoS Queue. This object only takes effect at
+                      roundRobin mode of swL2CosScheduleMethod."
+              ::= { swL2CosControlEntry 2 }
+
+          swL2CosMaxLatency OBJECT-TYPE
+              SYNTAX  INTEGER (0..255)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates maximum allowable latency for packet transmission on a CoS Queue such
+                      that the packets on this queue are not delayed more than the maximum allowable
+                      latency time. The granularity of this timer is 17 microsecond. A value of 0x00
+                      disable this timer. swL2CosMaxLatency takes precedence over swL2CosScheduleMethod."
+              ::= { swL2CosControlEntry 3 }
+
+-- ********************************************************************
+--        swL2PortSecurityMgmt               OBJECT IDENTIFIER ::= { swL2MgmtMIB 4 }
+-- ********************************************************************
+
+          swL2PortSecurityControlTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2PortSecurityControlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "port security feature which controls the address leaning capability and the
+                      traffic forwarding decision. Each port can have this function enabled or disabled.
+                      When it is enabled and a number is given said N, which allows N addresses to be
+                      learned at this port, the first N learned addresses are locked at this port as
+                      static entry. When the learned addresses number reach N, any coming packet with
+                      not learned source addresses are discarded (e.g. dropped) and no more new addresses
+                      can be learned at this port."
+              ::= { swL2PortSecurityMgmt 1 }
+
+          swL2PortSecurityControlEntry OBJECT-TYPE
+              SYNTAX  SwL2PortSecurityControlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2PortSecurityControlTable."
+              INDEX   { swL2PortSecurityPortIndex }
+              ::= { swL2PortSecurityControlTable 1 }
+
+          SwL2PortSecurityControlEntry ::=
+              SEQUENCE {
+                  swL2PortSecurityPortIndex
+                      INTEGER,
+                  swL2PortSecurityMaxLernAddr
+                      INTEGER,
+                  swL2PortSecurityMode
+                      INTEGER,
+                  swL2PortSecurityAdmState
+                      INTEGER
+              }
+
+          swL2PortSecurityPortIndex OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the secured port to lock address learning."
+              ::= { swL2PortSecurityControlEntry 1 }
+
+          swL2PortSecurityMaxLernAddr OBJECT-TYPE
+              SYNTAX  INTEGER (0..65535)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates allowable number of addresses to be learned at this port."
+              ::= { swL2PortSecurityControlEntry 2 }
+
+          swL2PortSecurityMode OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          deleteOnTimeout(2),
+                          deleteOnReset(3)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates the mode of locking address.
+                      In deleteOnTimeout(2) mode - the locked addresses can be aged out after aging timer
+                                                   expire. In this mode, when the locked address is aged
+                                                   out, the number of address can be learned has to be
+                                                   increased by one.
+                      In deleteOnReset(3) mode - never age out the locked addresses unless restart
+                                                   the system to prevent from port movement or intrusion."
+              ::= { swL2PortSecurityControlEntry 3 }
+
+          swL2PortSecurityAdmState OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          enable(2),
+                          disable(3)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                      "Indicates administration state of locking address."
+              ::= { swL2PortSecurityControlEntry 4 }
+
+-- ********************************************************************
+--        swL2DevMgmt               OBJECT IDENTIFIER ::= { swL2MgmtMIB 5 }
+-- ********************************************************************
+
+          swL2DevInfo             OBJECT IDENTIFIER ::= { swL2DevMgmt 1 }
+
+          swL2DevInfoSystemUpTime OBJECT-TYPE
+              SYNTAX  TimeTicks
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "The value of sysUpTime at the time the switch entered its 
+                  current operational state. If the current state was entered 
+                  prior to the last re-initialization, then this object contains
+                  a zero value. This value is in units of seconds."
+              ::= { swL2DevInfo 1 }
+
+          swL2DevInfoTotalNumOfPort OBJECT-TYPE
+              SYNTAX  INTEGER (0..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "The number of ports within this switch. This value is the sum
+                   of the ports within this switch."
+              ::= { swL2DevInfo 2 }
+
+          swL2DevInfoNumOfPortInUse OBJECT-TYPE
+              SYNTAX  INTEGER (0..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "The number of ports in this switch connected to the segment or
+                   the end stations."
+              ::= { swL2DevInfo 3 }
+
+          swL2DevInfoConsoleInUse   OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     in-use(2),
+                     not-in-use(3)
+                     }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This usage indication of console system."
+              ::= { swL2DevInfo 4 }
+
+          swL2DevInfoFrontPanelLedStatus OBJECT-TYPE
+              SYNTAX  OCTET STRING (SIZE (0..127))
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object is a set of system LED indications. The first third octets
+                  is defined as system LED . The first LED is power LED . The second LED
+                  is console LED . The third LED is RPS (Redundancy Power Supply) LED .
+                  . The other octets following the third octets are the logical port LED 
+                  (following dot1dBasePort ordering) . Every two bytes are presented to a
+                  port. The first byte is presentd to the Link/Activity LED . The second
+                  byte is presented to the Speed LED .
+                    
+                  There is one byte per LED .
+
+                  The most significant bit is used for blink/solid:
+                     Off = The LED is lit permanently.
+                     On = The LED blinks.
+
+                  The three least significant bits are used for color:
+                     1 = not lit,
+                     2 = green,
+                     3 = yellow,(orange)
+                     4 = blue,
+                     5 = red,
+                     0+6+7 not used
+
+                  The four remaining bits are currently unused and must be 0 ."
+              ::= { swL2DevInfo 5 }
+
+    -- *******************************************************
+
+          swL2DevCtrl             OBJECT IDENTIFIER ::= { swL2DevMgmt 2 }
+
+          swL2DevCtrlSystemReboot OBJECT-TYPE
+              SYNTAX  INTEGER {
+                          other(1),
+                          reboot(2),
+                          save-config-and-reboot(3),
+                          reboot-and-load-factory-default-config(4),
+                          reboot-and-load-factory-default-config-except-ip-address(5)
+                      }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the agent system reboot state. The agent always
+                  returns other(1) when this object is read."
+              ::= { swL2DevCtrl 1 }
+
+          swL2DevCtrlSystemIP OBJECT-TYPE
+              SYNTAX  IpAddress
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates system ip."
+              ::= { swL2DevCtrl 2 }
+
+          swL2DevCtrlSubnetMask OBJECT-TYPE
+              SYNTAX  IpAddress
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates system subnet mask."
+              ::= { swL2DevCtrl 3 }
+
+          swL2DevCtrlDefaultGateway OBJECT-TYPE
+              SYNTAX  IpAddress
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates system default gateway."
+              ::= { swL2DevCtrl 4 }
+
+          swL2DevCtrlManagementVlanId OBJECT-TYPE
+              SYNTAX  VlanId
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object controls which Vlan includes system ip. And the Vlan
+                  should have been created."
+              ::= { swL2DevCtrl 5 }
+
+          swL2DevCtrlStpState OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object can be enabled or disabled spanning tree algorithm
+                   during runtime of the system."
+              ::= { swL2DevCtrl 6 }
+
+          swL2DevCtrlIGMPSnooping OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates layer 2 Internet Group Management Protocol
+                  (IGMP) capture function is enabled or disabled ."
+              ::= { swL2DevCtrl 7 }
+
+          swL2DevCtrlBcastStormCtrl OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                 "This object indicates broadcast storm control function is enabled or
+                 disabled. The swL2PortCtrlBMDStormLimit object will descript the 
+                 detail about the storm control ."
+              ::= { swL2DevCtrl 8 }
+
+          swL2DevCtrlMcastStormCtrl OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                 "This object indicates multicast storm control function is enabled or
+                 disabled. The swL2PortCtrlBMDStormLimit object will descript the 
+                 detail about the storm control ."
+              ::= { swL2DevCtrl 9 }
+
+          swL2DevCtrlDestLookupFailureCtrl OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                 "This object indicates destination lookup failure rate control function
+                 is enabled or disabled. The swL2PortCtrlBMDStormLimit object will
+                 descript the detail about the storm control ."
+              ::= { swL2DevCtrl 10 }
+
+          swL2DevCtrlBMDStormLimit OBJECT-TYPE
+              SYNTAX  INTEGER (0..262143)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object to decide how many broadcast/multicast (depend on
+                  swL2DevCtrlBcastStormCtrl, swL2DevCtrlMcastStormCtrl or
+                  swL2DevCtrlDestLookupFailureCtrlobjects whether is enabled) packets per second
+                  will pass thru. Beyond the limit, the device will start dropping
+                  that type of packet until the second interval has expired . Once the time
+                  interval has expired , the device will start forwarding that type of packet."
+              ::= { swL2DevCtrl 11 }
+
+          swL2DevCtrlCleanAllStatisticCounter OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     normal(1),
+                     active(2)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "As the object is set to active, all the statistic counters will be cleared.
+                  If set to normal, do nothing."
+              ::= { swL2DevCtrl 12 }
+
+          swL2DevCtrlSnmpEnableAuthenTraps OBJECT-TYPE
+              SYNTAX      INTEGER { enabled(1), disabled(2) }
+              MAX-ACCESS  read-write
+              STATUS      current
+              DESCRIPTION
+                      "Indicates whether the SNMP entity is permitted to generate
+                      authenticationFailure traps.  The value of this object
+                      overrides any configuration information; as such, it
+                      provides a means whereby all authenticationFailure traps may
+                      be disabled.
+
+                      Note that it is strongly recommended that this object be
+                      stored in non-volatile memory so that it remains constant
+                      across re-initializations of the network management system."
+              ::= { swL2DevCtrl 13 }
+
+          swL2DevCtrlConsoleTimeout OBJECT-TYPE
+              SYNTAX  INTEGER {
+						console-timeout-never(1),
+						console-timeout-2min(2),
+						console-timeout-5min(3),
+						console-timeout-10min(4),
+						console-timeout-15min(5)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object controls the timeout value of the console."
+              ::= { swL2DevCtrl 14 }
+
+          swL2DevCtrlWebTimeout OBJECT-TYPE
+              SYNTAX  INTEGER (5..20)
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object controls the timeout value of the web. The range of this object
+                  is from 5 minutes to 20 minutes."
+              ::= { swL2DevCtrl 15 }
+
+-- ********************************************************************
+--  swL2PortMgmt            OBJECT IDENTIFIER ::= { swL2MgmtMIB 6 }
+-- ********************************************************************
+
+          swL2PortInfoTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2PortInfoEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                  "A table that contains information about every port."
+              ::= { swL2PortMgmt 1 }
+
+          swL2PortInfoEntry OBJECT-TYPE
+              SYNTAX  SwL2PortInfoEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                  "A list of information for each port of the device."
+              INDEX   { swL2PortInfoPortIndex }
+              ::= { swL2PortInfoTable 1 }
+
+          SwL2PortInfoEntry ::= 
+              SEQUENCE {
+                  swL2PortInfoPortIndex
+                      INTEGER,
+                  swL2PortInfoType
+                      INTEGER,
+                  swL2PortInfoDescr
+                      DisplayString,
+                  swL2PortInfoLinkStatus
+                      INTEGER,
+                  swL2PortInfoNwayStatus
+                      INTEGER
+              }
+
+          swL2PortInfoPortIndex OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the module's port number.(1..Max port number in
+                   the module)"
+              ::= { swL2PortInfoEntry 1 }
+
+          swL2PortInfoType OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     portType-UTP(2),
+                     portType-AUI(3),
+                     portType-Fiber-MTRJ(4),
+                     portType-Fiber-SC(5),
+                     portType-Fiber-GBIC(6),
+                     portType-BNC(7)
+                     }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the connector type of this port."
+              ::= { swL2PortInfoEntry 2 }
+
+          swL2PortInfoDescr OBJECT-TYPE
+              SYNTAX DisplayString (SIZE(0..64))
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "Provides port type information in displayed string format"
+              ::= { swL2PortInfoEntry 3 }
+
+          swL2PortInfoLinkStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     link-pass(2),
+                     link-fail(3)
+                     }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the port link status."
+              ::= { swL2PortInfoEntry 4 }
+
+          swL2PortInfoNwayStatus OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     half-10Mbps(2),
+                     full-10Mbps(3),
+                     half-100Mbps(4),
+                     full-100Mbps(5),
+                     half-1Gigabps(6),
+                     full-1Gigabps(7)
+                     }
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the port speed and duplex mode."
+              ::= { swL2PortInfoEntry 5 }
+
+    -- *******************************************************
+
+          swL2PortCtrlTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2PortCtrlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                  "A table that contains control information about every port."
+              ::= { swL2PortMgmt 2 }
+
+          swL2PortCtrlEntry OBJECT-TYPE
+              SYNTAX  SwL2PortCtrlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                  "A list of control information for each port of the device."
+              INDEX  { swL2PortCtrlPortIndex }
+              ::= { swL2PortCtrlTable 1 }
+
+          SwL2PortCtrlEntry ::= 
+              SEQUENCE {
+                  swL2PortCtrlPortIndex
+                      INTEGER,
+                  swL2PortCtrlAdminState
+                      INTEGER,
+                  swL2PortCtrlNwayState
+                      INTEGER,
+                  swL2PortCtrlFlowCtrlState
+                      INTEGER,
+                  swL2PortCtrlCleanStatCounter
+                      INTEGER
+              }
+
+          swL2PortCtrlPortIndex OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the module's port number.(1..Max port number in
+                   the module)"
+              ::= { swL2PortCtrlEntry 1 }
+
+          swL2PortCtrlAdminState OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object decide the port enabled or disabled."
+              ::= { swL2PortCtrlEntry 2 }
+
+          swL2PortCtrlNwayState OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     nway-enabled(2),
+                     nway-disabled-10Mbps-Half(3),
+                     nway-disabled-10Mbps-Full(4),
+                     nway-disabled-100Mbps-Half(5),
+                     nway-disabled-100Mbps-Full(6),
+                     nway-disabled-1Gigabps-Half(7),
+                     nway-disabled-1Gigabps-Full(8)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "Chose the port speed, duplex mode, and N-Way function mode."
+              ::= { swL2PortCtrlEntry 3 }
+
+          swL2PortCtrlFlowCtrlState OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "Set flow control function as enabled or disabled."
+              ::= { swL2PortCtrlEntry 4 }
+
+          swL2PortCtrlCleanStatCounter OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     normal(1),
+                     active(2)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "As the object is set to active, the statistic counters of this port will be
+                  cleared. If set to normal, do nothing."
+              ::= { swL2PortCtrlEntry 5 }
+
+-- ********************************************************************
+--        swL2PriorityMgmt               OBJECT IDENTIFIER ::= { swL2MgmtMIB 7 }
+-- ********************************************************************
+
+          swL2PriorityMACAddress	OBJECT IDENTIFIER ::= { swL2PriorityMgmt 1 }
+
+		  swL2PriorityMACAddressMaxEntries OBJECT-TYPE
+			  SYNTAX  INTEGER (0..32)
+			  MAX-ACCESS read-only
+			  STATUS	current
+			  DESCRIPTION
+				  "The max entries of swL2PriorityMACAddressTable"
+			  ::= { swL2PriorityMACAddress 1}
+
+          swL2PriorityMACAddressTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2PriorityMACAddressEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A table that contains special MAC addresses along with priority"
+              ::= { swL2PriorityMACAddress 2 }
+
+          swL2PriorityMACAddressEntry OBJECT-TYPE
+              SYNTAX  SwL2PriorityMACAddressEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                      "A list of information contained in swL2PriorityMACAddressTable."
+              INDEX   { swL2PriorityMACAddressVlanIndex , swL2PriorityMACAddressMACAddress }
+              ::= { swL2PriorityMACAddressTable 1 }
+
+          SwL2PriorityMACAddressEntry ::=
+              SEQUENCE {
+                  swL2PriorityMACAddressVlanIndex
+                      VlanId,
+                  swL2PriorityMACAddressMACAddress
+                      MacAddress,
+                  swL2PriorityMACAddressPriLevel
+                      INTEGER,
+                  swL2PriorityMACAddressLookAt
+                      INTEGER,
+                  swL2PriorityMACAddressState
+                      RowStatus
+              }
+
+          swL2PriorityMACAddressVlanIndex OBJECT-TYPE
+              SYNTAX  VlanId
+              MAX-ACCESS  read-create
+              STATUS  current
+              DESCRIPTION
+                      "The VLAN-ID or other identifier refering to this VLAN."
+              ::= { swL2PriorityMACAddressEntry 1 }
+
+          swL2PriorityMACAddressMACAddress OBJECT-TYPE
+              SYNTAX  MacAddress
+              MAX-ACCESS  read-create
+              STATUS  current
+              DESCRIPTION
+                      "The MAC address along with priority"
+              ::= { swL2PriorityMACAddressEntry 2 }
+
+          swL2PriorityMACAddressPriLevel OBJECT-TYPE
+              SYNTAX  INTEGER (0..7)
+              MAX-ACCESS  read-create
+              STATUS  current
+              DESCRIPTION
+                      "The value of the priority which the queue packet puting in is based on."
+              ::= { swL2PriorityMACAddressEntry 3 }
+
+          swL2PriorityMACAddressLookAt OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     srcAddr(1),
+                     dstAddr(2),
+                     either(3)
+                     }
+              MAX-ACCESS  read-create
+              STATUS  current
+              DESCRIPTION
+                      "The field MAC address looked at in packet."
+              ::= { swL2PriorityMACAddressEntry 4 }
+
+          swL2PriorityMACAddressState OBJECT-TYPE
+              SYNTAX  RowStatus
+              MAX-ACCESS  read-create
+              STATUS  current
+              DESCRIPTION
+                      "This object indicates the status of this entry."
+              ::= { swL2PriorityMACAddressEntry 5 }
+
+-- ********************************************************************
+--        swL2STPMgmt				OBJECT IDENTIFIER ::= { swL2MgmtMIB 8 }
+-- ********************************************************************
+
+          swL2STPCtrlTable OBJECT-TYPE
+              SYNTAX  SEQUENCE OF SwL2STPCtrlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                  "A table that contains STP ByPass information about every port."
+              ::= { swL2STPMgmt 1 }
+
+          swL2STPCtrlEntry OBJECT-TYPE
+              SYNTAX  SwL2STPCtrlEntry
+              MAX-ACCESS  not-accessible
+              STATUS  current
+              DESCRIPTION
+                  "A list of STP ByPass information for each port of the device."
+              INDEX  { swL2STPCtrlPortIndex }
+              ::= { swL2STPCtrlTable 1 }
+
+          SwL2STPCtrlEntry ::= 
+              SEQUENCE {
+                  swL2STPCtrlPortIndex
+                      INTEGER,
+                  swL2STPCtrlByPass
+                      INTEGER
+              }
+
+          swL2STPCtrlPortIndex OBJECT-TYPE
+              SYNTAX  INTEGER (1..255)
+              MAX-ACCESS  read-only
+              STATUS  current
+              DESCRIPTION
+                  "This object indicates the module's port number.(1..Max port number in
+                   the module)"
+              ::= { swL2STPCtrlEntry 1 }
+
+          swL2STPCtrlByPass OBJECT-TYPE
+              SYNTAX  INTEGER {
+                     other(1),
+                     disabled(2),
+                     enabled(3)
+                     }
+              MAX-ACCESS  read-write
+              STATUS  current
+              DESCRIPTION
+                  "This object decides the ByPass mode of the port."
+              ::= { swL2STPCtrlEntry 2 }
+
+END

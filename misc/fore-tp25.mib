@@ -1,0 +1,267 @@
+------------------------------------------------------------------------
+-- Copyright 1994 by Fore Systems, Inc.
+
+Fore-tp25-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	Counter, Gauge, IpAddress, TimeTicks	FROM RFC1155-SMI
+	OBJECT-TYPE				FROM RFC1212
+	asx					FROM Fore-Switch-MIB;
+	
+
+------------------------------------------------------------------------
+-- The implementation of the foreTP25 tables is mandatory
+-- for all switches that have 25.6Mbps UTP/STP port module.
+
+foreTP25		OBJECT IDENTIFIER ::= { asx 9 }
+tp25ConfGroup		OBJECT IDENTIFIER ::= { foreTP25 1 }
+tp25StatsGroup		OBJECT IDENTIFIER ::= { foreTP25 2 }
+
+
+------------------------------------------------------------------------
+-- The TP25 configuration Group
+
+tp25ConfTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TP25ConfEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of TP25(25.6Mbps UTP/STP switch port configuration 
+		 information."
+	::= { tp25ConfGroup 1 }
+
+tp25ConfEntry OBJECT-TYPE
+	SYNTAX	TP25ConfEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing TP25 configuration information
+		 for each port."
+	INDEX	{ tp25ConfBoard, tp25ConfModule, tp25ConfPort }
+	::= { tp25ConfTable 1 }
+
+TP25ConfEntry ::=
+	SEQUENCE {
+		tp25ConfBoard		INTEGER,
+		tp25ConfModule		INTEGER,
+		tp25ConfPort		INTEGER,
+		tp25MediaType		INTEGER,
+		tp25LoopbackConfig	INTEGER,
+		tp25RxTiming		INTEGER
+	}		
+
+tp25ConfBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this port's switch board."
+	::= { tp25ConfEntry 1 }
+
+tp25ConfModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The network module of this port."
+	::= { tp25ConfEntry 2 }
+
+tp25ConfPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this port."
+	::= { tp25ConfEntry 3 }
+
+tp25MediaType OBJECT-TYPE
+	SYNTAX	INTEGER {
+		tp25UTP (1),
+		tp25STP (2),
+		tp25FTP (3)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This variable represents the type of the physical medium
+	 	 connected to the TP25 interface:
+		tp25UTP (1) means physical media is UTP  
+		tp25STP (2) means physical media is STP
+		tp25FTP (3) means physical media is FTP."
+	::= { tp25ConfEntry 4 }
+
+tp25LoopbackConfig OBJECT-TYPE
+	SYNTAX	INTEGER {
+		tp25NoLoop (1), 
+		tp25DiagLoop (2),
+		tp25LineLoop (3)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"This variable represents the loopback configuration of the
+		  TP25 interface.
+		tp25NoLoop (1) means that the interface is not in a loopback
+ 	    	  state.
+		tp25DiagLoop (2) means that the transmit data stream is looped
+		  back to the receiver.
+		tp25LineLoop (3) also known as remote loopback, in this state
+	          received data is transfered to upstream system as well as
+	          looped back to the transmitter."
+	DEFVAL { 1 }
+	::= { tp25ConfEntry 5 }
+
+tp25RxTiming OBJECT-TYPE
+	SYNTAX	INTEGER {
+		tp25NoTimingPresent (1),
+		tp25TimingPresent (2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"This variable represents the type of the physical medium
+	 	 connected to the TP25 interface:
+		tp25NoTimingPresent (1) means port is not receiving sync pulses.
+		tp25TimingPresent (2) means port is receiving sync pulses."
+	::= { tp25ConfEntry 6 }
+
+------------------------------------------------------------------------
+-- The TP25 Statistics Group
+
+tp25ErrorTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TP25ErrorEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of TP25 error counters."
+	::= { tp25StatsGroup 1 }
+
+tp25ErrorEntry OBJECT-TYPE
+	SYNTAX	TP25ErrorEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing TP25 error counters."
+	INDEX	{ tp25ErrorBoard, tp25ErrorModule, tp25ErrorPort }
+	::= { tp25ErrorTable 1 }
+
+TP25ErrorEntry ::=
+	SEQUENCE {
+		tp25ErrorBoard		INTEGER,
+		tp25ErrorModule		INTEGER,
+		tp25ErrorPort		INTEGER,
+		tp25ErrorSymbol		Counter
+	}
+
+tp25ErrorBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this port's switch board."
+	::= { tp25ErrorEntry 1 }
+
+tp25ErrorModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The network module of this port."
+	::= { tp25ErrorEntry 2 }
+
+tp25ErrorPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this port."
+	::= { tp25ErrorEntry 3 }
+
+tp25ErrorSymbol OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of all undefined 5 bit symbols received."
+	::= { tp25ErrorEntry 4 }
+
+------------------------------------------------------------------------
+
+tp25AtmTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TP25AtmEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of TP25 ATM statistics information."
+	::= { tp25StatsGroup 2 }
+
+tp25AtmEntry OBJECT-TYPE
+	SYNTAX	TP25AtmEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table entry containing TP25 ATM statistics information."
+	INDEX	{ tp25AtmBoard, tp25AtmModule, tp25AtmPort }
+	::= { tp25AtmTable 1 }
+
+TP25AtmEntry ::=
+	SEQUENCE {
+		tp25AtmBoard		INTEGER,
+		tp25AtmModule		INTEGER,
+		tp25AtmPort		INTEGER,
+		tp25AtmHCSs		Counter,
+		tp25AtmRxCells		Counter,
+		tp25AtmTxCells		Counter
+	}
+
+tp25AtmBoard OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of this port's switch board."
+	::= { tp25AtmEntry 1 }
+
+tp25AtmModule OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The network module of this port."
+	::= { tp25AtmEntry 2 }
+
+tp25AtmPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The number of this port."
+	::= { tp25AtmEntry 3 }
+
+tp25AtmHCSs OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Number of header check sequence (HCS) error events.
+		 The HCS is a CRC-8 calculation over the first 4 octets
+		 of the ATM cell header."
+	::= { tp25AtmEntry 4 }
+
+tp25AtmRxCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Number of ATM cells that were received."
+	::= { tp25AtmEntry 5 }
+
+tp25AtmTxCells OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Number of non-null ATM cells that were transmitted."
+	::= { tp25AtmEntry 6 }
+
+END

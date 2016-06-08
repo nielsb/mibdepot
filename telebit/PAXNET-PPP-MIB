@@ -1,0 +1,482 @@
+PAXNET-PPP-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+	    MODULE-IDENTITY, OBJECT-TYPE, enterprises, Counter32, Integer32
+	    	FROM SNMPv2-SMI
+	    DisplayString, RowStatus, DateAndTime
+	        FROM SNMPv2-TC
+	    InterfaceIndex
+		FROM IF-MIB
+	    DsChannelName
+		FROM PAXNET-DS-MIB
+	    paxnet, paxManagement
+		FROM PAXNET-MIB;
+
+    paxPPPMIB MODULE-IDENTITY
+              LAST-UPDATED "200001040905Z"
+
+              ORGANIZATION "Telebit Communications A/S, Denmark"
+              CONTACT-INFO
+                      "        "
+              DESCRIPTION
+                      "MIB for management of the PPP drivers in PAXNET routers.
+			This version of the MIB is fit for SWppp release 4.1;
+			the configuration table is cloned into a new version
+			with symbolic names plus incarnations as indices.  The
+			original table will probably be deprecated in the
+			later releases"
+              REVISION "200002180905Z"
+              DESCRIPTION
+                      "Initial revision.
+			This version of the MIB is fit for SWppp release 3.6"
+              ::= { paxManagement 9 }
+
+paxPPP OBJECT IDENTIFIER ::= { paxPPPMIB 1 }
+paxPPPConformance OBJECT IDENTIFIER ::= { paxPPPMIB 2 }
+
+paxPPPTable OBJECT-TYPE
+   SYNTAX SEQUENCE OF PaxPPPEntry
+   MAX-ACCESS  not-accessible
+   STATUS current
+   DESCRIPTION
+	"The table of PPP drivers"
+   ::= { paxPPP 1 }
+
+paxPPPEntry OBJECT-TYPE
+   SYNTAX PaxPPPEntry
+   MAX-ACCESS not-accessible
+   STATUS current
+   DESCRIPTION
+	"The entry for one PPP driver"
+   INDEX { pppInc }
+   ::= { paxPPPTable 1 }
+
+PaxPPPEntry ::= SEQUENCE
+    {
+	pppInc INTEGER,
+	pppConfMRU INTEGER,
+	pppNoofRcvBufs INTEGER,
+	pppNoofTrsBufs INTEGER,
+	pppRcvBufLgt INTEGER,
+	pppTrsBufLgt INTEGER,
+	pppLcpTimeout INTEGER,
+	pppMaxConfReq INTEGER,
+	pppMaxTermReq INTEGER,
+	pppMaxNegoAtt INTEGER,
+	pppKeepAliveIntv INTEGER,
+	pppMaxOutstRepl INTEGER,
+	pppActMRU INTEGER,
+	pppIfIndex InterfaceIndex,
+	pppStatus RowStatus,
+	pppAlias DisplayString
+    }
+
+pppInc OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+       "Incarnation number of PPP driver process"
+    ::=  { paxPPPEntry 1 }
+
+pppConfMRU OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "Maximum Receive Unit. This value will be used as initial
+        value when negotiating the line. The negotiation may however
+        produce a somewhat different MRU."
+    DEFVAL { 1500 }
+    ::=  { paxPPPEntry 2 }
+
+pppNoofRcvBufs OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "This many buffers will be allocated as line receive buffers."
+    DEFVAL { 20 }
+    ::=  { paxPPPEntry 3 }
+
+pppNoofTrsBufs OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "This many buffers will be allocated as line transmit
+        buffers."
+    DEFVAL { 20 }
+    ::=  { paxPPPEntry 4 }
+
+pppRcvBufLgt OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "The size of the line receive buffers. PPP cannot
+        receive packets larger than this.
+        NOTE: If the buffer size is made smaller than 1500, the PPP
+        will no longer conform to the standard."
+    DEFVAL { 1500 }
+    ::=  { paxPPPEntry 5 }
+
+pppTrsBufLgt OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "The size of the line transmit buffers. PPP cannot
+        transmit packets larger than this."
+    DEFVAL { 1500 }
+    ::=  { paxPPPEntry 6 }
+
+pppLcpTimeout OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "The time in milliseconds PPP's LCP waits for a configuration
+        reply before assuming it was lost."
+    DEFVAL { 1000 }
+    ::=  { paxPPPEntry 7 }
+
+pppMaxConfReq OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many configuration requests have timed out the
+        negotiation starts over. If this value is 0, the negotiation
+        never restarts, and just loops forever. This is probably the
+        most useful value."
+    DEFVAL { 0 }
+    ::=  { paxPPPEntry 8 }
+
+pppMaxTermReq OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many termination requests have timed out, the line
+        is declared down without waiting for further replies from
+        the peer."
+    DEFVAL { 2 }
+    ::=  { paxPPPEntry 9 }
+
+pppMaxNegoAtt OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many configurations in a row have been rejected by
+        the peer, the LCP assumes that the negotiation is looping
+        and
+        starts sending reject's instead of Nak's."
+    DEFVAL { 10 }
+    ::=  { paxPPPEntry 10 }
+
+pppKeepAliveIntv OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "The interval in milliseconds between keepalive tests. With
+        this interval PPP echo requests are sent to the peer. If
+        sufficiently many replies disappear, the line is taken down"
+    DEFVAL { 3000 }
+    ::=  { paxPPPEntry 11 }
+
+pppMaxOutstRepl OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many consecutive keepalive packets have
+	disappeared, the line is taken down."
+    DEFVAL { 4 }
+    ::=  { paxPPPEntry 12 }
+
+pppActMRU OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "Maximum Receive Unit. This value is the result of the
+        line negotiation"
+    ::=  { paxPPPEntry 13 }
+
+pppIfIndex OBJECT-TYPE
+    SYNTAX InterfaceIndex
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "The index value of this driver in the IF-MIB"
+    ::=  { paxPPPEntry 14 }
+
+pppStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Tool for creating the driver entry"
+    ::=  { paxPPPEntry 15 }
+
+pppAlias OBJECT-TYPE
+    SYNTAX DisplayString (SIZE(0..64))
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "The same object as IF-MIB:ifAlias"
+    DEFVAL { ''H }
+    ::=  { paxPPPEntry 16 }
+
+
+PppAccessName ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "A printable identifier, unique per MPPP service,
+                 used as management handle to a PPP engine. It is
+		recommended to use only printable characters in the name.
+		Use of embedded spaces is prohibited.  For use in an
+		environment where a SWIPE CLI coexist with the SNMP agent,
+		the name should be exactly S<board>/<connector> for PPP on
+		serial lines and S<board>/<connector>:<group id> for PPP on a
+		channelized group on an E1/T1 line. The ifName of the
+		corresponding ifTable object will be Serial<board>/<connector>,
+		optionally :<group id>."
+    SYNTAX OCTET STRING (SIZE(16))
+
+
+paxMPPPTable OBJECT-TYPE
+   SYNTAX SEQUENCE OF paxMPPPEntry
+   MAX-ACCESS  not-accessible
+   STATUS current
+   DESCRIPTION
+	"The table of PPP drivers"
+   ::= { paxPPP 2 }
+
+paxMPPPEntry OBJECT-TYPE
+   SYNTAX paxMPPPEntry
+   MAX-ACCESS not-accessible
+   STATUS current
+   DESCRIPTION
+	"The entry for one PPP driver"
+   INDEX { mpppInc, mpppLinkName }
+   ::= { paxMPPPTable 1 }
+
+paxMPPPEntry ::= SEQUENCE
+    {
+	mpppInc INTEGER,
+	mpppLinkName PppAccessName,
+	mpppConfMRU INTEGER,
+	mpppServer INTEGER (1..127),
+	mpppServerType INTEGER (1..127),
+	mpppChannel DsChannelName,
+	mpppLcpTimeout INTEGER,
+	mpppMaxConfReq INTEGER,
+	mpppMaxTermReq INTEGER,
+	mpppMaxNegoAtt INTEGER,
+	mpppKeepAliveIntv INTEGER,
+	mpppMaxOutstRepl INTEGER,
+	mpppActMRU INTEGER,
+	mpppIfIndex InterfaceIndex,
+	mpppStatus RowStatus,
+	mpppAlias DisplayString
+    }
+
+mpppInc OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+       "Incarnation number of MPPP Access process"
+    ::=  { paxMPPPEntry 1 }
+
+mpppLinkName OBJECT-TYPE
+    SYNTAX PppAccessName
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+       "Link name of MPPP Access process"
+    ::=  { paxMPPPEntry 2 }
+
+mpppConfMRU OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "Maximum Receive Unit. This value will be used as initial
+        value when negotiating the line. The negotiation may however
+        produce a somewhat different MRU."
+    DEFVAL { 1500 }
+    ::=  { paxMPPPEntry 3 }
+
+mpppServer OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Incarnation number of underlying server process"
+    ::=  { paxMPPPEntry 4 }
+
+mpppServerType OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Type of underlying server process.  Relevant values are 2 for qmc and
+        212 for ppp (a ka XPC driver)."
+    ::=  { paxMPPPEntry 5 }
+
+mpppChannel OBJECT-TYPE
+    SYNTAX DsChannelName
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Only relevant when ServerType is 2.  The name of the time slot group
+        that constitutes the framing channel"
+    ::=  { paxMPPPEntry 6 }
+
+mpppLcpTimeout OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "The time in milliseconds PPP's LCP waits for a configuration
+        reply before assuming it was lost."
+    DEFVAL { 1000 }
+    ::=  { paxMPPPEntry 8 }
+
+mpppMaxConfReq OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many configuration requests have timed out the
+        negotiation starts over. If this value is 0, the negotiation
+        never restarts, and just loops forever. This is probably the
+        most useful value."
+    DEFVAL { 0 }
+    ::=  { paxMPPPEntry 9 }
+
+mpppMaxTermReq OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many termination requests have timed out, the line
+        is declared down without waiting for further replies from
+        the peer."
+    DEFVAL { 2 }
+    ::=  { paxMPPPEntry 10 }
+
+mpppMaxNegoAtt OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many configurations in a row have been rejected by
+        the peer, the LCP assumes that the negotiation is looping
+        and
+        starts sending reject's instead of Nak's."
+    DEFVAL { 10 }
+    ::=  { paxMPPPEntry 11 }
+
+mpppKeepAliveIntv OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "The interval in milliseconds between keepalive tests. With
+        this interval PPP echo requests are sent to the peer. If
+        sufficiently many replies disappear, the line is taken down"
+    DEFVAL { 3000 }
+    ::=  { paxMPPPEntry 12 }
+
+mpppMaxOutstRepl OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+       "When this many consecutive keepalive packets have
+	disappeared, the line is taken down."
+    DEFVAL { 4 }
+    ::=  { paxMPPPEntry 13 }
+
+mpppActMRU OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)    
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "Maximum Receive Unit. This value is the result of the
+        line negotiation"
+    ::=  { paxMPPPEntry 14 }
+
+mpppIfIndex OBJECT-TYPE
+    SYNTAX InterfaceIndex
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "The index value of this driver in the IF-MIB"
+    ::=  { paxMPPPEntry 15 }
+
+mpppStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Tool for creating the driver entry"
+    ::=  { paxMPPPEntry 16 }
+
+mpppAlias OBJECT-TYPE
+    SYNTAX DisplayString (SIZE(0..64))
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "The same object as IF-MIB:ifAlias"
+    DEFVAL { ''H }
+    ::=  { paxMPPPEntry 17 }
+
+
+-- conformance information
+
+paxPPPCompliances OBJECT IDENTIFIER ::= { paxPPPConformance 1 }
+paxPPPGroups      OBJECT IDENTIFIER ::= { paxPPPConformance 2 }
+
+
+-- compliance statements
+
+paxPPPCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for a paxnet router."
+    MODULE  -- this module
+        MANDATORY-GROUPS { paxPPPGroup }
+
+    ::= { paxPPPCompliances 1 }
+
+
+-- units of conformance
+
+paxPPPGroup OBJECT-GROUP
+    OBJECTS { pppConfMRU, pppNoofRcvBufs, pppNoofTrsBufs,
+	pppRcvBufLgt, pppTrsBufLgt, pppLcpTimeout, pppMaxConfReq,
+	pppMaxTermReq, pppMaxNegoAtt, pppKeepAliveIntv, pppMaxOutstRepl,
+	pppActMRU, pppIfIndex, pppStatus, pppAlias,
+	mpppConfMRU, mpppServer, mpppServerType, mpppChannel,
+	mpppLcpTimeout, mpppMaxConfReq,
+	mpppMaxTermReq, mpppMaxNegoAtt, mpppKeepAliveIntv, mpppMaxOutstRepl,
+	mpppActMRU, mpppIfIndex, mpppStatus, mpppAlias
+            
+            }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     PPP drivers and Access Engines in a Paxnet router."
+    ::= { paxPPPGroups 1 }
+
+
+END
+
+
+

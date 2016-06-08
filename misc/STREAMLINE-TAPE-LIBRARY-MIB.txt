@@ -1,0 +1,5008 @@
+-- **********************************************************************
+--          STREAMLINE-TAPE-LIBRARY-MIB (1.3.6.1.4.1.1211.1.15)
+--
+-- Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- **********************************************************************
+
+STREAMLINE-TAPE-LIBRARY-MIB DEFINITIONS ::= BEGIN
+IMPORTS     
+    enterprises, Counter32, Integer32 FROM SNMPv2-SMI
+    --OBJECT-TYPE FROM RFC-1212
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE FROM SNMPv2-CONF
+    TEXTUAL-CONVENTION FROM SNMPv2-TC
+    OBJECT-TYPE, MODULE-IDENTITY, NOTIFICATION-TYPE FROM SNMPv2-SMI;
+
+--
+-- STREAMLINE_TAPE_LIBRARY_MIB_VERSION "2.6"
+--  NOTE: If this number matches the value as set in the library by slLibMibVer
+--  then the proper MIB file is being used at run-time.
+--
+streamlineTapeLibrary MODULE-IDENTITY
+    LAST-UPDATED "201110100000Z" -- Oct 10, 2011
+    ORGANIZATION "Oracle"
+    CONTACT-INFO "Please contact Oracle Support: 
+                    https://support.oracle.com/CSP/ui/flash.html"
+    DESCRIPTION  "The MIB module for StreamLine Tape Library.
+                  Copyright (c) 2005-2011,
+                  Oracle. All Rights Reserved."
+
+    REVISION     "201110100000Z" -- Oct 10, 2011
+    DESCRIPTION  "Ver 2.6 (see above)
+                  Revised slDriveInterfaceType to additionally support SAS
+                  and other drives." 
+
+    REVISION     "201107300000Z" -- July 30, 2011
+    DESCRIPTION  "Ver 2.5 (see above)
+                  Revised slTbiEventData string size from 1418 to 1252 to 
+                  accommodate v3 specific Security parameters and other 
+                  dynamic sizing requirements for the SNMP header."
+
+    REVISION     "201107130000Z" -- July 13, 2011
+    DESCRIPTION  "Ver 2.4 (see above)
+                  Revised slCellHostType from Integer32 to INTEGER.
+                  Modified slCellContentStatus DESCRIPTION to include the
+                  possible returned string values (as if enumerated)"
+
+    REVISION     "201105130000Z" -- May 13, 2011
+    DESCRIPTION  "Ver 2.3 (see above)
+                  Made all Ptp table and OID STATUS current."
+
+    REVISION     "201105120000Z" -- May 12, 2011
+    DESCRIPTION  "Ver 2.2 (see above)
+                  Made all Elevator table and OID STATUS current.
+                  Also added comments to various device tables to annunciate
+                  behavioral differences between library types."
+
+    REVISION     "201104210000Z" -- Apr 21, 2011
+    DESCRIPTION  "Ver 2.1 (see above)
+                  Added non-RE enum values to slHaState, Id and Slot."
+
+    REVISION     "201104140000Z" -- Apr 14, 2011
+    DESCRIPTION  "Ver 2.1 (see above)
+                  Revised CONTACT-INFO to Oracle corporate support web-site."
+
+    REVISION     "201102220000Z" -- Feb 22, 2011
+    DESCRIPTION  "Ver 2.1 (see above)
+                  Renamed slControllerStatus to slControllerTopLevelCondition.
+                  Also moved the details of the previous revision from the
+                  description header to the snmp reference manual."
+    
+    REVISION     "201102070000Z" -- Feb 7, 2011
+    DESCRIPTION  "Ver 2.0 (see above)
+                  Added physical and logical addressing components to better 
+                  support SL8500 and SL3000 High-Level Interface (HLI) host 
+                  addressing concepts."
+
+    REVISION     "201010280000Z" -- Oct 28, 2010
+    DESCRIPTION  "Added library and complexId's to slLibrary.
+                  Added slLibSerialNumber to slTrapTbiEvent trap varbind list." 
+
+    REVISION     "201010010000Z" -- Oct 1, 2010
+    DESCRIPTION  "Added RE support for slAgent, slAgentStartTrap, 
+                  slHostInterface, slController and slGroup"
+
+    REVISION     "201009140000Z" -- Sep 14, 2010
+    DESCRIPTION  "Added slAgentLibStatusAtStartup to slAgentStartTrap in 
+                  preperation for more RE support.  Also added support for all
+                  current slAgent OID's."
+
+    REVISION     "201006290000Z" -- June 29, 2010
+    DESCRIPTION  "Added Tape Business Info (TBI) trap support and general
+                  comment cleanup."
+
+    REVISION     "200908210000Z" -- Aug 21, 2009
+    DESCRIPTION  "Revised STATUS from deprecated to current:
+                   slLibVersionFirmDate,
+                   slLibVersionHardware,
+                   slDriveAddress
+                  Added a note for a description of the physical address format
+                  when used as an integer for any physHardware device along with 
+                  a corresponding note for a description of the logical address 
+                  format when used as an integer for any storage (cell) or 
+                  inventory (tape) location.
+                  Slightly revised DESCRIPTION comments for the following OID's
+                  to use logical rather than physical Element ID/Address:
+                   slCellElementID
+                   slTapeLocationElementID"
+
+    REVISION     "200907240000Z" -- July 24, 2009
+    DESCRIPTION  "Corrected slRobotFaultLED DESCRIPTION.
+                  Further revised to correct all MIB compilation errors and most
+                  warnings by running validate from simpleweb.org.  The only
+                  warnings that are still being generated are from the
+                  deprecated objects as defined within the 'slGroup' OBJECT-GROUP.  
+                  These are all however considered to be completly benign.  The 
+                  slGroup provides a comprehensive list of all objects as defined 
+                  throughout the STREAMLINE-TAPE-LIBRARY-MIB, independent of 
+                  implementation status.
+                  Also updated the ORGANIZATION and CONTACT-INFO within 
+                  MODULE-IDENTITY above."
+
+    REVISION     "200803030000Z" -- March 3, 2008
+    DESCRIPTION  "Change DriveStatus values to reflect LibDriveStateEnum
+                  values."
+
+    REVISION     "200709140000Z" -- September 14, 2007
+    DESCRIPTION  "Made accessible slLibStatsNumBoots, slLibStatsNumGetFails,
+                  slLibStatsNumPutFails, slLibStatsCumMachUptime,
+                  and slLibStatsUpTimeSinceLastBoot.  Changed status
+                  from deprecated to current for slLibCleanNumCartTypes,
+                  slCellStorageFreeCells, and slCellStorageRestrictedFreeCells."
+
+    REVISION     "200705140000Z" -- May 14, 2007
+    DESCRIPTION  "Changed MediaEventTable entries slLibMediaEventMediaDomain
+                  and slLibMediaEventMediaType to not-accessible. This 
+                  information is already included in the volid.
+                  Also modify slLibMediaEventEnum to remove DriveNeedsCleaning
+                  and add DriveError.
+                  Changed MediaEvent Table, Count, and table entries
+                  to current"
+
+    REVISION     "200704180000Z" -- April 18, 2007
+    DESCRIPTION  "Changed the following tables from not-accessible to
+                  read-only:
+                     slLibCleanWarnTable
+                     slLibCleanCartTable
+                     slHostInterfaceTable
+                     slTempSensorTable
+                     slFanTable
+                     slPowerSupplyTable
+                     slControllerTable
+                     slTapeTable
+                     slCellTable
+                     slLibNetworkTable 
+                     slLibMediaEventTable
+
+                  Also changed there contents to current.
+                  Except as requested for slCellGetRetryCount
+                  and slCellPutRetryCount.
+
+                  Also changed to current the following:
+                     slLibCleanEnabled
+                     slLibCleanNumCarts
+                     slHostInterfaceCount
+                     slFanCount
+                     slTempSensorCount
+                     slPowerSupplyCount
+                     slControllerCount
+                     slCellCount
+                     slLibVersionFirmRev
+                     slLibVersionBootRev"
+
+
+    REVISION     "200703140000Z" -- March 14, 2007
+    DESCRIPTION  "Changed the following from read/write to
+                  read-only:
+                     slLibCleanWarnCount, slLibCleanEnabled,
+                     slTempSensorWarnThreshold, slTempSensorFailThreshold,
+                     slLibNetworkSecondaryDNS, slLibNetworkPrimaryDNS,
+                     slLibNetworkDomainName, slLibNetworkDhcpEnabled,
+                     slLibNetworkNetmask, slLibNetworkName,
+                     slLibNetworkGateway, slLibNetworkIpAddr,
+                     slLibNetworkInterfaceName
+
+                   Added the following slLibStatistics:
+                     slLibStatsGetTotals
+                     slLibStatsPutTotals
+                     slLibStatsCumMachUptime
+                     slLibStatsUpTimeSinceLastBoot
+                   Changed slLibStatsNumIPL to slLibStatsNumBoots
+
+                   Added the following to slRobot:
+                     slRobotGetFails
+                     slRobotPutFails
+                     slRobotGetTotals
+                     slRobotPutTotals
+
+                  slCellGetRetryCount is kept deprecated
+                  slCellPutRetryCount is kept deprercated
+                  All other slCellTable entries are now current
+                  
+                  All slTapeTable entries are now current
+ 
+                  Changed slLibMediaErrors to slLibMediaEvents
+                  All media error entries change.
+                  Extended slLibMediaEventEnum to include:
+                    LoadRetry
+                    DriveNeedsCleaning
+                    MediaEndOfLife
+                    DriveEndOfLife
+                    EN/DecryptionError"                 
+
+    REVISION     "200702060000Z" -- February 6, 2007
+    DESCRIPTION  "Corrected following named object groups:
+                   slHdwFan to slFan
+                   slHdwTempSensor to slTempSensor
+                   slHdwSupply to slPowerSupply
+                  Corrected individual names in the following
+                  areas: slLibNetwork, slLibMediaErrors,
+                  slLibCleaning and slStorage."
+
+    REVISION     "200612010000Z" -- December 1, 2006
+    DESCRIPTION  "Revised for configuration notification updates.
+                  Also updated access attributes for:
+                  slLibLSMConfigTable, slLibLSMStateTable and
+                  slRobotTable."
+
+    REVISION     "200610270000Z" -- October 27, 2006
+    DESCRIPTION  "Changed slRobot to current for SL500.
+                  Added trap notification updates."    
+
+    REVISION     "200610150000Z" -- October 15, 2006
+    DESCRIPTION  "Updated Net-SNMP Generated code for
+                  LSMState & LSMConfig tables.
+                  Corrected LSMState & LSMConfig object names."
+
+    REVISION     "200608100000Z" -- August 10, 2006
+    DESCRIPTION  "Changed a slDriveTable & slDriveCount to current 
+                  for SL500."
+
+    REVISION     "200606290000Z" -- June 29, 2006
+    DESCRIPTION  "Changed a number of table indexes from not-accessible 
+                  to read-only. Changed LSM status definitions."
+
+    REVISION     "200604180000Z" -- April 18, 2006
+    DESCRIPTION  "Added slAgentTrapTest for sending test traps"
+
+    REVISION     "200602240000Z" -- February 24, 2006
+    DESCRIPTION  "Updated STATUS to deprecated for items
+                  not currently supported"
+
+    REVISION     "200602030000Z" -- February 3, 2006
+    DESCRIPTION  "Changed the length of slTrapDeviceId to 14.
+                  Changed slTrapLibrarySerialNumber length to
+                  match that of slLibSerialNumber (32)"
+
+    REVISION     "200511160000Z" -- November 16, 2005
+    DESCRIPTION  "Changed the description of slLSMStatus, slLSMStatusEnum,
+                  slDriveCodeVer, slDriveVersion.
+                  Removed slDriveFirmwareVer and made {slDriveEntry 13}
+                  obsolete."
+
+    REVISION     "200507130000Z" -- July 13, 2005
+    DESCRIPTION  "Changed the non-V3 slAgentTrapRecipient to slAgentTrapRecipientV2.
+                  Changed and expanded the description for trap filter for both
+                  V2c and V3."
+
+    REVISION     "200505240000Z" -- May 24, 2005
+    DESCRIPTION  "Added slHostInterface, SNMP V3 traps."
+
+    REVISION     "200505230000Z" -- May 23, 2005
+    DESCRIPTION  "Changed Integer32 to INTEGER for items that have
+                  a predefined set of values."
+    
+    REVISION     "200505180000Z" -- May 18, 2005
+    DESCRIPTION  "Changed STATUS current to pertain to Phase 1 only.
+                  Otherwise, STATUS deprecated is used."
+
+    REVISION     "200505110000Z" -- May 11, 2005
+    DESCRIPTION  "Added MODULE-IDENTITY, conformance groups."
+    
+    REVISION     "200505100000Z" -- May 10, 2005
+    DESCRIPTION  "Added media, cleaning, cell tables.
+                  Added slSnmpNotifications."
+
+    REVISION     "200503100000Z" -- March 10, 2005
+    DESCRIPTION  "The proposed MIB."
+    ::= { enterprises 1211 1 15 }
+
+storagetek              OBJECT IDENTIFIER ::= { enterprises 1211 }
+products                OBJECT IDENTIFIER ::= { storagetek  1  }
+
+slSnmpNotifications     OBJECT IDENTIFIER ::= { streamlineTapeLibrary 0 }
+slAgent                 OBJECT IDENTIFIER ::= { streamlineTapeLibrary 1 }
+slTrapVarBind           OBJECT IDENTIFIER ::= { streamlineTapeLibrary 2 }
+slLibrary               OBJECT IDENTIFIER ::= { streamlineTapeLibrary 3 }
+slPhysHardware          OBJECT IDENTIFIER ::= { streamlineTapeLibrary 4 }
+slStorage               OBJECT IDENTIFIER ::= { streamlineTapeLibrary 5 }
+slInventory             OBJECT IDENTIFIER ::= { streamlineTapeLibrary 6 }
+slTrapConfigVarBind     OBJECT IDENTIFIER ::= { streamlineTapeLibrary 7 }
+slConformance           OBJECT IDENTIFIER ::= { streamlineTapeLibrary 8 }
+slTbiEventVarBind       OBJECT IDENTIFIER ::= { streamlineTapeLibrary 9 }
+
+-- *******************************************************************
+--
+-- Group conformance
+--
+-- *******************************************************************
+slCompliances           OBJECT IDENTIFIER ::= { slConformance 1 }
+slGroups                OBJECT IDENTIFIER ::= { slConformance 2 }
+
+slBasicCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION "The compliance statement for SNMP entities which
+                 implement this MIB module."
+    MODULE
+        MANDATORY-GROUPS { slGroupNotification, slGroup }
+    ::= { slCompliances 1 }
+
+-- *******************************************************************
+--
+-- Type Definitions
+--
+-- *******************************************************************
+
+SlLibraryId ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS  current
+    DESCRIPTION "The library identifier (n of Max) within a complex."
+    SYNTAX Integer32 (0..32)
+    
+SlLibraryIdMax ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS  current
+    DESCRIPTION "The maximum library identifier within a complex."
+    SYNTAX Integer32 (0..32)
+    
+SlComplexId ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS  current
+    DESCRIPTION "The complex identifier."
+    SYNTAX Integer32
+    
+SlSnmpPort ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS  current
+    DESCRIPTION "The SNMP ports allowed."
+    SYNTAX Integer32 (161)
+    
+SlSnmpTrapPort ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS  current
+    DESCRIPTION "The SNMP trap ports allowed."
+    SYNTAX Integer32 (162)
+    
+SlCmdClear ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "The SNMP trap ports allowed."
+    SYNTAX INTEGER { noaction(1), clear(2) }
+    
+SlDeviceStatus ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Device status."
+    SYNTAX INTEGER { ok(0), error(1), warning(2), info(3), trace(4) }
+
+SlLibraryCondition ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Library condition."
+    SYNTAX INTEGER { normal(0), degraded(1), notoperative(2) }
+
+SlMediaEventType ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Media error type."
+    SYNTAX INTEGER { load(1), unload(2), error(3), loadRetry(4), driveError(5), mediaEndOfLife(6), driveEndOfLife(7), decryptionError(8), unknown(9) }
+
+SlHaState ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "RE controller state."
+    SYNTAX INTEGER { simplex(0), duplex(1), nonRE(2) }
+
+SlHaId ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "RE controller identifier."
+    SYNTAX INTEGER { active(0), standby(1), nonRE(2) }
+
+SlHaSlot ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "RE controller slot."
+    SYNTAX INTEGER { sideA(0), sideB(1), nonRE(2) }
+
+SlDriveFibreLoopId ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS  current
+    DESCRIPTION "Drive fibre loop ID."
+    SYNTAX Integer32 ( 0 | 1..125 ) -- 0 is for soft addressing
+
+SlDriveFibreSpeed ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Drive fibre speed."
+    SYNTAX INTEGER { unknown(1), oneGbit(2), twoGbit(3), fourGbit(4) }
+
+SlDriveFibreAddressing ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Drive fibre addressing."
+    SYNTAX INTEGER { hard(1), soft(2) }
+
+SlDriveStatus ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Drive status."
+    SYNTAX INTEGER { unknown(0), initializing(1), empty(2), cartridgePresent(3), loading(4), loaded(5), cleaning(6), rewinding(7), unloading(8), inoperative(9), notLoadable(10), notUnloadable(11) }
+
+SlPartitionType ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Partition type."
+    SYNTAX INTEGER { hli(1), scsi(2), other(3) }
+    
+SlCellHostType ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION "Cell host type."
+    SYNTAX INTEGER { invalid(0), storage(1), drive(2), cap(3), playground(4), intransit(5), ptp(6), hand(7) }
+
+-- *******************************************************************
+--
+--  StreamLine Library Embedded Agent Data
+--
+-- *******************************************************************
+
+slAgentRevision  OBJECT-TYPE
+    SYNTAX  OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The firmware version of the embedded agent."
+::= { slAgent 1 }
+
+slAgentLibStatusAtStartup  OBJECT-TYPE
+    SYNTAX  SlLibraryCondition
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The condition of the library at agent start (normal,degraded,not-operational)"
+::= { slAgent 2 }
+
+slAgentBootDate  OBJECT-TYPE
+    SYNTAX  OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The date & time when the agent initialized."
+::= { slAgent 3 }
+
+slAgentURL  OBJECT-TYPE
+    SYNTAX  OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "URL for web based management"
+::= { slAgent 4 }
+
+slAgentTrapPort  OBJECT-TYPE
+    SYNTAX  SlSnmpTrapPort
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "UDP port number that the agent will send traps"
+::= { slAgent 5 }
+
+slAgentPort  OBJECT-TYPE
+    SYNTAX  SlSnmpPort
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "UDP port number that the agent will listen for requests"
+::= { slAgent 6 }
+
+slAgentCommunity  OBJECT-TYPE
+    SYNTAX  OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS current
+    DESCRIPTION  "The agent default community"
+
+-- Unless the community is set to public (initial), each incomming message  
+-- will be challenged to match the community string for authentication.  The 
+-- StreamLine agent will not respond to the request if the community string 
+-- doesn't exactly match.  If the community is left unchanged (or reset) then 
+-- no check is performed.  As configuration changes are not granted on community 
+-- string matching, the StreamLine agent uses the same community for both SETs 
+-- and GETs.
+
+::= { slAgent 7 }
+
+
+-- *******************************************************************
+--
+--  V2c Trap recipient data
+--
+-- *******************************************************************
+
+slAgentTrapRecipientV2  OBJECT IDENTIFIER
+::= { slAgent 8 } 
+
+slAgentTrapRecipientV2ClearAll OBJECT-TYPE
+    SYNTAX SlCmdClear
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION  "Set to 2 to clear all the trap recipients in list."
+::= { slAgentTrapRecipientV2 1 }
+
+slAgentTrapRecipientV2Count OBJECT-TYPE
+    SYNTAX Integer32 ( 0..20 )
+    MAX-ACCESS  read-only
+    STATUS deprecated
+    DESCRIPTION  "Number of trap recipients in the table"
+::= { slAgentTrapRecipientV2 2 }
+
+slAgentTrapRecipientV2Table OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLAgentTrapRecipientV2Entry
+    MAX-ACCESS  not-accessible
+    STATUS deprecated
+    DESCRIPTION  "Trap recipients table"
+::= { slAgentTrapRecipientV2 3 }
+
+slAgentTrapRecipientV2Entry OBJECT-TYPE
+    SYNTAX  SLAgentTrapRecipientV2Entry
+    MAX-ACCESS  not-accessible
+    STATUS deprecated
+    DESCRIPTION  "Trap recipients table entry"
+    INDEX  { slAgentTrapRecipientV2TableIndex }
+::= { slAgentTrapRecipientV2Table 1 }
+
+SLAgentTrapRecipientV2Entry ::= SEQUENCE
+{
+    slAgentTrapRecipientV2TableIndex       Integer32,
+    slAgentTrapRecipientV2Filter           OCTET STRING,
+    slAgentTrapRecipientV2Host             OCTET STRING,
+    slAgentTrapRecipientV2Port             Integer32,
+    slAgentTrapRecipientV2Community        OCTET STRING,
+    slAgentTrapRecipientV2ClearEntry       INTEGER
+}
+
+slAgentTrapRecipientV2TableIndex OBJECT-TYPE
+    SYNTAX  Integer32 ( 0..20 )
+    MAX-ACCESS  not-accessible
+    STATUS deprecated
+    DESCRIPTION  "Index into the trap recipients table"
+::= { slAgentTrapRecipientV2Entry 1 }
+
+slAgentTrapRecipientV2Filter OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION  "A comma-separated string specifying the levels on which to report the traps.
+        For example, the string 1,2,3 specifies to report traps for error, warning and info levels.
+        An asterisk (*) specifies that traps for all levels are to be reported.
+        A 0 specifies that no traps are to be reported.
+        The final filter is an ORing of all the levels specified in the comma-separated string."
+::= { slAgentTrapRecipientV2Entry 2 }
+
+slAgentTrapRecipientV2Host OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION  "The trap recipent's host name or IP address"
+::= { slAgentTrapRecipientV2Entry 3 }
+
+slAgentTrapRecipientV2Port OBJECT-TYPE
+    SYNTAX  Integer32 (162)
+    MAX-ACCESS  read-only
+    STATUS deprecated
+    DESCRIPTION  "UDP port for the recipient to receive notification"
+::= { slAgentTrapRecipientV2Entry 4 }
+
+slAgentTrapRecipientV2Community OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(1..33) )
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION "The trap recipient's community string."
+::= { slAgentTrapRecipientV2Entry 5 }
+
+slAgentTrapRecipientV2ClearEntry OBJECT-TYPE
+    SYNTAX  SlCmdClear
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION  "Set to 2 to clear/remove this trap recipient entry"
+::= { slAgentTrapRecipientV2Entry 6 }
+
+
+-- *******************************************************************
+--
+--  V3 Trap recipient data
+--
+-- *******************************************************************
+
+slAgentTrapRecipientV3  OBJECT IDENTIFIER
+::= { slAgent 9 } 
+
+slAgentTrapRecipientV3ClearAll OBJECT-TYPE
+    SYNTAX SlCmdClear
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION  "Set to 2 to clear all the trap recipients in list."
+::= { slAgentTrapRecipientV3 1 }
+
+slAgentTrapRecipientV3Count OBJECT-TYPE
+    SYNTAX Integer32 ( 0..20 )
+    MAX-ACCESS  read-only
+    STATUS deprecated
+    DESCRIPTION  "Number of trap recipients in the table"
+::= { slAgentTrapRecipientV3 2 }
+
+slAgentTrapRecipientV3Table OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLAgentTrapRecipientV3Entry
+    MAX-ACCESS  not-accessible
+    STATUS deprecated
+    DESCRIPTION  "V3 trap recipients table"
+::= { slAgentTrapRecipientV3 3 }
+
+slAgentTrapRecipientV3Entry OBJECT-TYPE
+    SYNTAX  SLAgentTrapRecipientV3Entry
+    MAX-ACCESS  not-accessible
+    STATUS deprecated
+    DESCRIPTION  "Trap recipients table entry"
+    INDEX  { slAgentTrapRecipientV3TableIndex }
+::= { slAgentTrapRecipientV3Table 1 }
+
+SLAgentTrapRecipientV3Entry ::= SEQUENCE
+{
+    slAgentTrapRecipientV3TableIndex       Integer32,
+    slAgentTrapRecipientV3Filter           OCTET STRING,
+    slAgentTrapRecipientV3Host             OCTET STRING,
+    slAgentTrapRecipientV3Port             Integer32,
+    slAgentTrapRecipientV3SecLevel         OCTET STRING,
+    slAgentTrapRecipientV3Auth             OCTET STRING,
+    slAgentTrapRecipientV3AuthPass         OCTET STRING,
+    slAgentTrapRecipientV3Priv             OCTET STRING,
+    slAgentTrapRecipientV3PrivPass         OCTET STRING,
+    slAgentTrapRecipientV3RemoteId         OCTET STRING,
+    slAgentTrapRecipientV3ClearEntry       INTEGER
+}
+
+slAgentTrapRecipientV3TableIndex OBJECT-TYPE
+    SYNTAX  Integer32 ( 0..20 )
+    MAX-ACCESS  not-accessible
+    STATUS deprecated
+    DESCRIPTION  "Index into the trap recipients table"
+::= { slAgentTrapRecipientV3Entry 1 }
+
+slAgentTrapRecipientV3Filter OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION  "A comma-separated string specifying the levels on which to report the traps.
+        For example, the string 1,2,3 specifies to report traps for error, warning and info levels.
+        An asterisk (*) specifies that traps for all levels are to be reported.
+        A 0 specifies that no traps are to be reported.
+        The final filter is an ORing of all the levels specified in the comma-separated string."
+::= { slAgentTrapRecipientV3Entry 2 }
+
+slAgentTrapRecipientV3Host OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION  "The trap recipent's host name or IP address"
+::= { slAgentTrapRecipientV3Entry 3 }
+
+slAgentTrapRecipientV3Port OBJECT-TYPE
+    SYNTAX  Integer32 (162)
+    MAX-ACCESS  read-only
+    STATUS deprecated
+    DESCRIPTION  "UDP port for the recipient to receive notification"
+::= { slAgentTrapRecipientV3Entry 4 }
+
+slAgentTrapRecipientV3SecLevel OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(9..13) )
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION  "Security level:
+        noAuthNoPriv: match on user name for authentication.
+        authNoPriv: MD5 or SHA authentication.
+        authPriv: MD5 or SHA authentication, DES or AES encryption."
+::= { slAgentTrapRecipientV3Entry 5 }
+
+slAgentTrapRecipientV3Auth OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(1..4) )
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION "Authentication algorithm: MD5 or SHA."
+::= { slAgentTrapRecipientV3Entry 6 }
+
+slAgentTrapRecipientV3AuthPass OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(1..33) )
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION "MD5 or SHA authentication passphrase.
+    -- This object is write-only."
+::= { slAgentTrapRecipientV3Entry 7 }
+
+slAgentTrapRecipientV3Priv OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(1..4) )
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION "Encryption algorithm: DES or AES."
+::= { slAgentTrapRecipientV3Entry 8 } 
+ 
+slAgentTrapRecipientV3PrivPass OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(1..33) )
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION "DES or AES encryption passphrase.
+    -- This object is write-only."
+::= { slAgentTrapRecipientV3Entry 9 }   
+
+slAgentTrapRecipientV3RemoteId OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(1..33) )
+    MAX-ACCESS read-write
+    STATUS deprecated
+    DESCRIPTION "Remote engine ID.
+    -- This object is write-only."
+::= { slAgentTrapRecipientV3Entry 10 }   
+
+slAgentTrapRecipientV3ClearEntry OBJECT-TYPE
+    SYNTAX  SlCmdClear
+    MAX-ACCESS  read-write
+    STATUS deprecated
+    DESCRIPTION  "Set to 2 to clear/remove this trap recipient entry"
+::= { slAgentTrapRecipientV3Entry 11 }
+
+
+-- *******************************************************************
+--
+--  Test trap generation
+--
+-- *******************************************************************
+
+slAgentTrapTest OBJECT IDENTIFIER ::= { slAgent 10 }
+
+slAgentTrapTestLevel OBJECT-TYPE
+    SYNTAX  Integer32 ( 1..2 )
+    MAX-ACCESS  read-write
+    STATUS current
+    DESCRIPTION  "Set to a trap level to generate a test trap for
+                  that level. When this is read, the last written
+                  value is returned.
+                  If a trap level is not implemented, an error will
+                  be returned when writing."
+::= { slAgentTrapTest 1 }
+
+slAgentTrapTestCount OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "The number of times slAgentTrapTestLevel has been
+                 written to."
+::= { slAgentTrapTest 2 }                  
+ 
+-- *******************************************************************
+--
+--  Redundant Electronics
+--
+-- *******************************************************************
+
+slAgentHaState  OBJECT-TYPE
+    SYNTAX  SlHaState
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "RE controller state. simplex=0, duplex(switchable)=1"
+::= { slAgent 11 }
+
+slAgentHaId  OBJECT-TYPE
+    SYNTAX  SlHaId
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "RE controller identifier. active=0, standby=1"
+::= { slAgent 12 }
+
+slAgentHaSlot  OBJECT-TYPE
+    SYNTAX  SlHaSlot
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "RE controller slot. sideA=0, sideB=1"
+::= { slAgent 13 }
+
+slAgentHaAlternateIp  OBJECT-TYPE
+    SYNTAX  OCTET STRING ( SIZE(0..16) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "alternate RE controller's IP address"
+::= { slAgent 14 }
+
+
+-- *******************************************************************
+--
+-- slTrapVarBind Definitions
+--
+-- *******************************************************************
+
+slTrapLibrarySerialNumber  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The frame serial number of the library"
+::= { slTrapVarBind 1 }
+
+slTrapDeviceId  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..14) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The devices FRU ID, needed for high availability"
+::= { slTrapVarBind 2 }
+
+slTrapDeviceTime  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..24) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The device date & time in UTC standard format per ISO 1086"
+::= { slTrapVarBind 3 }
+
+slTrapDeviceAddress  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..12) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The device address of the component associated with the log entry"
+::= { slTrapVarBind 4 }
+
+slTrapDeviceUserName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..8) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The user name on the device identifying the access level that originated the activity"
+::= { slTrapVarBind 5 }
+
+slTrapDeviceInterfaceName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..8) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "A name representing the interface on the device that was used to request the activity"
+::= { slTrapVarBind 6 }
+
+slTrapDeviceActivity OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..20) ) 
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "A short text name representing the device activity being performed"
+::= { slTrapVarBind 7 }
+
+slTrapDeviceRequestId OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..8) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device request ID associated with the activity with this Trap"
+::= { slTrapVarBind 8 }
+
+slTrapDeviceSeverity OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..6) ) 
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device log severity"
+::= { slTrapVarBind 9 }
+
+slTrapDeviceResultCode OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..5 ) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device result code"
+::= { slTrapVarBind 10 }
+
+-- ***
+-- NOTE: These next two object have been moved to slTrapConfiguration VarBind list
+--
+slTrapDevicePropertyName OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..128) ) 
+   MAX-ACCESS  read-only
+   STATUS  deprecated
+   DESCRIPTION "The device property name that is being configured"
+::= { slTrapVarBind 11 }
+
+slTrapDeviceNewPropertyValue OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..128 ) )
+   MAX-ACCESS  read-only
+   STATUS  deprecated
+   DESCRIPTION "The new value that has been changed. Success will only be reported."
+::= { slTrapVarBind 12 }
+-- ***
+
+slTrapDeviceFreeFormText OBJECT-TYPE
+   --
+   -- Max UDP packet is 1500-26? so freeform text is to fill the rest
+   -- 
+   SYNTAX  OCTET STRING( SIZE(0..1350) ) 
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device freeform text area. Usually text from sub-systems that led to the log entry."
+::= { slTrapVarBind 13 }
+
+-- *******************************************************************
+--
+-- Traps are organized in to the following numeric ranges
+--
+--    1   thru 10    - Generic traps
+--    11  thru 20    - Agent related traps
+--    21  thru 99    - Device related traps
+--    100            - Tape Business Info (TBI) trap
+--    101 and above  - Media related traps
+--
+-- *******************************************************************
+
+-- *******************************************************************
+--
+-- Generic traps: 1-10
+--
+-- *******************************************************************
+
+slTrapError  NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slTrapLibrarySerialNumber,
+        slTrapDeviceId,
+        slTrapDeviceTime,
+        slTrapDeviceAddress,
+        slTrapDeviceUserName, 
+        slTrapDeviceInterfaceName, 
+        slTrapDeviceActivity, 
+        slTrapDeviceRequestId,
+        slTrapDeviceSeverity,
+        slTrapDeviceResultCode,
+        slTrapDeviceFreeFormText
+    }
+    STATUS current
+    DESCRIPTION "An error trap - a device condition which is critical to machine operation was encountered"
+::= { slSnmpNotifications 1 }
+
+slTrapWarning  NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slTrapLibrarySerialNumber,
+        slTrapDeviceId,
+        slTrapDeviceTime,
+        slTrapDeviceAddress,
+        slTrapDeviceUserName, 
+        slTrapDeviceInterfaceName, 
+        slTrapDeviceActivity, 
+        slTrapDeviceRequestId,
+        slTrapDeviceSeverity,
+        slTrapDeviceResultCode,
+        slTrapDeviceFreeFormText
+    }
+    STATUS current
+    DESCRIPTION "An warning trap - a device condition which may need attention has been encountered"
+::= { slSnmpNotifications 2 }
+
+slTrapInformation  NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slTrapLibrarySerialNumber,
+        slTrapDeviceId,
+        slTrapDeviceTime,
+        slTrapDeviceAddress,
+        slTrapDeviceUserName, 
+        slTrapDeviceInterfaceName, 
+        slTrapDeviceActivity, 
+        slTrapDeviceRequestId,
+        slTrapDeviceSeverity,
+        slTrapDeviceResultCode,
+        slTrapDeviceFreeFormText
+    }
+    STATUS current
+    DESCRIPTION "An information trap - information is presented for activity monitoring"
+::= { slSnmpNotifications 3 }
+
+
+-- *******************************************************************
+--
+-- slTrapConfiguration VarBind Definitions
+--
+-- *******************************************************************
+
+slTrapConfigLibrarySerialNumber  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The frame serial number of the library"
+::= { slTrapConfigVarBind 1 }
+
+slTrapConfigDeviceId  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..14) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The devices FRU ID, needed for high availability"
+::= { slTrapConfigVarBind 2 }
+
+slTrapConfigDeviceTime  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..24) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The device date & time in UTC standard format per ISO 1086"
+::= { slTrapConfigVarBind 3 }
+
+slTrapConfigDeviceAddress  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..12) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The device address of the component associated with the log entry"
+::= { slTrapConfigVarBind 4 }
+
+slTrapConfigDeviceUserName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..8) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The user name on the device identifying the access level that originated the activity"
+::= { slTrapConfigVarBind 5 }
+
+slTrapConfigDeviceInterfaceName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..8) ) 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "A name representing the interface on the device that was used to request the activity"
+::= { slTrapConfigVarBind 6 }
+
+slTrapConfigDeviceActivity OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..20) ) 
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "A short text name representing the device activity being performed"
+::= { slTrapConfigVarBind 7 }
+
+slTrapConfigDeviceRequestId OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..8) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device request ID associated with the activity with this Trap"
+::= { slTrapConfigVarBind 8 }
+
+slTrapConfigDeviceSeverity OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..6) ) 
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device log severity"
+::= { slTrapConfigVarBind 9 }
+
+slTrapConfigDeviceResultCode OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..5 ) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device result code"
+::= { slTrapConfigVarBind 10 }
+
+slTrapConfigPropertyName OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..128) ) 
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The device property name that is being configured"
+::= { slTrapConfigVarBind 11 }
+
+slTrapConfigNewPropertyValue OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..128 ) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The new value that has been changed. Success will only be reported."
+::= { slTrapConfigVarBind 12 }
+
+slTrapConfigNewPropertyEffective OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(0..128 ) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The condition when the new property value will be effective."
+::= { slTrapConfigVarBind 13 }
+
+slTrapConfiguration  NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slTrapConfigLibrarySerialNumber,
+        slTrapConfigDeviceId,
+        slTrapConfigDeviceTime,
+        slTrapConfigDeviceAddress,
+        slTrapConfigDeviceUserName, 
+        slTrapConfigDeviceInterfaceName, 
+        slTrapConfigDeviceActivity, 
+        slTrapConfigDeviceRequestId,
+        slTrapConfigDeviceSeverity,
+        slTrapConfigDeviceResultCode,
+        slTrapConfigPropertyName,
+        slTrapConfigNewPropertyValue,
+        slTrapConfigNewPropertyEffective
+    }
+    STATUS current
+    DESCRIPTION "A configuration trap - reporting machine configuration activity"
+::= { slSnmpNotifications 4 }
+
+-- *******************************************************************
+--
+-- Agent traps: 11-20
+--
+-- *******************************************************************
+
+slTrapAgentStart NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slAgentBootDate,
+        slAgentLibStatusAtStartup,
+        slAgentHaState,
+        slAgentHaId,
+        slAgentHaSlot,
+        slAgentHaAlternateIp,
+        slControllerFru,
+        slLibSerialNumber
+    }
+    STATUS current
+    DESCRIPTION "This trap is sent when the agent starts"
+::= { slSnmpNotifications 11 }
+
+-- *******************************************************************
+--
+-- Device traps: 21-99
+--
+-- *******************************************************************
+
+-- *******************************************************************
+--
+-- Library status traps : 21-27
+-- These traps are sent when the status of the library changes.
+--
+-- *******************************************************************
+
+slTrapLibStatusGood NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibraryTopLevelCondition,
+        slLibStkBaseModel,
+        slLibSerialNumber
+    }
+    STATUS current
+    DESCRIPTION "This trap is sent when the library status changes to Good"
+::= { slSnmpNotifications 21 }
+
+slTrapLibStatusCheck NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibraryTopLevelCondition,
+        slLibStkBaseModel,
+        slLibSerialNumber
+    }
+    STATUS current
+    DESCRIPTION "This trap is sent when the library condition changes to a check condition (degraded, not-operative)"
+::= { slSnmpNotifications 25 }
+
+slTrapEnvHdwCheck NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slTrapLibrarySerialNumber,
+        slTrapDeviceId,
+        slTrapDeviceTime,
+        slTrapDeviceAddress,
+        slTrapDeviceUserName, 
+        slTrapDeviceInterfaceName, 
+        slTrapDeviceActivity, 
+        slTrapDeviceRequestId,
+        slTrapDeviceSeverity,
+        slTrapDeviceResultCode,
+        slTrapDeviceFreeFormText
+    }
+    STATUS current
+    DESCRIPTION "This trap is sent when the library environmental or hardware condition changes"
+::= { slSnmpNotifications 27 }
+
+-- *******************************************************************
+--
+-- Drive status traps :41-45
+-- These traps are sent when the status of a drive changes
+--
+-- *******************************************************************
+
+slTrapDrvStatusGood NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slDriveState,
+        slDrivePhysicalAddressStr,
+        slDriveType,
+        slDriveVendor,
+        slDriveSerialNum
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a drive status changes to good"
+::= { slSnmpNotifications 41 }
+
+slTrapDrvStatusCheck NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slDriveState,
+        slDrivePhysicalAddressStr,
+        slDriveType,
+        slDriveVendor,
+        slDriveSerialNum
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a drive status changes to a check condition (error, warning, unknown ...)"
+::= { slSnmpNotifications 45 }
+
+-- *******************************************************************
+--
+-- CAP status traps : 61-65
+--
+-- These traps are sent when the status of a CAP changes
+--
+-- *******************************************************************
+
+slTrapCapStatusGood NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slCapState,
+        slCapPhysicalAddressStr
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a CAP status changes to good"
+::= { slSnmpNotifications 61 }
+
+slTrapCapStatusOpen NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slCapState,
+        slCapPhysicalAddressStr
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a CAP status changes to open"
+::= { slSnmpNotifications 63 }
+
+slTrapCapStatusCheck NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slCapState,
+        slCapPhysicalAddressStr
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a CAP status changes to a check condition (error, warning, unknown ...)"
+::= { slSnmpNotifications 65 }
+
+-- *******************************************************************
+--
+-- PTP status traps : 81-85
+--
+-- These traps are sent when the status of a PTP changes
+--
+-- *******************************************************************
+
+slTrapPtpStatusGood NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slPtpState,
+        slPtpPhysicalAddressStr
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a PTP status changes to good"
+::= { slSnmpNotifications 81 }
+
+slTrapPtpStatusCheck NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slPtpState,
+        slPtpPhysicalAddressStr
+    }
+    STATUS current
+    DESCRIPTION "This trap sent when a PTP status changes to a check condition (error, warning, unknown ...)"
+::= { slSnmpNotifications 85 }
+
+-- *******************************************************************
+--
+-- TBI event trap : 100
+--
+-- This trap is sent on any TBI (Tape Business Info) event
+--
+-- *******************************************************************
+   -- TBI TRAP SIZE NOTE:
+   --  In order to minimize segmentation (assembly/reassembly) of packets at the
+   --  application layer using the SNMP standard (connectionless and therefore 
+   --  somewhat unreliable) User Datagram Protocol (UDP), a maximum payload size
+   --  not exceeding the underlying transport frame length is specified:
+   --
+   --  Max UDP packet size on an Ethernet MAC Frame PDU is 1514 bytes
+   --   IPv4 - minus 24 byte header (typical) = 1476 bytes
+   --        - minus 26 byte header (options) = 1474 bytes
+   --        - minus 50 byte header (w/option data) = 1450 bytes        
+   --   IPv6 - minus 40 byte header (standard) = 1460 bytes
+   -- 
+   --  Therefore, worst case is a 1450 byte PDU
+   --   Minus another 32 bytes for the library serial number 
+   --   This leaves 1418 bytes.
+   --
+   --  Now also considering all other dynamic sizing requirements such as v3 
+   --  security parameters, an additional 168 bytes is being reserved, thus 
+   --  leaving 1250 bytes for the actual tbiEvent payload. 
+   --
+   --  NOTE: (IMPORTANT!)
+   --   If any new objects are ever added to the varbind list of this trap, the
+   --   LC side TBIDataHandler's MAX_DATA_PAYLOAD size will need to be reduced
+   --   accordingly. Unfortunately due to the operating environment abstractions
+   --   between these two code levels, this offset must currently be manually 
+   --   maintained between the two entities.
+   --   
+   --   The LC also inserts two apostrophes bracketed around the tbi event data.
+   --   Since this data is contained within an eventListener message and the
+   --   entire message is tokenized by the trap handler, these two additional
+   --   characters must be accounted for.  Therefore, the SNMP OID string size 
+   --   must be two greater than the LC's MAX_DATA_PAYLOAD.
+   --
+   --   SNMP_TBI_EVENT_DATA_LEN = 1252
+   --   
+slTbiEventData OBJECT-TYPE
+   SYNTAX  OCTET STRING( SIZE(1..1252 ) )
+   MAX-ACCESS  read-only
+   STATUS  current
+   DESCRIPTION "The self-descriptive TBI event data"
+::= { slTbiEventVarBind 1 }
+
+slTrapTbiEvent NOTIFICATION-TYPE
+    OBJECTS
+    {
+        slLibSerialNumber,
+        slTbiEventData
+    }
+    STATUS current
+    DESCRIPTION "This trap sent whenever a TBI event is detected"
+::= { slSnmpNotifications 100 }
+
+-- *******************************************************************
+--
+-- slLibrary
+--   This tree includes elements which are global to the library
+--   such as statistics, network information, uptime, etc.
+--
+-- *******************************************************************
+
+slLibStkBaseModel  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The StorageTek Model Name - see slXXXX section for vendor specific model data"
+::= { slLibrary 1 }
+
+slLibSerialNumber  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library frame serial number"
+::= { slLibrary 2 }
+
+slLibWWNNumber  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The libraries WWN number"
+::= { slLibrary 3 }
+
+slLibraryTopLevelCondition  OBJECT-TYPE
+    SYNTAX  SlLibraryCondition
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The overall condition of the library (normal,degraded,not-operational)"
+::= { slLibrary 4 }
+
+-- *******************************************************************
+--
+-- slLibVersion
+-- This tree includes elements which are local to the library
+-- devices such as firmware versions, etc.
+--
+-- *******************************************************************
+
+slLibVersion  OBJECT IDENTIFIER 
+::= { slLibrary 7 }
+
+slLibVersionFirmRev  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The library's embedded firmware version per EC field releases"
+::= { slLibVersion 1 }
+
+slLibVersionFirmDate  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The library's embedded firmware build date"
+::= { slLibVersion 2 }
+
+slLibVersionBootRev  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The library's boot software/OS version"
+::= { slLibVersion 3 }
+
+slLibVersionHardware  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The library's controller hardware version"
+::= { slLibVersion 4 }
+
+-- *******************************************************************
+--
+-- slLibLSMConfig
+-- This tree includes elements which are local to the library
+-- LSM as configuration, etc.
+--
+-- *******************************************************************
+
+slLibLSMConfig  OBJECT IDENTIFIER 
+::= { slLibrary 8 }
+
+slLibLSMConfigCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of LSM's installed"
+::= { slLibLSMConfig 1 }
+
+slLibLSMConfigTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLLibLSMConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of LSM's configurations"
+::= { slLibLSMConfig 2 }
+
+slLibLSMConfigEntry OBJECT-TYPE
+    SYNTAX  SLLibLSMConfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A LSM config entry"
+    INDEX { slLibLSMConfigIndex }
+::= { slLibLSMConfigTable 1 }
+
+SLLibLSMConfigEntry ::= SEQUENCE
+{
+    slLibLSMConfigIndex                      Integer32,
+    slLibLSMConfigNumPanels                  Integer32,
+    slLibLSMConfigNumHandCells               Integer32,
+    slLibLSMConfigMinHandAddr                Integer32,
+    slLibLSMConfigMaxHandAddr                Integer32,
+    slLibLSMConfigNumSystemCells             Integer32,
+    slLibLSMConfigNumRestrictedCells         Integer32,
+    slLibLSMConfigMinSystemAddr              Integer32,
+    slLibLSMConfigMaxSystemAddr              Integer32,
+    slLibLSMConfigNumCaps                    Integer32,
+    slLibLSMConfigNumCapColumns              Integer32,
+    slLibLSMConfigNumCapCells                Integer32,
+    slLibLSMConfigMinCapAddr                 Integer32,
+    slLibLSMConfigMaxCapAddr                 Integer32,
+    slLibLSMConfigNumDriveColumns            Integer32,
+    slLibLSMConfigNumDrives                  Integer32,
+    slLibLSMConfigMinDriveAddr               Integer32,
+    slLibLSMConfigMaxDriveAddr               Integer32,
+    slLibLSMConfigNumStorageCells            Integer32,
+    slLibLSMConfigMinStorageAddr             Integer32,
+    slLibLSMConfigMaxStorageAddr             Integer32,
+    slLibLSMConfigNumPtps                    Integer32,
+    slLibLSMConfigNumPtpColumns              Integer32,
+    slLibLSMConfigNumPtpCells                Integer32,
+    slLibLSMConfigMinPtpAddr                 Integer32,
+    slLibLSMConfigMaxPtpAddr                 Integer32
+}
+
+slLibLSMConfigIndex  OBJECT-TYPE
+    SYNTAX  Integer32 ( 1..4 )
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A LSM Config Index"
+::= { slLibLSMConfigEntry 1 }
+
+slLibLSMConfigNumPanels  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of physical panels"
+::= { slLibLSMConfigEntry 2 }
+
+slLibLSMConfigNumHandCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of physical hands"
+::= { slLibLSMConfigEntry 3 }
+
+slLibLSMConfigMinHandAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Minimum Element ID or Address of physical hands"
+::= { slLibLSMConfigEntry 4 }
+
+slLibLSMConfigMaxHandAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Maximum Element ID or Address of physical hands"
+::= { slLibLSMConfigEntry 5 }
+
+slLibLSMConfigNumSystemCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of system/reserved cells"
+::= { slLibLSMConfigEntry 6 }
+
+slLibLSMConfigNumRestrictedCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of customer restricted cells"
+::= { slLibLSMConfigEntry 7 }
+
+slLibLSMConfigMinSystemAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Minimum Element ID or Address of system cells"
+::= { slLibLSMConfigEntry 8 }
+
+slLibLSMConfigMaxSystemAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Maximum Element ID or Address of system cells"
+::= { slLibLSMConfigEntry 9 }
+
+slLibLSMConfigNumCaps  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of cartridge access ports (CAPs)"
+::= { slLibLSMConfigEntry 10 }
+
+slLibLSMConfigNumCapColumns  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of columns within CAPs"
+::= { slLibLSMConfigEntry 11 }
+
+slLibLSMConfigNumCapCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of CAP cells"
+::= { slLibLSMConfigEntry 12 }
+
+slLibLSMConfigMinCapAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Minimum Element ID or Address of CAP cells"
+::= { slLibLSMConfigEntry 13 }
+
+slLibLSMConfigMaxCapAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Maximum Element ID or Address of CAP cells"
+::= { slLibLSMConfigEntry 14 }
+
+slLibLSMConfigNumDriveColumns  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of drive columns"
+::= { slLibLSMConfigEntry 15 }
+
+slLibLSMConfigNumDrives  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of tape drives"
+::= { slLibLSMConfigEntry 16 }
+
+slLibLSMConfigMinDriveAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Minimum Element ID or Address of tape drives"
+::= { slLibLSMConfigEntry 17 }
+
+slLibLSMConfigMaxDriveAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Maximum Element ID or Address of tape drives"
+::= { slLibLSMConfigEntry 18 }
+
+slLibLSMConfigNumStorageCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of storage cells"
+::= { slLibLSMConfigEntry 19 }
+
+slLibLSMConfigMinStorageAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Minimum Element ID or Address of storage cells"
+::= { slLibLSMConfigEntry 20 }
+
+slLibLSMConfigMaxStorageAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Maximum Element ID or Address of storage cells"
+::= { slLibLSMConfigEntry 21 }
+
+slLibLSMConfigNumPtps  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of pass through ports (PTPs)"
+::= { slLibLSMConfigEntry 22 }
+
+slLibLSMConfigNumPtpColumns  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of columns within PTPs"
+::= { slLibLSMConfigEntry 23 }
+
+slLibLSMConfigNumPtpCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of PTP cells"
+::= { slLibLSMConfigEntry 24 }
+
+slLibLSMConfigMinPtpAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Minimum Element ID or Address of PTP cells"
+::= { slLibLSMConfigEntry 25 }
+
+slLibLSMConfigMaxPtpAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Maximum Element ID or Address of PTP cells"
+::= { slLibLSMConfigEntry 26 }
+
+-- *******************************************************************
+--
+-- slLibLSMState
+-- This tree includes elements which are local to the library
+-- LSM states, etc.
+--
+-- *******************************************************************
+
+slLibLSMState  OBJECT IDENTIFIER
+::= { slLibrary 9 }
+
+slLibLSMCount  OBJECT-TYPE
+    SYNTAX  Integer32 ( 1..4 )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The LSM Count"
+::= { slLibLSMState 1 }
+
+slLibLSMStateTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLLibLSMStateEntry
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A table of LSM's states"
+::= { slLibLSMState 2 }
+
+slLibLSMStateEntry OBJECT-TYPE
+    SYNTAX  SLLibLSMStateEntry
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A LSM state entry"
+    INDEX { slLibLSMStateIndex }
+::= { slLibLSMStateTable 1 }
+
+SLLibLSMStateEntry ::= SEQUENCE
+{
+    slLibLSMStateIndex    Integer32,
+    slLibLSMStatus        OCTET STRING,
+    slLibLSMStatusEnum    Integer32
+}
+
+slLibLSMStateIndex  OBJECT-TYPE
+    SYNTAX  Integer32 ( 1..4 )
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A LSM State Index"
+::= { slLibLSMStateEntry 1 }
+
+slLibLSMStatus OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The LSM operational state - reported as a string (online, offline, offlinePending).
+                  This is hardware-based state, derived from robot state"
+::= { slLibLSMStateEntry 2 }
+
+slLibLSMStatusEnum  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The LSM operational state - reported as an enumeration
+                  (online (0), offline (1), offlinePending(2))"
+::= { slLibLSMStateEntry 3 }
+
+-- *******************************************************************
+--
+-- slLibLocation
+-- This tree includes elements which are local to the library
+-- configuration text. This for user data, etc.
+--
+-- *******************************************************************
+
+slLibLocation  OBJECT IDENTIFIER
+::= { slLibrary 10 }
+
+slLibLocatContact  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "The primary contact for administration"
+::= { slLibLocation 1 }
+
+slLibLocatStreet  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "Location/Site - street address"
+::= { slLibLocation 2 }
+
+slLibLocatState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "Location/Site - state/province"
+::= { slLibLocation 3 }
+
+slLibLocatZip  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "Location/Site - zip code (or other data)"
+::= { slLibLocation 4 }
+
+slLibLocatCountry  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "Location/Site - country"
+::= { slLibLocation 5 }
+
+slLibLocatDescr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "Location/site - description/misc"
+::= { slLibLocation 6 }
+
+slLibLocatCity  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-write
+    STATUS  current
+    DESCRIPTION  "Location/Site - city"
+::= { slLibLocation 7 }
+
+-- *******************************************************************
+--
+-- slLibNetwork
+-- This tree includes elements which are local to the library internal
+-- network. This includes external and internal network interfaces.
+--
+-- *******************************************************************
+
+slLibNetwork  OBJECT IDENTIFIER
+::= { slLibrary 11 }
+
+slLibNetworkCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Count of all the Ethernet Ports"
+::= { slLibNetwork 1 }
+
+slLibNetworkTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLLibNetworkEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of network interfaces"
+::= { slLibNetwork 2 }
+
+slLibNetworkEntry OBJECT-TYPE
+    SYNTAX  SLLibNetworkEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A network interface"
+    INDEX { slLibNetworkIndex }
+::= { slLibNetworkTable 1 }
+
+SLLibNetworkEntry ::= SEQUENCE
+{
+    slLibNetworkIndex               Integer32,
+    slLibNetworkInterfaceName       OCTET STRING,
+    slLibNetworkIpAddr              OCTET STRING,
+    slLibNetworkGateway             OCTET STRING,
+    slLibNetworkEthAddr             OCTET STRING,
+    slLibNetworkName                OCTET STRING,
+    slLibNetworkNetmask             OCTET STRING,
+    slLibNetworkDhcpEnabled         INTEGER,
+    slLibNetworkDomainName          OCTET STRING,
+    slLibNetworkPrimaryDNS          OCTET STRING,
+    slLibNetworkSecondaryDNS        OCTET STRING,
+    slLibNetworkRXPackets           Integer32,
+    slLibNetworkTXPackets           Integer32,
+    slLibNetworkErrors              Integer32,
+    slLibNetworkDropped             Integer32,
+    slLibNetworkOverruns            Integer32,
+    slLibNetworkFrame               Integer32,
+    slLibNetworkCollisions          Integer32
+}
+
+slLibNetworkIndex  OBJECT-TYPE
+    SYNTAX  Integer32 ( 0..128 )
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A index into the table"
+::= { slLibNetworkEntry 1 }
+
+slLibNetworkInterfaceName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..15) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The interface name used by the library software"
+::= { slLibNetworkEntry 2 }
+
+slLibNetworkIpAddr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..15) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library's IP Address"
+::= { slLibNetworkEntry 3 }
+
+slLibNetworkGateway  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..15) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library network's internet gateway"
+::= { slLibNetworkEntry 4 }
+
+slLibNetworkEthAddr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library's physical 48 bit ethernet address"
+::= { slLibNetworkEntry 5 }
+
+slLibNetworkName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library's network host name"
+::= { slLibNetworkEntry 6 }
+
+slLibNetworkNetmask  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..15) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library's network internet address netmask"
+::= { slLibNetworkEntry 7 }
+
+slLibNetworkDhcpEnabled  OBJECT-TYPE
+    SYNTAX  INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "DHCP IP address/name client lookup service status -- SL500 only"
+::= { slLibNetworkEntry 8 }
+
+slLibNetworkDomainName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..64) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library's network domain name"
+::= { slLibNetworkEntry 9 }
+
+slLibNetworkPrimaryDNS  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..15) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library network's primary DNS server"
+::= { slLibNetworkEntry 10 }
+
+slLibNetworkSecondaryDNS  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..15) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The library network's secondary DNS server"
+::= { slLibNetworkEntry 11 }
+
+slLibNetworkRXPackets  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of packets received"
+::= { slLibNetworkEntry 12 }
+
+slLibNetworkTXPackets  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of packets transmitted"
+::= { slLibNetworkEntry 13 }
+
+slLibNetworkErrors  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of errors on this interface"
+::= { slLibNetworkEntry 14 }
+
+slLibNetworkDropped  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of dropped packets on this interface"
+::= { slLibNetworkEntry 15 }
+
+slLibNetworkOverruns  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of overrun packets on this interface"
+::= { slLibNetworkEntry 16 }
+
+slLibNetworkFrame  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of frame packets on this interface"
+::= { slLibNetworkEntry 17 }
+
+slLibNetworkCollisions  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of collisions on this interface"
+::= { slLibNetworkEntry 18 }
+
+-- *******************************************************************
+--
+-- slLibStatistics
+-- This tree includes elements which are local to the library
+-- and reports statistical information about devices
+--
+-- *******************************************************************
+
+slLibStatistics  OBJECT IDENTIFIER
+::= { slLibrary 12 }
+
+slLibStatsNumBoots  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of library initializations"
+::= { slLibStatistics 1 }
+
+slLibStatsNumDoorOpens  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of times the service door has been opened"
+::= { slLibStatistics 2 }
+
+slLibStatsNumGetRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The total number of get retries"
+::= { slLibStatistics 3 }
+
+slLibStatsNumGetFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The total number of get failures"
+::= { slLibStatistics 4 }
+
+slLibStatsNumPutRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The total number of put retries"
+::= { slLibStatistics 5 }
+
+slLibStatsNumPutFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The total number of put failures"
+::= { slLibStatistics 6 }
+
+slLibStatsNumLabelRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of label read retries (Not used for SL500)"
+::= { slLibStatistics 7 }
+
+slLibStatsNumLabelFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of label read failures (Not used for SL500)"
+::= { slLibStatistics 8 }
+
+slLibStatsNumTargetRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of target read retries (Not used for SL500)"
+::= { slLibStatistics 9 }
+
+slLibStatsNumTargetFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of target read failures (Not used for SL500)"
+::= { slLibStatistics 10 }
+
+slLibStatsNumMoves  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The total number of cartridge moves"
+::= { slLibStatistics 11 }
+
+slLibStatsNumMounts  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The total number of mounts"
+::= { slLibStatistics 12 }
+
+slLibStatsNumTargetReads  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of target reads (Not used for SL500)"
+::= { slLibStatistics 13 }
+
+slLibStatsNumEmptyReads  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of empty cell reads (Not used for SL500)"
+::= { slLibStatistics 14 }
+
+slLibStatsNumLabelReads  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The total number of label reads (Not used for SL500)"
+::= { slLibStatistics 15 }
+
+slLibStatsGetTotals  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "Sun of all Get operations of individual robots"
+::= { slLibStatistics 16 }
+
+slLibStatsPutTotals  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "Sum of all Put operations of individual robots"
+::= { slLibStatistics 17 }
+
+slLibStatsCumMachUptime  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Cumulative Machine Up Time in seconds"
+::= { slLibStatistics 18 }
+
+slLibStatsUpTimeSinceLastBoot  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "In seconds"
+::= { slLibStatistics 19 }
+ 
+-- *******************************************************************
+--
+-- slLibMediaEvents
+--
+-- *******************************************************************
+
+slLibMediaEvents  OBJECT IDENTIFIER
+::= { slLibStatistics 20 }
+ 
+slLibMediaEventCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of media statistics in the table"
+::= { slLibMediaEvents 1 }
+ 
+slLibMediaEventTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLLibMediaEventEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of media statistics"
+::= { slLibMediaEvents 2 }
+ 
+slLibMediaEventEntry OBJECT-TYPE
+    SYNTAX  SLLibMediaEventEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A media event statistic"
+    INDEX { slLibMediaEventIndex }
+::= { slLibMediaEventTable 1 }
+ 
+SLLibMediaEventEntry ::= SEQUENCE
+{
+    slLibMediaEventIndex              Integer32,
+    slLibMediaEventMediaVolid         OCTET STRING,
+    slLibMediaEventMediaDomain        OCTET STRING,        
+    slLibMediaEventMediaType          OCTET STRING,
+    slLibMediaEventDriveSerialNum     OCTET STRING,
+    slLibMediaEventDriveType          OCTET STRING,
+    slLibMediaEventDateTime           OCTET STRING,
+    slLibMediaEventEnum               SlMediaEventType,
+    slLibMediaEventOccurrenceCount    Integer32 
+}
+ 
+slLibMediaEventIndex OBJECT-TYPE
+    SYNTAX  Integer32( 1..500 )
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Index into the media error statistic table"
+::= { slLibMediaEventEntry 1 }
+ 
+slLibMediaEventMediaVolid  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The VOLID of the optical barcode"
+::= { slLibMediaEventEntry 2 }
+ 
+slLibMediaEventMediaDomain  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The Domain of the optical barcode"
+    -- This is the domain field that is detected from the volser label.  Please 
+    -- refer to the "Specification for Tape Cartridge Media Identification" 
+    -- Sun/Oracle Doc No. 3136715
+::= { slLibMediaEventEntry 3 }
+ 
+slLibMediaEventMediaType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The Type of the optical barcode"
+    -- This is the type field that is detected from the volser label. Please 
+    -- refer to the "Specification for Tape Cartridge Media Identification" 
+    -- Sun/Oracle Doc No. 3136715
+::= { slLibMediaEventEntry 4 }
+ 
+slLibMediaEventDriveSerialNum  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The electronics serial number of the drive."
+::= { slLibMediaEventEntry 5 }
+ 
+slLibMediaEventDriveType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Domain of the drive"
+::= { slLibMediaEventEntry 6 }
+ 
+slLibMediaEventDateTime  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Log entry's date/time in 'MM:DD:YYYY HH:MM:SS' form"
+::= { slLibMediaEventEntry 7 }
+ 
+slLibMediaEventEnum OBJECT-TYPE
+    SYNTAX  SlMediaEventType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The type of media error - reported as an enumeration"
+::= { slLibMediaEventEntry 8 }
+ 
+slLibMediaEventOccurrenceCount OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "Occurrence count for media statistic"
+::= { slLibMediaEventEntry 9 }
+
+-- *******************************************************************
+--
+-- slLibDate
+--
+-- *******************************************************************
+
+slLibDate  OBJECT IDENTIFIER
+::= { slLibrary 13 }
+
+slLibDateString OBJECT-TYPE
+    --
+    -- UTC format per ISO 1086-2000
+    --
+    SYNTAX  OCTET STRING( SIZE(0..24) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Library's date/time in 'YYYY:MM:DDTHH:MM:SS.xxxx' form"
+::= { slLibDate 1 }
+
+-- *******************************************************************
+--
+-- slLibCleaning
+--
+-- *******************************************************************
+
+slLibCleaning  OBJECT IDENTIFIER
+::= { slLibrary 14 }
+
+slLibCleanEnabled  OBJECT-TYPE
+    SYNTAX  INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Auto clean feature configuration. Not all libraries support this feature, please refer to user documentation."
+::= { slLibCleaning 1 }
+ 
+slLibCleanNumCartTypes  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of unique cartridge types supported"
+::= { slLibCleaning 2 }
+ 
+slLibCleanWarnTable  OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLLibCleanWarnEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Table of clean count warning thresholds"
+::= { slLibCleaning 3 }
+ 
+slLibCleanWarnEntry OBJECT-TYPE
+    SYNTAX  SLLibCleanWarnEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Clean count warning thresh table entry"
+    INDEX  { slLibCleanWarnIndex }
+::= { slLibCleanWarnTable 1 }
+ 
+SLLibCleanWarnEntry ::= SEQUENCE
+{
+    slLibCleanWarnIndex    Integer32,
+    slLibCleanWarnCartType OCTET STRING,
+    slLibCleanWarnCount    Integer32
+}
+ 
+slLibCleanWarnIndex  OBJECT-TYPE
+    SYNTAX  Integer32( 1..32 )
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Index into clean warning thresh table"
+::= { slLibCleanWarnEntry 1 }
+ 
+slLibCleanWarnCartType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Cleaning cartridge type (DLT, 9840, LTO, etc)"
+::= { slLibCleanWarnEntry 2 }
+ 
+slLibCleanWarnCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Configured warn count threshold"
+::= { slLibCleanWarnEntry 3 }
+ 
+slLibCleanNumCarts  OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the clean cartridges in the library"
+::= { slLibCleaning 4 }
+ 
+slLibCleanCartTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLLibCleanCartEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of cleaning cartridges in the library"
+::= { slLibCleaning 5 }
+ 
+slLibCleanCartEntry OBJECT-TYPE
+    SYNTAX  SLLibCleanCartEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A cleaning cartridge"
+    INDEX { slLibCleanCartIndex }
+::= { slLibCleanCartTable 1 }
+ 
+SLLibCleanCartEntry ::= SEQUENCE
+{
+    slLibCleanCartIndex              Integer32,
+    slLibCleanCartLabel              OCTET STRING,
+    slLibCleanCartType               OCTET STRING,
+    slLibCleanCartLocationElementID  Integer32,
+    slLibCleanCartHostAccessible     INTEGER,
+    slLibCleanCartUsageCount         Integer32
+}
+ 
+slLibCleanCartIndex  OBJECT-TYPE
+    SYNTAX  Integer32( 1..32 ) 
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "Integer index into the cleaning cart table"
+::= { slLibCleanCartEntry 1 }
+ 
+slLibCleanCartLabel  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The clean cartridge label"
+::= { slLibCleanCartEntry 2 }
+ 
+slLibCleanCartType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "Cleaning cartridge type (DLT, 9840, LTO, etc)"
+::= { slLibCleanCartEntry 3 }
+ 
+slLibCleanCartLocationElementID  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The cleaning cartridge location - SCSI Element ID or translated HLI Address"
+    -- NOTE: Please refer to slStorage section for HLI Logical Address Translation 
+::= { slLibCleanCartEntry 4 }
+ 
+slLibCleanCartHostAccessible  OBJECT-TYPE
+    SYNTAX  INTEGER { true(1), false(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Indication of host accessible status"
+::= { slLibCleanCartEntry 5 }
+ 
+slLibCleanCartUsageCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of times that the cartridge has been used to clean"
+::= { slLibCleanCartEntry 6 }
+
+
+-- *******************************************************************
+--
+-- slLibIdentification
+--
+-- *******************************************************************
+
+slLibLibraryId  OBJECT-TYPE
+    SYNTAX  SlLibraryId
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The library identifier (n of Max) within a complex."
+::= { slLibrary 15 }
+
+slLibLibraryIdMax  OBJECT-TYPE
+    SYNTAX  SlLibraryIdMax
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The maximum library identifier within a complex."
+::= { slLibrary 16 }
+
+slLibComplexId  OBJECT-TYPE
+    SYNTAX  SlComplexId
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The complex identifier."
+::= { slLibrary 17 }
+
+slLibMibVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..16) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The revision of the STREAMLINE-TAPE-LIBRARY-MIB supported by the library"
+::= { slLibrary 18 }
+ 
+
+-- *******************************************************************
+--
+-- slPhysHardware
+--   This tree describes the library's hardware physical components
+--   and monitoring sensors.
+--
+-- ******************************************************************* 
+--
+-- PHYSICAL ADDRESSES:
+-- Differences exist between the addressing concepts of the various SL-Series
+-- Libraries.  The SL500 defines a physical address as a fourtuple in the form
+-- (library,module,row,column) but always exports this information to SNMP as
+-- either a SCSI element id or raw encoder count.  Either of these fit within 
+-- a standard 32-bit integer variable.  The SL8500 and the SL3000 both use a 
+-- pentuple representation in the form (library,rail,column,side,row).  Since 
+-- these libraries support interfaces other than SCSI such as the HLI (refer to 
+-- note below), and due to a more sophisticated multiple robot design, neither 
+-- element id or counts work in all situations.  Therefore to better expose an 
+-- addressing scheme for SNMP, a modified addressing format is used.
+--
+-- Wherever a physical address is used by any OID specified as an integer 
+-- (rather than an ASCII string) within any physHardware device, where the 
+-- internal pentuple convention (library,rail,column,side,row) is required, 
+-- the address representation is mapped to an unsigned integer.  This mapping
+-- convention is chosen to be as human-readable/user-friendly as practically 
+-- possible through a simple hexadecimal to decimal conversion.  Each two 
+-- hexadecimal digits represents exactly one of each of the following four
+-- pentuple fields (rail,column,side,row). Where the library field is always 
+-- assumed to be one (the local library within a possible multi-library complex 
+-- configuration). Since each individual library completely supports a totally 
+-- independent SNMP agent, every SNMP query will always be relative to this 
+-- local library.  Therefore the following format is supported:
+--
+--   (physical) Address Representation ===============================
+--   Bits:
+--   |3|3|2|2|2|2|2|2|2|2|2|2|1|1|1|1|1|1|1|1|1|1|0|0|0|0|0|0|0|0|0|0|
+--   |1|0|9|8|7|6|5|4|3|2|1|0|9|8|7|6|5|4|3|2|1|0|9|8|7|6|5|4|3|2|1|0|
+--   |===============================================================|
+--   |     Rail      |s    Column    |     Side      |      Row      |
+--   |===============================================================|
+--   Physical format address masks
+--    RAIL_MASK       0xFF000000
+--    COLUMN_MASK     0x00FF0000
+--    SIDE_MASK       0x0000FF00
+--    ROW_MASK        0x000000FF
+--
+--   Physical format address offsets
+--    RAIL_OFFSET     24
+--    COLUMN_OFFSET   16
+--    SIDE_OFFSET      8
+--    ROW_OFFSET       0
+--
+--   where
+--    Library: always assumed to be the local library 1
+--    Rail:    unsigned 8-bits in the range   1 thru  4 inclusive              
+--    Column:    signed 8-bits in the range -31 thru 31 inclusive
+--    Side :   unsigned 8-bits in the range   1 thru  2 inclusive
+--    Row:     unsigned 8-bits in the range   1 thru 52 inclusive
+--
+--    zeros are allowed for generic devices such as controller cards 
+--
+--     Examples:
+--       address      hex          decimal
+--       1,0,0,0    = 0x01000000 = 16777216
+--       1,1,1,1    = 0x01010101 = 16843009
+--       1,-31,2,13 = 0x01E1020D = 31523341
+--                       | | | |
+-- rail  =   1(0x01)<====| | | |
+-- colum = -31(0xE1)<======| | |
+-- side  =   2(0x02)<========| |
+-- row   =  13(0x0D)<==========|
+--
+--
+-- For the user, simply now convert the decimal value of the OID to hexadecimal.
+-- To determine the device's location in modified pentuple form read each two
+-- hexadecimal digits of the 32-bit integer OID as the four fields.  Note that 
+-- the leading zero(s) in most conversion routines are left omitted, and the 
+-- column field is signed which requires a standard binary negation (invert all 
+-- binary bits within the column field and add one):  This will then produce:
+--   (1,rail,column,side,row)
+--
+-- For the examples above:
+--  decimal     hex       phys4tuple      pentuple (physical address)
+--  16777216 -> 0x1000000 (1,0,0,0)    -> (1,1,0,0,0)
+--  16843009 -> 0x1010101 (1,1,1,1)    -> (1,1,1,1,1)
+--  31523341 -> 0x1E1020D (1,-31,2,13) -> (1,1,-31,2,13)
+--
+-- The OID's which may use physical addresses are:
+--  slRobotPosition (current position of this robot)
+--  slDriveElementID (location of this drive)
+--
+-- NOTE1:
+-- Since the underlying control interface to the library can currently be either 
+-- SCSI (Small Computer Systems Interface) or HLI (High Level Interface), yet 
+-- another (logical) addressing concept needs to be considered. However, these 
+-- logical addressing concepts will not be used within the context of addressing 
+-- physical hardware devices.  Still, logical addresses will be exposed with 
+-- both storage locations (cells) and inventory (tape cartridges) within other 
+-- areas of this MIB.
+--
+-- NOTE2:
+-- As stated above, device address contexts are generally considered to be 
+-- primarily physical in nature.  Most devices, especially the ones that are
+-- robotic such as the robots themselves, wrists, hands, elevators, passthrough 
+-- ports, safety doors and turntables are not host addressable and therefore 
+-- have no logical address.  However some tables, mainly due to historical 
+-- implementation, have always attempted to expose some sort of logical address 
+-- to these devices regardless of host addressability.  In fact SCSI defines 
+-- Element ID's for some (but not all) of these devices.  So in order to remain 
+-- strictly backwards compatible to previous legacy SCSI implementation, some 
+-- devices will continue to return a logical Element ID instead of a physical 
+-- address.  Both a DESCRIPTION note, as well as a comment, are placed at each 
+-- OID in the various device tables throughout this MIB where such behavior is 
+-- expected.
+--
+-- Refer to the slStorage section for a detailed description of the logical 
+-- addressing format.
+
+-- *******************************************************************
+--
+-- slHostInterface
+--
+-- *******************************************************************
+
+slHostInterfaceCount OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of interface cards."
+::= { slPhysHardware 1 }
+
+slHostInterfaceTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLHostInterfaceEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of host interfaces"
+::= { slPhysHardware 2 }
+
+slHostInterfaceEntry OBJECT-TYPE
+    SYNTAX  SLHostInterfaceEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A host interface entry (fiber, SCSI, etc.)"
+    INDEX { slHostInterfaceIndex }
+::= { slHostInterfaceTable 1 }
+
+SLHostInterfaceEntry ::= SEQUENCE
+{
+    slHostInterfaceIndex                  Integer32,
+    slHostInterfaceFibreCount             INTEGER,
+
+    slHostInterfaceAWWN                   OCTET STRING,
+    slHostInterfaceA1AddressingMode       INTEGER,
+    slHostInterfaceA1PortEnabled          INTEGER,
+    slHostInterfaceA1LoopId               SlDriveFibreLoopId,
+    slHostInterfaceA1PortSpeed            SlDriveFibreSpeed,       
+    slHostInterfaceA2AddressingMode       SlDriveFibreAddressing,
+    slHostInterfaceA2PortEnabled          INTEGER,
+    slHostInterfaceA2LoopId               SlDriveFibreLoopId,
+    slHostInterfaceA2PortSpeed            SlDriveFibreSpeed,       
+
+    slHostInterfaceBWWN                   OCTET STRING,
+    slHostInterfaceB1AddressingMode       INTEGER,
+    slHostInterfaceB1PortEnabled          INTEGER,
+    slHostInterfaceB1LoopId               SlDriveFibreLoopId,
+    slHostInterfaceB1PortSpeed            SlDriveFibreSpeed,       
+    slHostInterfaceB2AddressingMode       SlDriveFibreAddressing,
+    slHostInterfaceB2PortEnabled          INTEGER,
+    slHostInterfaceB2LoopId               SlDriveFibreLoopId,
+    slHostInterfaceB2PortSpeed            SlDriveFibreSpeed,       
+      
+    slHostInterfaceElementID              OCTET STRING,
+    slHostInterfaceSerialNum              Integer32,
+    slHostInterfaceStatus                 SlDeviceStatus,
+    slHostInterfaceFaultLED               Integer32,
+    slHostInterfaceSafeToRemoveLED        Integer32,
+    slHostInterfaceStatusEnum             SlDeviceStatus,
+    slHostInterfaceCodeVer                OCTET STRING,
+    slHostInterfaceVersion                OCTET STRING,
+    slHostInterfaceFirmwareVer            OCTET STRING
+}
+
+slHostInterfaceIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..2)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Integer index into the table of host interface cards"
+::= { slHostInterfaceEntry 1 }
+
+slHostInterfaceFibreCount  OBJECT-TYPE
+    SYNTAX  INTEGER { single(1), dual(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of active fibres in this host interface card"
+::= { slHostInterfaceEntry 2 }
+
+slHostInterfaceAWWN   OBJECT-TYPE
+    SYNTAX OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Fibre A - World wide name"
+::={ slHostInterfaceEntry 3 }
+
+slHostInterfaceA1AddressingMode   OBJECT-TYPE
+    SYNTAX SlDriveFibreAddressing
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A1 - addressing mode"
+::={ slHostInterfaceEntry 4 }
+
+slHostInterfaceA1PortEnabled   OBJECT-TYPE
+    SYNTAX INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A1 - is port enabled"
+::={ slHostInterfaceEntry 5 }
+
+slHostInterfaceA1LoopId   OBJECT-TYPE
+    SYNTAX SlDriveFibreLoopId 
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A1 - loop id"
+::={ slHostInterfaceEntry 6 }
+
+slHostInterfaceA1PortSpeed   OBJECT-TYPE
+    SYNTAX SlDriveFibreSpeed
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A1 - port speed"
+::={ slHostInterfaceEntry 7 }
+
+slHostInterfaceA2AddressingMode   OBJECT-TYPE
+    SYNTAX SlDriveFibreAddressing
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A2 - addressing mode"
+::={ slHostInterfaceEntry 8 }
+
+slHostInterfaceA2PortEnabled   OBJECT-TYPE
+    SYNTAX INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A2 - is port enabled"
+::={ slHostInterfaceEntry 9 }
+
+slHostInterfaceA2LoopId   OBJECT-TYPE
+    SYNTAX SlDriveFibreLoopId 
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A2 - loop id"
+::={ slHostInterfaceEntry 10 }
+
+slHostInterfaceA2PortSpeed   OBJECT-TYPE
+    SYNTAX SlDriveFibreSpeed
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A2 - port speed"
+::={ slHostInterfaceEntry 11 }
+
+slHostInterfaceBWWN   OBJECT-TYPE
+    SYNTAX OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Fibre B - World wide name"
+::={ slHostInterfaceEntry 12 }
+
+slHostInterfaceB1AddressingMode   OBJECT-TYPE
+    SYNTAX SlDriveFibreAddressing
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B1 - addressing mode"
+::={ slHostInterfaceEntry 13 }
+
+slHostInterfaceB1PortEnabled   OBJECT-TYPE
+    SYNTAX INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B1 - is port enabled"
+::={ slHostInterfaceEntry 14 }
+
+slHostInterfaceB1LoopId   OBJECT-TYPE
+    SYNTAX SlDriveFibreLoopId 
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B1 - loop id"
+::={ slHostInterfaceEntry 15 }
+
+slHostInterfaceB1PortSpeed   OBJECT-TYPE
+    SYNTAX SlDriveFibreSpeed
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B1 - port speed"
+::={ slHostInterfaceEntry 16 }
+
+slHostInterfaceB2AddressingMode   OBJECT-TYPE
+    SYNTAX SlDriveFibreAddressing
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B2 - addressing mode"
+::={ slHostInterfaceEntry 17 }
+
+slHostInterfaceB2PortEnabled   OBJECT-TYPE
+    SYNTAX INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B2 - is port enabled"
+::={ slHostInterfaceEntry 18 }
+
+slHostInterfaceB2LoopId   OBJECT-TYPE
+    SYNTAX SlDriveFibreLoopId 
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B2 - loop id"
+::={ slHostInterfaceEntry 19 }
+
+slHostInterfaceB2PortSpeed   OBJECT-TYPE
+    SYNTAX SlDriveFibreSpeed
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B2 - port speed"
+::={ slHostInterfaceEntry 20 }
+
+slHostInterfaceElementID OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Element ID/Address of the controller"
+::= { slHostInterfaceEntry 21 }
+
+slHostInterfaceSerialNum OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Controller's Card serial number"
+::= { slHostInterfaceEntry 22 }
+
+slHostInterfaceStatus  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Controller's state (okay,error,warning, etc)"
+::= { slHostInterfaceEntry 23 }
+
+slHostInterfaceFaultLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Controller's Fault LED state"
+::= { slHostInterfaceEntry 24 }
+
+slHostInterfaceSafeToRemoveLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Controller's safe to remove LED state"
+::= { slHostInterfaceEntry 25 }
+
+slHostInterfaceStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's operational status in enumerated form"
+::= { slHostInterfaceEntry 26 }
+
+slHostInterfaceCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's code version"
+::= { slHostInterfaceEntry 27 }
+
+slHostInterfaceVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's hardware version"
+::= { slHostInterfaceEntry 28 }
+
+slHostInterfaceFirmwareVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's firmware version"
+::= { slHostInterfaceEntry 29 }
+
+
+-- *******************************************************************
+--
+-- slTempSensor
+--
+-- *******************************************************************
+
+slTempSensorCount OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of temperature sensors in the library"
+::= { slPhysHardware 3 }
+
+slTempSensorTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLTempSensorEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of the library's temperature sensors"
+::= { slPhysHardware 4 }
+
+slTempSensorEntry OBJECT-TYPE
+    SYNTAX  SLTempSensorEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A temperature sensor"
+    INDEX { slTempSensorIndex }
+::= { slTempSensorTable 1 }
+
+SLTempSensorEntry ::= SEQUENCE
+{
+    slTempSensorIndex          Integer32,
+    slTempSensorName           OCTET STRING,
+    slTempSensorCurrentTemp    Integer32,
+    slTempSensorHighTemp       Integer32,
+    slTempSensorWarnThreshold  Integer32,
+    slTempSensorFailThreshold  Integer32
+}
+
+slTempSensorIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..128)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Integer index into the temperature sensor table"
+::= { slTempSensorEntry 1 }
+
+slTempSensorName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Name of the temperature sensor"
+::= { slTempSensorEntry 2 }
+
+slTempSensorCurrentTemp  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Current/Present temperature reading"
+::= { slTempSensorEntry 3 }
+
+slTempSensorHighTemp  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Storage area peak temp since last machine boot"
+::= { slTempSensorEntry 4 }
+
+slTempSensorWarnThreshold  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Temp threshold for automated warning"
+::= { slTempSensorEntry 5 }
+
+slTempSensorFailThreshold  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Temp threshold for automated library activity shutdown"
+::= { slTempSensorEntry 6 }
+
+-- *******************************************************************
+--
+-- slFan
+--   This tree describes the library hardware fans.  Data
+--   which is reported includes status, on, off.
+--
+-- *******************************************************************
+
+slFanCount OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of monitored fans in the library"
+::= { slPhysHardware 5 }
+
+slFanTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLFanEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of the library's fans"
+::= { slPhysHardware 6 }
+
+slFanEntry OBJECT-TYPE
+    SYNTAX  SLFanEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A fan"
+    INDEX { slFanIndex }
+::= { slFanTable 1 }
+
+SLFanEntry ::= SEQUENCE
+{
+    slFanIndex         Integer32,
+    slFanName          OCTET STRING,
+    slFanOperational   INTEGER
+}
+
+slFanIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..128)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Integer index into the fan table"
+::= { slFanEntry 1 }
+
+slFanName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Name of the fan"
+::= { slFanEntry 2 }
+
+slFanOperational  OBJECT-TYPE
+    SYNTAX  INTEGER { failed(1), normal(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Operational state of the fan"
+::= { slFanEntry 3 }
+
+-- *******************************************************************
+--
+-- slPowerSupply
+--   This tree describes the library hardware power supplies.
+--   Data which is reported includes status, on, off.
+--
+-- *******************************************************************
+
+slPowerSupplyCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of power supplies installed in the library"
+::= { slPhysHardware 7 }
+
+slPowerSupplyTable  OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLPowerSupplyEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of the library's power supplies"
+::= { slPhysHardware 8 }
+
+slPowerSupplyEntry  OBJECT-TYPE
+    SYNTAX  SLPowerSupplyEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION "A power supply"
+    INDEX { slPowerSupplyIndex }
+::= { slPowerSupplyTable 1 }
+
+SLPowerSupplyEntry ::= SEQUENCE
+{
+    slPowerSupplyIndex          Integer32,
+    slPowerSupplyName           OCTET STRING,
+    slPowerSupplyInstalled      INTEGER,
+    slPowerSupplyOperational    INTEGER
+}
+
+slPowerSupplyIndex OBJECT-TYPE
+    SYNTAX  Integer32 (1..32)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION "Integer index into the power supply table"
+::= { slPowerSupplyEntry 1 }
+
+slPowerSupplyName OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Name of the power supply"
+::= { slPowerSupplyEntry 2 }
+
+slPowerSupplyInstalled OBJECT-TYPE
+    SYNTAX  INTEGER { notinstalled(1), installed(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Indicates if the supply is installed(2) or not(1)"
+::= { slPowerSupplyEntry 3 }
+
+slPowerSupplyOperational OBJECT-TYPE
+    SYNTAX  INTEGER { failed(1), normal(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Indicates if the supply is OK(2), meaningless if not-installed"
+::= { slPowerSupplyEntry 4 }
+
+-- *******************************************************************
+--
+-- slRobot
+--   This tree describes the robot elements of the library.  Data
+--   which is reported includes status, Element ID or Address, etc.
+--
+-- *******************************************************************
+
+slRobotCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "Count of the number of robots in the table"
+::= { slPhysHardware 9 }
+
+slRobotTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLRobotEntry
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A table of robots"
+::= { slPhysHardware 10 }
+
+slRobotEntry OBJECT-TYPE
+    SYNTAX  SLRobotEntry
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A robot entry"
+    INDEX { slRobotIndex }
+::= { slRobotTable 1 }
+
+SLRobotEntry ::= SEQUENCE
+{
+    slRobotIndex              Integer32,
+    slRobotPhysicalAddressStr OCTET STRING,
+    slRobotPosition           Integer32,
+    slRobotHandCartStatus     Integer32,
+    slRobotSerialNum          Integer32,
+    slRobotState              OCTET STRING,
+    slRobotFaultLED           Integer32,
+    slRobotStatusEnum         SlDeviceStatus,
+    slRobotCodeVer            OCTET STRING,
+    slRobotVersion            OCTET STRING,
+    slRobotFirmwareVer        OCTET STRING,
+    slRobotGetRetries         Integer32,
+    slRobotPutRetries         Integer32,
+    slRobotGetFails           Integer32,
+    slRobotPutFails           Integer32,
+    slRobotGetTotals          Integer32,
+    slRobotPutTotals          Integer32
+}
+
+slRobotIndex OBJECT-TYPE
+    SYNTAX  Integer32 (1..8)
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION "A robot index"
+::= { slRobotEntry 1 }
+
+slRobotPhysicalAddressStr OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "Robot physical address string. NOTE: SL500 returns a logical SCSI Element ID"
+     -- NOTE: For backwards compatibility, the SL500 will continue to return a
+     -- logical SCSI Element ID in lieu of a physical address.
+::= { slRobotEntry 2 }
+
+slRobotPosition OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS deprecated
+    DESCRIPTION "Robot Position <Not Implemented on any SL-Series Library>"
+     -- NOTE: Due to data caching the position accuracy would always be suspect.
+     --  Since the robot is never directly controlled by the host, it's precise
+     --  position is essentially irrelevant and therefore suppressed.  This OID 
+     --  is left defined for robot table backwards compatibility only.
+::= { slRobotEntry 3 }
+
+slRobotHandCartStatus OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The Robot's hand state (cartridge=1, no cartridge=0)"
+::= { slRobotEntry 4 }
+
+slRobotSerialNum OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The Robot's card serial number"
+::= { slRobotEntry 5 }
+
+slRobotState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The robot's state (empty, loaded, moving, etc)"
+::= { slRobotEntry 6 }
+
+slRobotFaultLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION "The Robot's Fault LED status off=0, on=1"
+::= { slRobotEntry 7 }
+
+slRobotStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The robot's operational status in enumerated form"
+::= { slRobotEntry 8 }
+
+slRobotCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The robot's code version"
+::= { slRobotEntry 9 }
+
+slRobotVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The robot's hardware version"
+::= { slRobotEntry 10 }
+
+slRobotFirmwareVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The robot's firmware version"
+::= { slRobotEntry 11 }
+
+slRobotGetRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of mount retries performed by the robot"
+::= { slRobotEntry 12 }
+
+slRobotPutRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of dismount retries performed by the robot"
+::= { slRobotEntry 13 }
+
+slRobotGetFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of Get fails for the individual robot"
+::= { slRobotEntry 14 }
+
+slRobotPutFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of Put fails for the individual robot"
+::= { slRobotEntry 15 }
+
+slRobotGetTotals  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The sum of all Get operations of individual robots."
+::= { slRobotEntry 16 }
+
+slRobotPutTotals  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The sum of all Put operations of individual robots."
+::= { slRobotEntry 17 }
+
+-- *******************************************************************
+--
+-- slElevator
+--   This tree describes the elevator elements of the library.  Data
+--   which is reported includes status, Element ID or Address, etc.
+--
+-- *******************************************************************
+
+slElevatorCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the elevators in the elevator table"
+::= { slPhysHardware 11 }
+
+slElevatorTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLElevatorEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of elevators"
+::= { slPhysHardware 12 }
+
+slElevatorEntry OBJECT-TYPE
+    SYNTAX  SLElevatorEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "An elevator"
+    INDEX { slElevatorIndex }
+::= { slElevatorTable 1 }
+
+SLElevatorEntry ::= SEQUENCE
+{
+    slElevatorIndex              Integer32,
+    slElevatorPhysicalAddressStr OCTET STRING,
+    slElevatorPositionOn         Integer32,
+    slElevatorHandCartStatus     Integer32,
+    slElevatorSerialNum          Integer32,
+    slElevatorState              OCTET STRING,
+    slElevatorFaultLED           Integer32,
+    slElevatorStatusEnum         SlDeviceStatus,
+    slElevatorCodeVer            OCTET STRING,
+    slElevatorVersion            OCTET STRING,
+    slElevatorFirmwareVer        OCTET STRING,
+    slElevatorGetRetries         Integer32,
+    slElevatorPutRetries         Integer32
+}
+
+slElevatorIndex OBJECT-TYPE
+    SYNTAX  Integer32 (1..2)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION "Elevator index"
+::= { slElevatorEntry 1 }
+
+slElevatorPhysicalAddressStr OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Elevator physical address string"
+::= { slElevatorEntry 2 }
+
+slElevatorPositionOn OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "Elevator Position <Not Implemented on any SL-Series Library>"
+     -- NOTE: Due to data caching the position accuracy would always be suspect.
+     --  Since the elevator is never directly controlled by the host, it's precise
+     --  position is essentially irrelevant and therefore suppressed.  This OID 
+     --  is left defined for elevator table backwards compatibility only.
+::= { slElevatorEntry 3 }
+
+slElevatorHandCartStatus OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Elevator's hand state (cartridge = 1, no cartridge = 0)"
+::= { slElevatorEntry 4 }
+
+slElevatorSerialNum OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Elevator's serial number"
+::= { slElevatorEntry 5 }
+
+slElevatorState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Elevator's state (idled, moving, in-op, etc)"
+::= { slElevatorEntry 6 }
+
+slElevatorFaultLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Elevator's Fault LED State"
+::= { slElevatorEntry 7 }
+
+slElevatorStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The elevator's operational status in enumerated form"
+::= { slElevatorEntry 8 }
+
+slElevatorCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The elevator's code version"
+::= { slElevatorEntry 9 }
+
+slElevatorVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The elevator's hardware version"
+::= { slElevatorEntry 10 }
+
+slElevatorFirmwareVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The elevator's firmware version"
+::= { slElevatorEntry 11 }
+
+slElevatorGetRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of mount retries performed to the elevator"
+::= { slElevatorEntry 12 }
+
+slElevatorPutRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of dismount retries performed to the elevator"
+::= { slElevatorEntry 13 }
+
+-- *******************************************************************
+--
+-- slController
+--   This tree describes the controller elements of the library.  Data
+--   which is reported includes status, Element ID or Address, etc.
+--
+-- *******************************************************************
+
+slControllerCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the controllers in the controller table"
+::= { slPhysHardware 13 }
+
+slControllerTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLControllerEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of controllers"
+::= { slPhysHardware 14 }
+
+slControllerEntry OBJECT-TYPE
+    SYNTAX  SLControllerEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A controller entry (HBC,RLC,HBT,etc)"
+    INDEX { slControllerIndex }
+::= { slControllerTable 1 }
+
+SLControllerEntry ::= SEQUENCE
+{
+    slControllerIndex                  Integer32,
+    slControllerPhysicalAddressStr     OCTET STRING,
+    slControllerSerialNum              Integer32,
+    slControllerTopLevelCondition      SlLibraryCondition,
+    slControllerFaultLED               Integer32,
+    slControllerSafeToRemoveLED        Integer32,
+    slControllerStatusEnum             SlDeviceStatus,
+    slControllerCodeVer                OCTET STRING,
+    slControllerVersion                OCTET STRING,
+    slControllerFirmwareVer            OCTET STRING,
+    slControllerHaState                SlHaState,
+    slControllerHaId                   SlHaId,
+    slControllerHaSlot                 SlHaSlot,
+    slControllerHaAlternateIp          OCTET STRING,
+    slControllerFru                    OCTET STRING
+}
+
+slControllerIndex OBJECT-TYPE
+    SYNTAX  Integer32 (1..32)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION "A Controller's Card Index"
+::= { slControllerEntry 1 }
+
+slControllerPhysicalAddressStr OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Controller physical address string"
+::= { slControllerEntry 2 }
+
+slControllerSerialNum OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Controller's Card serial number"
+::= { slControllerEntry 3 }
+
+slControllerTopLevelCondition  OBJECT-TYPE
+    SYNTAX  SlLibraryCondition
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Controller's top-level condition (normal, degraded, notoperative)"
+::= { slControllerEntry 4 }
+
+slControllerFaultLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Controller's Fault LED state"
+::= { slControllerEntry 5 }
+
+slControllerSafeToRemoveLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Controller's safe to remove LED state"
+::= { slControllerEntry 6 }
+
+slControllerStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's operational status in enumerated form"
+::= { slControllerEntry 7 }
+
+slControllerCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's code version"
+::= { slControllerEntry 8 }
+
+slControllerVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's hardware version"
+::= { slControllerEntry 9 }
+
+slControllerFirmwareVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's firmware version"
+::= { slControllerEntry 10 }
+
+slControllerHaState  OBJECT-TYPE
+    SYNTAX  SlHaState
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "RE controller state. simplex=0, duplex(switchable)=1"
+::= { slControllerEntry 11 }
+
+slControllerHaId  OBJECT-TYPE
+    SYNTAX  SlHaId
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "RE controller identifier. active=0, standby=1"
+::= { slControllerEntry 12 }
+
+slControllerHaSlot  OBJECT-TYPE
+    SYNTAX  SlHaSlot
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "RE controller slot. sideA=0, sideB=1"
+::= { slControllerEntry 13 }
+
+slControllerHaAlternateIp  OBJECT-TYPE
+    SYNTAX  OCTET STRING ( SIZE(0..16) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "alternate RE controller's IP address"
+::= { slControllerEntry 14 }
+
+slControllerFru  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..20) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The controller's Field Replaceable Unit (FRU) based serial number"
+::= { slControllerEntry 15 }
+
+
+
+-- *******************************************************************
+--
+-- slPtp 
+--   This tree describes the pass-through port elements of the
+--   library (if any)
+--
+-- *******************************************************************
+
+slPtpCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the pass-through ports in the library"
+::= { slPhysHardware 15 }
+
+slPtpTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLPtpEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of pass-through ports"
+::= { slPhysHardware 16 }
+
+slPtpEntry OBJECT-TYPE
+    SYNTAX  SLPtpEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A pass-through port (PTP)"
+    INDEX { slPtpIndex }
+::= { slPtpTable 1 }
+
+SLPtpEntry ::= SEQUENCE
+{
+    slPtpIndex                   Integer32,
+    slPtpPhysicalAddressStr      OCTET STRING,
+    slPtpSerialNum               Integer32,
+    slPtpState                   OCTET STRING,
+    slPtpFaultLED                Integer32,
+    slPtpStatusEnum              SlDeviceStatus,
+    slPtpCodeVer                 OCTET STRING,
+    slPtpVersion                 OCTET STRING,
+    slPtpFirmwareVer             OCTET STRING,
+    slPtpMoveRetries             Integer32
+}
+
+slPtpIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..8)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Integer index into the PTP table"
+::= { slPtpEntry 1 }
+
+slPtpPhysicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "PTP physical address string"
+::= { slPtpEntry 2 }
+
+slPtpSerialNum OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Passthrough Port's serial number"
+::= { slPtpEntry 3 }
+
+slPtpState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Passthrough Port's state (online, offline)"
+::= { slPtpEntry 4 }
+
+slPtpFaultLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "The Passthrough Port's Fault LED State"
+::= { slPtpEntry 5 }
+
+slPtpStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Passthrough Port's operational status in enumerated form"
+     -- Unless slPtpStatusEnum is reported ok(2), Ptp information may not be 
+     -- considered relevant if no-communication was established with the 
+     -- controller.  In such a situation, subsequent Ptp variables will be 
+     -- zero'ed and returned either as null-value (Integer32) or empty string 
+     -- (OCTET STRING).
+::= { slPtpEntry 6 }
+
+slPtpCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Passthrough Port's code version"
+::= { slPtpEntry 7 }
+
+slPtpVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Passthrough Port's hardware version"
+::= { slPtpEntry 8 }
+
+slPtpFirmwareVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The Passthrough Port's firmware version"
+::= { slPtpEntry 9 }
+
+slPtpMoveRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of move retries performed by the Passthrough Port"
+::= { slPtpEntry 10 }
+
+-- *******************************************************************
+--
+-- The slDrives
+--   This tree describes the drive elements of the library.  Data
+--   which is reported includes load status, SCSI ID, etc.
+--
+-- *******************************************************************
+
+slDriveCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS current 
+    DESCRIPTION "Count of the drives in the drive table"
+::= { slPhysHardware 17 }
+
+slDriveTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLDriveEntry
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A table of drives"
+::= { slPhysHardware 18 }
+
+slDriveEntry OBJECT-TYPE
+    SYNTAX  SLDriveEntry
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "A tape drive"
+    INDEX { slDriveIndex }
+::= { slDriveTable 1 }
+
+SLDriveEntry ::= SEQUENCE
+{
+    slDriveIndex                            Integer32,
+    slDriveHashedPhysAddr                   Integer32,
+    slDriveType                             OCTET STRING,
+    slDriveVendor                           OCTET STRING,
+    slDriveSerialNum                        OCTET STRING,
+    slDriveInterfaceType                    INTEGER,
+    slDriveID                               Integer32,
+    slDriveState                            OCTET STRING,
+    slDriveLED                              Integer32,
+    slDriveStatusEnum                       SlDriveStatus,
+    slDriveCodeVer                          OCTET STRING,
+    slDriveVersion                          OCTET STRING,
+    slDriveGetRetries                       Integer32,
+    slDrivePutRetries                       Integer32,
+    slDriveCommandClean                     INTEGER,
+    slDriveCellStatusEnum                   INTEGER,
+    slDriveCellStatusText                   OCTET STRING,
+    slDriveCellContentLabel                 OCTET STRING,
+    slDriveCellContentType                  OCTET STRING,
+    slDriveIdleSeconds                      Integer32,
+    slDriveNumMounts                        Integer32,
+    slDriveFibreNodeName                    OCTET STRING,
+    slDriveFibrePortCount                   INTEGER,
+    slDriveFibrePortAWWN                    OCTET STRING,
+    slDriveFibrePortAAddressingMode         INTEGER,
+    slDriveFibrePortAPortEnabled            INTEGER,
+    slDriveFibrePortALoopId                 SlDriveFibreLoopId,
+    slDriveFibrePortAPortSpeed              INTEGER,
+    slDriveFibrePortBWWN                    OCTET STRING,
+    slDriveFibrePortBAddressingMode         INTEGER,
+    slDriveFibrePortBPortEnabled            INTEGER,
+    slDriveFibrePortBLoopId                 SlDriveFibreLoopId,
+    slDriveFibrePortBPortSpeed              INTEGER,
+    slDriveWWNEnabled                       INTEGER,
+    slDrivePhysicalAddressStr               OCTET STRING
+}
+
+slDriveIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..64)
+    MAX-ACCESS  not-accessible
+    STATUS current
+    DESCRIPTION  "Integer index into the drive table"
+::= { slDriveEntry 1 }
+
+slDriveHashedPhysAddr  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "Hashed Physical Address of the drive. NOTE: SL500 returns a logical SCSI Element ID"
+     -- NOTE: For backwards compatibility, the SL500 will continue to return a 
+     -- logical SCSI Element ID in lieu of a physical address.
+::= { slDriveEntry 2 }
+
+slDriveType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's type, e.g. STK9840, HpUltrium4, etc."
+    -- This text string is derived by the manufacturer and make of the drive.
+    -- Please refer to the "Specification for Tape Cartridge Media Identification"
+    -- Sun/Oracle Doc No. 3136715
+::= { slDriveEntry 3 }
+
+slDriveVendor  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's vendor, e.g. STK, IBM, Quantum"
+::= { slDriveEntry 4 }
+
+slDriveSerialNum  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's electronic serial number"
+::= { slDriveEntry 5 }
+
+slDriveInterfaceType  OBJECT-TYPE
+    SYNTAX  INTEGER { unknown(1), scsi(2), fibre(3), sas(4), other(5) }
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's physical data transport type"
+::= { slDriveEntry 6 }
+
+slDriveID  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's SCSI ID or Fibre Port assignment"
+::= { slDriveEntry 7 }
+
+slDriveState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's state (empty, loaded, needs cleaning, etc)"
+::= { slDriveEntry 8 }
+
+slDriveLED  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's Tray LED sate (1=on,0=off)"
+::= { slDriveEntry 9 }
+
+slDriveStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDriveStatus
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's operational status in enumerated form"
+::= { slDriveEntry 10 }
+
+slDriveCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's code (software or firmware) version"
+::= { slDriveEntry 11 }
+
+slDriveVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drive's hardware version"
+::= { slDriveEntry 12 }
+
+slDriveGetRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of mount retries performed to the drive"
+::= { slDriveEntry 13 }
+
+slDrivePutRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The number of dismount retries performed to the drive"
+::= { slDriveEntry 14 }
+
+slDriveCommandClean  OBJECT-TYPE
+    SYNTAX  INTEGER { enable(1), cancel(2) } 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Signal to clean/cancel cleaning of the drive"
+::= { slDriveEntry 15 }
+
+slDriveCellStatusEnum  OBJECT-TYPE
+    SYNTAX  INTEGER { unknown(1), empty(2), full(3) }
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The status of the drive's cell presented as an enumeration"
+::= { slDriveEntry 16 }
+
+slDriveCellStatusText  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The status of the drive's cell"
+::= { slDriveEntry 17 }
+
+slDriveCellContentLabel  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The label of the cart in the drive (zero len string if empty, '??????' if unreadable)"
+::= { slDriveEntry 18 }
+
+slDriveCellContentType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The type of cartridge in the drive (zero len string if empty)"
+::= { slDriveEntry 19 }
+
+slDriveIdleSeconds  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of seconds that the drive has been idle (unmounted)"
+::= { slDriveEntry 20 }
+
+slDriveNumMounts  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of mounts to the drive"
+::= { slDriveEntry 21 }
+
+slDriveFibreNodeName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "Drive's fibre node name (node WWN)"
+::= { slDriveEntry 22 }
+
+slDriveFibrePortCount  OBJECT-TYPE
+    SYNTAX  INTEGER { single(1), dual(2) }
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The number of active ports in the drive"
+::= { slDriveEntry 23 }
+
+slDriveFibrePortAWWN   OBJECT-TYPE
+    SYNTAX OCTET STRING ( SIZE(0..32) )
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A - World wide name"
+::={ slDriveEntry 24 }
+
+slDriveFibrePortAAddressingMode   OBJECT-TYPE
+    SYNTAX SlDriveFibreAddressing
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "PortA's addressing mode"
+::={ slDriveEntry 25 }
+
+slDriveFibrePortAPortEnabled   OBJECT-TYPE
+    SYNTAX INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A - is port enabled"
+::={ slDriveEntry 26 }
+
+slDriveFibrePortALoopId   OBJECT-TYPE
+    SYNTAX SlDriveFibreLoopId 
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A - loop id"
+::={ slDriveEntry 27 }
+
+slDriveFibrePortAPortSpeed   OBJECT-TYPE
+    SYNTAX SlDriveFibreSpeed
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port A - port speed"
+::={ slDriveEntry 28 }
+
+slDriveFibrePortBWWN   OBJECT-TYPE
+    SYNTAX OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B - World wide name"
+::={ slDriveEntry 29 }
+
+slDriveFibrePortBAddressingMode   OBJECT-TYPE
+    SYNTAX SlDriveFibreAddressing
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B - is hard addressed"
+::={ slDriveEntry 30}
+
+slDriveFibrePortBPortEnabled   OBJECT-TYPE
+    SYNTAX  INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B - is port enabled"
+::={ slDriveEntry 31 }
+
+slDriveFibrePortBLoopId   OBJECT-TYPE
+    SYNTAX SlDriveFibreLoopId
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B - Loop id"
+::={ slDriveEntry 32 }
+
+slDriveFibrePortBPortSpeed   OBJECT-TYPE
+    SYNTAX SlDriveFibreSpeed
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Port B - Port speed"
+::={ slDriveEntry 33 }
+
+slDriveWWNEnabled   OBJECT-TYPE
+    SYNTAX  INTEGER { disabled(1), enabled(2) }
+    MAX-ACCESS  read-only
+    STATUS current
+    DESCRIPTION  "The drives's World Wide Name option. Can only be set in CLI, please refer to user documentation."
+::= { slDriveEntry 34 }
+
+slDrivePhysicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "Drive physical address string"
+::= { slDriveEntry 35 }
+
+
+-- *******************************************************************
+--
+-- The slCaps 
+--   This tree describes the CAP elements of the library.  Data
+--   which is reported includes cap position and status
+--
+-- *******************************************************************
+
+slCapCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the CAPs in the CAP table"
+::= { slPhysHardware 19 }
+
+slCapTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLCapEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of cartridge access ports"
+::= { slPhysHardware 20 }
+
+slCapEntry OBJECT-TYPE
+    SYNTAX  SLCapEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A cartridge access port (CAP)"
+    INDEX { slCapIndex }
+::= { slCapTable 1 }
+
+SLCapEntry ::= SEQUENCE
+{
+    slCapIndex                    Integer32,
+    slCapPhysicalAddressStr       OCTET STRING,
+    slCapAccessibility            OCTET STRING,
+    slCapAccessStateEnum          INTEGER,
+    slCapState                    OCTET STRING,
+    slCapStatusEnum               SlDeviceStatus,
+    slCapName                     OCTET STRING,
+    slCapRotations                Integer32,
+    slCapRotationRetries          Integer32,
+    slCapRotationFails            Integer32,
+    slCapIPLs                     Integer32
+}
+
+slCapIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..4)
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "Integer index into the CAP table"
+::= { slCapEntry 1 }
+
+slCapPhysicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "CAP physical address string. NOTE: SL500 returns a logical SCSI Element ID"
+     -- NOTE: For backwards compatibility, the SL500 will continue to return a 
+     -- logical SCSI Element ID in lieu of a physical address.
+::= { slCapEntry 2 }
+
+slCapAccessibility  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The accessibility of a CAP (open allow/prevent)"
+::= { slCapEntry 3 }
+
+slCapAccessStateEnum  OBJECT-TYPE
+    SYNTAX  INTEGER { unknown(1), open(2), close(3) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The access state of the cap presented as an enumeration"
+::= { slCapEntry 4 }
+
+slCapState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The physical state of the CAP"
+::= { slCapEntry 5 }
+
+slCapStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The operational status of the CAP presented as an enumeration"
+::= { slCapEntry 6 }
+
+slCapName  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The CAP name"
+::= { slCapEntry 7 }
+
+slCapRotations  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS deprecated
+    DESCRIPTION  "The Caps rotation count"
+::= { slCapEntry 8 }
+
+slCapRotationRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of rotation retries performed by the Cap"
+::= { slCapEntry 9 }
+
+slCapRotationFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of rotation failures performed by the Cap"
+::= { slCapEntry 10 }
+
+slCapIPLs  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of IPL's performed by the Cap"
+::= { slCapEntry 11 }
+
+-- *******************************************************************
+--
+-- The slTurntables
+--   This tree describes the turntable elements of the library.  Data
+--   which is reported includes status, Element ID or Address, etc.
+--
+-- *******************************************************************
+
+slTurntableCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "Count of the turntables in the turntable table"
+::= { slPhysHardware 21 }
+
+slTurntableTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLTurntableEntry
+    MAX-ACCESS  not-accessible
+    STATUS  deprecated
+    DESCRIPTION  "A table of turntables"
+::= { slPhysHardware 22 }
+
+slTurntableEntry OBJECT-TYPE
+    SYNTAX  SLTurntableEntry
+    MAX-ACCESS  not-accessible
+    STATUS  deprecated  
+    DESCRIPTION  "A turntable"
+    INDEX { slTurntableIndex }
+::= { slTurntableTable 1 }
+
+SLTurntableEntry ::= SEQUENCE
+{
+    slTurntableIndex              Integer32,
+    slTurntablePhysicalAddressStr OCTET STRING,
+    slTurntablePosition           Integer32,
+    slTurntableHandCartStatus     Integer32,
+    slTurntableSerialNum          Integer32,
+    slTurntableState              OCTET STRING,
+    slTurntableFaultLED           Integer32,
+    slTurntableStatusEnum         SlDeviceStatus,
+    slTurntableCodeVer            OCTET STRING,
+    slTurntableVersion            OCTET STRING,
+    slTurntableFirmwareVer        OCTET STRING,
+    slTurntablesRotations         Integer32,
+    slTurntablesRotationRetries   Integer32,
+    slTurntablesRotationFails     Integer32,
+    slTurntablesIPLs              Integer32
+}
+
+slTurntableIndex OBJECT-TYPE
+    SYNTAX  Integer32 (1..2)
+    MAX-ACCESS  not-accessible
+    STATUS  deprecated
+    DESCRIPTION "A Turntable Index"
+::= { slTurntableEntry 1 }
+
+slTurntablePhysicalAddressStr OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "Turntable physical address string"
+::= { slTurntableEntry 2 }
+
+slTurntablePosition OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "Physical lsm position of the turntable (0=left,1=right)"
+::= { slTurntableEntry 3 }
+
+slTurntableHandCartStatus OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "The Turntable's hand state (cartridge =1, no cartridge = 0)"
+::= { slTurntableEntry 4 }
+
+slTurntableSerialNum OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "The Turntable's serial number"
+::= { slTurntableEntry 5 }
+
+slTurntableState  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The Turntable's state (idled, moving, in-op, etc)"
+::= { slTurntableEntry 6 }
+
+slTurntableFaultLED OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "The Fault LED state"
+::= { slTurntableEntry 7 }
+
+slTurntableStatusEnum  OBJECT-TYPE
+    SYNTAX  SlDeviceStatus
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The turntable's operational status in enumerated form"
+::= { slTurntableEntry 8 }
+
+slTurntableCodeVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The turntable's code version"
+::= { slTurntableEntry 9 }
+
+slTurntableVersion  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The turntable's hardware version"
+::= { slTurntableEntry 10 }
+
+slTurntableFirmwareVer  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The turntable's firmware version"
+::= { slTurntableEntry 11 }
+
+slTurntablesRotations  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The Turntables rotation count"
+::= { slTurntableEntry 12 }
+
+slTurntablesRotationRetries  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of rotation retries performed by the Turntable"
+::= { slTurntableEntry 13 }
+
+slTurntablesRotationFails  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of rotation failures performed by the Turntable"
+::= { slTurntableEntry 14 }
+
+slTurntablesIPLs  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "The number of IPL's performed by the Turntable"
+::= { slTurntableEntry 15 }
+
+
+-- *******************************************************************
+--
+-- The slSafetyDoors
+--   This tree describes the turntable elements of the library.  Data
+--   which is reported includes status, Element ID or Address, etc.
+--
+-- *******************************************************************
+
+slSafetyDoorCenterCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION "The safety door center completion count"
+::= { slPhysHardware 23 }
+
+slSafetyDoorRetries OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  not-accessible
+    STATUS  deprecated
+    DESCRIPTION  "The number of total Safety Door retries."
+::= { slPhysHardware 24 }
+
+slSafetyDoorIPLs OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  not-accessible
+    STATUS  deprecated
+    DESCRIPTION  "The number of IPL's performed by the Safety Door."
+::= { slPhysHardware 25 }
+
+-- *******************************************************************
+--
+-- The slStorage
+--   This tree describes the storage elements in the library.  Data
+--   which is reported includes contents (if any), host accessibility
+--   (true/false), get/put retry statistics
+--
+-- *******************************************************************
+
+-- LOGICAL ADDRESSES:
+-- In order to better tie-in SNMP to the control interface (thereby reducing the
+-- amount of information translation), logical rather than physical addressing 
+-- concepts will be exposed.  This allows a one-to-one correspondence with the 
+-- identification for both locations (cells) and inventory (tapes) tied 
+-- directly to the underlying control interface.  While physical addresses could 
+-- certainly be used (as in the case with physical hardware devices), this makes 
+-- even less sense to force the SNMP user to then convert back from physical to 
+-- logical when relating to the control interface.  Furthermore, the use of 
+-- physical addresses make absolutely no sense when the control interface wants 
+-- to define layouts with a concept of contiguous addressing (such as SCSI 
+-- Element ID's).  The underlying physical layout may, but generally is not
+-- contiguous due to the myriad of possible library configurations.  The clear 
+-- majority of these configurations are not likely to support any kind of 
+-- contiguous concept.  This issue by itself would probably lead to confusion 
+-- and mistakes made in both perspective and translation.  Therefore, for all 
+-- storage and inventory addressing the logical addresses as used by the control 
+-- interface will be exposed via the addressing OID's.  Note that this has 
+-- always been the case for all earlier (legacy) SCSI-based implementations.
+--
+-- Since the underlying control interface to the library can currently be either 
+-- SCSI (Small Computer Sysytems Interface) or HLI (High Level Interface), and
+-- for the reasons cited above, a logical addressing concept clearly needs to be 
+-- supported.  Currently for SCSI based libraries (SL500 and SL3000), the 
+-- logical address is simply the SCSI Element ID.  This is generally specified 
+-- as a 16-bit integer starting at zero.  For HLI based libraries (SL8500 and 
+-- again the SL3000), the logical address is a quadtuple in the form 
+-- (LSM,Panel,Row,Column).  However, this should not be confused with either the 
+-- SL8500 pentuple physical address (Library,Rail,Column,Side,Row) or the 
+-- SL500 fourtuple physical address (Library,Module,Row,Column).  The logical 
+-- address LSM basically corresponds to the Library field whereas the Panel 
+-- loosely abstracts the side (and rail) fields of the SL8500 physical address 
+-- to be similar in concept to that of the idea of modules in the SL500.  Think
+-- of a panel as each particular robot accessible side to any installed base or 
+-- expansion unit.
+--
+-- Wherever a logical address is used by any OID specified as an integer 
+-- (rather than an ASCII string) within any storage or inventory location, where 
+-- the quadtuple convention (LSM,Panel,Row,Column) is required, the address 
+-- representation is mapped to an unsigned integer.  This mapping convention is 
+-- chosen to be as human-readable/user-friendly as practically possible through 
+-- a simple hexadecimal to decimal conversion.  Each two hexadecimal digits 
+-- represents exactly one of each of the following four quadtuple fields 
+-- (LSM,Panel,Row,Column):
+--
+--   (external) HLI Address Representation ===========================
+--   Bits:
+--   |3|3|2|2|2|2|2|2|2|2|2|2|1|1|1|1|1|1|1|1|1|1|0|0|0|0|0|0|0|0|0|0|
+--   |1|0|9|8|7|6|5|4|3|2|1|0|9|8|7|6|5|4|3|2|1|0|9|8|7|6|5|4|3|2|1|0|
+--   |===============================================================|
+--   |      LSM      |      Panel    |      Row      |s    Column    |
+--   |===============================================================|
+--   External format address masks
+--    LSM_MASK       0xFF000000
+--    PANEL_MASK     0x00FF0000
+--    ROW_MASK       0x0000FF00
+--    COLUMN_MASK    0x000000FF
+--
+--   External format address offsets
+--    LSM_OFFSET     24
+--    PANEL_OFFSET   16
+--    ROW_OFFSET      8
+--    COLUMN_OFFSET   0
+--
+--   where
+--    LSM:    unsigned 8-bits in the range  0 thru  1 inclusive              
+--    Panel:  unsigned 8-bits in the range  0 thru 31 inclusive
+--    Row:    unsigned 8-bits in the range  0 thru 63 inclusive 
+--    Column: signed   8-bits in the range -2 thru  5 inclusive
+--
+--     Examples:
+--       address      hex          decimal    string
+--       0,0,0,-2   = 0x000000FE = 254      = "254"
+--       1,1,1,1    = 0x01010101 = 16843009 = "16843009"
+--       1,31,63,5  = 0x011F3F05 = 18824965 = "18824965"
+--                       | | | |
+-- lsm    =  1(0x01)<====| | | |
+-- panel  = 31(0x1F)<======| | |
+-- row    = 63(0x3F)<========| |
+-- column =  5(0x05)<==========|
+-- 
+-- For the user, simply now convert the decimal value of the OID to hexadecimal.
+-- To determine the device's location in modified quadtuple form read each two
+-- hexadecimal digits of the 32-bit integer OID as the four fields.  Note that 
+-- the leading zero(s) in most conversion routines are left omitted, and the 
+-- column field is signed which requires a standard binary negation (invert all 
+-- binary bits within the column field and add one):  This will then produce:
+--  (LSM,Panel,Row,Column)
+--
+-- For the examples above:
+--  decimal     hex       quadtuple
+--  254      -> 0xFE      (0,0,0,-2)
+--  16843009 -> 0x1010101 (1,1,1,1)
+--  18824965 -> 0x11F3F05 (1,31,63,5)
+--
+-- The OID's which may use either SCSI element ID or HLI logical addressing are:
+--  slCellElementID
+--  slTapeLocationElementID
+--
+-- NOTE:
+-- All storage and inventory locations use only logical (quadtuple) or Element 
+-- ID's rather than the device-based physical (pentuple) addressing schemes 
+-- corresponding to the underlying controlling interface.  For partitioned 
+-- libraries with multiple installed interfaces (both HLI and SCSI for example), 
+-- then the logical address for each cell or tape location within each 
+-- interfaced partition would have its logical address correspond appropriately.
+-- Each HLI partitioned location would expose a quadtuple and each SCSI 
+-- partitioned location would show an Element ID.
+--
+-- Refer to the slPhysHardware section for a detailed description of the device-
+-- based physical addressing format.
+-- 
+-- *******************************************************************
+
+slCellCount OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the storage elements in the cell table"
+::= { slStorage 1 }
+
+slCellStorageFreeCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of available (empty) storage cells in the library"
+::= { slStorage 2 }
+
+slCellStorageRestrictedFreeCells  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Number of available restricted (empty) storage cells in the library"
+::= { slStorage 3 }
+
+slCellTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLCellEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of storage elements in the library"
+::= { slStorage 4 }
+
+slCellEntry OBJECT-TYPE
+    SYNTAX  SLCellEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A storage element"
+    INDEX { slCellIndex }
+::= { slCellTable 1 }
+
+SLCellEntry ::= SEQUENCE
+{
+    slCellIndex              Integer32,
+    slCellElementID          Integer32,
+    slCellHostAccessible     INTEGER,
+    slCellContentStatus      OCTET STRING,
+    slCellContentLabel       OCTET STRING,
+    slCellContentType        OCTET STRING,
+    slCellGetRetryCount      Integer32,
+    slCellPutRetryCount      Integer32,
+    slCellHostType           Integer32,
+    slCellPhysicalAddressStr OCTET STRING,
+    slCellLogicalAddressStr  OCTET STRING,
+    slCellPartition          Integer32,
+    slCellPartitionType      INTEGER
+}
+
+slCellIndex  OBJECT-TYPE
+    SYNTAX  Integer32 (1..65535)
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "Integer index into the storage cell table"
+::= { slCellEntry 1 }
+
+slCellElementID  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Element ID or translated logical HLI Address of the storage cell"
+::= { slCellEntry 2 }
+
+slCellHostAccessible  OBJECT-TYPE
+    SYNTAX  INTEGER { true(1), false(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Indication of host accessible status"
+::= { slCellEntry 3 }
+
+slCellContentStatus  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The status of the cell (unknown, empty, readable. not_readable, cap_magazine_not_present, drive_not_present, drive_not_available)"
+::= { slCellEntry 4 }
+
+slCellContentLabel  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The label of the cart in the cell (zero len string if empty, '??????' if unreadable)"
+::= { slCellEntry 5 }
+
+slCellContentType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The type of the cartridge in the cell (zero length string if empty)"
+    -- This is a text string based on the enumerated domain and type values that
+    -- are derived from the volser label.  Please refer to the "Specification for
+    -- Tape Cartridge Media Identification" Sun/Oracle Doc No. 3136715
+::= { slCellEntry 6 }
+
+slCellGetRetryCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "Number of get retries performed from this cell"
+::= { slCellEntry 7 }
+
+slCellPutRetryCount  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  deprecated
+    DESCRIPTION  "Number of put retries performed to this cell"
+::= { slCellEntry 8 }
+
+slCellHostType  OBJECT-TYPE
+    SYNTAX  SlCellHostType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "The type of cell (invalid, storage, drive, cap, playground, intransit, ptp, hand, generic)"
+::= { slCellEntry 9 }
+ 
+slCellPhysicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Storage Cell physical address string"
+::= { slCellEntry 10 }
+
+slCellLogicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Storage Cell logical address string"
+::= { slCellEntry 11 }
+
+slCellPartition  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Storage Cell partition ID"
+::= { slCellEntry 12 }
+
+slCellPartitionType  OBJECT-TYPE
+    SYNTAX  SlPartitionType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Storage Cell partition type"
+::= { slCellEntry 13 }
+
+
+-- *******************************************************************
+--
+-- The slInventory 
+--   This tree describes the tape elements in the library.  Data
+--   which is reported includes label, cartridge type, and position
+--
+-- *******************************************************************
+ 
+slTapeCount OBJECT-TYPE
+    SYNTAX  Integer32 
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Count of the cartridges in the inventory table"
+::= { slInventory 1 }
+ 
+slTapeTable OBJECT-TYPE
+    SYNTAX  SEQUENCE OF SLTapeEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current
+    DESCRIPTION  "A table of cartridges in the library"
+::= { slInventory 2 }
+ 
+slTapeEntry OBJECT-TYPE
+    SYNTAX  SLTapeEntry
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "A cartridge"
+    INDEX { slTapeIndex }
+::= { slTapeTable 1 }
+ 
+SLTapeEntry ::= SEQUENCE
+{
+    slTapeIndex               Integer32,
+    slTapeLabel               OCTET STRING,
+    slTapeType                OCTET STRING,
+    slTapeLocationElementID   Integer32,
+    slTapeHostAccessible      INTEGER,
+    slTapePhysicalAddressStr  OCTET STRING,
+    slTapeLogicalAddressStr   OCTET STRING,
+    slTapePartition           Integer32,
+    slTapePartitionType       INTEGER
+}
+ 
+slTapeIndex  OBJECT-TYPE
+    SYNTAX  Integer32( 0..65535 ) 
+    MAX-ACCESS  not-accessible
+    STATUS  current  
+    DESCRIPTION  "Integer index into the inventory table"
+::= { slTapeEntry 1 }
+ 
+slTapeLabel  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The cartridge label"
+::= { slTapeEntry 2 }
+ 
+slTapeType  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "The type of the cartridge (zero length string if empty)"
+    -- This is a text string based on the enumerated domain and type values that
+    -- are derived from the volser label.  Please refer to the "Specification for
+    -- Tape Cartridge Media Identification" Sun/Oracle Doc No. 3136715
+::= { slTapeEntry 3 }
+ 
+slTapeLocationElementID  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "Element ID or translated logical HLI Address of the tape cartridge"
+::= { slTapeEntry 4 }
+ 
+slTapeHostAccessible  OBJECT-TYPE
+    SYNTAX  INTEGER { true(1), false(2) }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION "Indication of host accessible status"
+::= { slTapeEntry 5 }
+ 
+slTapePhysicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current  
+    DESCRIPTION  "Tape Cartridge physical address string"
+::= { slTapeEntry 6 }
+
+slTapeLogicalAddressStr  OBJECT-TYPE
+    SYNTAX  OCTET STRING( SIZE(0..32) )
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Tape Cartridge logical address string"
+::= { slTapeEntry 7 }
+
+slTapePartition  OBJECT-TYPE
+    SYNTAX  Integer32
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Tape Cartridge partition ID"
+::= { slTapeEntry 8 }
+
+slTapePartitionType  OBJECT-TYPE
+    SYNTAX  SlPartitionType
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION  "Tape Cartridge partition type"
+::= { slTapeEntry 9 }
+
+
+-- *******************************************************************
+--
+-- Object conformance
+--
+-- *******************************************************************
+slGroupNotification NOTIFICATION-GROUP
+    NOTIFICATIONS {
+              slTrapError,
+              slTrapWarning,
+              slTrapInformation,
+              slTrapConfiguration,
+              slTrapAgentStart,
+              slTrapLibStatusGood,
+              slTrapLibStatusCheck,
+              slTrapEnvHdwCheck,
+              slTrapDrvStatusGood,
+              slTrapDrvStatusCheck,
+              slTrapCapStatusGood,
+              slTrapCapStatusOpen,
+              slTrapCapStatusCheck,
+              slTrapPtpStatusGood,
+              slTrapPtpStatusCheck,
+              slTrapTbiEvent
+             }
+    STATUS  current
+    DESCRIPTION
+            "Implementation of this group is mandatory."
+    ::= { slGroups 1 }
+              
+
+slGroup OBJECT-GROUP
+    OBJECTS { slAgentRevision,
+              slAgentLibStatusAtStartup,
+              slAgentBootDate,
+              slAgentURL,
+              slAgentTrapPort,
+              slAgentPort,
+              slAgentCommunity,
+              
+              slAgentTrapRecipientV2ClearAll,
+              slAgentTrapRecipientV2Count,
+              slAgentTrapRecipientV2Filter,
+              slAgentTrapRecipientV2Host,
+              slAgentTrapRecipientV2Port,
+              slAgentTrapRecipientV2Community,
+              slAgentTrapRecipientV2ClearEntry,
+              
+              slAgentTrapRecipientV3ClearAll,
+              slAgentTrapRecipientV3Count,
+              slAgentTrapRecipientV3Filter,
+              slAgentTrapRecipientV3Host,
+              slAgentTrapRecipientV3Port,
+              slAgentTrapRecipientV3SecLevel,
+              slAgentTrapRecipientV3Auth,
+              slAgentTrapRecipientV3AuthPass,
+              slAgentTrapRecipientV3Priv,
+              slAgentTrapRecipientV3PrivPass,
+              slAgentTrapRecipientV3RemoteId,
+              slAgentTrapRecipientV3ClearEntry,
+
+              slAgentTrapTestLevel,
+              slAgentTrapTestCount,
+              slAgentHaState,
+              slAgentHaId,
+              slAgentHaSlot,
+              slAgentHaAlternateIp,
+              
+              slTrapLibrarySerialNumber,
+              slTrapDeviceId,
+              slTrapDeviceTime,
+              slTrapDeviceAddress,
+              slTrapDeviceUserName,
+              slTrapDeviceInterfaceName,
+              slTrapDeviceActivity,
+              slTrapDeviceRequestId,
+              slTrapDeviceSeverity,
+              slTrapDeviceResultCode,
+              slTrapDevicePropertyName,
+              slTrapDeviceNewPropertyValue,
+              slTrapDeviceFreeFormText,
+              
+              slTrapConfigLibrarySerialNumber,
+              slTrapConfigDeviceId,
+              slTrapConfigDeviceTime,
+              slTrapConfigDeviceAddress,
+              slTrapConfigDeviceUserName, 
+              slTrapConfigDeviceInterfaceName, 
+              slTrapConfigDeviceActivity, 
+              slTrapConfigDeviceRequestId,
+              slTrapConfigDeviceSeverity,
+              slTrapConfigDeviceResultCode,
+              slTrapConfigPropertyName,
+              slTrapConfigNewPropertyValue,
+              slTrapConfigNewPropertyEffective,
+              
+              slTbiEventData,
+
+              slLibStkBaseModel,
+              slLibSerialNumber,
+              slLibWWNNumber,
+              slLibraryTopLevelCondition,
+
+              slLibVersionFirmRev,
+              slLibVersionFirmDate,
+              slLibVersionBootRev,
+              slLibVersionHardware,
+
+              slLibLSMConfigCount,
+              slLibLSMConfigNumPanels,
+              slLibLSMConfigNumHandCells,
+              slLibLSMConfigMinHandAddr,
+              slLibLSMConfigMaxHandAddr,
+              slLibLSMConfigNumSystemCells,
+              slLibLSMConfigNumRestrictedCells,
+              slLibLSMConfigMinSystemAddr,
+              slLibLSMConfigMaxSystemAddr,
+              slLibLSMConfigNumCaps,
+              slLibLSMConfigNumCapColumns,
+              slLibLSMConfigNumCapCells,
+              slLibLSMConfigMinCapAddr,
+              slLibLSMConfigMaxCapAddr,
+              slLibLSMConfigNumDriveColumns,
+              slLibLSMConfigNumDrives,
+              slLibLSMConfigMinDriveAddr,
+              slLibLSMConfigMaxDriveAddr,
+              slLibLSMConfigNumStorageCells,
+              slLibLSMConfigMinStorageAddr,
+              slLibLSMConfigMaxStorageAddr,
+              slLibLSMConfigNumPtps,
+              slLibLSMConfigNumPtpColumns,
+              slLibLSMConfigNumPtpCells,
+              slLibLSMConfigMinPtpAddr,
+              slLibLSMConfigMaxPtpAddr,
+
+              slLibLSMCount,
+              slLibLSMStatus,
+              slLibLSMStatusEnum,
+              slLibLocatContact,
+              slLibLocatStreet,
+              slLibLocatState,
+              slLibLocatZip,
+              slLibLocatCountry,
+              slLibLocatDescr,
+              slLibLocatCity,
+
+              slLibNetworkCount,
+              slLibNetworkInterfaceName,
+              slLibNetworkIpAddr,
+              slLibNetworkGateway,
+              slLibNetworkEthAddr,
+              slLibNetworkName,
+              slLibNetworkNetmask,
+              slLibNetworkDhcpEnabled,
+              slLibNetworkDomainName,
+              slLibNetworkPrimaryDNS,
+              slLibNetworkSecondaryDNS,
+              slLibNetworkRXPackets,
+              slLibNetworkTXPackets,
+              slLibNetworkErrors,
+              slLibNetworkDropped,
+              slLibNetworkOverruns,
+              slLibNetworkFrame,
+              slLibNetworkCollisions,
+
+              slLibStatsNumBoots,
+              slLibStatsNumDoorOpens,
+              slLibStatsNumGetRetries,
+              slLibStatsNumGetFails,
+              slLibStatsNumPutRetries,
+              slLibStatsNumPutFails,
+              slLibStatsNumLabelRetries,
+              slLibStatsNumLabelFails,
+              slLibStatsNumTargetRetries,
+              slLibStatsNumTargetFails,
+              slLibStatsNumMoves,
+              slLibStatsNumMounts,
+              slLibStatsNumTargetReads,
+              slLibStatsNumEmptyReads,
+              slLibStatsNumLabelReads,
+              slLibStatsGetTotals,
+              slLibStatsPutTotals,
+              slLibStatsCumMachUptime,
+              slLibStatsUpTimeSinceLastBoot,
+              
+              slLibMediaEventCount,
+              slLibMediaEventMediaVolid,
+              slLibMediaEventMediaDomain,
+              slLibMediaEventMediaType,
+              slLibMediaEventDriveSerialNum,
+              slLibMediaEventDriveType,
+              slLibMediaEventDateTime,
+              slLibMediaEventEnum,
+              slLibMediaEventOccurrenceCount,
+              
+              slLibDateString,
+              slLibCleanEnabled,
+              slLibCleanNumCartTypes,
+
+              slLibCleanWarnCartType,
+              slLibCleanWarnCount,
+              slLibCleanNumCarts,
+              
+              slLibCleanCartLabel,
+              slLibCleanCartType,
+              slLibCleanCartLocationElementID,
+              slLibCleanCartHostAccessible,
+              slLibCleanCartUsageCount,
+
+              slLibLibraryId,
+              slLibLibraryIdMax,
+              slLibComplexId,
+              slLibMibVer,
+              
+              slHostInterfaceCount,
+              slHostInterfaceFibreCount,
+              slHostInterfaceAWWN,
+              slHostInterfaceA1AddressingMode,
+              slHostInterfaceA1PortEnabled,
+              slHostInterfaceA1LoopId,
+              slHostInterfaceA1PortSpeed,
+              slHostInterfaceA2AddressingMode,
+              slHostInterfaceA2PortEnabled,
+              slHostInterfaceA2LoopId,
+              slHostInterfaceA2PortSpeed,
+              slHostInterfaceBWWN,
+              slHostInterfaceB1AddressingMode,
+              slHostInterfaceB1PortEnabled,
+              slHostInterfaceB1LoopId,
+              slHostInterfaceB1PortSpeed,
+              slHostInterfaceB2AddressingMode,
+              slHostInterfaceB2PortEnabled,
+              slHostInterfaceB2LoopId,
+              slHostInterfaceB2PortSpeed,
+              slHostInterfaceElementID,
+              slHostInterfaceSerialNum,
+              slHostInterfaceStatus,
+              slHostInterfaceFaultLED,
+              slHostInterfaceSafeToRemoveLED,
+              slHostInterfaceStatusEnum,
+              slHostInterfaceCodeVer,
+              slHostInterfaceVersion,
+              slHostInterfaceFirmwareVer,
+              
+              slTempSensorCount,
+              slTempSensorName,
+              slTempSensorCurrentTemp,
+              slTempSensorHighTemp,
+              slTempSensorWarnThreshold,
+              slTempSensorFailThreshold,
+              
+              slFanCount,
+              slFanName,
+              slFanOperational,
+
+              slPowerSupplyCount,
+              slPowerSupplyName,
+              slPowerSupplyInstalled,
+              slPowerSupplyOperational,
+              
+              slRobotCount,
+              slRobotPhysicalAddressStr,
+              slRobotPosition,
+              slRobotHandCartStatus,
+              slRobotSerialNum,
+              slRobotState,
+              slRobotFaultLED,
+              slRobotStatusEnum,
+              slRobotCodeVer,
+              slRobotVersion,
+              slRobotFirmwareVer,
+              slRobotGetRetries,
+              slRobotPutRetries,
+              slRobotGetFails,
+              slRobotPutFails,
+              slRobotGetTotals,
+              slRobotPutTotals,
+
+              slElevatorCount,
+              slElevatorPhysicalAddressStr,
+              slElevatorPositionOn,
+              slElevatorHandCartStatus,
+              slElevatorSerialNum,
+              slElevatorState,
+              slElevatorFaultLED,
+              slElevatorStatusEnum,
+              slElevatorCodeVer,
+              slElevatorVersion,
+              slElevatorFirmwareVer,
+              slElevatorGetRetries,
+              slElevatorPutRetries,
+              
+              slControllerCount,
+              slControllerPhysicalAddressStr,
+              slControllerSerialNum,
+              slControllerTopLevelCondition,
+              slControllerFaultLED,
+              slControllerSafeToRemoveLED,
+              slControllerStatusEnum,
+              slControllerCodeVer,
+              slControllerVersion,
+              slControllerFirmwareVer,
+              slControllerHaState,
+              slControllerHaId,
+              slControllerHaSlot,
+              slControllerHaAlternateIp,
+              slControllerFru,
+              
+              slPtpCount,
+              slPtpPhysicalAddressStr,
+              slPtpSerialNum,
+              slPtpState,
+              slPtpFaultLED,
+              slPtpStatusEnum,
+              slPtpCodeVer,
+              slPtpVersion,
+              slPtpFirmwareVer,
+              slPtpMoveRetries,
+              
+              slDriveCount,
+              slDriveHashedPhysAddr,
+              slDriveType,
+              slDriveVendor,
+              slDriveSerialNum,
+              slDriveInterfaceType,
+              slDriveID,
+              slDriveState,
+              slDriveLED,
+              slDriveStatusEnum,
+              slDriveCodeVer,
+              slDriveVersion,
+              slDriveGetRetries,
+              slDrivePutRetries,
+              slDriveCommandClean,
+              slDriveCellStatusEnum,
+              slDriveCellStatusText,
+              slDriveCellContentLabel,
+              slDriveCellContentType,
+              slDriveIdleSeconds,
+              slDriveNumMounts,
+              slDriveFibreNodeName,
+              slDriveFibrePortCount,
+              slDriveFibrePortAWWN,
+              slDriveFibrePortAAddressingMode,
+              slDriveFibrePortAPortEnabled,
+              slDriveFibrePortALoopId,
+              slDriveFibrePortAPortSpeed,
+              slDriveFibrePortBWWN,
+              slDriveFibrePortBAddressingMode,
+              slDriveFibrePortBPortEnabled,
+              slDriveFibrePortBLoopId,
+              slDriveFibrePortBPortSpeed,
+              slDriveWWNEnabled,
+              slDrivePhysicalAddressStr,
+              
+              slCapCount,
+              slCapPhysicalAddressStr,
+              slCapAccessibility,
+              slCapAccessStateEnum,
+              slCapState,
+              slCapStatusEnum,
+              slCapName,
+              slCapRotations,
+              slCapRotationRetries,
+              slCapRotationFails,
+              slCapIPLs,
+              
+              slTurntableCount,
+              slTurntablePhysicalAddressStr,
+              slTurntablePosition,
+              slTurntableHandCartStatus,
+              slTurntableSerialNum,
+              slTurntableState,
+              slTurntableFaultLED,
+              slTurntableStatusEnum,
+              slTurntableCodeVer,
+              slTurntableVersion,
+              slTurntableFirmwareVer,
+              slTurntablesRotations,
+              slTurntablesRotationRetries,
+              slTurntablesRotationFails,
+              slTurntablesIPLs,
+
+              slSafetyDoorCenterCount,
+              
+              slCellCount,
+              slCellStorageFreeCells,
+              slCellStorageRestrictedFreeCells,
+              slCellElementID,
+              slCellHostAccessible,
+              slCellContentStatus,
+              slCellContentLabel,
+              slCellContentType,
+              slCellGetRetryCount,
+              slCellPutRetryCount,
+              slCellHostType,
+              slCellPhysicalAddressStr,
+              slCellLogicalAddressStr,
+              slCellPartition,
+              slCellPartitionType,
+              
+              slTapeCount,
+              slTapeLabel,
+              slTapeType,
+              slTapeLocationElementID,
+              slTapeHostAccessible,
+              slTapePhysicalAddressStr,
+              slTapeLogicalAddressStr,
+              slTapePartition,
+              slTapePartitionType
+    }
+    STATUS  current
+    DESCRIPTION
+            "Implementation of this group is mandatory."
+    ::= { slGroups 2 }
+
+END

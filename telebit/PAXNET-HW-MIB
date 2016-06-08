@@ -1,0 +1,508 @@
+PAXNET-HW-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+	    MODULE-IDENTITY, OBJECT-TYPE, enterprises, Counter32, Integer32
+	    	FROM SNMPv2-SMI
+	    DisplayString, RowStatus, DateAndTime
+	        FROM SNMPv2-TC
+	    IANAifType
+                FROM IANAifType-MIB
+	    paxnet, paxManagement
+		FROM PAXNET-MIB;
+
+    paxnetHWMIB MODULE-IDENTITY
+              LAST-UPDATED "200003240905Z"
+
+              ORGANIZATION "Telebit Communications A/S, Denmark"
+              CONTACT-INFO
+                      "        "
+              DESCRIPTION
+                      "MIB for management of the hardware part PAXNET routers"
+              ::= { paxManagement 1 }
+
+paxnetHW OBJECT IDENTIFIER ::= { paxnetHWMIB 1}
+paxnetHWMIBConformance OBJECT IDENTIFIER ::= { paxnetHWMIB 2 }
+paxnetHWchipsets OBJECT IDENTIFIER ::= { paxnetHWMIB 3 }
+
+-- this is the environment data
+-- (impl note: (msys,r,9)
+
+voltage5v OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"milliVolt"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The voltage value of the 5 V unit"
+    ::= { paxnetHW 1 }
+
+voltage12v OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"milliVolt"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The voltage value of the 12 V unit"
+    ::= { paxnetHW 2 }
+
+voltageminus12v OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"milliVolt"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The voltage value of the minus 12 V unit for alarm event"
+    ::= { paxnetHW 3 }
+
+voltageUpperFlash12v OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"milliVolt"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The voltage value of the 12 V unit for the Upper Flash Unit"
+    ::= { paxnetHW 4 }
+
+voltageLowerFlash12v OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"milliVolt"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The voltage value of the 12 V unit for the Lower Flash Unit"
+    ::= { paxnetHW 5 }
+
+temperatureFront OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"centigrades"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "Value of the temperature sensor placed near the front edge
+	of the TBC013/TBC112 board"
+    ::= { paxnetHW 6 }
+
+temperatureRear OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"centigrades"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "Value of the temperature sensor placed near the rear edge
+	of the TBC013/TBC112 board"
+    ::= { paxnetHW 7 }
+
+temperatureAux OBJECT-TYPE
+    SYNTAX	Gauge32
+    UNITS	"centigrades"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "Value of the auxiliary temperature sensor"
+    ::= { paxnetHW 8 }
+
+
+-- (msys,a,13)
+
+backplaneID OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (8))
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The Backplane ID of the TBC unit"
+    ::= { paxnetHW 9 }
+
+-- (msys,a,45)
+
+nodeAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (5))
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The Backplane ID of the TBC unit"
+    ::= { paxnetHW 10 }
+
+-- (msys,a,49)
+
+restartNmcAddress OBJECT-TYPE
+    SYNTAX	OCTET STRING (SIZE (9))
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The session layer NMC address used for next restart"
+    ::= { paxnetHW 11 }
+
+-- (msys,a,21)
+
+uptime OBJECT-TYPE
+    SYNTAX	Integer32
+    UNITS	"seconds"
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The time since system start"
+    ::= { paxnetHW 12 }
+
+-- these three tables describes the board, transputer and connector
+-- configuration
+-- (implementation note: more or less output from (msys,r,157))
+
+boardTable OBJECT-TYPE
+    SYNTAX   SEQUENCE OF boardEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "The table of boards in the TBC router/switch."
+    ::= { paxnetHW 22 }
+
+boardEntry OBJECT-TYPE
+    SYNTAX   boardEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "A board in the TBC router/switch."
+    INDEX { boardNumber }
+    ::= { boardTable 1 }
+
+boardEntry ::=
+    SEQUENCE {
+        boardNumber
+            INTEGER (0..128),
+	boardName
+	    DisplayString
+	}
+
+boardNumber OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  not-accessible
+    STATUS	current
+    DESCRIPTION
+       "The unique number of the board"
+    ::= { boardEntry 1 }
+
+boardName OBJECT-TYPE
+    SYNTAX	DisplayString (SIZE (0..6))
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The type name of the board"
+    ::= { boardEntry 2 }
+
+
+processorTable OBJECT-TYPE
+    SYNTAX   SEQUENCE OF processorEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "The table of processors in the TBC router/switch."
+    ::= { paxnetHW 23 }
+
+processorEntry OBJECT-TYPE
+    SYNTAX   processorEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "A processor in the TBC router/switch."
+    INDEX { processorNumber }
+    ::= { processorTable 1 }
+
+processorEntry ::=
+    SEQUENCE {
+        processorNumber
+            INTEGER (0..127),
+	processorBoard
+	    INTEGER (0..127),
+	processorID
+	    INTEGER,
+	processorLocation
+	    INTEGER (0..127),
+	processorFreeMem
+	    Gauge32,
+	processorTotalMem
+	    Gauge32,
+	processorMeasSeconds
+	    Gauge32,
+	processorMeasUsage
+	    Gauge32
+	}
+
+processorNumber OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  not-accessible
+    STATUS	current
+    DESCRIPTION
+       "The unique number of the processor"
+    ::= { processorEntry 1 }
+
+processorBoard OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The board number of the board on which the processor is mounted"
+    ::= { processorEntry 2 }
+
+processorID OBJECT-TYPE
+    SYNTAX    INTEGER {
+	ct(1),		--
+	slt(2),		-- serial
+	mlt(3),		-- serial
+	mxt(4),		-- serial
+	sxt(5),		-- serial
+	lxt(6),		-- lan
+	gt(7),		-- 1 lan + 1 serial
+	tram(8),
+	tr(9),		-- lan
+	alc(10),	-- sar
+	ntc(11),	-- cells
+	x8xt(12),	-- serial
+	mat(13),	-- serial
+	x2nt(14),	-- cells
+	lit(30),	--
+	lx9(46),	-- lan
+	al9(62),	-- sar
+	fx9(78),	-- lan
+	st(94),		-- 1 lan + 1 serial
+	pp1(110),	-- cells
+	lan(126),	-- 4 lan + 1 sar
+	pp2(142),	-- cells
+	sar(157),	-- sar
+	ppp(158)	-- ds1
+      }
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The id states the main type of hardware which is
+	handled by the processor"
+    ::= { processorEntry 3 }
+
+processorFreeMem OBJECT-TYPE
+    SYNTAX	Gauge32
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The amount of free memory on the processor"
+    ::= { processorEntry 4 }
+
+processorTotalMem OBJECT-TYPE
+    SYNTAX	Gauge32
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The amount of total memory on the processor"
+    ::= { processorEntry 5 }
+
+-- when rest of SNMP is in place, change this to
+-- "value of sysUpTime when CPU measure started"
+
+processorMeasSeconds OBJECT-TYPE
+    SYNTAX	INTEGER
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The number of 1/100 seconds since CPU measure started"
+    ::= { processorEntry 6 }
+
+processorMeasFraction OBJECT-TYPE
+    SYNTAX	INTEGER
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The number of 1/100 seconds the CPU was in use sinces
+	CPU measure started"
+    ::= { processorEntry 7 }
+
+processorLocation OBJECT-TYPE
+    SYNTAX	INTEGER (0..127)
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The smallest connectorNumber and/or mopsys incarnation number"
+    ::= { processorEntry 8 }
+
+
+
+-- It is an open question whether an entry with connectorNumber = 0 should be
+-- in this table.  It would be the serial management/debug interface.  Pro:
+-- that it actually is there. Contra: it does not behave like the other
+-- connectors. For instance, the transputer on the TBC103/112 takes address
+-- after the connector 1, not the connector 0.
+
+connectorTable OBJECT-TYPE
+    SYNTAX   SEQUENCE OF connectorEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "The table of connectors in the TBC router/switch."
+    ::= { paxnetHW 24 }
+
+connectorEntry OBJECT-TYPE
+    SYNTAX   connectorEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "A connector in the TBC router/switch."
+    INDEX { connectorNumber }
+    ::= { connectorTable 1 }
+
+connectorEntry ::=
+    SEQUENCE {
+        connectorNumber
+            INTEGER (0..128),
+	connectorProcessor
+	    INTEGER (0..128),
+	connectorType
+	    IANAifType,
+	connectorCapabilities
+	    BITS
+	}
+
+connectorNumber OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  not-accessible
+    STATUS	current
+    DESCRIPTION
+       "The unique number of the connector; this is the same value
+	as is used for InterfaceIndex in those standard MIBs that
+	refer physical interfaces"
+    ::= { connectorEntry 1 }
+
+connectorProcessor OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The number of the processor to which the connector is
+	connected"
+    ::= { connectorEntry 2 }
+
+connectorType OBJECT-TYPE
+    SYNTAX	IANAifType
+    MAX-ACCESS  read-only
+    STATUS	obsolete
+    DESCRIPTION
+       "The interface type of the connector"
+    ::= { connectorEntry 3 }
+
+connectorCapabilities OBJECT-TYPE
+    SYNTAX BITS {
+	lan(0),
+	serial(1),
+	sar(2),
+	cells(3),
+	lan100(4),
+	ds1(5)
+      }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Capabilties of this physical interface"
+    ::= { connectorEntry 4 }
+
+-- ATM switch backplane presence
+
+atmBackplane OBJECT-TYPE
+    SYNTAX INTEGER { no-backplane(1), backplane-462(2) }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+	"Presence and type of ATM backplane.  backplane-462 is the backplane
+	in an AXI-462 (formerly TBC2000)"
+    ::= { paxnetHW 25 }
+
+-- ATM switch backplane table
+-- one entry for each backplane entry connected to a physical connector
+
+atmBackplTable OBJECT-TYPE
+    SYNTAX   SEQUENCE OF atmBackplEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "The table of atmBackplane connections in the TBC router/switch."
+    ::= { paxnetHW 26 }
+
+atmBackplEntry OBJECT-TYPE
+    SYNTAX   atmBackplEntry
+    MAX-ACCESS not-accessible
+    STATUS   current
+    DESCRIPTION
+       "A connection to atmBackplane in the TBC router/switch."
+    INDEX { atmBackplNumber }
+    ::= { atmBackplTable 1 }
+
+atmBackplEntry ::=
+    SEQUENCE {
+        atmBackplNumber
+            INTEGER (0..128),
+	atmBackplConnector
+	    INTEGER (0..128)
+	}
+
+atmBackplNumber OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  not-accessible
+    STATUS	current
+    DESCRIPTION
+       "The position in the ATM switch backplane of the connector"
+    ::= { atmBackplEntry 1 }
+
+atmBackplConnector OBJECT-TYPE
+    SYNTAX	INTEGER (0..128)
+    MAX-ACCESS  read-only
+    STATUS	current
+    DESCRIPTION
+       "The number of the connector (AAL5 or ATM line) to which this
+	atmBackplane is	connected"
+    ::= { atmBackplEntry 2 }
+
+
+paxnetHWTI380C27 OBJECT-IDENTITY
+    STATUS current
+    DESCRIPTION "The TMS chipset of TBC 108 and TBC112"
+    ::= { paxnetHWchipsets 1 }
+
+
+-- conformance information
+
+paxnetHWMIBConformance OBJECT IDENTIFIER ::= { paxnetHWMIB 2 }
+paxnetHWMIBCompliances OBJECT IDENTIFIER ::= { paxnetHWMIBConformance 1 }
+paxnetHWMIBGroups      OBJECT IDENTIFIER ::= { paxnetHWMIBConformance 2 }
+
+
+-- compliance statements
+
+paxnetHWMIBCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for a paxnet router."
+    MODULE  -- this module
+        MANDATORY-GROUPS { paxnetHWMIBGroup }
+
+    ::= { paxnetHWMIBCompliances 1 }
+
+
+-- units of conformance
+
+paxnetHWMIBGroup OBJECT-GROUP
+    OBJECTS { voltage5v, voltage12v, voltageminus12v,
+		voltageUpperFlash12v, voltageLowerFlash12v,
+		temperatureFront, temperatureRear, temperatureAux,
+		backplaneID, nodeAddress, restartNmcAddress, uptime,
+		boardName,
+		processorBoard, processorLocation, processorID,
+		processorFreeMem, processorTotalMem,
+		processorMeasSeconds, processorMeasFraction,
+		connectorProcessor, connectorType, connectorCapabilities,
+		atmBackplane, atmBackplConnector
+            }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     hardware of a Paxnet router."
+    ::= { paxnetHWMIBGroups 2 }
+
+
+END
+
+
+

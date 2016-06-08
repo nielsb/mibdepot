@@ -1,0 +1,131 @@
+
+Rm6TrapsMIB DEFINITIONS ::= BEGIN
+
+--Notes re: future modifications:
+--This is a non-starndard mib!
+--It is for use on the RM6 project and in noway to be taken as in keeping
+--with this companies efforts towars a RAID  standard.. 
+
+-- 03/13/96   Change the ::= id for some of the traps to allow the HP OpenView to
+-- work with the MIB. This is not a functional change and the MIb will still work
+-- with ManageWise. the id was ::=2, ::=3, and ::=4 and are now ::= 2, ::= 3, and
+-- ::= 4     jch
+
+
+	  IMPORTS
+	      OBJECT-TYPE               FROM RFC-1212
+	      TRAP-TYPE                 FROM RFC-1215
+	      DisplayString             FROM RFC1213-MIB
+	      IpAddress, enterprises    FROM RFC1155-SMI;
+
+symbios   OBJECT IDENTIFIER ::= { enterprises 1123 }
+wichita   OBJECT IDENTIFIER ::= { symbios 1 }
+ftcollins OBJECT IDENTIFIER ::= { symbios 2 }
+cosprings OBJECT IDENTIFIER ::= { symbios 3 }
+
+rm6Array OBJECT IDENTIFIER ::= { wichita 104 }
+
+	infoTable OBJECT-TYPE
+		 SYNTAX  SEQUENCE OF InfoEntry
+		 ACCESS  not-accessible 
+		 STATUS  mandatory
+		 DESCRIPTION
+		      "Information for RM6 traps."
+		 ::= { rm6Array 1 }
+
+	infoEntry OBJECT-TYPE
+		 SYNTAX InfoEntry
+		 ACCESS not-accessible
+		 STATUS mandatory
+		 DESCRIPTION
+		     "The data for RM6 traps."
+		 INDEX  { hostIP }
+		 ::= { infoTable 1 }     
+	
+	
+	
+	InfoEntry ::= 
+	SEQUENCE {
+		hostIP
+			IpAddress,
+		hostName
+			DisplayString,
+		moduleName
+			DisplayString,
+		description
+			DisplayString
+	}
+	
+	hostIP OBJECT-TYPE
+		SYNTAX IpAddress
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION 
+			"Address of the host system or freestanding controller"
+		::= { infoEntry 1 }
+
+	hostName OBJECT-TYPE
+		SYNTAX DisplayString (SIZE (0..17))
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The name of the host being reported on"
+		::= { infoEntry 2 }
+		
+	moduleName OBJECT-TYPE
+		SYNTAX DisplayString (SIZE (0..17))
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION
+			"The name of the controller being reported on"
+		::= { infoEntry 3 }
+
+	description OBJECT-TYPE
+		SYNTAX DisplayString (SIZE (0..42))
+		ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION 
+			"An indicator of the nature of the trap"
+		::= { infoEntry 4 }
+		
+
+--End of items in the info table
+
+
+--
+--      TRAP Definitions
+--
+
+	arrayDegraded TRAP-TYPE
+		ENTERPRISE rm6Array
+		VARIABLES  { hostIP, hostName, moduleName, description }
+		DESCRIPTION
+			"This trap indicates a non-critical failure. 
+			No data loss has occurred."
+		::= 1
+
+	arrayFailed TRAP-TYPE
+		ENTERPRISE rm6Array
+		VARIABLES  { hostIP, hostName, moduleName, description }
+		DESCRIPTION 
+			"This trap indicates a logical device has gone dead or
+			some other critical failure has occurred. User
+			data has either been lost or become unavailable."
+		::= 2
+		
+	arrayInfo TRAP-TYPE
+		ENTERPRISE rm6Array
+		VARIABLES  { hostIP, hostName, moduleName, description }
+		DESCRIPTION
+			"This trap indicates an event has been logged in the
+			event log. "
+		::= 3
+		
+	arrayCritical TRAP-TYPE
+		ENTERPRISE rm6Array
+		VARIABLES  { hostIP, hostName, moduleName, description }
+		DESCRIPTION
+			"This trap indicates a critical condition that could be
+			corrected by the user. "
+		::= 4
+      END

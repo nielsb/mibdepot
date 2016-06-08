@@ -1,0 +1,1965 @@
+PAXNET-IP-MIB DEFINITIONS ::= BEGIN
+
+-- this MIB to contain all single-ip-router related telebit private stuff
+
+    IMPORTS
+	    MODULE-IDENTITY, OBJECT-TYPE, enterprises, Counter32, Integer32,
+		Unsigned32, IpAddress
+	    	FROM SNMPv2-SMI
+	    DisplayString, RowStatus, DateAndTime, TruthValue, TimeStamp,
+		TAddress, TDomain
+	        FROM SNMPv2-TC
+	    Ipv6Address, Ipv6IfIndexOrZero, Ipv6AddressIfIdentifier
+		FROM IPV6-TC
+	    InterfaceIndex
+		FROM IF-MIB
+	    RouteTag
+	        FROM RIPv2-MIB
+	    PppAccessName
+		FROM PAXNET-PPP-MIB
+	    paxnet, paxManagement
+		FROM PAXNET-MIB;
+
+    paxnetIPMIB MODULE-IDENTITY
+	      LAST-UPDATED "200003221508Z"
+
+              ORGANIZATION "Telebit Communications A/S, Denmark"
+              CONTACT-INFO
+                      "        "
+              DESCRIPTION
+                      "MIB for configuration and management of the
+		       IP part of PAXNET routers"
+              ::= { paxManagement 7 }
+
+paxnetIP OBJECT IDENTIFIER ::= { paxnetIPMIB 1 }
+paxnetIPMIBConformance OBJECT IDENTIFIER ::= { paxnetIPMIB 2 }
+
+
+IpAccessName ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "A printable identifier, unique per IP routing service,
+                 used as management handle to an IP access point. It is
+		recommended to use only printable characters in the name.
+		Use of embedded spaces is prohibited.  For use in an
+		environment where a SWIPE CLI coexist with the SNMP agent,
+		the name should be E<board>/<connector> for Ethernet
+		interfaces, S<board>/<connector>,<version> for PPP over serial
+		interfaces, and S<board>/<connector>:<group id>,<version> for
+		PPP on a channelized group on an E1/T1 line.  Similar rules
+		will be defined later for other kinds of interfaces."
+    SYNTAX OCTET STRING (SIZE(16))
+
+IpAccessNameOrZero ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "An IpAccessName or an empty string"
+    SYNTAX OCTET STRING (SIZE(0|16))
+
+IpAccessProtocol ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "An encoding of the access protocol for the IP access point"
+    SYNTAX INTEGER {
+	lapb(0),
+	pppIPv4(1),
+	x25Svc(2),
+	frameRelayPvc(3),
+	lan(4),
+	lanpeer(5),
+	paxnet(6),
+	gre(7),
+	atmPvc(8),
+	v4tunnel(9),
+	atmLis(10),
+	pppIPv6(11),
+	lanSecond(24)
+	}
+
+AccKind ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "An encoding of accounting criteria"
+    SYNTAX INTEGER {
+	packaddress(1),
+	ifname(2),
+	ifaddr(3),
+	ifnamedetailed(4),
+	ifaddrdetailed(5)
+	}
+
+AccState ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "An encoding of access point state"
+    SYNTAX INTEGER {
+	up(0),
+	down(1),
+	tempDown(2),
+	stopped(3),
+	notUsed(4)
+	}
+
+StateChangeCause ::= TEXTUAL-CONVENTION
+    STATUS current
+    SYNTAX INTEGER {
+	connectionEstablished(0),
+	peerBusy(1),
+	resetByPeer(2),
+	disconnectedByPeer(4),
+	receiveLAPBFrameReject(6),
+	illegalFrameReceived(7),
+	lAPBProtocolError(8),
+	tooLongFrameReceived(9),
+	invalidAcknowledgementReceived(10),
+	keepaliveTimeout(11),
+	clockLost(17),
+	continously1sReceived(19),
+	unknownFrameReceived(23),
+	linkLevelParametersChanged(32),
+	operatorStarted(40),
+	operatorStopped(41),
+	operatorStoppedLinkLevel(42),
+	operatorResetLinkLevel(43),
+	peerReachable(50),
+	peerUnreachable(51),
+	tunnelSourceUnknownOrDown(52),
+	x25Busy(53),
+	x25NotReady(54),
+	x25InitiallyUp(60),
+	serviceAccessPointFailed(61),
+	serviceAccessPointRemoved(62),
+	pVCVciUndefinedAtATMLayer(63),
+	serviceAccessPointNoResources(99),
+	linkLevelDriverRemoved(252),
+	useX25CauseAndDiagnostic(253),
+	duplicateName(254),
+	causeUnknown(255)
+	}
+
+ipAccessTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF IpAccessEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The table of IP access points"
+    ::= { paxnetIP 1 }
+
+ipAccessEntry OBJECT-TYPE
+    SYNTAX IpAccessEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "An IP access points"
+    INDEX { ipAccessName }
+    ::= { ipAccessTable 1 }
+
+IpAccessEntry ::=
+    SEQUENCE {
+        ipAccessName IpAccessName,
+        ipAccessStatus RowStatus,
+	ipAccessProtocol IpAccessProtocol,
+	ipAccessForw INTEGER (1..127),
+	ipAccessServer INTEGER (1..127),
+	ipAccessSendRouterAdvert TruthValue,
+	ipAccessCollectAccount TruthValue,
+	ipAccessAccSrcKind AccKind,
+	ipAccessAccDstKind AccKind,
+	ipAccessAdminStatus INTEGER,
+	ipAccessOperStatus INTEGER,
+	ipAccessLastChange TimeStamp,
+	ipAccessIfAlias DisplayString,
+	ipAccessMTU INTEGER,
+	ipAccessTDT INTEGER,
+	ipAccessManagedFlag TruthValue,
+	ipAccessOtherConfigFlag TruthValue,
+	ipAccessAdvertLinkMTU TruthValue,
+	ipAccessAdvertReachableTime INTEGER,
+	ipAccessAdvertRetransTimer INTEGER,
+	ipAccessAdvertCurHopLimit INTEGER,
+	ipAccessMaxRtrAdvIntv INTEGER,
+	ipAccessMinRtrAdvIntv INTEGER,
+	ipAccessAdvDefaultLifeTime INTEGER,
+	ipAccessOspfMetric INTEGER,
+	ipAccessPimSparseMode TruthValue,
+	ipAccessPimDenseMode TruthValue
+	ipAccessAccountPeriod INTEGER,
+	ipAccessAccountCount INTEGER,
+	ipAccessMaxAccountEntries INTEGER,
+	ipAccessServIfIndex INTEGER,
+	ipAccessDupAddrDetectTransmits INTEGER,
+	ipAccessICMPRedir TruthValue,
+
+	ipAccess802 TruthValue,
+
+	ipAccessPPP PppAccessName,
+
+	ipAccessIfIndex InterfaceIndex,
+	ipAccessIpv6IfIndex Ipv6IfIndexOrZero,
+	ipAccessIpv6LinkLocal Ipv6Address,
+	ipAccessMissingAddress TruthValue,
+	ipAccessLastState AccState,
+	ipAccessLastChCause StateChangeCause
+	
+    }
+
+ipAccessName OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The name/administrative handle of the access point"
+    ::= { ipAccessEntry 1 }
+
+ipAccessStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+       "The SNMP Rowstatus of the access point; the objects
+	ipAccessProtocol and ipAccessServer may only be changed
+	when the row is non-active; most other configuration parameters
+	may be changed when the AdminStatus is 'down'.
+	Please note that the row may be 'active' rowstatus wide, but
+	still not truly active, if not enough address information is
+	present in the corresponding address tables.  This case is
+	distinguished in the object ipAccessMissingAddress."
+    ::= { ipAccessEntry 2 }
+
+ipAccessProtocol OBJECT-TYPE
+    SYNTAX IpAccessProtocol
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The access protocol of the access point"
+    ::= { ipAccessEntry 3 }
+
+ipAccessForw OBJECT-TYPE
+    SYNTAX INTEGER (1..127)
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The IP forwarder that implements the access point"
+    ::= { ipAccessEntry 4 }
+
+ipAccessServer OBJECT-TYPE
+    SYNTAX INTEGER (1..127)
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Incarnation number of the server process that provides service to
+	     the access point"
+    ::= { ipAccessEntry 5 }
+
+ipAccessSendRouterAdvert OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Whether the access point should send Router Advertisements
+	      and respond to Router Solicitations"
+    DEFVAL { false }
+    ::= { ipAccessEntry 6 }
+
+ipAccessCollectAccount OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "True if account information on packets received from
+	      this interface and forwarded should be colledted"
+    DEFVAL { false }
+    ::= { ipAccessEntry 7 }
+
+ipAccessAccSrcKind OBJECT-TYPE
+    SYNTAX AccKind
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Identification used to group account events"
+    DEFVAL { ifname }
+    ::= { ipAccessEntry 8 }
+
+ipAccessAccDstKind OBJECT-TYPE
+    SYNTAX AccKind
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Identification used to group account events"
+    DEFVAL { ifname }
+    ::= { ipAccessEntry 9 }
+
+ipAccessAdminStatus OBJECT-TYPE
+    SYNTAX  INTEGER {
+               up(1),       -- ready to pass packets
+               down(2)
+            }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+              "The desired state of the interface."
+    DEFVAL { up }
+    ::= { ipAccessEntry 10 }
+
+ipAccessOperStatus OBJECT-TYPE
+    SYNTAX  INTEGER {
+             up(1),             -- ready to pass packets
+
+             down(2),
+
+             tempdown(3)
+	}
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+      "The current operational state of the interface."
+    ::= { ipAccessEntry 11 }
+
+ipAccessLastChange OBJECT-TYPE
+    SYNTAX      TimeStamp
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The value of sysUpTime at the time the interface
+        entered its current operational state."
+    ::= { ipAccessEntry 12 }
+
+ipAccessIfAlias OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..64))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The value of IF-MIB:ifAlias for such interfaces where that is
+	 relevant: IP over clouds (X.25, Frame Relay, atm)"
+    DEFVAL { ''H }
+    ::= { ipAccessEntry 13 }
+
+ipAccessMTU OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The maximum Transmit Unit on the interface, including IP header,
+	 but excluding header and trailer of access protocols.  Defaults
+	 are available for all interfaces, they depend on ipAccessProtocol
+	 and underlying hardware"
+    ::= { ipAccessEntry 14 }
+
+ipAccessTDT OBJECT-TYPE
+    SYNTAX      INTEGER (0..30000)
+    UNITS	"seconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The Temp down timer is the interval between an operational down
+	 on an interface and the withdrawal of the interface from the
+	 IP routing tables"
+    DEFVAL { 30 }
+    ::= { ipAccessEntry 15 }
+
+ipAccessManagedFlag OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The value to be placed in the 'Managed address configuration' flag
+	 field in the Router Advertisement."
+    DEFVAL { false }
+    ::= { ipAccessEntry 16 }
+
+ipAccessOtherConfigFlag OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The value to be placed in the 'Other stateful Configuration' flag
+	 field in the Router Advertisement."
+    DEFVAL { false }
+    ::= { ipAccessEntry 17 }
+
+ipAccessAdvertLinkMTU OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "If true, MTU options with the value ipAccessMTU is placed in
+	 Router Advertisement"
+    DEFVAL { false }
+    ::= { ipAccessEntry 18 }
+
+ipAccessAdvertReachableTime OBJECT-TYPE
+    SYNTAX      INTEGER
+    UNITS	"milliseconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "If non-zero: the value to be placed in the Reachable Time field in the
+	Router Advertisement messages sent by the router"
+    DEFVAL { 0 }
+    ::= { ipAccessEntry 19 }
+
+ipAccessAdvertRetransTimer OBJECT-TYPE
+    SYNTAX      INTEGER
+    UNITS	"milliseconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "If non-zero: the value to be placed in the Retrans Timer field in the
+	Router Advertisement messages sent by the router"
+    DEFVAL { 0 }
+    ::= { ipAccessEntry 20 }
+
+ipAccessAdvertCurHopLimit OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "If non-zero: the value to be placed in the Cur Hop Limit field in the
+	 Router Advertisement messages sent by the router (i.e. current
+	 diameter of the Internet)"
+    DEFVAL { 0 }
+    ::= { ipAccessEntry 21 }
+
+ipAccessMaxRtrAdvIntv OBJECT-TYPE
+    SYNTAX      INTEGER (4000..1800000)
+    UNITS	"milliseconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The maximum time allowed between sending unsolicited
+	 multicast Router Advertisements from the interface"
+    DEFVAL { 600000 }
+    ::= { ipAccessEntry 22 }
+
+ipAccessMinRtrAdvIntv OBJECT-TYPE
+    SYNTAX      INTEGER (3000..1350000)
+    UNITS	"milliseconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The minimum time allowed between sending unsolicited
+	 multicast Router Advertisements from the interface.
+	 Default is 0.33 * MaxRtrAdvIntv"
+    ::= { ipAccessEntry 23 }
+
+ipAccessAdvDefaultLifeTime OBJECT-TYPE
+    SYNTAX      INTEGER (0..9000000)
+    UNITS	"milliseconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The value to be placed in the Router Lifetime field of
+	 Router Advertisements sent from the interface.
+	 Must be either zero or between MaxRtrAdvInterval and 9000
+	 seconds. A value of zero indicates that the router is not to
+	 be used as a default router.
+	 Default is 3 * MaxRtrAdvIntv"
+    ::= { ipAccessEntry 24 }
+
+ipAccessOspfMetric OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "OSPF Routing protocol cost associated with this interface. The
+	 default value 0 really means unspecified; when used, with OSPF
+	 this value 10 will be used"
+    DEFVAL { 0 }
+    ::= { ipAccessEntry 25 }
+
+ipAccessPimSparseMode OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Enable PIM Sparse Mode and IGMP"
+    DEFVAL { false }
+    ::= { ipAccessEntry 26 }
+
+
+ipAccessPimDenseMode OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Enable PIM Dense Mode and IGMP"
+    DEFVAL { false }
+    ::= { ipAccessEntry 27 }
+
+ipAccessAccountPeriod OBJECT-TYPE
+    SYNTAX      INTEGER (1..86400)
+    UNITS	"seconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The period in seconds between generation of account events
+	 for this interface.
+	 A random delay (measured in msec) between -1 sec and +1 sec
+	 is added to this account period, to insure not all ports
+	 generate account records at the same time."
+    DEFVAL { 300 }
+    ::= { ipAccessEntry 28 }
+
+ipAccessAccountCount OBJECT-TYPE
+    SYNTAX      INTEGER (1..20)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "the number of account records generated for this
+	 interface each time the account timer runs out."
+    DEFVAL { 3 }
+    ::= { ipAccessEntry 29 }
+
+ipAccessMaxAccountEntries OBJECT-TYPE
+    SYNTAX      INTEGER (1..4294967295)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Limit on the total number of account records hold for this interface"
+    DEFVAL { 200 }
+    ::= { ipAccessEntry 30 }
+
+ipAccessServIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "IfIndex of service provider entity."
+    ::= { ipAccessEntry 31 }
+
+ipAccessDupAddrDetectTransmits OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+	"The number of consecutive Neighbor Solicitation
+	 messages sent while performing Duplicate Address
+	 Detection on a tentative address. A value of zero
+	 indicates that Duplicate Address Detection is not
+	 performed on tentative addresses. A value of one
+	 indicates a single transmission with no follow up
+	 retransmissions.  Not implemented in current SWIPE."
+     ::= { ipAccessEntry 32 }
+
+ipAccessICMPRedir OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+	"This variable indicates if IPv4 redirects should be send,
+	when packets are forwarded back to the same interface
+	as they were received from."
+    DEFVAL { true }
+     ::= { ipAccessEntry 33 }
+
+-- access specific objects of the interface
+
+ipAccess802 OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Setting this value to true causes the Ethernet driver to consider
+	 an Ethernet interface as an 802.3 medium instead of the default
+	 Ethernet medium"
+    DEFVAL { false }
+    ::= { ipAccessEntry 40 }
+
+
+ipAccessPPP OBJECT-TYPE
+    SYNTAX      PppAccessName
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The management handle (i.e. PAXNET-PPP-MIB:mpppLinkName) of the
+	server PPP engine embedded in the server identified with
+	ipAccessServer."
+    ::= { ipAccessEntry 41 }
+
+
+-- State objects of the interface
+
+ipAccessIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The IF-MIB interfaceIndex associated with this interface"
+    ::= { ipAccessEntry 60 }
+
+ipAccessIpv6IfIndex OBJECT-TYPE
+    SYNTAX      Ipv6IfIndexOrZero
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The IPV6-TC IPv6 interface index associated with this interface"
+    ::= { ipAccessEntry 61 }
+
+ipAccessIpv6LinkLocal OBJECT-TYPE
+    SYNTAX      Ipv6Address
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The IPV6-TC IPv6 interface index associated with this interface"
+    ::= { ipAccessEntry 62 }
+
+ipAccessMissingAddress OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object is an extension of the rowstatus object; if this object
+	 has the value 'true', the access point is 'active' rowstatus-wise,
+	 but not truly active because addresses are missing"
+    ::= { ipAccessEntry 63 }
+
+ipAccessLastState OBJECT-TYPE
+    SYNTAX      AccState
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The combined admin/oper state that preceded the current one"
+    ::= { ipAccessEntry 64 }
+
+ipAccessLastChCause OBJECT-TYPE
+    SYNTAX      StateChangeCause
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The reason that the admin/oper state changed last time"
+    ::= { ipAccessEntry 65 }
+
+
+
+
+-- Table for IPv4 addresses
+-- the current rules are
+-- only one IPv4 address per interface
+-- except for LAN interfaces
+-- addresses may only be changed when the ipAccessEntry is Admin 'down'
+-- 
+
+ipV4Table OBJECT-TYPE
+    SYNTAX SEQUENCE OF IpV4Entry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The table of IPv4 addresses points"
+    ::= { paxnetIP 3 }
+
+ipV4Entry OBJECT-TYPE
+    SYNTAX IpV4Entry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "A configured local/peer IPv4 address"
+    INDEX { ipV4Name, ipV4, ipV4Prefix }
+    ::= { ipV4Table 1 }
+
+IpV4Entry ::=
+    SEQUENCE {
+	ipV4Name IpAccessName,
+        ipV4 IpAddress,
+	ipV4Prefix INTEGER (0..32),
+        ipV4Status RowStatus,
+	ipV4Peer IpAddress,
+	ipV4Primary TruthValue,
+	ipV4SecName IpAccessName,
+	ipV4ThisDomain TruthValue
+    }
+
+ipV4 OBJECT-TYPE
+    SYNTAX IpAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The local IPv4 address"
+    ::= { ipV4Entry 1 }
+
+ipV4Prefix OBJECT-TYPE
+    SYNTAX INTEGER (0..32)
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The number of bits entered in the routing table; only
+	      meaningful for LAN and LIS interfaces.  On point-to-point
+	      interfaces the value *must* be 32"
+    ::= { ipV4Entry 2 }
+
+ipV4Status OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The SNMP Rowstatus of the address"
+    ::= { ipV4Entry 3 }
+
+ipV4Peer OBJECT-TYPE
+    SYNTAX IpAddress
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The peer IPv4 address; mandatory for point-to-point links;
+		meaningless on LAN and LIS"
+    ::= { ipV4Entry 4 }
+
+ipV4Primary OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "Whether or not this address is the primary; the decision is
+		made based on the sequence of establishment of the addresses;
+		'true' for all non-LAN interfaces"
+    ::= { ipV4Entry 5 }
+
+ipV4SecName OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The name used to store this secondary access point; not
+		mandatory, the system will select a name if not specified"
+    ::= { ipV4Entry 6 }
+
+ipV4ThisDomain OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "Determines whether the routing prefix injected in local routing
+	tables because of the configuration of this prefix is a part of 
+	the local AS, for the purpose of exporting prefixes via BGP.
+	Not relevant for point-to-point type access points."
+    DEFVAL { true }
+    ::= { ipV4Entry 7 }
+
+ipV4Name OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The name of the access point"
+    ::= { ipV4Entry 8 }
+
+
+ipV6Table OBJECT-TYPE
+    SYNTAX SEQUENCE OF ipV6Entry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The table of IPv6 addresses points"
+    ::= { paxnetIP 4 }
+
+ipV6Entry OBJECT-TYPE
+    SYNTAX IpV6Entry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "A configured local/peer IPv6 address"
+    INDEX { ipV6Name, ipV6, ipV6Prefix }
+    ::= { ipV6Table 1 }
+
+IpV6Entry ::=
+    SEQUENCE {
+	ipV6Name ipAccessName,
+        ipV6 Ipv6Address,
+	ipV6Prefix INTEGER (0..128),
+        ipV6Status RowStatus,
+	ipV6Peer Ipv6Address,
+	ipV6Primary TruthValue,
+	ipV6SecName IpAccessName,
+	ipV6ThisDomain TruthValue,
+	ipV6AdvValidLifetime Unsigned32,
+	ipV6AdvPreferredLifetime Unsigned32,
+	ipV6OnLinkFlag TruthValue,
+	ipV6AutonomousFlag TruthValue,
+	ipV6AdvPrefixFlag TruthValue,
+	ipV6IfIdentifier Ipv6AddressIfIdentifier
+    }
+
+ipV6 OBJECT-TYPE
+    SYNTAX Ipv6Address
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The local IPv6 address"
+    ::= { ipV6Entry 1 }
+
+ipV6Prefix OBJECT-TYPE
+    SYNTAX INTEGER (0..128)
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The number of bits entered in the routing table; only
+	      meaningful for LAN and LIS interfaces. On point-to-point
+	      interfaces the value *must* be 128"
+    ::= { ipV6Entry 2 }
+
+ipV6Status OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "The SNMP Rowstatus of the address. Only accepted values
+	 are active and destroy - the distinction between active
+	 and notReady/notInService is governed by the ipAccessStatus
+	 object"
+    ::= { ipV6Entry 3 }
+
+ipV6Peer OBJECT-TYPE
+    SYNTAX Ipv6Address
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The peer IPv6 address; mandatory for point-to-point links;
+		meaningless on LAN and LIS"
+    ::= { ipV6Entry 4 }
+
+ipV6Primary OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "Whether or not this address is the primary; the decision is
+		made based on the sequence of establishment of the addresses;
+		'true' for all non-LAN interfaces"
+    ::= { ipV6Entry 5 }
+
+ipV6SecName OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The name used to store this secondary access point; not
+		mandatory, the system will select a name if not specified"
+    ::= { ipV6Entry 6 }
+
+ipV6ThisDomain OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "Determines whether the routing prefix generated by the
+	configuration of this prefix is a part of the local AS,
+	for the purpose of exporting prefixes via BGP"
+    DEFVAL { true }
+    ::= { ipV6Entry 7 }
+
+ipV6OnLinkFlag OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+               "This object has the value 'true(1)', if this
+               prefix can be used  for on-link determination
+               and the value 'false(2)' otherwise."
+     DEFVAL { true }
+    ::= { ipV6Entry 8 }
+
+ipV6AutonomousFlag OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+       "Autonomous address configuration flag. When
+       true(1), indicates that this prefix can be used
+       for autonomous address configuration (i.e. can
+       be used to form a local interface address).
+       If false(2), it is not used to autoconfigure
+       a local interface address."
+     DEFVAL { true }
+     ::= { ipV6Entry 9 }
+
+ipV6AdvPrefixFlag OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+       "Advertise Prefix address configuration flag. When
+       true(1), indicates that this prefix are to be
+       included in Router Advertisements.
+       If false(2), it is not included in Router Advertisements."
+     DEFVAL { true }
+     ::= { ipV6Entry 10 }
+
+ipV6AdvPreferredLifetime OBJECT-TYPE
+     SYNTAX      Unsigned32
+     UNITS       "seconds"
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "It is the length of time in seconds that this
+        prefix will remain preferred, i.e. time until
+        deprecation.  A value of 4,294,967,295 represents
+        infinity.
+
+        The address generated from a deprecated prefix
+        should no longer be used as a source address in
+        new communications, but packets received on such
+        an interface are processed as expected."
+     DEFVAL { 604800 }
+     ::= { ipV6Entry 11 }
+
+ipV6AdvValidLifetime OBJECT-TYPE
+     SYNTAX      Unsigned32
+     UNITS       "seconds"
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+       "It is the length of time in seconds that this
+       prefix will remain valid, i.e. time until
+       invalidation.  A value of 4,294,967,295 represents
+       infinity.
+
+       The address generated from an invalidated prefix
+       should not appear as the destination or source
+       address of a packet."
+     DEFVAL { 4294967295 }
+     ::= { ipV6Entry 12 }
+
+ipV6IfIdentifier OBJECT-TYPE
+     SYNTAX      Ipv6AddressIfIdentifier
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+       "This value is the interface identifier part of the address.  The
+	index value of this row (the object 'ipv6') may contain these bytes;
+	on the other hand, they may be zero in the index, which means that
+	the IfIdentifier part of the address is automatically generated
+	and not specified via management"
+     ::= { ipV6Entry 13 }
+
+ipV6Name OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The name of the access point"
+    ::= { ipV6Entry 14 }
+
+
+-- Management of static routes
+
+ipStRoutTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF IpStRoutEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The table of configured routes"
+    ::= { paxnetIP 5 }
+
+ipStRoutEntry OBJECT-TYPE
+    SYNTAX IpStRoutEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "A configured route"
+    INDEX { ipStRoutAccess, ipStRoutVersion, ipStRoutAddr, ipStRoutPref }
+    ::= { ipStRoutTable 1 }
+
+IpStRoutEntry ::=
+    SEQUENCE {
+	ipStRoutAccess IpAccessName,
+	ipStRoutAddr Ipv6Address,
+	ipStRoutVersion INTEGER (4|6),
+	ipStRoutPref INTEGER (0..128),
+	ipStRoutStatus RowStatus,
+        ipStRoutMetric Unsigned32,
+	ipStRoutNextHop Ipv6Address
+    }
+
+ipStRoutAccess OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The interface to which this route is assigned"
+    ::= { ipStRoutEntry 1 }
+
+ipStRoutVersion OBJECT-TYPE
+    SYNTAX INTEGER (4|6)
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+             "The IP version of the static route"
+    ::= { ipStRoutEntry 2 }
+
+ipStRoutAddr OBJECT-TYPE
+    SYNTAX Ipv6Address
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The address part of the prefix; those bits that are beyond
+	      the ipStRoutPrefix must be zero.  For IPv4 addresses, use
+	      the IPv4-mapped format."
+    ::= { ipStRoutEntry 3 }
+
+ipStRoutPref OBJECT-TYPE
+    SYNTAX INTEGER (0..128)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The number of significant bits in this route.  For IPv4
+	      addresses, the values are in the 96-128 range"
+    ::= { ipStRoutEntry 4 }
+
+ipStRoutStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "tool for row handling"
+    ::= { ipStRoutEntry 5 }
+
+ipStRoutMetric OBJECT-TYPE
+    SYNTAX Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Internal metric for this route; mandatory"
+    ::= { ipStRoutEntry 6 }
+
+ipStRoutNextHop OBJECT-TYPE
+    SYNTAX Ipv6Address
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "The nexthop address; necessary for non-point-to-point access pointns"
+    ::= { ipStRoutEntry 7 }
+
+
+-- Management of management - tables for management configuration
+
+
+paxIPMgmntTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxIPMgmntEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "The table of IP-based management services"
+    ::= { paxnetIP 2 }
+
+paxIPMgmntEntry OBJECT-TYPE
+    SYNTAX PaxIPMgmntEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "An IP-based management service"
+    INDEX { paxIPMgmntDomain, paxIPMgmntTAddress }
+    ::= { paxIPMgmntTable 1 }
+
+PaxIPMgmntEntry ::=
+    SEQUENCE {
+	paxIPMgmntDomain TDomain,
+	paxIPMgmntTAddress TAddress,
+        paxIPMgmntService INTEGER,
+	paxIPMgmntStatus RowStatus
+    }
+
+paxIPMgmntDomain    OBJECT-TYPE
+        SYNTAX      TDomain
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "The communication domain for the service (typically
+	     snmpUDPDomain)"
+    ::= { paxIPMgmntEntry 1 }
+
+paxIPMgmntTAddress    OBJECT-TYPE
+        SYNTAX      TAddress
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+            "The address of the service"
+    ::= { paxIPMgmntEntry 2 }
+
+paxIPMgmntService    OBJECT-TYPE
+        SYNTAX      INTEGER { cmip(1), snmp(2), omt(3) }
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+            "Tool for creating new/removing management services"
+    ::= { paxIPMgmntEntry 3 }
+
+paxIPMgmntStatus    OBJECT-TYPE
+        SYNTAX      RowStatus
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+            "Tool for creating new/removing management services"
+    ::= { paxIPMgmntEntry 4 }
+
+--
+-- Objects related to BGP management
+--
+
+paxBGPLocalAs OBJECT-TYPE
+    SYNTAX     INTEGER (0..65535)
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "The local autonomous system number."
+   ::= { paxnetIP 10 }
+
+paxBGPIdentifier OBJECT-TYPE
+    SYNTAX     IpAddress
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The BGP Identifier of local system.  Note, that in current
+	(SWIP 9.2) implementation this is identical to the object
+	OSPF-MIB:ospfRouterID which is settable."
+   ::= { paxnetIP 11 }
+
+paxBGPTotalAdm OBJECT-TYPE
+    SYNTAX INTEGER { start(1), stop(2) }
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+	"A tool to administratively start and stop all (started) peer sessions
+	in one operation.  Useful when changing aggregates or AS Number
+	on the fly."
+    DEFVAL { start }
+    ::= { paxnetIP 12 }
+
+paxBGPAggrTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxBGPAggrEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"Table of configured aggregation rules"
+    ::= { paxnetIP 13 }
+
+paxBGPAggrEntry OBJECT-TYPE
+    SYNTAX PaxBGPAggrEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"One configured aggregation rule"
+    INDEX { paxBGPAggrType, paxBGPAggrPartBits, paxBGPAggrPart }
+    ::= { paxBGPAggrTable 1 }
+
+PaxBGPAggrEntry ::= SEQUENCE {
+	paxBGPAggrType INTEGER,
+	paxBGPAggrPartBits INTEGER,
+	paxBGPAggrPart OCTET STRING,
+	paxBGPAggrStatus RowStatus,
+	paxBGPAggrBits INTEGER,
+	paxBGPAggr OCTET STRING
+    }
+
+paxBGPAggrType OBJECT-TYPE
+    SYNTAX INTEGER { v4proxy(0), v4local(1), v6local(2), v6proxy(3) }
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The type of aggregate specification of this row.  Note, v6proxy
+	is not implemented in SWIP 9.2"
+    ::= { paxBGPAggrEntry 1 }
+
+paxBGPAggrPartBits OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The number of significant bits in paxBGPAggrPart.
+	 Must be zero if we are talking local-AS prefix"
+    ::= { paxBGPAggrEntry 2 }
+
+paxBGPAggrPart OBJECT-TYPE
+    SYNTAX OCTET STRING (SIZE (0..16))
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The routing prefix that will be aggregated into paxBGPAggr.
+	 Must be zero-length string if we are talking local-AS prefix,
+	 otherwise as short as possible to allow paxBGPAggrPartBits bits"
+    ::= { paxBGPAggrEntry 3 }
+
+paxBGPAggrStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	""
+    ::= { paxBGPAggrEntry 4 }
+
+paxBGPAggrBits OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"The number of significant bits in paxBGPAggr."
+    ::= { paxBGPAggrEntry 5 }
+
+paxBGPAggr OBJECT-TYPE
+    SYNTAX OCTET STRING (SIZE (0..16))
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"The routing prefix that will be announced via BGP if this
+	aggregate is active."
+    ::= { paxBGPAggrEntry 6 }
+
+
+
+paxBGPTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxBGPEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "The table of configured BGP sessions"
+    ::= { paxnetIP 14 }
+
+paxBGPEntry OBJECT-TYPE
+    SYNTAX PaxBGPEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "A BGP session"
+    INDEX { paxBGPIPversion, paxBGPAccess, paxBGPPeerAddr }
+    ::= { paxBGPTable 1 }
+
+PaxBGPEntry ::=
+    SEQUENCE {
+	paxBGPIPversion INTEGER,
+	paxBGPAccess IpAccessNameOrZero,
+	paxBGPPeerAddr OCTET STRING,
+	paxBGPStatus RowStatus,
+	paxBGPHoldTime INTEGER,
+	paxBGPRetryTime INTEGER,
+	paxBGPTcpTimeout INTEGER,
+	paxBGPLocalPort INTEGER,
+	paxBGPAdmStatus INTEGER,
+
+	paxBGPProState INTEGER,
+	paxBGPPeerAS INTEGER,
+	paxBGPPeerID IpAddress,
+	paxBGPHoldTimer INTEGER,
+	paxBGPKeepAliveTimer INTEGER,
+	paxBGPInUpdates Counter32,
+	paxBGPOutUpdates Counter32,
+	paxBGPInTotalMsgs Counter32,
+	paxBGPOutTotalMsgs Counter32,
+	paxBGPFsmUps Counter32,
+	paxBGPFsmLastChange Gauge32
+    }
+
+paxBGPIPversion OBJECT-TYPE
+    SYNTAX INTEGER { v4(4), v6(6) }
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The IP protocol over which the session runs"
+    ::= { paxBGPEntry 1 }
+
+paxBGPAccess OBJECT-TYPE
+    SYNTAX IpAccessNameOrZero
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The name of the access point to which the session is bound.  If
+	 the BGP session is 'remote' BGP, the value of this object is
+	 the empty string.
+	 Note that the current version of SWIP (9.2) does *not* support remote
+	 BGP; this facility is in preparation for future release which does."
+    ::= { paxBGPEntry 2 }
+
+paxBGPPeerAddr OBJECT-TYPE
+    SYNTAX OCTET STRING (SIZE (0|4|16))
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The Peer address.  This is either an IPv4 or an IPv6 address,
+	 depending on the value of paxBGPIPversion.
+	 If the access point is a point-to-point interface, this object
+	 must be the empty string; in that case, the BGP session
+	 wish to choose the address itself."
+    ::= { paxBGPEntry 3 }
+
+paxBGPStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	""
+    ::= { paxBGPEntry 4 }
+
+paxBGPHoldTime OBJECT-TYPE
+    SYNTAX INTEGER 
+    UNITS "seconds"
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"Gives the maximum number of seconds that may elapse
+	between the receipt of successive BGP messages.
+	If BGP messages are not received from the peer BGP speaker
+	within the period specified by holdtime the BGP connection
+	are closed"
+    DEFVAL { 90 }
+    ::= { paxBGPEntry 5 }
+
+paxBGPRetryTime OBJECT-TYPE
+    SYNTAX INTEGER
+    UNITS "seconds" 
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"When the TCP connection to the peer BGP speaker has not been
+	established Retrytime gives the number of seconds between
+	the IPROUTER attemps to establish a TCP connection"
+    DEFVAL { 120 }
+    ::= { paxBGPEntry 6 }
+
+paxBGPTcpTimeout OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"Gives the number of times the TCP module will retransmit data
+	before the TCP connection is closed."
+    DEFVAL { 30 }
+    ::= { paxBGPEntry 7 }
+
+paxBGPLocalPort OBJECT-TYPE
+    SYNTAX     INTEGER (0..65535)
+    MAX-ACCESS read-create
+    STATUS     current
+    DESCRIPTION
+        "Gives the TCP port number used for the local end when a
+	TCP call is made to a peer BGP speaker.
+	0 means that the TCP will find the port number to be used"
+    ::= { paxBGPEntry 8 }
+
+
+paxBGPAdmStatus OBJECT-TYPE
+    SYNTAX INTEGER { stop(1), start(2), allstopped(3) }
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"The administrative status of the BGP session.  By default it is
+	stopped on creation, to allow configuration of filters before
+	start.  The value 'allstopped' is not valid for setting; it
+	will be returned if the object has been set to 'start' but the
+	session has not been started because paxBGPTotalAdm is 'stop'."
+    DEFVAL { stop }
+    ::= { paxBGPEntry 25 }
+
+paxBGPProState OBJECT-TYPE
+    SYNTAX INTEGER {
+                                idle(1),
+                                connect(2),
+                                active(3),
+                                opensent(4),
+                                openconfirm(5),
+                                established(6)
+                       }
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+	"The BGP peer connection state"
+    ::= { paxBGPEntry 30 }
+
+paxBGPPeerAS OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+	"The remote autonomous system number"
+    ::= { paxBGPEntry 31 }
+
+paxBGPPeerID OBJECT-TYPE
+    SYNTAX IpAddress
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+	"The BGP Identifier of this session's peer"
+    ::= { paxBGPEntry 32 }
+
+paxBGPHoldTimer OBJECT-TYPE
+    SYNTAX     INTEGER  ( 0 | 3..65535 )
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of seconds before the IPROUTER will
+	close the TCP connection if no Keepalive/Update messages
+	is received from the peer BGP speaker.
+	0 means timer not started."
+
+    ::= { paxBGPEntry 33 }
+
+paxBGPKeepAliveTimer OBJECT-TYPE
+    SYNTAX     INTEGER ( 0 | 1..21845 )
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of seconds before the IPROUTER will
+	send a Keepalive/Update messages to the peer BGP speaker
+	0 means timer not started."
+
+    ::= { paxBGPEntry 34 }
+
+paxBGPInUpdates OBJECT-TYPE
+    SYNTAX     Counter32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of BGP update messages received
+	from the peer BGP speaker on this connection."
+
+    ::= { paxBGPEntry 35 }
+
+paxBGPOutUpdates OBJECT-TYPE
+    SYNTAX     Counter32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of BGP update messages sent
+	to the peer BGP speaker on this connection."
+
+    ::= { paxBGPEntry 36 }
+
+paxBGPInTotalMsgs OBJECT-TYPE
+    SYNTAX     Counter32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of BGP messages received
+	from the peer BGP speaker on this connection."
+
+    ::= { paxBGPEntry 37 }
+
+paxBGPOutTotalMsgs OBJECT-TYPE
+    SYNTAX     Counter32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of BGP messages sent
+	to the peer BGP speaker on this connection."
+
+    ::= { paxBGPEntry 38 }
+
+paxBGPFsmUps OBJECT-TYPE
+    SYNTAX     Counter32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the number of BGP state transitions to the
+	established state"
+
+    ::= { paxBGPEntry 39 }
+
+paxBGPFsmLastChange OBJECT-TYPE
+    SYNTAX     Gauge32
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Gives the seconds since last BGP state transitions to 
+	or from the established state"
+
+    ::= { paxBGPEntry 40 }
+
+
+paxBGPAsFiltTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxBGPAsFiltEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"Table of configured AsFilter rules.  This table define
+	a number of sets of AS numbers, two for each BGP Peer session.
+	If, for a given session/direction, the set is empty, no filtering
+	is done on NLRIs.  If the set is non-empty, only NLRIs that contain
+	at least one AS from the set is allowed to pass in that direction
+	on the session."
+    ::= { paxnetIP 15 }
+
+paxBGPAsFiltEntry OBJECT-TYPE
+    SYNTAX PaxBGPAsFiltEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"One configured AsFiltegation rule"
+    INDEX { paxBGPIPversion, paxBGPAccess, paxBGPPeerAddr,
+	    paxBGPAsFiltDirection, paxBGPAsFiltAs}
+    ::= { paxBGPAsFiltTable 1 }
+
+PaxBGPAsFiltEntry ::= SEQUENCE {
+	paxBGPAsFiltDirection INTEGER,
+	paxBGPAsFiltAs INTEGER,
+	paxBGPAsFiltStatus RowStatus
+    }
+
+paxBGPAsFiltDirection OBJECT-TYPE
+    SYNTAX INTEGER { in(0), out(1) }
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The direction on which this filter works"
+    ::= { paxBGPAsFiltEntry 1 }
+
+paxBGPAsFiltAs OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The AS number of the AS filtered by the rule of this row"
+    ::= { paxBGPAsFiltEntry 2 }
+
+paxBGPAsFiltStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"The table should only be modified when the relevant peer session
+	is administratively stopped"
+    ::= { paxBGPAsFiltEntry 3 }
+
+paxBGPAsMetricTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxBGPAsMetricEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"Table of configured AsMetric rules.  This table define
+	for each BGP Peer session a set of associations between AS numbers
+	and metrics.  The purpose is to tune the local computation of metrics
+	for each incoming routing prefix.  By default, each AS in the AS path
+	of an NLRI 'costs' 5 metric units.  If an AS is specified in this
+	table, the metric given here will be used instead of the value 5."
+    ::= { paxnetIP 16 }
+
+paxBGPAsMetricEntry OBJECT-TYPE
+    SYNTAX PaxBGPAsMetricEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"One configured AsMetric definition"
+    INDEX { paxBGPIPversion, paxBGPAccess, paxBGPPeerAddr,
+	    paxBGPAsMetricAs}
+    ::= { paxBGPAsMetricTable 1 }
+
+PaxBGPAsMetricEntry ::= SEQUENCE {
+	paxBGPAsMetricAs INTEGER,
+	paxBGPAsMetricStatus RowStatus,
+	paxBGPAsMetricMetric INTEGER
+    }
+
+paxBGPAsMetricAs OBJECT-TYPE
+    SYNTAX INTEGER (0..65535)
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The AS number of the AS whose metric is modified by the rule of this
+	 row"
+    ::= { paxBGPAsMetricEntry 1 }
+
+paxBGPAsMetricStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"The table should only be modified when the relevant peer session
+	is administratively stopped"
+    ::= { paxBGPAsMetricEntry 2 }
+
+paxBGPAsMetricMetric OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	""
+    ::= { paxBGPAsMetricEntry 3 }
+
+--
+-- Table of interface that do RIP
+-- The table is indexed with access points, then IP version, thus allowing
+-- for the management of one RIP engine of each version on a given accesspoint.
+-- The only interface where this two-version model is relevant is LAN.
+--
+
+paxRIPTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxRIPEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"Table of interfaces with RIP configured"
+    ::= { paxnetIP 20 }
+
+paxRIPEntry OBJECT-TYPE
+    SYNTAX PaxRIPEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"One interface configured with RIP"
+    INDEX { paxRIPAccess, paxRIPVersion }
+    ::= { paxRIPTable 1 }
+
+PaxRIPEntry ::= SEQUENCE {
+	paxRIPAccess IpAccessName,
+	paxRIPVersion INTEGER,
+	paxRIPStatus RowStatus,
+	paxRIPAdmStatus INTEGER,
+	paxRIPinfilt INTEGER,
+	paxRIPoutfilt INTEGER,
+	paxRIPTagValue RouteTag,
+	paxRIPSetTag TruthValue,
+	paxRIPAuthType INTEGER,
+	paxRIPAuthKey OCTET STRING,
+	paxRIPSend INTEGER,
+	paxRIPReceive INTEGER,
+--	paxRIPDefaultMetric INTEGER,
+	paxRIPUpdInterval INTEGER,
+	paxRIPHoldTimer INTEGER,
+	paxRIPLineCost INTEGER,
+	paxRIPSplitHorizon INTEGER,
+	paxRIPMaxMetric INTEGER,
+	paxRIPUseNextHop INTEGER
+    }
+
+
+paxRIPAccess OBJECT-TYPE
+    SYNTAX IpAccessName
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The interface on which to run RIP"
+    ::= { paxRIPEntry 1 }
+
+paxRIPVersion OBJECT-TYPE
+    SYNTAX INTEGER  { v4(4), v6(6) }
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The IP version over which to run RIP"
+    ::= { paxRIPEntry 2 }
+
+paxRIPStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"Tool for creating rows in this table"
+    ::= { paxRIPEntry 3 }
+
+paxRIPAdmStatus OBJECT-TYPE
+    SYNTAX INTEGER { up(1), down(2) }
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"Administrative status of RIP at interface.  Toggling this
+	value down-then-up will a.o. cause reload of filter definitions."
+    DEFVAL { up }
+    ::= { paxRIPEntry 4 }
+
+paxRIPinfilt OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"This integer should be an index in the paxSmplAccTable, designating
+	the access list applied to incoming RIP data on this interface"
+    DEFVAL { 0 }
+    ::= { paxRIPEntry 5 }
+
+paxRIPoutfilt OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"This integer should be an index in the paxSmplAccTable, designating
+	the access list applied to outgoing RIP data on this interface"
+    DEFVAL { 0 }
+    ::= { paxRIPEntry 6 }
+
+paxRIPTagValue OBJECT-TYPE
+    SYNTAX RouteTag
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"Value inserted into the Routing Tag field
+           of all RIP packets sent on this interface.
+	   In current SWIPE, this may only be configured for IPv6 RIP engines."
+    DEFVAL { '0000'h }
+    ::= { paxRIPEntry 7 }
+
+paxRIPSetTag OBJECT-TYPE
+    SYNTAX TruthValue
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+	"When this value is false, the Route Tag field is set to zero.
+	When true, set to paxTagValue for IPv6, and to first AS number
+	in AS path for IPv4."
+    DEFVAL { false }
+    ::= { paxRIPEntry 8 }
+
+paxRIPAuthType OBJECT-TYPE
+    SYNTAX   INTEGER {
+        noAuthentication (1),
+	simplePassword (2),
+	md5 (3)
+    }
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"The type of Authentication used on this
+	interface.  In current SWIPE release, only working on IPv4
+	RIP engines, and only with noAuthentication and simplePassword."
+    DEFVAL { noAuthentication }
+    ::= { paxRIPEntry 9 }
+
+paxRIPAuthKey OBJECT-TYPE
+    SYNTAX   OCTET STRING (SIZE(0..16))
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"The value to be used as the Authentication Key
+	whenever the corresponding instance of
+	paxRIPAuthType has a value other than
+	noAuthentication.  A modification of the corresponding
+	instance of paxRIPAuthType does not modify
+	the paxRIPAuthKey value.  If a string shorter
+	than 16 octets is supplied, it will be left-
+	justified and padded to 16 octets, on the right,
+	with nulls (0x00)."
+    DEFVAL { ''h }
+    ::= { paxRIPEntry 10 }
+
+paxRIPSend OBJECT-TYPE
+    SYNTAX   INTEGER {
+        doNotSend (1),
+	ripVersion1 (2),
+	rip1Compatible (3),
+	ripVersion2 (4),
+	ripV1Demand (5),
+	ripV2Demand (6)
+	}
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"What the router sends on this interface.
+	ripVersion1 implies sending RIP updates compliant
+	with  RFC  1058.   rip1Compatible implies
+	broadcasting RIP-2 updates using RFC 1058 route
+	subsumption rules.  ripVersion2 implies
+	multicasting RIP-2 updates.  ripV1Demand indicates
+	the use of Demand RIP on a WAN interface under RIP
+	Version 1 rules.  ripV2Demand indicates the use of
+	Demand RIP on a WAN interface under Version 2 rules.
+	SWIPE note: this is *only* for IPv4 interfaces, and
+	SWIPE does not support Demand RIP."
+    DEFVAL { ripVersion2 }
+    ::= { paxRIPEntry 11 }
+
+paxRIPReceive OBJECT-TYPE
+    SYNTAX   INTEGER {
+       rip1 (1),
+       rip2 (2),
+       rip1OrRip2 (3),
+       doNotRecieve (4)
+       }
+   MAX-ACCESS   read-create
+   STATUS   current
+   DESCRIPTION
+       "This indicates which version of RIP updates
+       are to be accepted.  Note that rip2 and
+       rip1OrRip2 implies reception of multicast
+       packets.
+       SWIPE note: this is only relevant for IPv4 RIP interfaces."
+   DEFVAL { rip1OrRip2 }
+   ::= { paxRIPEntry 12 }
+
+--
+--  This is just a placeholder for a functionality that is not implemented
+--  in the SWIPE package but is described in the RIPv2-MIB, so it may be in
+--  the SWIPE some day.
+
+--paxRIPDefaultMetric OBJECT-TYPE
+--    SYNTAX   INTEGER ( 0..15 )
+--    MAX-ACCESS   read-create
+--    STATUS   current
+--    DESCRIPTION
+--	"This variable indicates the metric that is to
+--	be used for the default route entry in RIP updates
+--	originated on this interface.  A value of zero
+--	indicates that no default route should be
+--	originated; in this case, a default route via
+--	another router may be propagated.
+--	SWIPE note: this is a placeholder for a function that
+--	is described in the RIPv2-MIB, but is not supported in
+--	the current SWIPE software."
+--    ::= { paxRIPEntry 13 }
+
+paxRIPUpdInterval OBJECT-TYPE
+    SYNTAX   INTEGER
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"Gives the number of seconds between a complete response
+	is generated for this interface"
+    DEFVAL { 180 }
+    ::= { paxRIPEntry 14 }
+
+paxRIPHoldTimer OBJECT-TYPE
+    SYNTAX   INTEGER
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"A RIP route learned on this interface is considered to
+	have expired if no update message is received for the route
+	within the last holdtime seconds."
+    DEFVAL { 120 }
+    ::= { paxRIPEntry 15 }
+
+paxRIPLineCost OBJECT-TYPE
+    SYNTAX   INTEGER (0..255)
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"Gives a measure for the cost of the interface.
+	 Added to the metric when receiving updates"
+    DEFVAL { 1 }
+    ::= { paxRIPEntry 16 }
+
+paxRIPSplitHorizon OBJECT-TYPE
+    SYNTAX   INTEGER {simple(0), poisonedreverse(1)}
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+ 	"simple : Simple split horizon. Routes learned from neighbours
+	 on this interface is omited when sending updates to this interface.
+	 poisonedreverse : Split horizon with poisoned reverse. Routes learned
+	 from this interface is included in the updates sent
+	 on this interface but the metrics is set to infinity."
+    DEFVAL { simple }
+    ::= { paxRIPEntry 17 }
+
+paxRIPMaxMetric OBJECT-TYPE
+    SYNTAX   INTEGER (0..255)
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"Specifies how the internal metric is converted to
+	 a RIP metric when generating RIP updates.
+	 The RIP metric is set to min(Maxmetric, metric)."
+    DEFVAL { 14 }
+    ::= { paxRIPEntry 18 }
+
+paxRIPUseNextHop OBJECT-TYPE
+    SYNTAX   INTEGER {no(0), yes(1)}
+    MAX-ACCESS   read-create
+    STATUS   current
+    DESCRIPTION
+	"no : The nexthop field in a route entry is not
+	 used when generating RIP updates.
+	 yes : The nexthop field in a route entry is set
+	 if next hop is the same interface."
+    DEFVAL { yes }
+    ::= { paxRIPEntry 19 }
+
+
+
+-- conformance information
+
+paxnetIPMIBCompliances OBJECT IDENTIFIER ::= { paxnetIPMIBConformance 1 }
+paxnetIPMIBGroups      OBJECT IDENTIFIER ::= { paxnetIPMIBConformance 2 }
+
+
+-- compliance statements
+
+paxnetIPMIBCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for a paxnet router."
+    MODULE  -- this module
+        MANDATORY-GROUPS { paxnetIPMIBGroup, paxnetBGPGroup }
+	GROUP		paxnetIPMIBEtherGroup
+	DESCRIPTION
+	   "This group is mandatory for Ethernet-based interfaces"
+	GROUP		paxnetIPMIBPPPGroup
+	DESCRIPTION
+	   "This group is mandatory for PPP-based interfaces"
+
+    ::= { paxnetIPMIBCompliances 1 }
+
+
+-- units of conformance
+
+paxnetIPMIBGroup OBJECT-GROUP
+    OBJECTS {ipAccessStatus, ipAccessProtocol, ipAccessForw, ipAccessServer,
+	ipAccessSendRouterAdvert,
+	ipAccessCollectAccount, ipAccessAccSrcKind, ipAccessAccDstKind,
+	ipAccessAdminStatus, ipAccessOperStatus, ipAccessLastChange,
+	ipAccessIfAlias,
+	ipAccessMTU, ipAccessTDT, ipAccessManagedFlag, ipAccessOtherConfigFlag,
+	ipAccessAdvertLinkMTU, ipAccessAdvertReachableTime,
+	ipAccessAdvertRetransTimer, ipAccessAdvertCurHopLimit,
+	ipAccessMaxRtrAdvIntv, ipAccessMinRtrAdvIntv,
+	ipAccessAdvDefaultLifeTime,
+	ipAccessOspfMetric, ipAccessPimSparseMode, ipAccessPimDenseMode,
+	ipAccessAccountPeriod, ipAccessAccountCount, ipAccessMaxAccountEntries,
+	ipAccessServIfIndex, ipAccessDupAddrDetectTransmits,
+	ipAccessIfIndex, ipAccessIpv6IfIndex, ipAccessIpv6LinkLocal,
+	ipAccessMissingAddress, ipAccessLastState, ipAccessLastChCause,
+
+	ipV4Name, ipV4, ipV4Prefix,
+	ipV4Status, ipV4Peer, ipV4Primary, ipV4SecName,
+	ipV4ThisDomain,
+
+	ipV6Name, ipV6, ipV6Prefix,
+	ipV6Status, ipV6Peer, ipV6Primary, ipV6SecName,
+	ipV6ThisDomain,
+	ipV6AdvValidLifetime, ipV6AdvPreferredLifetime,
+	ipV6OnLinkFlag, ipV6AutonomousFlag, ipV6AdvPrefixFlag,
+	ipV6IfIdentifier,
+
+	ipStRoutAccess, ipStRoutVersion, ipStRoutStatus,
+	ipStRoutMetric, ipStRoutNextHop,
+
+	paxIPMgmntService, paxIPMgmntStatus }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     ip part of a Paxnet router."
+    ::= { paxnetIPMIBGroups 2 }
+
+paxnetIPMIBEtherGroup OBJECT-GROUP
+    OBJECTS {ipAccess802, ipAccessICMPRedir}
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     Ethernet interfaces on a Paxnet router."
+    ::= { paxnetIPMIBGroups 3 }
+
+paxnetIPMIBPPPGroup OBJECT-GROUP
+    OBJECTS {ipAccessPPP}
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     PPP interfaces on a Paxnet router."
+    ::= { paxnetIPMIBGroups 4}
+
+paxnetBGPGroup OBJECT-GROUP
+    OBJECTS { paxBGPLocalAs, paxBGPIdentifier, paxBGPTotalAdm,
+	paxBGPAggrStatus, paxBGPAggr, paxBGPAggrBits,
+	paxBGPStatus, paxBGPHoldTime, paxBGPRetryTime, paxBGPTcpTimeout,
+	paxBGPLocalPort, paxBGPAdmStatus,
+	paxBGPProState, paxBGPPeerAS, paxBGPPeerID, paxBGPHoldTimer,
+	paxBGPKeepAliveTimer, paxBGPInUpdates, paxBGPOutUpdates,
+	paxBGPInTotalMsgs, paxBGPOutTotalMsgs, paxBGPFsmUps,
+	paxBGPFsmLastChange,
+	paxBGPAsFiltStatus,
+	paxBGPAsMetricStatus, paxBGPAsMetricMetric }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of BGP
+	     on a Paxnet router."
+    ::= { paxnetIPMIBGroups 10 }
+
+paxnetRIPGroup OBJECT-GROUP
+    OBJECTS {paxRIPStatus, paxRIPAdmStatus, paxRIPinfilt, paxRIPoutfilt,
+        paxRIPTagValue, paxRIPSetTag, paxRIPAuthType, paxRIPAuthKey,
+	paxRIPSend, paxRIPReceive,
+	paxRIPUpdInterval, paxRIPHoldTimer, paxRIPLineCost, paxRIPSplitHorizon,
+	paxRIPMaxMetric, paxRIPUseNextHop}
+    STATUS current
+    DESCRIPTION
+	"A collection of objects to support management of RIP
+	on a Paxnet router."
+    ::= { paxnetIPMIBGroups 11 }
+END

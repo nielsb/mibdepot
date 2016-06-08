@@ -1,0 +1,701 @@
+NCCI-MIB DEFINITIONS ::= BEGIN
+
+        IMPORTS
+                MODULE-IDENTITY, OBJECT-TYPE, enterprises
+                        FROM SNMPv2-SMI
+                TEXTUAL-CONVENTION, RowStatus, TruthValue
+                        FROM SNMPv2-TC
+                ifIndex
+                        FROM IF-MIB
+                atmVclEntry, atmVplEntry
+                        FROM ATM-MIB
+                MODULE-COMPLIANCE, OBJECT-GROUP
+                        FROM SNMPv2-CONF;
+
+atmfNcciMIB MODULE-IDENTITY
+        LAST-UPDATED    "0002290000Z"
+        ORGANIZATION    "The ATM Forum"
+        CONTACT-INFO
+            "The ATM Forum
+             2570 West El Camino Real, Suite 304
+             Mountain View, CA 94040-1313 USA
+             Phone: +1 415-949-6700
+             Fax:   +1 415-949-6705
+             info@atmforum.com"
+        DESCRIPTION
+            "The MIB module for managing the ATM Forum 
+             Network Call Correlation Identifier (NCCI) v1.0"
+        REVISION "0002290000Z"
+        DESCRIPTION
+          "Initial version of the MIB module for managing the ATM Forum
+           Network Call Correlation Identifier v1.0."
+       ::= { atmfNcci 1 }
+
+-- The object identifier subtree for the ATM Forum NCCI MIBs
+
+atmForum        OBJECT IDENTIFIER ::= { enterprises 353 }
+atmForumNetworkManagement       OBJECT IDENTIFIER ::= { atmForum 5 }
+atmfSignalling        OBJECT IDENTIFIER ::= { atmForumNetworkManagement 9 }
+atmfNcci        OBJECT IDENTIFIER ::= { atmfSignalling 1 }
+
+ncciMIBObjects OBJECT IDENTIFIER ::= { atmfNcciMIB 1 }
+
+-- ========================================
+-- atmNCCIType
+-- ========================================
+
+    AtmNcciType ::= TEXTUAL-CONVENTION
+        STATUS        current
+        DESCRIPTION
+            "The network call correlation identifier (NCCI) is used to 
+             uniquely identify a call over ATM networks.
+
+             The associated call can be either a point-to-point or 
+             point-to-multipoint call. Both VCCs and VPCs can be
+             associated with a network call correlation identifier.
+             A network call correlation identifier (NCCI) can be coded
+             under two formats : The AESA-based format or the B-ISUP format
+
+             The AESA-based NCCI has a length of 28 bytes and is composed 
+             as follows :
+             
+                - The NCCI root (20 octets) contains the AESA associated 
+                  with the entity (node, interface) at which the NCCI is 
+                  first assigned to that call.
+
+                - The NCCI index (8 octets) is used in combination with the 
+                  AESA to provide a NCCI that is unique over a sufficiently 
+                  long period of time.
+
+                -------------------------------------------------
+                |        NCCI Root (AESA)          | NCCI Index |
+                -------------------------------------------------
+
+             The B-ISUP NCCI has a length of 9 bytes and is composed 
+             as follows (defined in ITU Recommendation Q.2726.3) :
+             
+                - The network identifier (2 octets of 4 BCD digits) 
+                  consists of a 0 followed by an E.164 country code 
+                  followed by a sufficient number of 0s to make 4 digits.
+
+                - The point code (3 octets) contains the SS7 point code
+                  of the node where the NCCI is assigned.
+
+                - The Call identifier (4 octets) is used in combination with 
+                  the Point Code and the Net ID to provide a NCCI that is 
+                  unique over a long period of time.
+
+                -----------------------------------------
+                | Net ID | Point Code | Call Identifier |
+                -----------------------------------------
+            "
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        SYNTAX        INTEGER { 
+                                none (0),
+                                aesaBased(1), 
+                                bisup(2) 
+                              }
+
+-- ========================================
+-- atmNCCI
+-- ========================================
+
+    AtmNcci ::= TEXTUAL-CONVENTION
+        STATUS        current
+        DESCRIPTION
+            "Describes the value of a NCCI
+
+             Two types of NCCI are defined: the AESA-based and the 
+             B-ISUP formats. These formats are explained in the 
+             AtmNcciType definition.
+
+             When the AtmNcciType is equal to none, it means that no 
+             NCCI is contained in the variable. The length of AtmNcci
+             is equal to zero byte."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        SYNTAX        OCTET STRING (SIZE (0|9|28))
+
+
+-- ========================================
+-- atmNCCIRoot
+-- ========================================
+
+    AtmNcciRoot ::= TEXTUAL-CONVENTION
+        STATUS        current
+        DESCRIPTION
+            "The root portion of a NCCI.
+
+             Two types of NCCI are defined: the AESA-based and the 
+             B-ISUP formats. These formats are explained in the atmNcciType
+             definition.
+
+             For a NCCI in a AESA-based format, the root portion is equivalent
+             to the NCCI Root as described in the atmNcciType definition 
+             (20 bytes).
+
+             For a NCCI in a B-ISUP format, the root portion is equivalent
+             to the NCCI Network ID + Point Code as described in the 
+             atmNcciType definition (5 bytes).
+
+             When the AtmNcciType is equal to none, it means that no 
+             NCCI is contained in the variable. The length of AtmNcciRoot
+             is equal to zero byte."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        SYNTAX        OCTET STRING (SIZE (0|5|20))
+
+
+
+-- ========================================
+-- Per Interface NCCI Configuration
+-- ========================================
+
+ncciIfTable OBJECT-TYPE
+        SYNTAX        SEQUENCE OF NcciIfEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION
+            "The table used to manage the assignment of NCCIs on 
+             a per interface basis. One row of this 
+             table can be created  by the managed system for each row in 
+             the ifTable of atm(37).
+
+             An entry in this table configures the management of NCCIs for
+             SVCs, SVPs, soft PVCs, and soft PVPs. The configuration can 
+             be applied to point-to-point calls, point-to-multipoint calls 
+             or both.
+
+             When no entry in this table has been configured for a given 
+             interface and direction, the action is to forward the received
+             NCCI if present, and not to assign any NCCI even when no NCCI is
+             received."
+         REFERENCE
+            "ATM Forum NCCI v1.0"
+        ::= { ncciMIBObjects 1 }
+
+ncciIfEntry OBJECT-TYPE
+        SYNTAX        NcciIfEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION
+            "Each entry in this table is used to configure the NCCI     
+             operations for SETUP messages of svcs and svps. 
+
+             The entry is also be used to configure the assignment of NCCIs to
+             soft pvcs or soft pvps whose terminating legs are located on the 
+             interface indexed by ifIndex.
+
+             The actions configured in this entry are subject to the procedures
+             described in sections 3,4 and 5 of the ATM Forum NCCI v1.0.
+
+             The ifIndex is used as the instance ID to uniquely identify 
+             the interface on the local switching system. This index has 
+             the same value as the ifIndex object defined in RFC 1573 for 
+             the same interface, since this table correlates with the ifTable 
+             in RFC 1573."
+        INDEX { ifIndex, ncciIfDirection }
+        ::= { ncciIfTable 1 }
+
+NcciIfEntry ::=
+        SEQUENCE {
+                  ncciIfDirection       INTEGER,
+                  ncciIfAction          INTEGER,
+                  ncciIfSave            BITS,
+                  ncciIfinConnect       TruthValue,
+                  ncciIfType            AtmNcciType,
+                  ncciIfRoot            AtmNcciRoot,
+                  ncciIfCastType        INTEGER,
+                  ncciIfVpType          INTEGER,
+                  ncciIfVcType          INTEGER,
+                  ncciIfRowStatus       RowStatus
+                 }
+
+ncciIfDirection OBJECT-TYPE 
+        SYNTAX       INTEGER { incoming (1), 
+                               outgoing (2) 
+                             } 
+        MAX-ACCESS   not-accessible 
+        STATUS       current 
+        DESCRIPTION 
+            "Indicates if the configuration applies to incoming setup 
+             indications or to outgoing setup requests."
+        ::= { ncciIfEntry 1}
+
+ncciIfAction OBJECT-TYPE 
+        SYNTAX       INTEGER { 
+                               discardNcci (1), 
+                               assignNcci (2), 
+                               forwardNcci (3) 
+                             } 
+        MAX-ACCESS   read-create 
+        STATUS       current 
+        DESCRIPTION 
+            "Indicates what action to perform when a setup indication
+             is received on this interface. 
+
+             'discardNcci' means that if an incoming setup indication 
+             is received, if a NCCI is present in the setup, it is discarded
+             and no NCCI is assigned to the call. The values contained 
+             in ncciIfType and ncciIfRoot are ignored. 
+
+             'assignNcci' means that if an incoming setup indication is
+             received, a new locally generated NCCI is assigned to the call.
+             'assignNcci' implies that the ncciIfType is set to a value
+             different than 'none'. 
+
+             'forwardNcci' means that if an incoming setup indication 
+             is received, if a NCCI is present in the setup, it is forwarded
+             to the next interface. 
+             If no NCCI is present: 
+             - a locally generated NCCI is assigned to the call if 
+               the ncciIfType is set to a value different than 'none'. 
+             - no locally generated NCCI is assigned to the call if 
+               the ncciIfType is set to the value 'none'."
+
+         REFERENCE
+            "ATM Forum NCCI v1.0 sections 3, 4, and 5"
+         DEFVAL { forwardNcci }
+        ::= { ncciIfEntry 2}
+
+ncciIfSave OBJECT-TYPE 
+        SYNTAX       BITS { localNcci (0), 
+                            remoteNcci (1) 
+                          } 
+
+        MAX-ACCESS   read-create 
+        STATUS       current 
+        DESCRIPTION 
+            "Indicates whether NCCIs are saved for calls on this 
+             interface
+
+             'localNcci' indicates that the value of 
+              - a newly assigned NCCI, or 
+              - a received NCCI if it has been forwarded, or
+               - a received NCCI if it has been discarded and either 
+                 the atmVclConnKind or the atmVplConnKind is 'svcOutgoing', or
+               - a received NCCI if the atmVclConnKind or atmVplConnKind 
+                 is 'spvcTarget'
+              is stored.
+
+
+             'remoteNcci' indicates that the value of
+              - a NCCI received in the SETUP message if either 
+                 the atmVclConnKind or the atmVplConnKind is 'svcIncoming', or
+              - a NCCI received in the CONNECT message if either 
+                 the atmVclConnKind or the atmVplConnKind is 'svcOutgoing'
+               is stored."
+
+        ::= { ncciIfEntry 3}
+
+
+ncciIfinConnect OBJECT-TYPE 
+        SYNTAX       TruthValue
+        MAX-ACCESS   read-create 
+        STATUS       current 
+        DESCRIPTION 
+            "Indicates whether a locally generated NCCI assigned to an
+             incoming call on this interface is returned in the 
+             CONNECT message. 
+
+             'true' means that the NCCI is returned in the CONNECT message.
+
+             This object is only applicable on AINI or UNI interfaces 
+             and when ncciIfDirection has the value 'incoming'."
+        DEFVAL { true }
+        ::= { ncciIfEntry 4}
+
+ncciIfType OBJECT-TYPE
+        SYNTAX        AtmNcciType
+        MAX-ACCESS    read-create
+        STATUS        current
+        DESCRIPTION
+            "Indicates the format of the NCCI to be assigned on the 
+             specified interface."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        DEFVAL { none }
+        ::= { ncciIfEntry 5 }
+
+ncciIfRoot OBJECT-TYPE
+        SYNTAX        AtmNcciRoot
+        MAX-ACCESS    read-create
+        STATUS        current
+        DESCRIPTION
+            "Contains the NCCI Root or the NCCI Network ID + Point Code
+             to be used by the switching system when generating a NCCI 
+             on the specified interface.
+
+             If the ncciIfRoot value is not supplied prior to creating the
+             row, the switching system is in charge of deriving the 
+             ncciIfRoot value from one of the switch addresses. 
+             The value of the NCCI root assigned by the switch can be read 
+             from this variable when the entry in the table has been activated.
+
+             The length of the NCCI must match the length of the 
+             specified NCCI format."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciIfEntry 6 }
+
+ncciIfCastType OBJECT-TYPE
+        SYNTAX       INTEGER { 
+                               p2p (1), 
+                               p2mp (2),
+                               p2pANDp2mp (3) 
+                             }
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+            "Indicates if the NCCI configuration for this interface 
+             applies to point-to-point calls only, to 
+             point-to-multipoint calls only, or to both"
+        ::= { ncciIfEntry 7}
+
+ncciIfVpType OBJECT-TYPE
+        SYNTAX       INTEGER { 
+                               none (1),
+                               svp (2), 
+                               spvpInitiator (3),
+                               svpANDspvpInitiator (4) 
+                             }
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+            "Indicates if the NCCI configuration for this interface 
+             applies to svps only, to soft pvps only, to both, or to none
+
+             'svp' value applies to switched portions of a soft pvp as well           
+             as switched vps."
+        ::= { ncciIfEntry 8}
+
+ncciIfVcType OBJECT-TYPE
+        SYNTAX       INTEGER { 
+                               none (1),
+                               svc (2), 
+                               spvcInitiator (3),
+                               svcANDspvcInitiator (4) 
+                             }
+        MAX-ACCESS   read-create
+        STATUS       current
+        DESCRIPTION
+            "Indicates if the NCCI configuration for this interface 
+             applies to svcs only, to soft pvcs only, to both, or to none
+             'svc' value applies to switched portions of a soft pvc as well           
+             as switched vcs."
+        ::= { ncciIfEntry 9}
+ncciIfRowStatus OBJECT-TYPE
+        SYNTAX        RowStatus
+        MAX-ACCESS    read-create
+        STATUS        current
+        DESCRIPTION
+            "To create, delete, activate and de-activate a NCCI
+             configuration for an interface."
+        ::= { ncciIfEntry 10}
+
+-- ========================================
+-- Ncci Vpl Table 
+-- ========================================
+
+ncciVpTable OBJECT-TYPE
+        SYNTAX        SEQUENCE OF NcciVpEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION
+            "The table used to manage NCCIs and their association 
+             with a point-to-point or point-to-multipoints PVPs and 
+             Soft PVPs in a switching system.
+
+             This table is an augmentation of atmVplTable."
+         REFERENCE
+            "ATM Forum NCCI v1.0"
+        ::= { ncciMIBObjects 2 }
+
+ncciVpEntry OBJECT-TYPE
+        SYNTAX        NcciVpEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION
+            "Each entry in this table represents a NCCI associated with
+             a PVP or Soft PVP connection.
+
+             The content of this table reflects only the NCCI values 
+             associated with VPCs. atmVplTable is specified in
+             ATM-MIB (RFC 2515).  
+
+             This entry serves to identify the VPL on the interface."
+        AUGMENTS { atmVplEntry }
+        ::= { ncciVpTable 1 }
+
+NcciVpEntry ::=
+        SEQUENCE {
+                  ncciVpLocalType         AtmNcciType,
+                  ncciVpLocalValue        AtmNcci,
+                  ncciVpRemoteType        AtmNcciType,
+                  ncciVpRemoteValue       AtmNcci
+                 }
+
+ncciVpLocalType OBJECT-TYPE
+        SYNTAX        AtmNcciType
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The format of the NCCI contained in the NCCI ncciVpLocalValue."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVpEntry 1 }
+
+
+ncciVpLocalValue OBJECT-TYPE
+        SYNTAX        AtmNcci
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The NCCI value associated with the VPC identified by
+             its atmVpl. It contains the the value 
+             - of the assigned NCCI if a new NCCI has been assigned,  
+             - of a received NCCI if it has been forwarded, 
+             - of a received NCCI if it has been discarded and the 
+               atmVplConnKind for this entry is 'svcOutgoing'
+             - of a received NCCI if the atmVplConnKind is 'spvcTarget'
+
+             The length and type of the NCCI is determined by the 
+             ncciVpLocalType."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVpEntry 2 }
+
+ncciVpRemoteType OBJECT-TYPE
+        SYNTAX        AtmNcciType
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The format of the NCCI contained in the NCCI ncciVpRemoteValue."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVpEntry 3 }
+
+
+ncciVpRemoteValue OBJECT-TYPE
+        SYNTAX        AtmNcci
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The NCCI value associated with the VPC on the other side
+             of the interface. 
+
+             When the atmVplConnKind for this entry is
+             'svcIncoming', contains the NCCI value received in the SETUP 
+             message on the interface. 
+
+             When the atmVplConnKind for this entry is
+             'svcOutgoing', contains the NCCI value 
+             received in the CONNECT message on the interface.
+
+             The length and type of the NCCI is determined by the 
+             ncciVpRemoteType."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVpEntry 4 }
+
+
+-- ========================================
+-- Ncci Vcl Table 
+-- ========================================
+
+ncciVcTable OBJECT-TYPE
+        SYNTAX        SEQUENCE OF NcciVcEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION
+            "The table used to manage NCCIs and their association 
+             with a point-to-point or point-to-multipoints PVCs and 
+             Soft PVCs in a switching system.
+
+             This table is an augmentation of atmVclTable."
+         REFERENCE
+            "ATM Forum NCCI v1.0"
+        ::= { ncciMIBObjects 3 }
+
+ncciVcEntry OBJECT-TYPE
+        SYNTAX        NcciVcEntry
+        MAX-ACCESS    not-accessible
+        STATUS        current
+        DESCRIPTION
+            "Each entry in this table represents a NCCI associated with
+             a PVC or Soft PVC connection.
+
+             The content of this table reflects only the NCCI values 
+             associated with VCCs. atmVclTable is specified in
+             ATM-MIB (RFC 2515).  
+
+             This entry serves to identify the VCL on the interface."
+        AUGMENTS { atmVclEntry }
+        ::= { ncciVcTable 1 }
+
+NcciVcEntry ::=
+        SEQUENCE {
+                  ncciVcLocalType         AtmNcciType,
+                  ncciVcLocalValue        AtmNcci,
+                  ncciVcRemoteType        AtmNcciType,
+                  ncciVcRemoteValue       AtmNcci
+                 }
+
+ncciVcLocalType OBJECT-TYPE
+        SYNTAX        AtmNcciType
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The format of the NCCI contained in the NCCI ncciVcLocalValue."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVcEntry 1 }
+
+
+ncciVcLocalValue OBJECT-TYPE
+        SYNTAX        AtmNcci
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The NCCI value associated with the VCC identified by
+             its atmVcl. It contains the value 
+             - of the assigned NCCI if a new NCCI has been assigned,  
+             - of a received NCCI if it has been forwarded, 
+             - of a received NCCI if it has been discarded and the 
+               atmVclConnKind for this entry is 'svcOutgoing'
+             - of a received NCCI if the atmVclConnKind is 'spvcTarget' 
+
+             The length and type of the NCCI is determined by the 
+             ncciVcLocalType."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVcEntry 2 }
+
+ncciVcRemoteType OBJECT-TYPE
+        SYNTAX        AtmNcciType
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The format of the NCCI contained in the NCCI ncciVcRemoteValue."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVcEntry 3 }
+
+
+ncciVcRemoteValue OBJECT-TYPE
+        SYNTAX        AtmNcci
+        MAX-ACCESS    read-only
+        STATUS        current
+        DESCRIPTION
+            "The NCCI value associated with the VCC on the other side
+             of the interface. 
+
+             When the atmVclConnKind for this entry is
+             'svcIncoming', contains the NCCI value received in the SETUP 
+             message on the interface. 
+
+             When the atmVclConnKind for this entry is
+             'svcOutgoing', contains the NCCI value 
+             received in the CONNECT message on the interface.
+
+             The length and type of the NCCI is determined by the 
+             ncciVcRemoteType."
+        REFERENCE
+            "ATM Forum NCCI v1.0 section 2"
+        ::= { ncciVcEntry 4 }
+
+
+
+
+-- conformance information
+
+ncciMIBConformance
+                   OBJECT IDENTIFIER ::= { atmfNcciMIB 2 }
+ncciMIBCompliances
+                   OBJECT IDENTIFIER ::= { ncciMIBConformance 1 }
+ncciMIBGroups
+                   OBJECT IDENTIFIER ::= { ncciMIBConformance 2 }
+
+
+-- compliance statements
+
+ncciMIBCompliance MODULE-COMPLIANCE
+        STATUS        current
+        DESCRIPTION
+            "The compliance statement for entities which implement
+             the AESA-based NCCI MIB.
+
+             Groups of the AESA-based NCCI objects required for using the 
+             NCCI extension are identified by the suffix MinGroup.
+
+             Groups of optional NCCI objects are identified by the
+             suffix OptionalGroup."
+
+        MODULE  -- this module
+            MANDATORY-GROUPS { 
+                               ncciIfMinGroup,
+                               ncciVcMinGroup
+                              }
+
+        ::= { ncciMIBCompliances 1 }
+
+-- units of conformance
+
+ncciIfMinGroup OBJECT-GROUP
+        OBJECTS { 
+                   ncciIfAction,
+                   ncciIfSave,
+                   ncciIfinConnect,
+                   ncciIfType,
+                   ncciIfRoot,
+                  ncciIfCastType,
+                  ncciIfVcType,
+                   ncciIfRowStatus
+
+                }
+        STATUS current
+        DESCRIPTION
+            "A collection of per interface NCCI management objects required
+             for managing the NCCI extension in a switching system."
+        ::= { ncciMIBGroups 1 }
+
+ncciVcMinGroup OBJECT-GROUP
+        OBJECTS {
+                  ncciVcLocalType,
+                  ncciVcLocalValue,
+                  ncciVcRemoteType,
+                  ncciVcRemoteValue
+                  }
+        STATUS current
+        DESCRIPTION
+            "A collection of per Vc NCCI objects required
+             for managing the NCCI extension in a switching system."
+        ::= { ncciMIBGroups 2 }
+
+ncciIfVpOptionalGroup OBJECT-GROUP
+        OBJECTS { 
+                  ncciIfVpType
+                }
+        STATUS current
+        DESCRIPTION
+            "A collection of per interface NCCI management objects required
+             for managing the NCCI extension when VPs are supported
+             in this switching system."
+        ::= { ncciMIBGroups 3 }
+
+ncciVpOptionalGroup OBJECT-GROUP
+        OBJECTS {
+                  ncciVpLocalType,
+                  ncciVpLocalValue,
+                  ncciVpRemoteType,
+                  ncciVpRemoteValue
+                  }
+        STATUS current
+        DESCRIPTION
+            "A collection of per VP NCCI management objects required
+             for managing the NCCI extension when VPs are supported
+             in this switching system."
+        ::= { ncciMIBGroups 4 }
+
+END

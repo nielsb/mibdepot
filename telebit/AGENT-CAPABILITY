@@ -1,0 +1,364 @@
+-- Note that work on this file is still ongoing - it is by no means complete.
+-- Nevertheless it should be correct for the MIBs it actually describes
+-- as "SUPPORTS".
+
+-- We do not have an Agent-Cap parser - thus, the file may contain simple
+-- typos.
+
+-- Copyright (c) Ericsson Telebit A/S, Denmark
+-- $Date: 2000/05/11 22:33:30 $
+-- All rights reserved
+--
+-- $Source: /nmc/Repository/mbase/objmgr/AGENT-CAPABILITY,v $
+-- $Revision: 1.4 $
+
+PAXNET-AGENT-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+    	paxnet, paxManagement FROM PAXNET-MIB;
+
+    paxnetAgentMIB MODULE-IDENTITY
+	LAST-UPDATED "200003221508Z"  
+	ORGANIZATION "Ericsson Telebit A/S, Denmark"
+	CONTACT-INFO
+		"        "
+	DESCRIPTION
+		"MIB for configuration and management of the
+		 IP part of PAXNET routers"
+	::= { paxManagement 11 }                                           
+
+swipeAgent AGENT-CAPABILITIES
+    PRODUCT-RELEASE    "Product is currently not formally released"
+    STATUS             current
+    DESCRIPTION        "SNMP agent interface of SWIPE Object Manager, as
+			implemented on a UNIX system running against an
+			AXI461/462 system."
+
+    SUPPORTS PAXNET-HW-MIB
+	INCLUDES	{ paxnetHWMIBGroup }
+
+
+    SUPPORTS PAXNET-DS-MIB
+	INCLUDES 	{ paxDSGroup }
+
+	VARIATION	paxDSchanEntry
+	    CREATION-REQUIRES { dsChanSlots }
+	    DESCRIPTION	"This is the main tool for creating timeslot fractions
+			 for HDLC framing"
+
+    SUPPORTS PAXNET-PPP-MIB
+	INCLUDES	{ paxPPPGroup }
+
+	VARIATION	paxMPPPEntry
+	    CREATION-REQUIRES { mpppServer, mpppServerType, mpppChannel }
+	    DESCRIPTION	"This is the main tool for creating new PPP engines"
+
+	VARIATION	mpppConfMRU
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppMaxConfReq
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppMaxTermReq
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppMaxNegoAtt
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppKeepAliveIntv
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppMaxOutstRepl
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppActMRU
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+	VARIATION	mpppLcpTimeout
+	    ACCESS	not-implemented
+	    DESCRIPTION	"No support for this in current MLPPP network module"
+
+
+    SUPPORTS IP-MIB
+	INCLUDES	{ ipGroup, icmpGroup }
+
+	VARIATION	ipForwarding
+	    ACCESS	read-only
+	    DESCRIPTION "IPv4 Routing cannot be disabled"
+
+	VARIATION	ipDefaultTTL
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Default TTL cannot be set; unclear what it is"
+
+	VARIATION	ipNetToMediaTable
+	    DESCRIPTION	"This table is only implemented for LAN interfaces,
+			 implementation for ATM LIS interfaces is missing."
+
+    SUPPORTS TCP-MIB
+	INCLUDES	{ tcpGroup }
+
+	VARIATION	tcpConnState
+	    ACCESS	read-only
+	    DESCRIPTION	"Not possible to kill a TCP session this way"
+
+
+    SUPPORTS UDP-MIB
+	INCLUDES	{ udpGroup }
+
+
+    SUPPORTS RIPv2-MIB
+	-- Note: everything in this MIB is declared inside MANDATORY-GROUPS,
+	-- so we are not conformant.
+    	INCLUDES	{ rip2GlobalGroup, rip2IfStatGroup, rip2IfConfGroup
+			  -- rip2PeerGroup
+			  }
+
+	VARIATION	rip2GlobalRouteChanges
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+
+	-- rip2IfStatGroup
+	VARIATION	rip2IfStatStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	
+	-- rip2IfConfGroup
+	VARIATION	rip2IfConfDefaultMetric
+	    ACCESS	read-only
+	    DESCRIPTION	""
+
+
+    SUPPORTS OSPF-MIB
+	-- Note: everything in this MIB is declared inside MANDATORY-GROUPS,
+	-- so we are not conformant.
+    	INCLUDES	{ ospfBasicGroup, ospfAreaGroup, ospfStubAreaGroup,
+			  ospfLsdbGroup, ospfAreaRangeGroup,
+			  -- ospfHostGroup,
+			  ospfIfGroup, ospfIfMetricGroup,
+			  -- ospfVirtIfGroup,
+			  ospfNbrGroup,
+			  -- ospfVirtNbrGroup,
+			  ospfExtLsdbGroup
+			  -- ospfAreaAggregateGroup
+			  }
+
+	-- ospfBasicGroup
+	VARIATION	ospfExternLsaCksumSum
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfTOSSupport
+	    ACCESS	read-only
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfOriginateNewLsas
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfRxNewLsas
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfExtLsdbLimit
+	    ACCESS	read-only
+	    DESCRIPTION "constant -1. limited by memory"
+	VARIATION	ospfExitOverflowInterval
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfDemandExtensions
+	    ACCESS	read-only
+	    DESCRIPTION "Not available from IPROUTER module"
+
+	-- ospfAreaGroup (ospfAreaTable)
+	VARIATION	ospfAuthType
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfImportAsExtern
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfSpfRuns
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfAreaBdrRtrCount
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfAreaLsaCksumSum
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfAreaSummary
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfAreaStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+
+	-- ospfStubAreaGroup (ospfStubAreaTable)
+	VARIATION	ospfStubMetric
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfStubStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfStubMetricType
+	    ACCESS	read-only
+	    DESCRIPTION	""
+
+	-- ospfLsdbGroup (ospfLsdbTable)
+	VARIATION	ospfLsdbAdvertisement
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+
+	-- ospfAreaRangeGroup (ospfAreaRangeTable)
+	VARIATION	ospfAreaRangeMask
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfAreaRangeStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfAreaRangeEffect
+	    ACCESS	read-only
+	    DESCRIPTION	""
+
+	-- ospfIfGroup (ospfIfTable)
+	VARIATION	ospfIfPollInterval
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+	VARIATION	ospfIfEvents
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+
+	-- ospfIfMetricGroup (ospfIfMetricTable)
+	VARIATION	ospfIfMetricValue
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfIfMetricStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+
+	-- ospfNbrGroup (ospfNbrTable)
+	VARIATION	ospfNbrPriority
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfNbmaNbrStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+
+	-- ospfExtLsdbGroup (ospfExtLsdbTable)
+	VARIATION	ospfExtLsdbAdvertisement
+	    ACCESS	not-implemented
+	    DESCRIPTION "Not available from IPROUTER module"
+
+
+    SUPPORTS OSPF-TRAP-MIB
+    	INCLUDES	{ ospfTrapControlGroup }
+	-- This is how they really should have been declared !
+	VARIATION	ospfConfigErrorType
+	    ACCESS	accessible-for-notify
+	    DESCRIPTION ""
+	VARIATION	ospfPacketType
+	    ACCESS	accessible-for-notify
+	    DESCRIPTION ""
+	VARIATION	ospfPacketSrc
+	    ACCESS	accessible-for-notify
+	    DESCRIPTION ""
+
+
+    SUPPORTS OSPFV3-MIB
+	-- Note: everything in this MIB is declared inside MANDATORY-GROUPS,
+	-- so we are not conformant.
+    	INCLUDES	{ ospfv3BasicGroup, ospfv3AreaGroup
+			  -- ospfv3AsLsdbGroup
+			  -- ospfv3AreaLsdbGroup
+			  -- ospfv3LinkLsdbGroup
+			  -- ospfv3HostGroup
+			  -- ospfv3Ifgroup
+			  -- ospfv3VirtIfGroup
+			  -- ospfv3NbrGroup
+			  -- ospfv3VirtNbrGroup
+			  -- ospfv3AreaAggregateGroup
+			  }
+
+	-- ospfv3BasicGroup
+	VARIATION	ospfv3ASBdrRtrStatus
+	    ACCESS	read-only
+	    DESCRIPTION	""
+	VARIATION	ospfv3AsScopeLsaCksumSum
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3OriginateNewLsas
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3RxNewLsas
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3ExtAreaLsdbLimit
+	    ACCESS	read-only
+	    DESCRIPTION	"Constant -1. Limited by memory"
+	VARIATION	ospfv3MulticastExtensions
+	    ACCESS	read-only
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3ExitOverflowInterval
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3DemandExtensions
+	    ACCESS	read-only
+	    DESCRIPTION	"Not available from IPROUTER module"
+
+	-- ospfv3AreaGroup
+	VARIATION	ospfv3SpfRuns
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3AreaBdrRtrCount
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3AsBdrRtrCount
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3AreaScopeLsaCksumSum
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+	VARIATION	ospfv3AreaSummary
+	    ACCESS	not-implemented
+	    DESCRIPTION	"Not available from IPROUTER module"
+
+-- Still need to write notes on 
+
+-- ATM-MIB
+-- ENTITY-MIB
+-- RS-232-MIB
+-- EtherLike-MIB
+-- DS1-MIB
+-- DS0-MIB
+-- DS0BUNDLE-MIB
+-- DIFF-SERV-MIB
+-- DISMAN-PING-MIB
+-- DISMAN-TRACEROUTE-MIB
+-- MAU-MIB
+-- IF-MIB
+-- IP-FORWARD-MIB
+-- IPV6-MIB
+-- IPV6-ICMP-MIB
+-- PAX-IP-ENT-MIB
+-- PAXNET-SW-MIB
+-- PAXNET-IP-MIB
+-- PPP-LCP-MIB (problem with the two PPP MIBs, they are SMIv1 format, no group)
+-- PPP-IP-NCP-MIB
+-- BGP4-MIB
+-- PIM-STD-MIB
+-- IGMP-STD-MIB
+-- IPMROUTE-STD-MIB
+-- SNMP-FRAMEWORK-MIB
+-- SNMP-USER-BASED-SM-MIB
+-- SNMP-VIEW-BASED-ACM-MIB
+-- SNMPv2-MIB
+-- SNMP-MPD-MIB
+-- SNMP-COMMUNITY-MIB
+-- SNMP-TARGET-MIB
+-- SNMP-NOTIFICATION-MIB
+
+    ::= { paxnet 4 2 1}
+
+END

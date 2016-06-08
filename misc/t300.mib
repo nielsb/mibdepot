@@ -1,0 +1,1486 @@
+SUN-T300-MIB
+
+    -- The definitions in this module apply to the Sun StorEdge T300
+
+	-- History:
+
+	-- 19990819 TMM
+	-- Changed volDiskDisabled and volDiskSubstituted to
+    --         volDisabledDisk and volSubstitutedDisk in order
+	-- to match corresponding tokens.		   
+	-- Added fruCtlrRole, fruCtlrPartnerId, fruCtlrCtState; and removed
+	-- fruCtlrBaudRate
+
+    -- We start with special comments intended for the MIB compiler.
+
+    --FORCE-INCLUDE <pna.h>
+    --FORCE-INCLUDE <pna_mib.h>
+    --FORCE-INCLUDE "snmpdefs.h"
+    --FORCE-INCLUDE "snmpvars.h"
+    --FORCE-INCLUDE "pnamib.h"
+
+    -- Set up MIB-wide defaults for generating snmpd in C.
+    -- All functions can use %n for object name and
+    -- %t for object type, %p for parent name,
+    -- %d for name of default-bearing node and %% for %
+    --DEFAULT    test-function    it_exists
+    --DEFAULT    next-function    std_next
+    --DEFAULT    cookie           "%n"
+
+    DEFINITIONS ::= BEGIN
+
+    IMPORTS
+        MODULE-IDENTITY, OBJECT-IDENTITY, enterprises
+                        FROM SNMPv2-SMI
+        IpAddress, Counter
+                        FROM RFC1155-SMI
+        DisplayString   FROM RFC1213-MIB
+        TRAP-TYPE       FROM RFC-1215
+        OBJECT-TYPE     FROM RFC-1212;
+
+    sun                 OBJECT IDENTIFIER ::= { enterprises 42 }
+
+    products            OBJECT IDENTIFIER ::= { sun 2 }
+
+    storage-subsystem   OBJECT IDENTIFIER ::= { products 28 }
+
+    t300 MODULE-IDENTITY
+        LAST-UPDATED    "9905240000Z"       
+        ORGANIZATION    "SUN MICROSYSTEMS INCORPORATED"
+        CONTACT-INFO    "        Storage Management
+                                 Sun Microsystems, Inc.
+                                 901 San Antonio Road, MS UMIL14
+                                 Palo Alto, CA 94303"
+        DESCRIPTION     "The MIB module for Sun StorEdge T300"
+        ::= { storage-subsystem 2 }
+
+    -- sub-tree for registrations
+    t300Reg             OBJECT IDENTIFIER ::= { t300 1 }
+
+    -- the registrations for the actual hardware
+    t300Purple1         OBJECT-IDENTITY
+        STATUS          current
+        DESCRIPTION     "Purple 1 Storage Array"
+        ::= { t300Reg 1 }
+
+    t300Objs            OBJECT IDENTIFIER ::= { t300 2 }
+    t300SystemObjs      OBJECT IDENTIFIER ::= { t300Objs 1 }
+    t300UnitObjs        OBJECT IDENTIFIER ::= { t300Objs 2 }
+    t300FruObjs         OBJECT IDENTIFIER ::= { t300Objs 3 }
+    t300VolumeObjs      OBJECT IDENTIFIER ::= { t300Objs 4 }
+    t300PortObjs        OBJECT IDENTIFIER ::= { t300Objs 5 }
+    t300AttachObjs      OBJECT IDENTIFIER ::= { t300Objs 6 }
+	t300LoopObjs		OBJECT IDENTIFIER ::= { t300Objs 7 }
+
+    -- sub-tree for events
+    t300Events          OBJECT IDENTIFIER ::= { t300 3 }
+    t300EventsV2        OBJECT IDENTIFIER ::= { t300Events 0 }
+
+    -- the system objects
+
+    sysId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  "The system name."
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 1 }
+
+    sysVendor OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 2 }
+                  
+    sysModel OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 3 }
+                  
+    sysRevision OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 4 }
+
+    sysStripeUnitSize OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 5 }
+
+    sysCacheMode OBJECT-TYPE
+        SYNTAX  INTEGER { disabled(1), writeThrough(2),
+                          writeBehind(3), auto(4) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 6 }
+            
+    sysCacheMirror OBJECT-TYPE
+        SYNTAX  INTEGER { off(1), auto(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 7 }
+            
+    sysAutoDisable OBJECT-TYPE
+        SYNTAX  INTEGER { none(1), disableOnly(2), disableRecon(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 8 }
+            
+    sysMpSupport OBJECT-TYPE
+        SYNTAX  INTEGER { none(1), readWrite(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 9 }
+            
+    sysReadAhead OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 10 }
+
+    sysReconRate OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 11 }
+
+    sysOndgMode OBJECT-TYPE
+        SYNTAX  INTEGER { off(1), passive(2), active(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 12 }
+            
+    sysOndgTimeslice OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 13 }
+
+    sysIdleDiskTimeout OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 14 }
+
+    sysFruRemovalShutdown OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 15 }
+
+    sysBootMode OBJECT-TYPE
+        SYNTAX  INTEGER { none(1), auto(2), tftp(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 16 }
+            
+    sysBootDelay OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 17 }
+
+    sysSpinDelay OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 18 }
+
+    sysTftpHost OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleIpAddr
+        ::= { t300SystemObjs 19 }
+                  
+    sysTftpFile OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 20 }
+                  
+    sysIpAddr OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleIpAddr
+        ::= { t300SystemObjs 21 }
+
+    sysSubNet OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleIpAddr
+        ::= { t300SystemObjs 22 }
+
+    sysGateway OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleIpAddr
+        ::= { t300SystemObjs 23 }
+
+    sysWriteRequests OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 24 }
+
+    sysReadRequests OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 25 }
+
+    sysBlocksWritten OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 26 }
+
+    sysBlocksRead OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 27 }
+
+    sysCacheWriteHits OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 28 }
+
+    sysCacheWriteMisses OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 29 }
+
+    sysCacheReadHits OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 30 }
+
+    sysCacheReadMisses OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 31 }
+
+    sysCacheRmwFlushes OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 32 }
+
+    sysCacheReconFlushes OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 33 }
+
+    sysCacheStripeFlushes OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 34 }
+
+    sysTimezone OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 35 }
+                  
+    sysDate OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 36 }
+                  
+    sysTime OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 37 }
+                  
+    sysRootSession OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 38 }
+
+    sysGuestSession OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300SystemObjs 39 }
+
+    sysLastMessage OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { t300SystemObjs 40 }
+
+
+    -- the unit objects
+
+    unitCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300UnitObjs 1 }
+
+    unitTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF UnitEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300UnitObjs 2 } 
+
+    unitEntry OBJECT-TYPE
+        SYNTAX  UnitEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { unitTable 1 }
+                                
+    UnitEntry ::= 
+        SEQUENCE {
+            unitIndex                   INTEGER,
+            unitId                      DisplayString,
+            unitType                    INTEGER,
+            unitStandby                 INTEGER
+            }
+
+    unitIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { unitEntry 1 }
+                  
+    unitId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { unitEntry 2 }
+                  
+    unitType OBJECT-TYPE
+        SYNTAX  INTEGER { controller(1), expansion(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { unitEntry 3 }
+
+    unitStandby OBJECT-TYPE
+        SYNTAX  INTEGER { no(1), yes(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { unitEntry 4 }
+                  
+
+    -- the fru objects
+
+    fruCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300FruObjs 1 }
+
+    fruTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF FruEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300FruObjs 2 } 
+
+    fruEntry OBJECT-TYPE
+        SYNTAX  FruEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, fruIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { fruTable 1 }
+
+    FruEntry ::=
+        SEQUENCE {
+            fruIndex                    INTEGER,
+            fruId                       DisplayString,
+            fruType                     INTEGER,
+            fruStatus                   INTEGER,
+            fruState                    INTEGER,
+            fruVendor                   DisplayString,
+            fruModel                    DisplayString,
+            fruRevision                 DisplayString,
+            fruSerialNo                 DisplayString
+            }
+
+    fruIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruEntry 1 }
+                  
+    fruId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruEntry 2 }
+                  
+    fruType OBJECT-TYPE
+        SYNTAX  INTEGER { diskDrive(1), controllerCard(2),
+                          loopCard(3), powerUnit(4), midplane(5) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruEntry 3 }
+                  
+    fruStatus OBJECT-TYPE
+        SYNTAX  INTEGER { notInstalled(1), fault(2), ready(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruEntry 4 }
+                  
+    fruState OBJECT-TYPE
+        SYNTAX  INTEGER { enabled(1), disabled(2), substituted(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruEntry 5 }
+                  
+    fruVendor OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruEntry 6 }
+                  
+    fruModel OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruEntry 7 }
+                  
+    fruRevision OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruEntry 8 }
+                  
+    fruSerialNo OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruEntry 9 }
+
+    fruDiskCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300FruObjs 3 }
+
+    fruDiskTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF FruDiskEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300FruObjs 4 } 
+
+    fruDiskEntry OBJECT-TYPE
+        SYNTAX  FruDiskEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, fruIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { fruDiskTable 1 }
+
+    FruDiskEntry ::=
+        SEQUENCE {
+            fruDiskRole                 INTEGER,
+            fruDiskPort1State           INTEGER,
+            fruDiskPort2State           INTEGER,
+            fruDiskCapacity             INTEGER,
+            fruDiskStatusCode           DisplayString,
+            fruDiskVolName              DisplayString
+            }
+
+    fruDiskRole OBJECT-TYPE
+        SYNTAX  INTEGER { unassigned(1), dataDisk(2),
+                          standbyDisk(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruDiskEntry 1 }
+                  
+    fruDiskPort1State OBJECT-TYPE
+        SYNTAX  INTEGER { ready(1), notReady(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruDiskEntry 2 }
+                  
+    fruDiskPort2State OBJECT-TYPE
+        SYNTAX  INTEGER { ready(1), notReady(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruDiskEntry 3 }
+                  
+    fruDiskCapacity OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruDiskEntry 4 }
+
+    fruDiskStatusCode OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..3))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruDiskEntry 5 }
+
+    fruDiskVolName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruDiskEntry 6 }
+                  
+    fruCtlrCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300FruObjs 5 }
+
+    fruCtlrTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF FruCtlrEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300FruObjs 6 } 
+
+    fruCtlrEntry OBJECT-TYPE
+        SYNTAX  FruCtlrEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, fruIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { fruCtlrTable 1 }
+                                
+    FruCtlrEntry ::=
+        SEQUENCE {
+            fruCtlrCpuDesc              DisplayString,
+            fruCtlrRole                 INTEGER,
+			fruCtlrPartnerId            DisplayString,
+			fruCtlrCtState              INTEGER,
+            fruCtlrCacheSize            INTEGER,
+            fruCtlrTemp                 INTEGER
+            }
+
+    fruCtlrCpuDesc OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruCtlrEntry 1 }
+                  
+    fruCtlrRole OBJECT-TYPE
+        SYNTAX  INTEGER { master(1), alternateMaster(2), slave(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruCtlrEntry 2 }
+                  
+    fruCtlrPartnerId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..6))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { fruCtlrEntry 3 }
+                  
+    fruCtlrCtState OBJECT-TYPE
+        SYNTAX  INTEGER { expansionUnit(1), booting(2), online(3),
+		                  disabled(4), disabling(5), reset(6),
+						  resetting(7), reconfig(8), hotPlug(9),
+						  virtual(10) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruCtlrEntry 4 }
+                  
+    fruCtlrCacheSize OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruCtlrEntry 5 }
+
+    fruCtlrTemp OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruCtlrEntry 6 }
+
+    fruLoopCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300FruObjs 7 }
+
+    fruLoopTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF FruLoopEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300FruObjs 8 } 
+
+    fruLoopEntry OBJECT-TYPE
+        SYNTAX  FruLoopEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, fruIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { fruLoopTable 1 }
+                                
+    FruLoopEntry ::=
+        SEQUENCE {
+            fruLoopMode                 INTEGER,
+            fruLoopTemp                 INTEGER,
+			fruLoopCable1State			INTEGER,
+			fruLoopCable2State			INTEGER
+            }
+
+    fruLoopMode OBJECT-TYPE
+        SYNTAX  INTEGER { master(1), slave(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruLoopEntry 1 }
+
+    fruLoopTemp OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruLoopEntry 2 }
+
+    fruLoopCable1State OBJECT-TYPE
+        SYNTAX  INTEGER { notInstalled(1), installed(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruLoopEntry 3 }
+
+    fruLoopCable2State OBJECT-TYPE
+        SYNTAX  INTEGER { notInstalled(1), installed(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruLoopEntry 4 }
+
+    fruPowerCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300FruObjs 9 }
+
+    fruPowerTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF FruPowerEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300FruObjs 10 } 
+
+    fruPowerEntry OBJECT-TYPE
+        SYNTAX  FruPowerEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, fruIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { fruPowerTable 1 }
+                                
+    FruPowerEntry ::=
+        SEQUENCE {
+            fruPowerPowOutput           INTEGER,
+            fruPowerPowSource           INTEGER,
+            fruPowerPowTemp             INTEGER,
+            fruPowerFan1State           INTEGER,
+            fruPowerFan2State           INTEGER,
+            fruPowerBatState            INTEGER
+            }                 
+
+    fruPowerPowOutput OBJECT-TYPE
+        SYNTAX  INTEGER { off(1), normal(2), fault(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruPowerEntry 1 }
+                  
+    fruPowerPowSource OBJECT-TYPE
+        SYNTAX  INTEGER { line(1), battery(2), unknown(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruPowerEntry 2 }
+                  
+    fruPowerPowTemp OBJECT-TYPE
+        SYNTAX  INTEGER { normal(1), overTemp(2), unknown(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruPowerEntry 3 }
+                  
+    fruPowerFan1State OBJECT-TYPE
+        SYNTAX  INTEGER { normal(1), fault(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruPowerEntry 4 }
+                  
+    fruPowerFan2State OBJECT-TYPE
+        SYNTAX  INTEGER { normal(1), fault(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruPowerEntry 5 }
+                  
+    fruPowerBatState OBJECT-TYPE
+        SYNTAX  INTEGER { notInstalled(1), normal(2),
+                          fault(3), unknown(4) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { fruPowerEntry 6 }
+                  
+
+    -- the volume objects
+
+    volCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300VolumeObjs 1 }
+
+    volTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF VolEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300VolumeObjs 2 } 
+
+    volEntry OBJECT-TYPE
+        SYNTAX  VolEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, volIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { volTable 1 }
+                                
+    VolEntry ::=
+        SEQUENCE {
+            volIndex                    INTEGER,
+            volId                       DisplayString,
+            volName                     DisplayString,
+            volWWN                      DisplayString,
+            volStatus                   INTEGER,
+            volCacheMode                INTEGER,
+            volCacheMirror              INTEGER,
+            volCapacity                 INTEGER,
+            volArrayWidth               INTEGER,
+            volRaidLevel                INTEGER,
+            volWriteRequests            Counter,
+            volReadRequests             Counter,
+            volBlocksWritten            Counter,
+            volBlocksRead               Counter,
+            volSoftErrors               Counter,
+            volFirmErrors               Counter,
+            volHardErrors               Counter,
+            volCacheWriteHits           Counter,
+            volCacheWriteMisses         Counter,
+            volCacheReadHits            Counter,
+            volCacheReadMisses          Counter,
+            volCacheRmwFlushes          Counter,
+            volCacheReconFlushes        Counter,
+            volCacheStripeFlushes       Counter,
+            volDisabledDisk             DisplayString,
+            volSubstitutedDisk          DisplayString
+            }
+                    
+    volIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 1 }
+                  
+    volId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { volEntry 2 }
+                  
+    volName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { volEntry 3 }
+                  
+    volWWN OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { volEntry 4 }
+                  
+    volStatus OBJECT-TYPE
+        SYNTAX  INTEGER { deleted(1), uninitialized(2),
+                          unmounted(3), mounted(4) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 5 }
+                  
+    volCacheMode OBJECT-TYPE
+        SYNTAX  INTEGER { disabled(1), writeThrough(2),
+                          writeBehind(3), auto(4) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 6 }
+            
+    volCacheMirror OBJECT-TYPE
+        SYNTAX  INTEGER { off(1), on(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 7 }
+            
+    volCapacity OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 8 }
+
+    volArrayWidth OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 9 }
+
+    volRaidLevel OBJECT-TYPE
+        SYNTAX  INTEGER { raid0(1), raid1(2), raid5(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 10 }
+                  
+    volWriteRequests OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 11 }
+
+    volReadRequests OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 12 }
+
+    volBlocksWritten OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 13 }
+
+    volBlocksRead OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 14 }
+
+    volSoftErrors OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 15 }
+
+    volFirmErrors OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 16 }
+
+    volHardErrors OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 17 }
+
+    volCacheWriteHits OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 18 }
+
+    volCacheWriteMisses OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 19 }
+
+    volCacheReadHits OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 20 }
+
+    volCacheReadMisses OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 21 }
+
+    volCacheRmwFlushes OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 22 }
+
+    volCacheReconFlushes OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 23 }
+
+    volCacheStripeFlushes OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { volEntry 24 }
+
+    volDisabledDisk OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { volEntry 25 }
+                  
+    volSubstitutedDisk OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { volEntry 26 }
+                  
+
+    -- the port objects
+
+    portCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300PortObjs 1 }
+
+    portTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF PortEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300PortObjs 2 } 
+
+    portEntry OBJECT-TYPE
+        SYNTAX  PortEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, portIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { portTable 1 }
+                                
+    PortEntry ::=
+        SEQUENCE {
+            portIndex                   INTEGER,
+            portId                      DisplayString,
+            portType                    INTEGER,
+            portFruId                   DisplayString,
+            portWriteRequests           Counter,
+            portReadRequests            Counter,
+            portBlocksWritten           Counter,
+            portBlocksRead              Counter,
+            portSunHost                 INTEGER
+            }
+                
+    portIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 1 }
+                  
+    portId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { portEntry 2 }
+                  
+    portType OBJECT-TYPE
+        SYNTAX  INTEGER { ultraScsi(1), fibreChannel(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 3 }
+                  
+    portFruId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { portEntry 4 }
+                  
+    portWriteRequests OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 5 }
+
+    portReadRequests OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 6 }
+
+    portBlocksWritten OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 7 }
+
+    portBlocksRead OBJECT-TYPE
+        SYNTAX  Counter
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 8 }
+
+    portSunHost OBJECT-TYPE
+        SYNTAX  INTEGER { no(1), yes(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portEntry 9 }
+                  
+    portFibreCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300PortObjs 3 }
+
+    portFibreTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF PortFibreEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300PortObjs 4 } 
+
+    portFibreEntry OBJECT-TYPE
+        SYNTAX  PortFibreEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, portIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { portFibreTable 1 }
+                                
+    PortFibreEntry ::=
+        SEQUENCE {
+            portFibreAlpaMode           INTEGER,
+            portFibreAlpa               INTEGER
+            }
+
+    portFibreAlpaMode OBJECT-TYPE
+        SYNTAX  INTEGER { hard(1), soft(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portFibreEntry 1 }
+                  
+    portFibreAlpa OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { portFibreEntry 2 }
+
+
+    -- the attachment objects
+
+    attachCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300AttachObjs 1 }
+
+    attachTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF AttachEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300AttachObjs 2 } 
+
+    attachEntry OBJECT-TYPE
+        SYNTAX  AttachEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, portIndex, attachIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { attachTable 1 }
+                                
+    AttachEntry ::=
+        SEQUENCE {
+            attachIndex                 INTEGER,
+            attachLun                   INTEGER,
+            attachMode                  INTEGER,
+            attachVolId                 DisplayString,
+            attachVolName               DisplayString
+            }
+
+    attachIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { attachEntry 1 }
+                  
+    attachLun OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { attachEntry 2 }
+
+    attachMode OBJECT-TYPE
+        SYNTAX  INTEGER { primary(1), secondary(2), failover(3) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { attachEntry 3 }
+                  
+    attachVolId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { attachEntry 4 }
+                  
+    attachVolName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { attachEntry 5 }
+
+
+    -- the loop objects
+
+    loopCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { t300LoopObjs 1 }
+
+    loopTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF LoopEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        ::= { t300LoopObjs 2 } 
+
+    loopEntry OBJECT-TYPE
+        SYNTAX  LoopEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION  ""
+        INDEX   { unitIndex, loopIndex }
+        --DEFAULT test-function testproc_Noble
+        --DEFAULT next-function nextproc_Noble
+        ::= { loopTable 1 }
+                                
+    LoopEntry ::=
+        SEQUENCE {
+            loopIndex                   INTEGER,
+            loopId                      DisplayString,
+            loopStatus                  INTEGER,
+            loopMux                     INTEGER
+            }
+                    
+    loopIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { loopEntry 1 }
+                  
+    loopId OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (0..40))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleString
+        ::= { loopEntry 2 }
+                  
+    loopStatus OBJECT-TYPE
+        SYNTAX  INTEGER { available(1), reserved(2) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { loopEntry 3 }
+                  
+    loopMux OBJECT-TYPE
+        SYNTAX  INTEGER { isolated(1), top(2), bottom(3), middle(4) }
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION  ""
+        --DEFAULT get-function get_NobleInt32
+        ::= { loopEntry 4 }
+                  
+
+    -- trap definitions
+
+    sysMessage TRAP-TYPE
+        ENTERPRISE  t300Events
+        VARIABLES   { sysLastMessage }
+        DESCRIPTION  ""
+        ::= 1
+
+
+    END

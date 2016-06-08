@@ -1,0 +1,642 @@
+------------------------------------------------------------------------
+-- $Id: fore-lane.mib,v 1.14 1995/11/02 21:56:22 kompella Exp $
+-- Copyright 1993, 1994, 1995 by Fore Systems, Inc.
+
+Fore-Lane-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	enterprises				FROM RFC1155-SMI
+	OBJECT-TYPE				FROM RFC1212
+	DisplayString				FROM RFC1213-MIB
+	lane					FROM Fore-Common-MIB
+	EntryStatus				FROM Fore-Common-MIB
+	AtmAddress, MacAddress			FROM Fore-Common-MIB;
+
+---------------------------------------------------------------
+-- MIB Types Definitions
+
+LecConfigType ::= INTEGER {
+                automatic(1),
+                manual(2)
+        }
+
+---------------------------------------------------------------
+-- MIB Groups
+
+laneLecGroup	 OBJECT IDENTIFIER ::= { lane 1 }
+lecConfGroup	 OBJECT IDENTIFIER ::= { laneLecGroup 1 }
+lecStatGroup	 OBJECT IDENTIFIER ::= { laneLecGroup 2 }
+lecArpGroup	 OBJECT IDENTIFIER ::= { laneLecGroup 3 }
+
+laneLesGroup	 OBJECT IDENTIFIER ::= { lane 2 }
+lesConfGroup	 OBJECT IDENTIFIER ::= { laneLesGroup 1 }
+lesStatGroup	 OBJECT IDENTIFIER ::= { laneLesGroup 2 }
+
+laneBusGroup	 OBJECT IDENTIFIER ::= { lane 3 }
+busConfGroup	 OBJECT IDENTIFIER ::= { laneBusGroup 1 }
+busStatGroup	 OBJECT IDENTIFIER ::= { laneBusGroup 2 }
+
+laneLecsGroup	 OBJECT IDENTIFIER ::= { lane 4 }
+lecsConfGroup	 OBJECT IDENTIFIER ::= { laneLecsGroup 1 }
+lecsStatGroup	 OBJECT IDENTIFIER ::= { laneLecsGroup 2 }
+
+---------------------------------------------------------------
+-- LEC Groups
+--
+-- The LEC MIB allows the management station to configure the LEC on a host or
+-- a switch.  In order to configure the LEC, the address of the LECS is
+-- required.  lecDefaultLecsConfigType and lecDefaultLecsAtmAddress allow 
+-- for setting the default LECS address.
+--
+
+lecDefaultLecsConfigType OBJECT-TYPE
+        SYNTAX  LecConfigType
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "Default configuration type of the LECS, see
+		lecConfLecsConfigType (which overrides this variable)
+		for more information on config type"
+        ::= { lecConfGroup 1 }
+
+lecDefaultLecsAtmAddress OBJECT-TYPE
+        SYNTAX  AtmAddress
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "Default LECS Atm Address to use for each LEC, can be
+		overridden by lecConfLecsAtmAddress"
+        ::= { lecConfGroup 2 }
+
+
+lecConfTable OBJECT-TYPE
+        SYNTAX	SEQUENCE OF LecConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table of LECs and their parameters."
+        ::= { lecConfGroup 10 }
+
+lecConfEntry OBJECT-TYPE
+        SYNTAX  LecConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table entry contaning LEC parameters."
+        INDEX   { lecConfIndex }
+        ::= { lecConfTable 1 }
+        
+LecConfEntry ::=
+        SEQUENCE {
+                lecConfIndex			INTEGER,
+                lecConfAtmAddress		AtmAddress,
+                lecConfAdminStatus		INTEGER,
+                lecConfOperStatus		INTEGER,
+                lecConfElanName			DisplayString,
+                lecConfMacAddress		MacAddress,
+                lecConfLecsConfigType		LecConfigType,
+                lecConfLecsAtmAddress		AtmAddress,
+                lecConfLesAtmAddress		AtmAddress,
+                lecConfEntryStatus		EntryStatus,
+		lecConfIfName			DisplayString
+        }
+
+
+lecConfIndex OBJECT-TYPE
+	SYNTAX 	INTEGER (1..255)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index to the lecConfTable"
+	::= { lecConfEntry 1 }
+
+lecConfAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of this LEC"
+	::= { lecConfEntry 2 }
+
+lecConfAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The desired state for this LEC, the default value for 
+		this variable is up(1)"
+	::= { lecConfEntry 3 }
+
+lecConfOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2), 
+			joining(3)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The actual status of this LEC"
+	::= { lecConfEntry 4 }
+
+lecConfElanName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"Name of the emulated lan to join"
+	::= { lecConfEntry 5 }
+
+lecConfMacAddress OBJECT-TYPE
+	SYNTAX	MacAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"MAC address assigned to this LEC"
+	::= { lecConfEntry 6 }
+
+lecConfLecsConfigType OBJECT-TYPE
+	SYNTAX	LecConfigType
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"One of: automatic(1), manual(2).
+                 The default configuration type of the LEC is based on 
+		 the default value set in the lecDefaultConfigType variable.
+                 automatic(1) means that the LEC will try to find LECS in the 
+		 manner specified in the spec (ILMI, WellKnown, PVC).
+                 manual(2) means that the LEC will use the address specified 
+		 in the lecConfLecsAtmAddress variable."
+	::= { lecConfEntry 7 }
+
+lecConfLecsAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of LECS.  The default ATM address of the 
+		LECS server is based on the default value set in the 
+		lecDefaultLecsAtmAddress variable.  When the 
+		lecConfLecsConfigType is set to manual(2), this variable will 
+		be set to the Wellknown LECS address."
+	::= { lecConfEntry 8 }
+
+lecConfLesAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of LES to join.  If The lecConfLecsConfigType 
+		is set to manual(2) and this variable is set to address of an 
+		LES, this address will be used as the address of the LES 
+		to join."
+	::= { lecConfEntry 9 }
+
+lecConfEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this table entry, one of: valid(1), 
+		createReuqest(2), underCreation(3), invalid(4)"
+	::= { lecConfEntry 10 }
+
+lecConfIfName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Name of the interface associated with this LEC."
+	::= { lecConfEntry 11 }
+
+
+-- The following variables allow for manipulating the LEC's ARP cache
+
+
+elarpFlush OBJECT-TYPE
+        SYNTAX  INTEGER {
+		enable(1),
+		disable(2)
+        }
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "This variable causes the LEC ARP cache to be flushed
+		when it is set to enable(1)."
+        ::= { lecArpGroup 1 }
+
+
+lecArpTable OBJECT-TYPE
+        SYNTAX	SEQUENCE OF LecArpEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table of LEC ARP entries."
+        ::= { lecArpGroup 10 }
+
+lecArpEntry OBJECT-TYPE
+        SYNTAX  LecArpEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table entry contaning LEC ARP parameters."
+        INDEX   { lecArpMacAddress }
+        ::= { lecArpTable 1 }
+        
+LecArpEntry ::=
+        SEQUENCE {
+		lecArpMacAddress		MacAddress,
+                lecArpAtmAddress		AtmAddress,
+                lecArpFlags			INTEGER,
+                lecArpConnVPI			INTEGER,
+                lecArpConnVCI			INTEGER,
+		lecArpFlush			INTEGER,
+		lecArpElanName			DisplayString
+        }
+
+
+lecArpMacAddress OBJECT-TYPE
+	SYNTAX	MacAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"MAC address of this ARP entry."
+	::= { lecArpEntry 1 }
+
+lecArpAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address associated with this ARP entry."
+	::= { lecArpEntry 2 }
+
+lecArpFlags OBJECT-TYPE
+	SYNTAX	INTEGER {
+		incomplete(1),
+		loopback(2),
+		pending(3),
+                valid(4)
+        }
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The flags associated with this ARP entry."
+	::= { lecArpEntry 3 }
+
+lecArpConnVPI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The VPI associated with this connection."
+	::= { lecArpEntry 4 }
+
+lecArpConnVCI OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The VCI associated with this connection."
+	::= { lecArpEntry 5 }
+
+lecArpFlush OBJECT-TYPE
+	SYNTAX	INTEGER {
+                enable(1),
+                disable(2)
+        }
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"When set to enable(1), will flush this entry from
+		ARP cache."
+	::= { lecArpEntry 6 }
+
+lecArpElanName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Name of the emulated lan associated with this arp entry."
+	::= { lecArpEntry 7 }
+
+---------------------------------------------------------------
+-- LES Groups
+--
+-- The LES table allows for setting up a LES service on a host or a switch.  
+-- Since multiple LESes may be started on the host or the switch, this table 
+-- is indexed by the lesConfIndex variable.
+--
+
+lesConfTable OBJECT-TYPE
+        SYNTAX	SEQUENCE OF LesConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table of LESes and their parameters."
+        ::= { lesConfGroup 1 }
+
+lesConfEntry OBJECT-TYPE
+        SYNTAX  LesConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table entry contaning LES parameters."
+        INDEX   { lesConfIndex }
+        ::= { lesConfTable 1 }
+        
+LesConfEntry ::=
+        SEQUENCE {
+                lesConfIndex			INTEGER,
+                lesConfAtmAddress		AtmAddress,
+                lesConfAdminStatus		INTEGER,
+                lesConfOperStatus		INTEGER,
+                lesConfElanName			DisplayString,
+                lesConfBusAtmAddress		AtmAddress,
+		lesConfBusMaster		INTEGER,
+                lesConfEntryStatus		EntryStatus
+        }
+
+lesConfIndex OBJECT-TYPE
+	SYNTAX	INTEGER (1..255)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"Index into the LesConfTable"
+	::= { lesConfEntry 1 }
+
+lesConfAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The Atm address of this LES"
+	::= { lesConfEntry 2 }
+
+lesConfAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The desired state for this LES"
+	::= { lesConfEntry 3 }
+
+lesConfOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The actual status of this LES"
+	::= { lesConfEntry 4 }
+
+lesConfElanName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"A name for this LES (not-required)"
+	::= { lesConfEntry 5 }
+
+lesConfBusAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of the BUS associated with this LES"
+	::= { lesConfEntry 6 }
+
+lesConfBusMaster OBJECT-TYPE
+	SYNTAX	INTEGER {
+		enable(1),
+		disable(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The configuration of the BUS associated with this LES.
+		When this variable is set to enable(1), the LES will
+		attempt to start the BUS on the current host."
+	::= { lesConfEntry 7 }
+
+lesConfEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this table entry, one of: valid(1), 
+		createReuqest(2), underCreation(3), invalid(4)"
+	::= { lesConfEntry 8 }
+
+---------------------------------------------------------------
+-- BUS Groups
+--
+-- The BUS table may be used to setup BUS service on a host or a switch.  This
+-- table is indexed by the busConfIndex variable.
+-- 
+
+
+busConfTable OBJECT-TYPE
+        SYNTAX	SEQUENCE OF BusConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table of BUSes and their parameters."
+        ::= { busConfGroup 1 }
+
+busConfEntry OBJECT-TYPE
+        SYNTAX  BusConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table entry contaning BUS parameters."
+        INDEX   { busConfIndex }
+        ::= { busConfTable 1 }
+        
+BusConfEntry ::=
+        SEQUENCE {
+                busConfIndex			INTEGER,
+                busConfAtmAddress		AtmAddress,
+                busConfAdminStatus		INTEGER,
+                busConfOperStatus		INTEGER,
+                busConfName			DisplayString,
+                busConfEntryStatus		EntryStatus
+        }
+
+busConfIndex OBJECT-TYPE
+        SYNTAX  INTEGER (1..255)
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "Index into the BusConfTable"
+	::= { busConfEntry 1 }
+
+busConfAtmAddress OBJECT-TYPE
+        SYNTAX  AtmAddress
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "The Atm address of this BUS"
+	::= { busConfEntry 2 }
+
+busConfAdminStatus OBJECT-TYPE
+        SYNTAX  INTEGER {
+			up(1),
+			down(2)
+		}
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "The desired state for this BUS"
+	::= { busConfEntry 3 }
+
+busConfOperStatus OBJECT-TYPE
+        SYNTAX  INTEGER {
+			up(1),
+			down(2)
+		}
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "The actual status of this BUS"
+	::= { busConfEntry 4 }
+
+busConfName OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "A name for this BUS (not-required)"
+	::= { busConfEntry 5 }
+
+busConfEntryStatus OBJECT-TYPE
+        SYNTAX  EntryStatus
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+		"The status of this table entry, one of: valid(1), 
+		createReuqest(2), underCreation(3), invalid(4)"
+	::= { busConfEntry 6 }
+
+---------------------------------------------------------------
+-- LECS Group
+--
+-- The LECS table may be used to setup LECS service on a host or a switch.
+-- The LECS configuration table is indexed by lecsConfIndex variable.  
+-- 
+
+lecsConfTable OBJECT-TYPE
+        SYNTAX	SEQUENCE OF LecsConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table of LECSes and their parameters."
+        ::= { lecsConfGroup 1 }
+
+lecsConfEntry OBJECT-TYPE
+        SYNTAX  LecsConfEntry
+        ACCESS	not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "A table entry contaning LECS parameters."
+        INDEX   { lecsConfIndex }
+        ::= { lecsConfTable 1 }
+        
+LecsConfEntry ::=
+        SEQUENCE {
+                lecsConfIndex			INTEGER,
+                lecsConfAtmAddress		AtmAddress,
+                lecsConfAdminStatus		INTEGER,
+                lecsConfOperStatus		INTEGER,
+		lecsConfDatabase		DisplayString,
+                lecsConfEntryStatus		EntryStatus,
+		lecsConfDefaultLesFlag		INTEGER,	
+		lecsConfDefaultLesAtmAddress	AtmAddress
+        }
+
+lecsConfIndex OBJECT-TYPE
+	SYNTAX	INTEGER (1..255)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+		"The index into the LecsConfTable"
+	::= { lecsConfEntry 1 }
+
+lecsConfAtmAddress OBJECT-TYPE
+	SYNTAX	AtmAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The ATM address of this LECS"
+	::= { lecsConfEntry 2 }
+
+lecsConfAdminStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "The desired state for LECS"
+	::= { lecsConfEntry 3 }
+
+lecsConfOperStatus OBJECT-TYPE
+	SYNTAX	INTEGER {
+			up(1),
+			down(2)
+		}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION
+                "The actual status of LECS"
+	::= { lecsConfEntry 4 }
+
+lecsConfDatabase OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+                "The full path to the location and name of the 
+		LECS database."
+	::= { lecsConfEntry 5 }
+
+lecsConfEntryStatus OBJECT-TYPE
+	SYNTAX	EntryStatus
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The status of this table entry, one of: valid(1), 
+		createReuqest(2), underCreation(3), invalid(4)"
+	::= { lecsConfEntry 6 }
+
+lecsConfDefaultLesFlag OBJECT-TYPE
+	SYNTAX	INTEGER {
+		   	enable(1),
+			disable(2)
+		}
+	ACCESS	read-write
+	STATUS 	mandatory
+	DESCRIPTION
+		"The option to use the default LES ATM-address if the
+		 configuration file is inaccessible, one of: enable(1),
+		 disable(2)"
+	::= { lecsConfEntry 7 }
+	
+lecsConfDefaultLesAtmAddress OBJECT-TYPE
+        SYNTAX  AtmAddress
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "The ATM address of the default LES"
+        ::= { lecsConfEntry 8 }
+
+END

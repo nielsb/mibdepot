@@ -1,0 +1,1961 @@
+PWG-IMAGING-SYSTEM-POWER-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Integer32, Counter32, Gauge32,
+    enterprises, NOTIFICATION-TYPE
+        FROM SNMPv2-SMI                 -- RFC 2578
+    TEXTUAL-CONVENTION, DateAndTime, DisplayString, TruthValue,
+    RowStatus
+        FROM SNMPv2-TC                  -- RFC 2579
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF                -- RFC 2580
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB;        -- RFC 3411
+
+powPowerMIB MODULE-IDENTITY
+    LAST-UPDATED    "201102140000Z" -- 14 February 2011
+    ORGANIZATION    "Printer Working Group, a Program of IEEE/ISTO"
+    CONTACT-INFO
+        "Workgroup for Imaging Management Solutions (WIMS)
+
+        Web:    http://www.pwg.org
+        FTP:    ftp://ftp.pwg.org/pub/pwg/wims
+        Email:  wims@pwg.org (subscribers only - see Web page above)
+
+        Editor: Ira McDonald
+        Postal: High North Inc
+                PO Box 221 - E21761 Ridge Ave
+                Grand Marais, MI  49839
+                USA
+        Tel:    +1 906-494-2434 or 906-494-2697
+        Email:  blueroofmusic@gmail.com"
+    DESCRIPTION
+        "The MIB module for passive monitoring and optional active
+        management of power state for Imaging Systems and optionally for
+        their associated Subunit components.
+
+        Copyright (C) IEEE/ISTO PWG (2011)."
+    ::= { enterprises pwg(2699) mibs(1) powPowerMIB(6) }
+
+powMIBNotifications      OBJECT IDENTIFIER ::= { powPowerMIB 0 }
+powMIBObjects            OBJECT IDENTIFIER ::= { powPowerMIB 1 }
+powMIBConformance        OBJECT IDENTIFIER ::= { powPowerMIB 2 }
+powMIBObjectGroups       OBJECT IDENTIFIER ::= { powMIBConformance 2 }
+powMIBNotificationGroups OBJECT IDENTIFIER ::= { powMIBConformance 3 }
+
+--
+-- Textual Conventions
+--
+
+PowPowerStateTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The power state of this component (System or Subunit).
+
+        Usage:  Vendor extensions allowed ONLY for primary power states
+        (on, standby, suspend, hibernate, and offSoft).  Vendor
+        extensions are intentionally not defined for reset or
+        interrupts."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027)."
+    SYNTAX      INTEGER {
+        other(1),                       -- DO NOT USE
+        unknown(2),                     -- initial default ONLY
+        on(20),                         -- On - fully operational
+        onVendor1(21),
+        onVendor2(22),
+        onVendor3(23),
+        onVendor4(24),
+        onVendor5(25),
+        standby(30),                    -- Standby - light sleep
+        standbyVendor1(31),
+        standbyVendor2(32),
+        standbyVendor3(33),
+        standbyVendor4(34),
+        standbyVendor5(35),
+        suspend(40),                    -- Suspend - deep sleep
+        suspendVendor1(41),
+        suspendVendor2(42),
+        suspendVendor3(43),
+        suspendVendor4(44),
+        suspendVendor5(45),
+        resetSoft(50),                  -- Reset - soft reset
+        offHard(60),                    -- Off Hard - no power consumed
+        hibernate(70),                  -- Hibernate - context save, off
+        hibernateVendor1(71),
+        hibernateVendor2(72),
+        hibernateVendor3(73),
+        hibernateVendor4(74),
+        hibernateVendor5(75),
+        offSoft(80),                    -- Off Soft - w/ auxiliary power
+        offSoftVendor1(81),
+        offSoftVendor2(82),
+        offSoftVendor3(83),
+        offSoftVendor4(84),
+        offSoftVendor5(85),
+        resetHard(90),                  -- hard off, power on
+        resetMBR(100),                  -- Master Bus Reset
+        resetNMI(110),                  -- Non-Maskable Interrupt
+        offSoftGraceful(120),           -- orderley shutdown, soft off
+        offHardGraceful(130),           -- orderly shutdown, hard off
+        resetMBRGraceful(140),          -- orderly shutdown, MBR reset
+        resetSoftGraceful(150),         -- orderly shutdown, soft reset
+        resetHardGraceful(160),         -- orderly shutdown, hard reset
+        resetINIT(170),                 -- Diagnostic Interrupt (INIT)
+        notApplicable(180),
+        noChange(190)
+    }
+
+PowPowerCalendarMonthTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The trigger month (January through December or any) for this
+        calendar policy."
+    REFERENCE
+        "schedMonth in IETF Schedule MIB (RFC 3231)."
+    SYNTAX      INTEGER {
+        january(1),
+        february(2),
+        march(3),
+        april(4),
+        may(5),
+        june(6),
+        july(7),
+        august(8),
+        september(9),
+        october(10),
+        november(11),
+        december(12),
+        any(13)
+    }
+
+PowPowerCalendarDayOfWeekTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The trigger day of week (Sunday through Saturday or any) for
+        this calendar policy."
+    REFERENCE
+        "schedWeekDay in IETF Schedule MIB (RFC 3231)."
+    SYNTAX      INTEGER {
+        sunday(1),
+        monday(2),
+        tuesday(3),
+        wednesday(4),
+        thursday(5),
+        friday(6),
+        saturday(7),
+        any(8)
+    }
+
+PowPowerComponentTypeTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The type of this component (System or Subunit) on this
+        Imaging System."
+    REFERENCE
+        "IcSubunitTypeTC, icSubunitType, and icKeySubunitType in
+            PWG Imaging System State and Counter MIB v2 (PWG 5106.3);
+        prtAlertGroup in IETF Printer MIB (RFC 1759/3805);
+        PrtAlertGroupTC in IANA Printer MIB (RFC 3805
+            and http://www.iana.org/assignments/ianaprinter-mib)."
+    SYNTAX      INTEGER {
+        other(1),
+        unknown(2),
+        console(4),
+        system(5),
+        cover(6),
+        inputTray(8),
+        outputTray(9),
+        marker(10),
+        mediaPath(13),
+        inputChannel(14),
+        interpreter(15),
+        finisher(30),
+        interface(40),
+        scanner(50),
+        scanMediaPath(51),
+        faxModem(60),
+        outputChannel(70),
+        storage(80),
+        processor(90)
+    }
+
+PowPowerPolicyMaxAccessTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "Maximum access to policies supported on this Imaging System."
+    REFERENCE
+        "pow[Timeout/Calendar/Event]RowStatus in this MIB."
+    SYNTAX      INTEGER {
+        other(1),                       -- accessible-for-notify
+        unknown(2),                     -- unknown - DO NOT USE
+        none(3),                        -- no policy access supported
+        readOnly(4),                    -- read-only
+        readWrite(5),                   -- read-write
+        readCreate(6)                   -- read-create
+    }
+
+PowPowerRequestStatusTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The current processing status of this power state change
+        request for this component (System or Subunit)."
+    REFERENCE
+        "Section 3.1.6.1 status-code in IETF IPP/1.1 (RFC 2911)."
+    SYNTAX      INTEGER {
+        other(1),
+        unknown(2),
+        none(3),
+        inProgress(4),
+        warning(5),
+        error(6),
+        success(7)
+    }
+
+PowPowerTimeoutPredicateTC ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "The timeout predicate for this policy.
+        'none' means no timeout predicate (i.e., ignore for trigger).
+        'activity' means incoming job, console input, etc.
+        'inactivity' means no incoming job, console input, etc."
+    REFERENCE
+        "Section 4.4.11 printer-state in IETF IPP/1.1 (RFC 2911)."
+    SYNTAX      INTEGER {
+        other(1),
+        unknown(2),
+        none(3),
+        activity(4),
+        inactivity(5)
+    }
+
+--
+-- General Group
+--
+
+powGeneral              OBJECT IDENTIFIER ::= { powMIBObjects 1 }
+
+powGeneralNaturalLanguage OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..63))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The natural language tag (RFC 5646) for all localized text
+        string objects (syntax of SnmpAdminString) defined in this MIB
+        specified as a visible US-ASCII string (ISO 646) that MUST NOT
+        contain any US-ASCII control characters (0x00 to 0x1F inclusive,
+        or 0x7F).
+
+        If this object is empty, then the natural language for
+        all localized text string objects defined in this MIB MUST
+        be 'en-US' (US English)."
+    REFERENCE
+        "IETF Tags for Identifying Languages (RFC 5646);
+        jobNaturalLanguageTag attribute in Job Mon MIB (RFC 2707);
+        prtGeneralCurrentLocalization and prtLocalizationTable in
+            IETF Printer MIB (RFC 1759/3805);
+        attributes-natural-language in IETF IPP/1.1 (RFC 2911)."
+    DEFVAL      { "en-US" }             -- US English default
+    ::= { powGeneral 1 }
+
+-- Reserved 'powGeneral.2'
+-- Reserved 'powGeneral.3'
+-- Reserved 'powGeneral.4'
+-- Reserved 'powGeneral.5'
+-- Reserved 'powGeneral.6'
+-- Reserved 'powGeneral.7'
+-- Reserved 'powGeneral.8'
+-- Reserved 'powGeneral.9'
+
+powGeneralPolicyMaxAccess OBJECT-TYPE
+    SYNTAX      PowPowerPolicyMaxAccessTC
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Maximum access to policies supported on this Imaging System."
+    REFERENCE
+        "pow[Timeout/Calendar/Event]RowStatus in this MIB."
+    DEFVAL      { none }                -- no policies (OPTIONAL)
+    ::= { powGeneral 10 }
+
+powGeneralPowerUsageIsRMSWatts OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether the power consumption objects on this Imaging
+        System use units of Root Mean Square (RMS) watts (true) or
+        unnormalized so-called peak watts (false)."
+    REFERENCE
+        "powSupportTable and powMeterTable in this MIB."
+    DEFVAL      { false }               -- not RMS watts
+    ::= { powGeneral 11 }
+
+-- Reserved 'powGeneral.12'
+-- Reserved 'powGeneral.13'
+
+powGeneralCanRequestPowerStates OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies all of the stable and transitional power states that
+        can be requested (in policies or operations) on this Imaging
+        System.
+
+        For example:  '20,30,40,50,60,70,80,90'.
+
+        Usage:  Conforming values MUST contain a comma-delimited list of
+        values of PowPowerStateTC in this MIB or the empty string
+        (none)."
+    REFERENCE
+        "PowPowerStateTC in this MIB."
+    DEFVAL      { "" }                  -- none
+    ::= { powGeneral 14 }
+
+--
+-- Monitor Group
+--
+
+powMonitor              OBJECT IDENTIFIER ::= { powMIBObjects 2 }
+
+powMonitorTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowMonitorEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table for the monitored components (System or Subunit)
+        on this Imaging System."
+    ::= { powMonitor 1 }
+
+powMonitorEntry OBJECT-TYPE
+    SYNTAX      PowMonitorEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one monitored component (System or Subunit)
+        on this Imaging System."
+    INDEX     { powMonitorIndex }
+    ::= { powMonitorTable 1 }
+
+PowMonitorEntry ::= SEQUENCE {
+        powMonitorIndex                 Integer32,
+        powMonitorPowerState            PowPowerStateTC,
+        powMonitorPowerStateMessage     SnmpAdminString,
+        powMonitorComponentType         PowPowerComponentTypeTC,
+        powMonitorComponentReferenceId  Integer32
+    }
+
+powMonitorIndex OBJECT-TYPE
+    SYNTAX      Integer32 (1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Primary key of this monitor entry for one referenced component
+        (System or Subunit) on this Imaging System.
+
+        Usage:  The referenced component is uniquely specified by values
+        of powMonitorComponentType and powMonitorComponentReferenceId.
+
+        Usage:  Values of this object MUST be persistent across system
+        reboots, except in the case of major system reconfigurations.
+
+        DEFVAL intentionally omitted - index object."
+    ::= { powMonitorEntry 1 }
+
+powMonitorPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current power state of this monitored component (System
+        or Subunit) on this Imaging System.
+
+        Usage:  Imaging Systems MUST implement 'on' and 'offSoft'.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+
+        Usage:  Imaging Systems MUST support standard power states
+        (e.g., 'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1')."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powLogPowerState in this MIB."
+    DEFVAL      { unknown }             -- unknown power state
+    ::= { powMonitorEntry 2 }
+
+powMonitorPowerStateMessage OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The human-readable message that describes, explains, or
+        qualifies the current power state for this monitored component
+        (System or Subunit) on this Imaging System, specified as a
+        Unicode string encoded in UTF-8 (RFC 3629) in the natural
+        language specified in powGeneralNaturalLanguage.
+
+        For example:  'On from calendar trigger (34 watts)'.
+
+        Usage:  Conforming values:
+        (a) MUST identify the power state;
+        (b) SHOULD identify the method of entry to the power state,
+        e.g., 'from timeout trigger' or 'from user request';
+        (c) SHOULD identify the nominal power consumption, e.g.,
+        '(34 watts)'; and
+        (d) MAY include any other power-related information, e.g., 'can
+        accept jobs' or 'can process jobs'."
+    REFERENCE
+        "powLogPowerStateMessage in this MIB."
+    DEFVAL      { "" }                  -- no power state message
+    ::= { powMonitorEntry 3 }
+
+powMonitorComponentType OBJECT-TYPE
+    SYNTAX      PowPowerComponentTypeTC
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The type of this monitored component (System or Subunit)
+        on this Imaging System.
+
+        Usage:  Imaging Systems MUST implement the 'system' value.
+        Imaging Systems SHOULD implement the 'scanner' and 'marker'
+        values, if these components are present."
+    REFERENCE
+        "IcSubunitTypeTC, icSubunitType, and icKeySubunitType in
+            PWG Imaging System State and Counter MIB v2 (PWG 5106.3);
+        prtAlertGroup in IETF Printer MIB (RFC 1759/3805);
+        PrtAlertGroupTC in IANA Printer MIB (RFC 3805
+            and http://www.iana.org/assignments/ianaprinter-mib)."
+    DEFVAL      { system }              -- system object
+    ::= { powMonitorEntry 4 }
+
+powMonitorComponentReferenceId OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The reference identifier of this monitored component (System
+        or Subunit) on this Imaging System or zero (if not available,
+        because there is no corresponding component in another MIB).
+
+        Usage:  Conforming values:
+        (a) for System, MUST be the corresponding hrDeviceIndex (for
+        hrDevicePrinter) in IETF Host Resources MIB (RFC 2790), if IETF
+        Printer MIB (RFC 3805) is implemented; otherwise, SHOULD be a
+        corresponding hrDeviceIndex (e.g., for hrDeviceProcessor);
+        (b) for Subunit defined in IETF Printer MIB (RFC 3805), MUST be
+        the corresponding Subunit index (e.g., prtInputIndex), if IETF
+        Printer MIB (RFC 3805) is implemented; otherwise SHOULD be a
+        corresponding hrDeviceIndex (e.g., for hrDeviceKeyboard);
+        (c) For Finisher, MUST be the corresponding finDeviceIndex in
+        IETF Finisher MIB (RFC 3806), if IETF Printer MIB (RFC 3805) and
+        IETF Finisher MIB (RFC 3806) are implemented; otherwise SHOULD
+        be a corresponding hrDeviceIndex;
+        (d) for Interface, MUST be the corresponding ifIndex in IETF
+        MIB-II (RFC 1213);
+        (e) for FaxModem, MUST be the corresponding hrDeviceIndex
+        (for hrDeviceModem) in IETF Host Resources MIB (RFC 2790);
+        (f) for Processor, MUST be the corresponding hrDeviceIndex
+        (for hrDeviceProcessor or hrDeviceCoprocessor) in IETF Host
+        Resources MIB (RFC 2790);
+        (g) for Scanner or ScanMediaPath, MUST be the corresponding
+        hrDeviceIndex (for hrDeviceOther or vendor OID) in IETF Host
+        Resources MIB (RFC 2790);
+        (h) for OutputChannel, MUST be the corresponding hrDeviceIndex
+        (for hrDeviceNetwork or vendor OID) in IETF Host Resources MIB
+        (RFC 2790); and
+        (i) for Storage, MUST be the corresponding hrStorageIndex in
+        IETF Host Resources MIB (RFC 2790)."
+    REFERENCE
+        "hrDeviceIndex and hrDeviceType in IETF Host Resources MIB
+            (RFC 2790);
+        powLogComponentReferenceId in this MIB."
+    DEFVAL      { 0 }                   -- no component reference ID
+    ::= { powMonitorEntry 5 }
+
+--
+-- Log Group
+--
+
+powLog                  OBJECT IDENTIFIER ::= { powMIBObjects 3 }
+
+powLogTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowLogEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the log entries on this Imaging System.
+
+        Usage:  Conforming implementations SHOULD support at least 10
+        entries concurrently in the powLogTable and MUST always delete
+        the oldest entry first (FIFO) for memory management, i.e., the
+        powLogTable always consists of a sliding window of entries with
+        contiguous values of powLogIndex."
+    ::= { powLog 1 }
+
+powLogEntry OBJECT-TYPE
+    SYNTAX      PowLogEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for a log entry on this Imaging System."
+    INDEX     { powLogIndex }
+    ::= { powLogTable 1 }
+
+PowLogEntry ::= SEQUENCE {
+        powLogIndex                     Integer32,
+        powLogPowerState                PowPowerStateTC,
+        powLogPowerStateMessage         SnmpAdminString,
+        powLogPowerStateDateAndTime     DateAndTime,
+        powLogComponentType             PowPowerComponentTypeTC,
+        powLogComponentReferenceId      Integer32
+    }
+
+powLogIndex OBJECT-TYPE
+    SYNTAX      Integer32 (1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Primary key of this log entry on this Imaging System.
+
+        Usage:  Values of this object MUST monotonically increase over
+        time and MUST NOT reset in the lifetime of this Imaging System.
+
+        Usage:  Values of this object MUST be persistent across system
+        reboots.
+
+        DEFVAL intentionally omitted - index object."
+    ::= { powLogEntry 1 }
+
+powLogPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The logged power state of the referenced component (System or
+        Subunit) on this Imaging System.
+
+        Usage:  Imaging Systems MUST implement 'on' and 'offSoft'.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+
+        Usage:  Imaging Systems MUST support standard power states
+        (e.g., 'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1').
+
+        Usage:  Imaging Systems SHOULD only add entries to powLogTable
+        when a power state transition occurs (i.e., successive rows in
+        the powLogTable for the same component SHOULD NOT have the same
+        power state)."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB."
+    DEFVAL      { unknown }             -- unknown power state
+    ::= { powLogEntry 2 }
+
+powLogPowerStateMessage OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The human-readable message that describes, explains, or
+        qualifies the logged power state for the referenced component
+        (System or Subunit) on this Imaging System, specified as a
+        Unicode string encoded in UTF-8 (RFC 3629) in the natural
+        language specified in powGeneralNaturalLanguage."
+    REFERENCE
+        "powMonitorPowerStateMessage in this MIB."
+    DEFVAL      { "" }                  -- no power state message
+    ::= { powLogEntry 3 }
+
+powLogPowerStateDateAndTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The date and time of this logged power state transition on the
+        referenced component (System or Subunit) on this Imaging
+        System."
+    REFERENCE
+        "hrSystemDate in IETF Host Resources MIB (RFC 2790)."
+    ::= { powLogEntry 4 }
+
+powLogComponentType OBJECT-TYPE
+    SYNTAX      PowPowerComponentTypeTC
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The type of this logged component (System or Subunit) on this
+        Imaging System.
+
+        Usage:  Imaging Systems MUST implement the 'system' value.
+        Imaging Systems SHOULD implement the 'scanner' and 'marker'
+        values, if these components are present."
+    REFERENCE
+        "IcSubunitTypeTC, icSubunitType, and icKeySubunitType in
+            PWG Imaging System State and Counter MIB v2 (PWG 5106.3);
+        prtAlertGroup in IETF Printer MIB (RFC 1759/3805);
+        PrtAlertGroupTC in IANA Printer MIB (RFC 3805
+            and http://www.iana.org/assignments/ianaprinter-mib);
+        powMonitorComponentType in this MIB."
+    DEFVAL      { system }              -- system object
+    ::= { powLogEntry 5 }
+
+powLogComponentReferenceId OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The reference identifier of this logged component (System
+        or Subunit) on this Imaging System or zero (none)."
+    REFERENCE
+        "powMonitorComponentReferenceId in this MIB."
+    DEFVAL      { 0 }                   -- no component reference ID
+    ::= { powLogEntry 6 }
+
+--
+-- Support Group
+--
+
+powSupport              OBJECT IDENTIFIER ::= { powMIBObjects 4 }
+
+powSupportTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowSupportEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the supported stable power states for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powSupport 1 }
+
+powSupportEntry OBJECT-TYPE
+    SYNTAX      PowSupportEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one supported stable power state for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex,
+                powSupportPowerState }
+    ::= { powSupportTable 1 }
+
+PowSupportEntry ::= SEQUENCE {
+        powSupportPowerState            PowPowerStateTC,
+        powSupportPowerInactiveWatts    Integer32,
+        powSupportPowerActiveWatts      Integer32,
+        powSupportCanAcceptJobs         TruthValue,
+        powSupportCanProcessJobs        TruthValue,
+        powSupportCanRequestPowerState  TruthValue,
+        powSupportCanUseInterfaces      DisplayString,
+        powSupportPowerPeakWatts        Integer32
+    }
+
+powSupportPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The secondary key of this supported stable power state on this
+        component (System or Subunit) on this Imaging System.
+
+        Usage:  The value of this object MUST be a stable power state.
+
+        Usage:  Imaging Systems MUST implement 'on' and 'offSoft'.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+
+        Usage:  Imaging Systems MUST support standard power states
+        (e.g., 'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1').
+
+        DEFVAL intentionally omitted - index object."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB."
+    ::= { powSupportEntry 1 }
+
+powSupportPowerInactiveWatts OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    UNITS       "watts"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The nominal power consumption in watts of this stable power
+        state on this component (System or Subunit) on this Imaging
+        System or zero (for less than one watt, i.e., nominal none),
+        when the component is in a inactive operational state (e.g.,
+        Idle or Stopped).
+
+        Usage:  This nominal power consumption MUST be determined by the
+        manufacturer and NOT by actual power consumption measurement."
+    DEFVAL      { 0 }                   -- no inactive power usage
+    ::= { powSupportEntry 2 }
+
+powSupportPowerActiveWatts OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    UNITS       "watts"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The nominal power consumption in watts of this stable power
+        state on this component (System or Subunit) on this Imaging
+        System or zero (for less than one watt, i.e., nominal none),
+        when the component is in an active operational state (e.g.,
+        Processing or Testing).
+
+        Usage:  This nominal power consumption MUST be determined by the
+        manufacturer and NOT by actual power consumption measurement."
+    DEFVAL      { 0 }                   -- no active power usage
+    ::= { powSupportEntry 3 }
+
+powSupportCanAcceptJobs OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether this stable power state on this component
+        (System or Subunit) on this Imaging System can accept incoming
+        jobs (unless disabled by Administrator).
+
+        Usage:  This supported power state capability MUST NOT report
+        the disabled condition."
+    REFERENCE
+        "Section 3.1.1 Disable-Printer in IETF IPP/1.1 System Admin
+        (RFC 3998)."
+    DEFVAL      { false }               -- cannot accept jobs in state
+    ::= { powSupportEntry 4 }
+
+powSupportCanProcessJobs OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether this stable power state on this component
+        (System or Subunit) on this Imaging System can process new or
+        queued jobs (unless paused by Administrator).
+
+        Usage:  This supported power state capability MUST NOT report
+        the paused condition."
+    REFERENCE
+        "Section 3.2.7 Pause-Printer in IETF IPP/1.1 (RFC 2911)."
+    DEFVAL      { false }               -- cannot process jobs in state
+    ::= { powSupportEntry 5 }
+
+powSupportCanRequestPowerState OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether this stabled power state on this component
+        (System or Subunit) on this Imaging System is valid for use in
+        power requests and power policies."
+    REFERENCE
+        "powRequestPowerState in this MIB."
+    DEFVAL      { false }               -- not valid state for requests
+    ::= { powSupportEntry 6 }
+
+powSupportCanUseInterfaces OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether this stable power state on this component
+        (System or Subunit) on this Imaging System can use the specified
+        interfaces.
+
+        For example:  '1,3,4'.
+
+        Usage:  Conforming values MUST contain a comma-delimited list of
+        values of ifIndex in IETF MIB-II (RFC 1213) or the empty string
+        (none)."
+    REFERENCE
+        "ifIndex in IETF MIB-II (RFC 1213)."
+    DEFVAL      { "" }                  -- cannot use any interfaces
+    ::= { powSupportEntry 7 }
+
+powSupportPowerPeakWatts OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    UNITS       "watts"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The peak power consumption in watts of this stable power
+        state on this component (System or Subunit) on this Imaging
+        System or zero (for less than one watt, i.e., peak none),
+        when the component is in an active operational state (e.g.,
+        Processing or Testing).
+
+        Usage:  This peak power consumption MUST be determined by the
+        manufacturer and NOT by actual power consumption measurement."
+    DEFVAL      { 0 }                   -- no peak power usage
+    ::= { powSupportEntry 8 }
+
+--
+-- Transition Group
+--
+
+powTransition           OBJECT IDENTIFIER ::= { powMIBObjects 5 }
+
+powTransitionTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowTransitionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the supported transitions between stable power
+        states for the monitored components (System or Subunit) on this
+        Imaging System."
+    ::= { powTransition 1 }
+
+powTransitionEntry OBJECT-TYPE
+    SYNTAX      PowTransitionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one supported transition between stable power
+        states for the monitored components (System or Subunit) on this
+        Imaging System."
+    INDEX     { powMonitorIndex,
+                powTransitionStartPowerState,
+                powTransitionEndPowerState }
+    ::= { powTransitionTable 1 }
+
+PowTransitionEntry ::= SEQUENCE {
+        powTransitionStartPowerState    PowPowerStateTC,
+        powTransitionEndPowerState      PowPowerStateTC,
+        powTransitionStateChangeSeconds Integer32
+    }
+
+powTransitionStartPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The secondary key of this supported power transition on this
+        component (System or Subunit) on this Imaging System.
+
+        Usage:  The value of this object MUST be a stable power state.
+
+        Usage:  Imaging Systems MUST implement 'on' and 'offSoft'.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+
+        Usage:  Imaging Systems MUST support standard power states
+        (e.g., 'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1').
+
+        DEFVAL intentionally omitted - index object."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB."
+    ::= { powTransitionEntry 1 }
+
+powTransitionEndPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The tertiary key of this supported power transition on this
+        component (System or Subunit) on this Imaging System.
+
+        Usage:  The value of this object MUST be a stable power state.
+
+        Usage:  Imaging Systems MUST implement 'on' and 'offSoft'.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+
+        Usage:  Imaging Systems MUST support standard power states
+        (e.g., 'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1').
+
+        DEFVAL intentionally omitted - index object."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB."
+    ::= { powTransitionEntry 2 }
+
+powTransitionStateChangeSeconds OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    UNITS       "seconds"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The nominal duration in seconds of this supported power state
+        transition on this component (System or Subunit) on this Imaging
+        System or zero (for less than one second, i.e., nominal
+        immediate).
+
+        Usage:  This nominal transition time MUST be determined by the
+        manufacturer and NOT by actual transition duration measurement."
+    DEFVAL      { 0 }                   -- nominal immediate
+    ::= { powTransitionEntry 3 }
+
+--
+-- Request Group
+--
+
+powRequest              OBJECT IDENTIFIER ::= { powMIBObjects 6 }
+
+powRequestTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowRequestEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the requested power state changes for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powRequest 1 }
+
+powRequestEntry OBJECT-TYPE
+    SYNTAX      PowRequestEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one requested power state change for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex }
+    ::= { powRequestTable 1 }
+
+PowRequestEntry ::= SEQUENCE {
+        powRequestPowerState            PowPowerStateTC,
+        powRequestStatus                PowPowerRequestStatusTC
+    }
+
+powRequestPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The requested target power state for this component (System
+        or Subunit) on this Imaging System."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB;
+        powSupportCanRequestPowerState in this MIB;
+        powRequestStatus in this MIB."
+    DEFVAL      { unknown }             -- unknown power state
+    ::= { powRequestEntry 1 }
+
+powRequestStatus OBJECT-TYPE
+    SYNTAX      PowPowerRequestStatusTC
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The current processing status of this power request for this
+        component (System or Subunit) on this Imaging System."
+    REFERENCE
+        "powRequestPowerState in this MIB."
+    DEFVAL      { none }                -- no request ever processed
+    ::= { powRequestEntry 2 }
+
+--
+-- Timeout Group
+--
+
+powTimeout              OBJECT IDENTIFIER ::= { powMIBObjects 7 }
+
+powTimeoutTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowTimeoutEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the configured timeout policies for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powTimeout 1 }
+
+powTimeoutEntry OBJECT-TYPE
+    SYNTAX      PowTimeoutEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one configured timeout policy for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex,
+                powTimeoutIndex }
+    ::= { powTimeoutTable 1 }
+
+PowTimeoutEntry ::= SEQUENCE {
+        powTimeoutIndex                 Integer32,
+        powTimeoutRequestPowerState     PowPowerStateTC,
+        powTimeoutStartPowerState       PowPowerStateTC,
+        powTimeoutPredicate             PowPowerTimeoutPredicateTC,
+        powTimeoutSeconds               Integer32,
+        powTimeoutRowStatus             RowStatus
+    }
+
+powTimeoutIndex OBJECT-TYPE
+    SYNTAX      Integer32 (1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Secondary key of this timeout policy for this component
+        (System or Subunit) on this Imaging System.
+
+        Usage:  Values of this object MUST be persistent across system
+        reboots, except in the case of major system reconfigurations.
+
+        DEFVAL intentionally omitted - index object."
+    ::= { powTimeoutEntry 1 }
+
+powTimeoutRequestPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The requested target power state for this component (System
+        or Subunit) on this Imaging System when this timeout policy is
+        triggered."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB;
+        powSupportCanRequestPowerState in this MIB;
+        powRequestPowerState in this MIB."
+    DEFVAL      { unknown }             -- unknown power state
+    ::= { powTimeoutEntry 2 }
+
+powTimeoutStartPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The specific start power state for this component (System
+        or Subunit) on this Imaging System for this timeout policy."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB."
+    DEFVAL      { notApplicable }       -- no start power state
+    ::= { powTimeoutEntry 3 }
+
+powTimeoutPredicate OBJECT-TYPE
+    SYNTAX      PowPowerTimeoutPredicateTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The predicate for this timeout policy on this component (System
+        or Subunit) on this Imaging System."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB."
+    DEFVAL      { none }                -- no predicate
+    ::= { powTimeoutEntry 4 }
+
+powTimeoutSeconds OBJECT-TYPE
+    SYNTAX      Integer32 (0..2147483647)
+    UNITS       "seconds"
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The nominal duration in seconds of this timeout policy
+        on this component (System or Subunit) on this Imaging System
+        or zero (none)."
+    REFERENCE
+        "schedInterval in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { 0 }                   -- none
+    ::= { powTimeoutEntry 5 }
+
+powTimeoutRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The row status management object for this timeout policy
+        on this component (System or Subunit) on this Imaging System."
+    REFERENCE
+        "schedRowStatus in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { notInService }        -- inactive
+    ::= { powTimeoutEntry 6 }
+
+--
+-- Calendar Group
+--
+
+powCalendar             OBJECT IDENTIFIER ::= { powMIBObjects 8 }
+
+powCalendarTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowCalendarEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the configured calendar policies for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powCalendar 1 }
+
+powCalendarEntry OBJECT-TYPE
+    SYNTAX      PowCalendarEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one configured calendar policy for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex,
+                powCalendarIndex }
+    ::= { powCalendarTable 1 }
+
+PowCalendarEntry ::= SEQUENCE {
+        powCalendarIndex                Integer32,
+        powCalendarRequestPowerState    PowPowerStateTC,
+        powCalendarRunOnce              TruthValue,
+        powCalendarDayOfWeek            PowPowerCalendarDayOfWeekTC,
+        powCalendarMonth                PowPowerCalendarMonthTC,
+        powCalendarDay                  Integer32,
+        powCalendarHour                 Integer32,
+        powCalendarMinute               Integer32,
+        powCalendarRowStatus            RowStatus
+    }
+
+powCalendarIndex OBJECT-TYPE
+    SYNTAX      Integer32 (1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Secondary key of this calendar policy for this component
+        (System or Subunit) on this Imaging System.
+
+        Usage:  Values of this object MUST be persistent across system
+        reboots, except in the case of major system reconfigurations.
+
+        DEFVAL intentionally omitted - index object."
+    ::= { powCalendarEntry 1 }
+
+powCalendarRequestPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The requested target power state for this component (System
+        or Subunit) on this Imaging System when this calendar policy is
+        triggered."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB;
+        powSupportCanRequestPowerState in this MIB;
+        powRequestPowerState in this MIB."
+    DEFVAL      { unknown }             -- unknown power state
+    ::= { powCalendarEntry 2 }
+
+powCalendarRunOnce OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether this calendar policy on this component
+        (System or Subunit) on this Imaging System can be triggered
+        more than once (false) or exactly once (true)."
+    REFERENCE
+        "schedType in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { false }               -- multiple executions
+    ::= { powCalendarEntry 3 }
+
+powCalendarDayOfWeek OBJECT-TYPE
+    SYNTAX      PowPowerCalendarDayOfWeekTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The trigger day of week (Sunday through Saturday or any) for
+        this calendar policy on this component (System or Subunit) on
+        this Imaging System."
+    REFERENCE
+        "schedWeekDay in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { any }                -- any day of week
+    ::= { powCalendarEntry 4 }
+
+powCalendarMonth OBJECT-TYPE
+    SYNTAX      PowPowerCalendarMonthTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The trigger month (January through December or any) for this
+        calendar policy on this component (System or Subunit) on this
+        Imaging System."
+    REFERENCE
+        "schedMonth in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { any }                 -- any month
+    ::= { powCalendarEntry 5 }
+
+powCalendarDay OBJECT-TYPE
+    SYNTAX      Integer32 (0..31)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The trigger day or zero (any) for this calendar policy on
+        this component (System or Subunit) on this Imaging System.
+
+        Usage:  '1' is the first day of the month, '2' is the second
+        day of the month, etc."
+    REFERENCE
+        "schedDay in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { 0 }                   -- any day of month
+    ::= { powCalendarEntry 6 }
+
+powCalendarHour OBJECT-TYPE
+    SYNTAX      Integer32 (0..23)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The trigger hour for this calendar policy on this component
+        (System or Subunit) on this Imaging System.
+
+        Usage:  '0' is the first hour of the day (12:00-12:59am), '1' is
+        the second hour of the day (1:00-1:59 am), etc.  Exactly
+        midnight (i.e., 12:00am) is specified by a value of zero for
+        powCalendarHour and a value of zero for powCalendarMinute."
+    REFERENCE
+        "schedHour in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { 0 }                   -- first hour of the day
+    ::= { powCalendarEntry 7 }
+
+powCalendarMinute OBJECT-TYPE
+    SYNTAX      Integer32 (0..59)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The trigger minute for this calendar policy on this component
+        (System or Subunit) on this Imaging System.
+
+        Usage:  '0' is the first minute of the hour (e.g., 7:00pm), '1'
+        is the second minute of the hour (e.g., 7:01pm), etc.  Exactly
+        at the hour (e.g., 7:00pm) is specified by a value of zero for
+        powCalendarMinute."
+    REFERENCE
+        "schedMinute in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { 0 }                   -- first minute of the hour
+    ::= { powCalendarEntry 8 }
+
+powCalendarRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The row status management object for this calendar policy
+        on this component (System or Subunit) on this Imaging System."
+    REFERENCE
+        "schedRowStatus in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { notInService }        -- inactive
+    ::= { powCalendarEntry 9 }
+
+--
+-- Event Group
+--
+
+powEvent                OBJECT IDENTIFIER ::= { powMIBObjects 9 }
+
+powEventTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowEventEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the configured event policies for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powEvent 1 }
+
+powEventEntry OBJECT-TYPE
+    SYNTAX      PowEventEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for one configured event policy for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex,
+                powEventIndex }
+    ::= { powEventTable 1 }
+
+PowEventEntry ::= SEQUENCE {
+        powEventIndex                   Integer32,
+        powEventRequestPowerState       PowPowerStateTC,
+        powEventName                    DisplayString,
+        powEventRowStatus               RowStatus
+    }
+
+powEventIndex OBJECT-TYPE
+    SYNTAX      Integer32 (1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Secondary key of this event policy for this component
+        (System or Subunit) on this Imaging System.
+
+        Usage:  Values of this object MUST be persistent across system
+        reboots, except in the case of major system reconfigurations.
+
+        DEFVAL intentionally omitted - index object."
+    ::= { powEventEntry 1 }
+
+powEventRequestPowerState OBJECT-TYPE
+    SYNTAX      PowPowerStateTC
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The requested target power state for this component (System
+        or Subunit) on this Imaging System when this event policy is
+        triggered."
+    REFERENCE
+        "Table 3 in section 7.3 in DMTF CIM Power Profile (DSP 1027);
+        powMonitorPowerState in this MIB;
+        powSupportCanRequestPowerState in this MIB;
+        powRequestPowerState in this MIB."
+    DEFVAL      { unknown }             -- unknown power state
+    ::= { powEventEntry 2 }
+
+powEventName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..255))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The trigger event name for this event policy on this component
+        (System or Subunit) on this Imaging System, specified as a
+        visible US-ASCII string (ISO 646) that MUST NOT contain any
+        US-ASCII control characters (0x00 to 0x1F inclusive, or 0x7F).
+
+        For example:  'jam'.
+
+        Usage:  Conforming values MUST contain either:
+        (a) the exact case-sensitive label (starting with a lowercase
+        letter, 'a..z') of an enumerated value in the PrtAlertCodeTC
+        textual convention in the IANA Printer MIB (e.g., 'jam'); or
+        (b) a case-sensitive keyword (starting with an uppercase letter,
+        'A..Z') vendor event name (e.g., 'AcmeCrackedHousing')."
+    REFERENCE
+        "prtAlertCode in IETF Printer MIB (RFC 1759/3805);
+        PrtAlertCodeTC in IANA Printer MIB (RFC 3805
+            and http://www.iana.org/assignments/ianaprinter-mib)."
+    DEFVAL      { "" }                  -- no event name
+    ::= { powEventEntry 3 }
+
+powEventRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The row status management object for this event policy
+        on this component (System or Subunit) on this Imaging System."
+    REFERENCE
+        "schedRowStatus in IETF Schedule MIB (RFC 3231)."
+    DEFVAL      { notInService }        -- inactive
+    ::= { powEventEntry 4 }
+
+--
+-- Counter Group
+--
+
+powCounter              OBJECT IDENTIFIER ::= { powMIBObjects 10 }
+
+powCounterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowCounterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the power transition counters for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powCounter 1 }
+
+powCounterEntry OBJECT-TYPE
+    SYNTAX      PowCounterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for the power transition counters for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex }
+    ::= { powCounterTable 1 }
+
+PowCounterEntry ::= SEQUENCE {
+        powCounterHibernateTransitions  Counter32,
+        powCounterOnTransitions         Counter32,
+        powCounterStandbyTransitions    Counter32,
+        powCounterSuspendTransitions    Counter32
+    }
+
+powCounterHibernateTransitions OBJECT-TYPE
+    SYNTAX      Counter32
+    UNITS       "transitions"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Lifetime number of transitions into the Hibernate power state
+        of this component (System or Subunit).
+
+        DEFVAL intentionally omitted - counter object."
+    REFERENCE
+        "powMonitorPowerState and powLogPowerState in this MIB."
+    ::= { powCounterEntry 1 }
+
+powCounterOnTransitions OBJECT-TYPE
+    SYNTAX      Counter32
+    UNITS       "transitions"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Lifetime number of transitions into the On power state
+        of this component (System or Subunit).
+
+        DEFVAL intentionally omitted - counter object."
+    REFERENCE
+        "powMonitorPowerState and powLogPowerState in this MIB."
+    ::= { powCounterEntry 2 }
+
+powCounterStandbyTransitions OBJECT-TYPE
+    SYNTAX      Counter32
+    UNITS       "transitions"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Lifetime number of transitions into the Standby power state
+        of this component (System or Subunit).
+
+        DEFVAL intentionally omitted - counter object."
+    REFERENCE
+        "powMonitorPowerState and powLogPowerState in this MIB."
+    ::= { powCounterEntry 3 }
+
+powCounterSuspendTransitions OBJECT-TYPE
+    SYNTAX      Counter32
+    UNITS       "transitions"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Lifetime number of transitions into the Suspend power state
+        of this component (System or Subunit).
+
+        DEFVAL intentionally omitted - counter object."
+    REFERENCE
+        "powMonitorPowerState and powLogPowerState in this MIB."
+    ::= { powCounterEntry 4 }
+
+--
+-- Meter Group
+--
+
+powMeter                OBJECT IDENTIFIER ::= { powMIBObjects 11 }
+
+powMeterTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF PowMeterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of the power consumption meters for the monitored
+        components (System or Subunit) on this Imaging System."
+    ::= { powMeter 1 }
+
+powMeterEntry OBJECT-TYPE
+    SYNTAX      PowMeterEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "An entry for the power consumption meters for one monitored
+        component (System or Subunit) on this Imaging System."
+    INDEX     { powMonitorIndex }
+    ::= { powMeterTable 1 }
+
+PowMeterEntry ::= SEQUENCE {
+        powMeterPowerMetersAreActual    TruthValue,
+        powMeterPowerCurrentWatts       Gauge32,
+        powMeterPowerPeakWatts          Gauge32,
+        powMeterPowerCurrentMonthKWH    Gauge32,
+        powMeterPowerPreviousMonthKWH   Gauge32,
+        powMeterPowerLifetimeKWH        Counter32
+    }
+
+powMeterPowerMetersAreActual OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Specifies whether power consumption meters on this component
+        (System or Subunit) are based on actual measurement (true) or
+        software estimation (false)."
+    REFERENCE
+        "powGeneralPowerUsageIsRMSWatts and powMeterTable in this MIB."
+    DEFVAL      { false }               -- software estimation
+    ::= { powMeterEntry 1 }
+
+powMeterPowerCurrentWatts OBJECT-TYPE
+    SYNTAX      Gauge32
+    UNITS       "watts"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Current power consumption in watts of this System or Subunit
+        or zero (for less than one watt, i.e., nominal none).
+
+        DEFVAL intentionally omitted - gauge object."
+    REFERENCE
+        "powMeterPowerMetersAreActual in this MIB."
+    ::= { powMeterEntry 2 }
+
+powMeterPowerPeakWatts OBJECT-TYPE
+    SYNTAX      Gauge32
+    UNITS       "watts"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Peak power consumption in watts of this System or Subunit
+        or zero (for less than one watt, i.e., nominal none), since
+        last reboot of this Imaging System.
+
+        DEFVAL intentionally omitted - gauge object."
+    REFERENCE
+        "powMeterPowerMetersAreActual in this MIB."
+    ::= { powMeterEntry 3 }
+
+powMeterPowerCurrentMonthKWH OBJECT-TYPE
+    SYNTAX      Gauge32
+    UNITS       "kilowatthours"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Current month power consumption in KWH of this System or
+        Subunit or zero (for less than one watt, i.e., nominal none).
+
+        Usage:  Because it specifies the *current* month's power
+        consumption, the value of this object will change rapidly.
+
+        DEFVAL intentionally omitted - gauge object."
+    REFERENCE
+        "powMeterPowerMetersAreActual in this MIB."
+    ::= { powMeterEntry 4 }
+
+powMeterPowerPreviousMonthKWH OBJECT-TYPE
+    SYNTAX      Gauge32
+    UNITS       "kilowatthours"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Previous month power consumption in KWH of this System or
+        Subunit or zero (for less than one watt, i.e., nominal none).
+
+        Usage:  Because it specifies the *previous* month's power
+        consumption, the value of this object will be stable and may be
+        read on any day of the current month (for reliable accounting).
+
+        DEFVAL intentionally omitted - gauge object."
+    REFERENCE
+        "powMeterPowerMetersAreActual in this MIB."
+    ::= { powMeterEntry 5 }
+
+powMeterPowerLifetimeKWH OBJECT-TYPE
+    SYNTAX      Counter32
+    UNITS       "kilowatthours"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Lifetime power consumption in KWH of this System or Subunit
+        or zero (for less than one watt, i.e., nominal none).
+
+        DEFVAL intentionally omitted - counter object."
+    REFERENCE
+        "powMeterPowerMetersAreActual in this MIB."
+    ::= { powMeterEntry 6 }
+
+--
+-- Power Trap Group
+--
+
+powPowerV2Trap NOTIFICATION-TYPE
+    OBJECTS { powGeneralNaturalLanguage, powLogPowerState,
+              powLogPowerStateMessage, powLogPowerStateDateAndTime,
+              powLogComponentType, powLogComponentReferenceId }
+    STATUS  current
+    DESCRIPTION
+        "This trap is sent (to registered or configured notification
+        receivers) when a new power state transition is added to the
+        'powLogTable'.
+
+        Note:  The value of the powLogIndex index object is included in
+        the instance qualifiers of the explicit variable bindings in
+        this trap.  The value of sysUpTime in IETF MIB-II (RFC 1213) is
+        always included in SNMP traps, per RFC 3416."
+    ::= { powMIBNotifications 1 }
+
+--
+-- Conformance
+--
+
+powPowerMIBCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for SNMP Agents that implement this
+        Imaging System Power MIB."
+    MODULE -- this module
+    MANDATORY-GROUPS { powGeneralGroup, powMonitorGroup, powLogGroup }
+
+    GROUP   powSupportGroup
+    DESCRIPTION
+        "Support group - columnar capabilities objects.
+
+        An Imaging System MAY implement the Support group, for
+        power capabilities."
+
+    GROUP   powTransitionGroup
+    DESCRIPTION
+        "Transition group - columnar capabilities objects.
+
+        An Imaging System MAY implement the Transition group, for
+        power capabilities."
+
+    GROUP   powRequestGroup
+    DESCRIPTION
+        "Request group - columnar objects for settings.
+
+        An Imaging System MAY implement the Request group, for
+        power state settings."
+
+    GROUP   powTimeoutGroup
+    DESCRIPTION
+        "Timeout group - columnar objects for settings.
+
+        An Imaging System SHOULD implement the Timeout group, for
+        power policy settings."
+
+    GROUP   powCalendarGroup
+    DESCRIPTION
+        "Calendar group - columnar objects for settings.
+
+        An Imaging System MAY implement the Calendar group, for
+        power policy settings."
+
+    GROUP   powEventGroup
+    DESCRIPTION
+        "Event group - columnar objects for settings.
+
+        An Imaging System MAY implement the Event group, for
+        power policy settings."
+
+    GROUP   powCounterGroup
+    DESCRIPTION
+        "Counter group - columnar objects for status.
+
+        An Imaging System MAY implement the Counter group, for status."
+
+    GROUP   powMeterGroup
+    DESCRIPTION
+        "Meter group - columnar objects for status.
+
+        An Imaging System MAY implement the Meter group, for status."
+
+    GROUP   powPowerTrapGroup
+    DESCRIPTION
+        "Power Trap group - notifications.
+
+        An Imaging System SHOULD implement the Power Trap group."
+
+    OBJECT  powGeneralNaturalLanguage
+    DESCRIPTION
+        "If this object is empty, then the natural language for
+        all localized text string objects defined in this MIB MUST
+        be 'en-US' (US English)."
+
+    OBJECT  powGeneralCanRequestPowerStates
+    SYNTAX  DisplayString (SIZE(0..63))
+    DESCRIPTION
+        "Imaging Systems MUST support at least 63 octets string length."
+
+    OBJECT  powMonitorPowerState
+    SYNTAX  INTEGER {
+        on(20),
+        offSoft(80)
+    }
+    DESCRIPTION
+        "Imaging Systems MUST implement the 'on' and 'offSoft' values.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+        Imaging Systems MUST support standard power states (e.g.,
+        'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1')."
+
+    OBJECT  powMonitorPowerStateMessage
+    SYNTAX  SnmpAdminString (SIZE(0..63))
+    DESCRIPTION
+        "Imaging Systems MUST support at least 63 octets string length."
+
+    OBJECT  powMonitorComponentType
+    SYNTAX  INTEGER {
+        system(5)
+    }
+    DESCRIPTION
+        "Imaging Systems MUST implement the 'system' value.
+        Imaging Systems SHOULD implement the 'scanner' and 'marker'
+        values, if these components are present."
+
+    OBJECT  powLogPowerState
+    SYNTAX  INTEGER {
+        on(20),
+        offSoft(80)
+    }
+    DESCRIPTION
+        "Imaging Systems MUST implement the 'on' and 'offSoft' values.
+        Imaging Systems SHOULD implement the 'standby', 'suspend', and
+        'hibernate' values.
+        Imaging Systems MUST support standard power states (e.g.,
+        'standby') whenever they support vendor extensions (e.g.,
+        'standbyVendor1').
+        Imaging Systems SHOULD only add entries to the powLogTable
+        when a power state transition occurs (i.e., successive rows in
+        the powLogTable for the same component SHOULD NOT have the same
+        power state)."
+
+    OBJECT  powLogPowerStateMessage
+    SYNTAX  SnmpAdminString (SIZE(0..63))
+    DESCRIPTION
+        "Imaging Systems MUST support at least 63 octets string length."
+
+    OBJECT  powLogComponentType
+    SYNTAX  INTEGER {
+        system(5)
+    }
+    DESCRIPTION
+        "Imaging Systems MUST implement the 'system' value.
+        Imaging Systems SHOULD implement the 'scanner' and 'marker'
+        values, if these components are present."
+
+    OBJECT  powSupportCanUseInterfaces
+    SYNTAX  DisplayString (SIZE(0..63))
+    DESCRIPTION
+        "Imaging Systems MUST support at least 63 octets string length."
+
+    OBJECT  powTimeoutRequestPowerState
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powTimeoutStartPowerState
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powTimeoutPredicate
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powTimeoutSeconds
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powTimeoutRowStatus
+    SYNTAX  INTEGER {
+        active(1),
+        notInService(2)
+    }
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MUST implement 'active' and 'notInService'.
+        Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarRequestPowerState
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarRunOnce
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarDayOfWeek
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarMonth
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarDay
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarHour
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarMinute
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powCalendarRowStatus
+    SYNTAX  INTEGER {
+        active(1),
+        notInService(2)
+    }
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MUST implement 'active' and 'notInService'.
+        Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powEventRequestPowerState
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powEventName
+    SYNTAX  DisplayString (SIZE(0..63))
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MUST support at least 63 octets string length.
+        Imaging Systems MAY implement this object as read-only."
+
+    OBJECT  powEventRowStatus
+    SYNTAX  INTEGER {
+        active(1),
+        notInService(2)
+    }
+    MIN-ACCESS  read-only
+    DESCRIPTION
+        "Imaging Systems MUST implement 'active' and 'notInService'.
+        Imaging Systems MAY implement this object as read-only."
+
+    ::= { powMIBConformance 1 }
+
+--
+-- Conformance Groups
+--
+
+powGeneralGroup OBJECT-GROUP
+    OBJECTS {
+        powGeneralNaturalLanguage,
+        powGeneralPolicyMaxAccess,
+        powGeneralPowerUsageIsRMSWatts,
+        powGeneralCanRequestPowerStates
+    }
+    STATUS      current
+    DESCRIPTION
+        "General group - scalar status objects."
+    ::= { powMIBObjectGroups 1 }
+
+powMonitorGroup OBJECT-GROUP
+    OBJECTS {
+        powMonitorPowerState,
+        powMonitorPowerStateMessage,
+        powMonitorComponentType,
+        powMonitorComponentReferenceId
+    }
+    STATUS      current
+    DESCRIPTION
+        "Monitor group - columnar status objects."
+    ::= { powMIBObjectGroups 2 }
+
+powLogGroup OBJECT-GROUP
+    OBJECTS {
+        powLogPowerState,
+        powLogPowerStateMessage,
+        powLogPowerStateDateAndTime,
+        powLogComponentType,
+        powLogComponentReferenceId
+    }
+    STATUS      current
+    DESCRIPTION
+        "Log group - columnar status objects."
+    ::= { powMIBObjectGroups 3 }
+
+powSupportGroup OBJECT-GROUP
+    OBJECTS {
+        powSupportPowerInactiveWatts,
+        powSupportPowerActiveWatts,
+        powSupportCanAcceptJobs,
+        powSupportCanProcessJobs,
+        powSupportCanRequestPowerState,
+        powSupportCanUseInterfaces,
+        powSupportPowerPeakWatts
+    }
+    STATUS      current
+    DESCRIPTION
+        "Support group - columnar capabilities objects."
+    ::= { powMIBObjectGroups 4 }
+
+powTransitionGroup OBJECT-GROUP
+    OBJECTS {
+        powTransitionStateChangeSeconds
+    }
+    STATUS      current
+    DESCRIPTION
+        "Transition group - columnar capabilities objects."
+    ::= { powMIBObjectGroups 5 }
+
+powRequestGroup OBJECT-GROUP
+    OBJECTS {
+        powRequestPowerState,
+        powRequestStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Request group - columnar objects for settings."
+    ::= { powMIBObjectGroups 6 }
+
+powTimeoutGroup OBJECT-GROUP
+    OBJECTS {
+        powTimeoutRequestPowerState,
+        powTimeoutStartPowerState,
+        powTimeoutPredicate,
+        powTimeoutSeconds,
+        powTimeoutRowStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Timeout group - columnar objects for settings."
+    ::= { powMIBObjectGroups 7 }
+
+powCalendarGroup OBJECT-GROUP
+    OBJECTS {
+        powCalendarRequestPowerState,
+        powCalendarRunOnce,
+        powCalendarDayOfWeek,
+        powCalendarMonth,
+        powCalendarDay,
+        powCalendarHour,
+        powCalendarMinute,
+        powCalendarRowStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Calendar group - columnar objects for settings."
+    ::= { powMIBObjectGroups 8 }
+
+powEventGroup OBJECT-GROUP
+    OBJECTS {
+        powEventRequestPowerState,
+        powEventName,
+        powEventRowStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Event group - columnar objects for settings."
+    ::= { powMIBObjectGroups 9 }
+
+powCounterGroup OBJECT-GROUP
+    OBJECTS {
+        powCounterHibernateTransitions,
+        powCounterOnTransitions,
+        powCounterStandbyTransitions,
+        powCounterSuspendTransitions
+    }
+    STATUS      current
+    DESCRIPTION
+        "Counter group - columnar objects for status."
+    ::= { powMIBObjectGroups 10 }
+
+powMeterGroup OBJECT-GROUP
+    OBJECTS {
+        powMeterPowerMetersAreActual,
+        powMeterPowerCurrentWatts,
+        powMeterPowerPeakWatts,
+        powMeterPowerCurrentMonthKWH,
+        powMeterPowerPreviousMonthKWH,
+        powMeterPowerLifetimeKWH
+    }
+    STATUS      current
+    DESCRIPTION
+        "Meter group - columnar objects for status."
+    ::= { powMIBObjectGroups 11 }
+
+powPowerTrapGroup NOTIFICATION-GROUP
+    NOTIFICATIONS { powPowerV2Trap }
+    STATUS      current
+    DESCRIPTION
+        "Power Trap group - notifications."
+    ::= { powMIBNotificationGroups 1 }
+
+END

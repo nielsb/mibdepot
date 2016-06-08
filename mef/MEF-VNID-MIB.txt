@@ -1,0 +1,566 @@
+MEF-VNID-MIB DEFINITIONS ::= BEGIN
+  IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Unsigned32, enterprises
+              FROM SNMPv2-SMI            -- RFC 2578
+    TEXTUAL-CONVENTION, DisplayString, DateAndTime
+             FROM SNMPv2-TC             -- RFC 2579
+    OBJECT-GROUP, MODULE-COMPLIANCE
+             FROM SNMPv2-CONF           -- RFC 2580
+    ifIndex
+             FROM IF-MIB                -- RFC 2863
+    InetAddress, InetAddressType
+             FROM INET-ADDRESS-MIB;     -- RFC 4001
+
+mefVnidMib MODULE-IDENTITY
+    LAST-UPDATED    "201401171200Z" -- January 17, 2014
+    ORGANIZATION    "Metro Ethernet Forum"
+    CONTACT-INFO
+       "Web URL: http://metroethernetforum.org/
+        E-mail:  mibs@metroethernetforum.org
+        Postal:  Metro Ethernet Forum
+                 6033 W. Century Boulevard, Suite 1107
+                 Los Angeles, CA 90045
+                 U.S.A.
+        Phone:   +1 310-642-2800
+        Fax:     +1 310-642-2808"
+    DESCRIPTION
+            "This MIB module contains the management objects for the
+             management of Virtual NID Services and intended for Metro Ethernet
+             Network Elements (NE).
+
+            Copyright 2014 Metro Ethernet Forum
+            All rights reserved.
+
+    ****************************************************************************
+    Reference Overview
+
+    [vNID] refers to MEF 43, 'Virtual NID (vNID) Functionality for E-Access
+        Services', January 2014
+    ****************************************************************************
+           "
+    REVISION        "201401171200Z" -- January 17, 2014
+    DESCRIPTION
+            "Initial Version."
+    ::= { enterprises mef(15007) mefService(2) 4 }
+
+
+-- *****************************************************************************
+-- Object definitions in the Service vNID MIB Module
+-- *****************************************************************************
+mefServiceVnidObjects            OBJECT IDENTIFIER ::= { mefVnidMib 1 }
+mefServiceVnidMibConformance     OBJECT IDENTIFIER ::= { mefVnidMib 2 }
+
+-- *****************************************************************************
+-- Groups in the Service vNID MIB Module
+-- *****************************************************************************
+mefServiceVnidUniAttributes    OBJECT IDENTIFIER ::= { mefServiceVnidObjects 1 }
+mefServiceRpeAttributes        OBJECT IDENTIFIER ::= { mefServiceVnidObjects 2 }
+
+
+-- *****************************************************************************
+-- Ethernet Service Textual Conventions
+-- *****************************************************************************
+
+MefServiceVnidType ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "This object configures vNID type at the UNI.
+
+         other(0)            UNI is not configured for vNID Services.
+
+         vNidBasicCase(1)    vNID Service Case B (Basic) indicates there is a
+                             single OVC to the UNI. All traffic from the UNI is
+                             mapped to that OVC.
+
+         vNidAdvancedCase(2) vNID Service Case A (Advanced) indicates there is
+                             one or more OVCs, each with a different CE-VLAN ID
+                             map at a UNI. The CE-VLAN ID map may contain one or
+                             more CE-VLAN IDs.
+        "
+   REFERENCE
+       "[vNID] 6.0 R1, R2"
+    SYNTAX      INTEGER {
+        other                 (0),
+        vNidBasicCase         (1),
+        vNidAdvancedCase      (2)
+    }
+
+
+-- *****************************************************************************
+-- Ethernet vNID UNI Service Attributes Configuration
+-- *****************************************************************************
+
+mefServiceVnidUniCfgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF MefServiceVnidUniCfgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This table represents the vNID Service UNI configuration attributes
+        at a specific vNID UNI. The purpose of this table is to allow
+        management of a vNID UNI.
+
+        Rows are automatically created on the RPE based upon the vNID service
+        being provided for the UNI by the AP, according to the Service Order
+        agreed between the SP and the AP. Similarly rows are deleted when the
+        vNID service is removed.
+
+        This table may be sparsely populated.
+
+        Rows in this table are accessed by the IF-MIB interface object ifIndex.
+
+        The RPE for the AP's vNID Service may or may not be located at the
+        vNID UNI; in either case, the RPE may allow the SP to manage multiple
+        vNID UNIs over the same RMI connection.
+
+        Hence, rows in this table are accessed by the IF-MIB interface
+        object ifIndex, so as to allow the SP to identify a specific vNID UNI.
+        The ifIndex may identify the physical UNI port, if the RPE is located
+        at the UNI; or it may be a 'virtual' ifIndex allocated by the RPE to
+        represent the UNI, if the RPE is not located at the UNI.  In the latter
+        case, the RPE must allocate unique ifIndex values for all the UNIs
+        managed over the same RMI connection. Note that the RPE may support
+        multiple RMI connections (e.g. from different SPs) - in this case,
+        it is permissible for the RPE to reuse the same ifIndex values for
+        UNIs managed over different RMI connections.
+
+        Rows in this table and the values of the objects in the row are
+        persistent (non-volatile) upon reboot.
+       "
+    REFERENCE
+       "[vNID] 7.2.1.1"
+    ::= { mefServiceVnidUniAttributes 1 }
+
+mefServiceVnidUniCfgEntry OBJECT-TYPE
+    SYNTAX      MefServiceVnidUniCfgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The conceptual row of mefServiceVnidUniCfgTable."
+    INDEX { ifIndex }
+    ::= { mefServiceVnidUniCfgTable 1 }
+
+MefServiceVnidUniCfgEntry ::= SEQUENCE {
+      mefServiceVnidUniCfgType             MefServiceVnidType,
+      mefServiceVnidUniCfgApIdentifier     DisplayString,
+      mefServiceVnidUniCfgSpIdentifier     DisplayString,
+      mefServiceVnidUniCfgUniMtuSize       Unsigned32,
+      mefServiceVnidUniCfgOvcPerUniMax     Unsigned32,
+      mefServiceVnidUniCfgCeVlansMax       Unsigned32
+    }
+
+mefServiceVnidUniCfgType OBJECT-TYPE
+    SYNTAX      MefServiceVnidType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the type of vNID Service at the
+        specific UNI that is designated to support vNID Services.
+       "
+    REFERENCE
+       "[vNID] 6.0 R1, R2"
+    DEFVAL { other }
+    ::= { mefServiceVnidUniCfgEntry 1 }
+
+mefServiceVnidUniCfgApIdentifier OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..45))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the vNID AP identifier. This is distinct from
+        the mefServiceInterfaceCfgIdentifier and the mefServiceUniCfgIdentifier.
+        The identifier is an arbitrary text string that is used to identify an
+        vNID UNI interface that is accessible by the SP.
+
+        Octet values of 0x00 through 0x1f are illegal.
+       "
+    REFERENCE
+       "[vNID] R4, R5, R6"
+    DEFVAL { "" }
+    ::= { mefServiceVnidUniCfgEntry 2 }
+
+mefServiceVnidUniCfgSpIdentifier OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE(0..45))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the vNID SP identifier. This is distinct from
+        the mefServiceInterfaceCfgIdentifier and the mefServiceUniCfgIdentifier.
+        The identifier is an arbitrary text string that is used to identify an
+        vNID UNI interface that is accessible by the SP.
+
+        Octet values of 0x00 through 0x1f are illegal.
+       "
+    REFERENCE
+       "[vNID] R7, R8, R9"
+    DEFVAL { "" }
+    ::= { mefServiceVnidUniCfgEntry 3 }
+
+mefServiceVnidUniCfgUniMtuSize OBJECT-TYPE
+    SYNTAX      Unsigned32 (1522..16384)
+    UNITS       "octets"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the configured UNI MTU size that is equal or
+        less than ifMtu (UNI MTU max), the maximum size that the AP offers to
+        the SP.
+       "
+    REFERENCE
+       "[vNID] R18, R19"
+    DEFVAL { 1522 }
+    ::= { mefServiceVnidUniCfgEntry 4 }
+
+mefServiceVnidUniCfgOvcPerUniMax OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the maximum number of OVCs that may be on a
+        UNI.
+       "
+    REFERENCE
+       "[vNID] R100, R104"
+    DEFVAL { 1 }
+    ::= { mefServiceVnidUniCfgEntry 5 }
+
+mefServiceVnidUniCfgCeVlansMax OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the maximum number of CE-VLAN IDs that can
+        be mapped to a single OVC at the UNI. A value = 1 indicates that the
+        UNI can only map single CE-VLANs to an OVC. A value > 1 indicates that
+        up to the indicated maximum can be mapped to a single OVC.
+       "
+    REFERENCE
+       "[vNID] R105, D21"
+    DEFVAL { 1 }
+    ::= { mefServiceVnidUniCfgEntry 6 }
+
+
+-- *****************************************************************************
+-- Ethernet Remote Processing Entity (RPE) Service Attributes Configuration
+-- *****************************************************************************
+
+mefServiceRpeCfgTable OBJECT IDENTIFIER ::= { mefServiceRpeAttributes 1 }
+--      This table represents the specific RPE service attributes configuration
+--      table for an MEF Ethernet compliant RPE. The primary
+--      purpose of this table is to provide management of the RPE providing
+--      vNID Services for a NE.  These objects are automatically created on the
+--      RPE based upon the vNID service being provided by the AP, according to
+--      the Service Order agreed between the SP and the AP. Similarly the
+--      objects are deleted when the vNID service is removed.
+
+mefServiceSystemTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object specifies the RPE local time, date, and time zone.
+
+        It is a read-only value. The method for configuring the system
+        Time is not defined.
+       "
+    REFERENCE
+       "[vNID] 7.2.5.1 R87 R89, R90, R91, R92, R93"
+    ::= { mefServiceRpeCfgTable 1 }
+
+mefServiceRpeCfgProtocol OBJECT-TYPE
+    SYNTAX      BITS {
+                     bSnmpv2c(0),
+                     bSnmpv3(1),
+                     bNetconf(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "A vector of bits that indicates the type of RMI management protocols
+        that are supported by the vNID RPE. It is not used to configure these
+        protocols, only report the supported state of these protocols.
+
+        A bit set to '1' indicates the specific protocol is enabled.
+
+        A bit set to '0' indicates the specific protocol is disabled.
+
+        bSnmpv2c(0)     SNMPv2c enable
+        bSnmpv3(1)      SNMPv3 enable
+        bNetconf(2)     NETCONF enable
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R80, R81, O9, O10"
+    ::= { mefServiceRpeCfgTable 2 }
+
+mefServiceRpeCfgIpSupported OBJECT-TYPE
+    SYNTAX      BITS {
+                     bIPv4(0),
+                     bIPv6Auto(1),
+                     bIPv6Static(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "A vector of bits that indicates which IP protocols can be supported by
+        the vNID RPE. It is not used to configure these protocols, only report
+        the supported state of these protocols.
+
+        A bit set to '1' indicates the specific IP protocol can be supported.
+
+        A bit set to '0' indicates the specific IP protocol cannot be supported.
+
+        bIPv4(0)        IPv4 support enable
+        bIPv6Auto(1)    IPv6 auto configuration mode support enable
+        bIPv6Static(2)  IPv6 static configuration mode support enable
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 D18, R79, CR17, CR18"
+    ::= { mefServiceRpeCfgTable 3 }
+
+mefServiceRpeCfgIpType OBJECT-TYPE
+    SYNTAX      BITS {
+                     bIPv4(0),
+                     bIPv6Auto(1),
+                     bIPv6Static(2)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "A vector of bits that indicates which IP protocols are currently
+        supported by the vNID RPE. It is not used to configure these
+        protocols, only report the active state of these protocols.
+
+        A bit set to '1' indicates the specific IP protocol is enabled.
+
+        A bit set to '0' indicates the specific IP protocol is disabled.
+
+        bIPv4(0)        IPv4 support enable
+        bIPv6Auto(1)    IPv6 auto configuration mode support enable
+        bIPv6Static(2)  IPv6 static configuration mode support enable
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R75"
+    ::= { mefServiceRpeCfgTable 4 }
+
+mefServiceRpeCfgIcmp OBJECT-TYPE
+    SYNTAX      BITS {
+                     bIPv4(0),
+                     bIPv6(1)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "A vector of bits that indicates which IP ICMP protocols
+        are currently supported by the vNID RPE. It is not used to
+        configure these protocols, only report the active state of
+        these protocols.
+
+        A bit set to '1' indicates the specific ICMP protocol is enabled.
+
+        A bit set to '0' indicates the specific ICMP protocol is disabled.
+
+        bIPv4(0)      IPv4 ICMP supported enable
+        bIPv6(1)      IPv6 ICMP supported enabled
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R78, CR25"
+    ::= { mefServiceRpeCfgTable 5 }
+
+mefServiceRpeCfgIpv4 OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object is the RPE IPv4 address if mefServiceRpeCfgIpType
+        'bIPv4' is set, otherwise the value of this object is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R74, CR14"
+    ::= { mefServiceRpeCfgTable 6 }
+
+mefServiceRpeCfgIpv4Subnet OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object is the RPE IPv4 subnet address if mefServiceRpeCfgIpType
+        'bIPv4' is set, otherwise the value of this object is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 CR15"
+    ::= { mefServiceRpeCfgTable 7 }
+
+mefServiceRpeCfgIpv4GatewayAddress OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object is the RPE IPv4 gateway address if mefServiceRpeCfgIpType
+        'ipv4' is set, otherwise the value of this object is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 CR16"
+    ::= { mefServiceRpeCfgTable 8 }
+
+mefServiceRpeCfgIpv6PrefixLength OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the length of the IPv6 prefix length if the RPE
+        mefServiceRpeCfgIpType 'ipv6' is set, otherwise the value of this
+        object is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 CR19, CR20"
+    ::= { mefServiceRpeCfgTable 9 }
+
+mefServiceRpeCfgIpv6 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the IPv6 address when IPv6 auto configuration is
+        not enabled, otherwise the value of this object is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 CR21"
+    ::= { mefServiceRpeCfgTable 10 }
+
+mefServiceRpeCfgIpv6StaticSuffix OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the IPv6 static suffix when IPv6 auto
+        configuration is enabled, otherwise the value of this object
+        is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 CR22"
+    ::= { mefServiceRpeCfgTable 11 }
+
+mefServiceRpeCfgIpv6GatewayAddress OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "This object indicates the IPv6 gateway address when IPv6 auto
+        configuration is not enabled, otherwise the value of this object
+        is ignored.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 CR23"
+    ::= { mefServiceRpeCfgTable 12 }
+
+mefServiceRpeCfgIpNotification1 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "IP Notification destination address 1 of the vNID RPE.
+
+        A value of 0 indicates no trap host address is configured
+        via this object for the RPE.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R83"
+    ::= { mefServiceRpeCfgTable 13 }
+
+mefServiceRpeCfgIpNotification2 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "IP Notification destination address 2 of the vNID RPE.
+
+        A value of 0 indicates no trap host address is configured
+        via this object for the RPE.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R83"
+    ::= { mefServiceRpeCfgTable 14 }
+
+mefServiceRpeCfgIpNotification3 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "IP Notification destination address 3 of the vNID RPE.
+
+        A value of 0 indicates no trap host address is configured
+        via this object for the RPE.
+       "
+    REFERENCE
+       "[vNID] 7.2.4.2 R83"
+    ::= { mefServiceRpeCfgTable 15 }
+
+
+-- *****************************************************************************
+-- vNID MIB Module - Conformance Information
+-- *****************************************************************************
+
+mefServiceVnidMibCompliances OBJECT IDENTIFIER ::=
+    { mefServiceVnidMibConformance 1 }
+mefServiceVnidMibGroups      OBJECT IDENTIFIER ::=
+    { mefServiceVnidMibConformance 2 }
+
+
+-- ******************************************************************
+-- vNID MIB Units of conformance
+-- ******************************************************************
+
+mefServiceVnidUniMandatoryGroup OBJECT-GROUP
+    OBJECTS {
+      mefServiceVnidUniCfgType,
+      mefServiceVnidUniCfgApIdentifier,
+      mefServiceVnidUniCfgSpIdentifier,
+      mefServiceVnidUniCfgUniMtuSize,
+      mefServiceVnidUniCfgOvcPerUniMax,
+      mefServiceVnidUniCfgCeVlansMax
+    }
+    STATUS      current
+    DESCRIPTION
+       "Mandatory objects for the vNID UNI Service Attributes group."
+    ::= { mefServiceVnidMibGroups 1 }
+
+mefServiceVnidRpeMandatoryGroup OBJECT-GROUP
+    OBJECTS {
+      mefServiceSystemTime,
+      mefServiceRpeCfgProtocol,
+      mefServiceRpeCfgIpSupported,
+      mefServiceRpeCfgIpType,
+      mefServiceRpeCfgIcmp,
+      mefServiceRpeCfgIpv4,
+      mefServiceRpeCfgIpv4Subnet,
+      mefServiceRpeCfgIpv4GatewayAddress,
+      mefServiceRpeCfgIpv6PrefixLength,
+      mefServiceRpeCfgIpv6,
+      mefServiceRpeCfgIpv6StaticSuffix,
+      mefServiceRpeCfgIpv6GatewayAddress,
+      mefServiceRpeCfgIpNotification1,
+      mefServiceRpeCfgIpNotification2,
+      mefServiceRpeCfgIpNotification3
+      }
+    STATUS      current
+    DESCRIPTION
+       "Mandatory objects for the vNID RPE Service Attributes
+        group."
+    ::= { mefServiceVnidMibGroups 2 }
+
+
+-- ******************************************************************
+-- vNID MIB Module Compliance statements
+-- ******************************************************************
+
+mefServiceVnidMibCompliance MODULE-COMPLIANCE
+    STATUS       current
+    DESCRIPTION "The compliance statement for the Ethernet Service vNID MIB."
+    MODULE
+        MANDATORY-GROUPS {
+            mefServiceVnidUniMandatoryGroup,
+            mefServiceVnidRpeMandatoryGroup
+        }
+
+    ::= { mefServiceVnidMibCompliances 1 }
+
+END

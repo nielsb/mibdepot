@@ -1,0 +1,1933 @@
+
+-- File Name : Vicom-sv-mgmt-mib.mib
+-- Date      : Tue Feb 06 14:51:12 GMT+00:00 2001
+-- Copyright (c) 2001 by Vicom Systems, Inc.
+-- Created By: Debbie Tran
+--------------------------------------------------------------------
+VICOM-SV-MGMT-MIB	DEFINITIONS ::= BEGIN
+	IMPORTS
+    	
+		IpAddress, enterprises
+			FROM RFC1155-SMI
+		OBJECT-TYPE
+			FROM RFC-1212	
+		DisplayString
+			FROM RFC1213-MIB
+		TRAP-TYPE
+			FROM RFC-1215;
+--------------------------------------------------------------------
+
+	vicom 	OBJECT IDENTIFIER
+		::= {enterprises 3282  }	
+      
+    vicomProducts	OBJECT IDENTIFIER
+		::=  {  vicom  1  }
+
+	vicomSVMgmtMIB	OBJECT IDENTIFIER
+		::=  {  vicomProducts  2  }
+
+	vicomSVMgmtMIBObjects	OBJECT IDENTIFIER
+		::=  {  vicomSVMgmtMIB  1  }
+
+	trapReg	OBJECT IDENTIFIER
+		::=  {  vicomSVMgmtMIB  2  }
+
+	vSVSANMgmt	OBJECT IDENTIFIER
+		::=  {  vicomSVMgmtMIBObjects  1  }
+
+	vSVZoneMgmt	OBJECT IDENTIFIER
+		::=  {  vicomSVMgmtMIBObjects  4  }
+
+
+-- SNMP trap registration group 
+
+	trapMaxClients	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"The maximum number of SNMP trap recipients supports in the traplist.cfg ."
+		::=  {  trapReg  1  }
+
+	trapClientCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"The current number of rows in the trap table."
+		::=  {  trapReg  2  }
+
+	trapRegTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  TrapRegEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"A table containing a row for each IP address/port
+			number that traps will be sent to."
+		::=  { trapReg  3 }
+
+	trapRegEntry	OBJECT-TYPE
+		SYNTAX		TrapRegEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Ip/Port pair for a specific client."
+		INDEX		{  trapRegIpAddress  }
+		::=  { trapRegTable 1 }
+
+	TrapRegEntry  ::=  SEQUENCE {
+		trapRegIpAddress  IpAddress,
+		trapRegPort  INTEGER,
+		trapRegFilter  INTEGER
+		}
+
+
+	trapRegIpAddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"The Ip address of a client registered for traps."
+		::=  {  trapRegEntry  1  }
+
+
+	trapRegPort	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"The UDP port to send traps to for this host.
+				Normally this would be the standard trap port
+				(162)."
+		::=  {  trapRegEntry  2  }
+
+
+	trapRegFilter	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , alert ( 2 ) , critical ( 3 ) , error ( 4 ) , warning ( 5 ) , info ( 6 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"This value defines the trap severity filter for this trap host. The Agent will send traps to this host that have a severity level less than or equal to this value.  The default value of this object is 'warning'."
+		::=  {  trapRegEntry  3  }
+
+	connSANView	OBJECT IDENTIFIER
+		::=  {  vSVSANMgmt  1  }
+
+	logicalSANView	OBJECT IDENTIFIER
+		::=  {  vSVSANMgmt  6  }
+
+	hostAdapterTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  HostAdapterEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of Host adapter."
+		::=  { vSVZoneMgmt  10 }
+
+	hostAdapterEntry	OBJECT-TYPE
+		SYNTAX		HostAdapterEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Host adapter entries."
+		INDEX		{  connSANIndex, connSLICIndex, hostAdapterIndex  }
+		::=  { hostAdapterTable 1 }
+
+	HostAdapterEntry  ::=  SEQUENCE {
+		hostAdapterIndex  INTEGER,
+		hostAdapterSANName  DisplayString,
+		hostAdapterSLICNum  DisplayString,
+		hostAdapterStatus  INTEGER,
+		hostAdapterName  DisplayString,
+		hostAdapterUID  DisplayString
+		}
+
+
+	hostAdapterIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter index."
+		::=  {  hostAdapterEntry  2  }
+
+
+	hostAdapterSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter SAN Name."
+		::=  {  hostAdapterEntry  4  }
+
+
+	hostAdapterSLICNum	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter Initiator Number."
+		::=  {  hostAdapterEntry  6  }
+
+
+	hostAdapterStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Column Description"
+		::=  {  hostAdapterEntry  7  }
+
+
+	hostAdapterName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter name description."
+		::=  {  hostAdapterEntry  8  }
+
+
+	hostAdapterUID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter UID."
+		::=  {  hostAdapterEntry  10  }
+
+	svDomainTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SvDomainEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Description"
+		::=  { vSVZoneMgmt  12 }
+
+	svDomainEntry	OBJECT-TYPE
+		SYNTAX		SvDomainEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Domain entries."
+		INDEX		{  connSANIndex, connSLICIndex, svDomainIndex  }
+		::=  { svDomainTable 1 }
+
+	SvDomainEntry  ::=  SEQUENCE {
+		svDomainIndex  INTEGER,
+		svDomainSANName  DisplayString,
+		svDomainSLICNum  DisplayString,
+		svDomainName  DisplayString,
+		svDomainID  DisplayString,
+		svDomainStatus  INTEGER,
+		svDomainZoneCount  INTEGER
+		}
+
+
+	svDomainIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Domain index"
+		::=  {  svDomainEntry  2  }
+
+
+	svDomainSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  svDomainEntry  4  }
+
+
+	svDomainSLICNum	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Initiator number."
+		::=  {  svDomainEntry  6  }
+
+
+	svDomainName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Domain Name"
+		::=  {  svDomainEntry  8  }
+
+
+	svDomainID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Domain ID description."
+		::=  {  svDomainEntry  10  }
+
+
+	svDomainStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Domain Status."
+		::=  {  svDomainEntry  12  }
+
+
+	svDomainZoneCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of zones in the domain."
+		::=  {  svDomainEntry  14  }
+
+	zoneTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ZoneEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Zone list."
+		::=  { vSVZoneMgmt  14 }
+
+	zoneEntry	OBJECT-TYPE
+		SYNTAX		ZoneEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Zone entries"
+		INDEX		{  zoneIndex, connSANIndex, connSLICIndex  }
+		::=  { zoneTable 1 }
+
+	ZoneEntry  ::=  SEQUENCE {
+		zoneIndex  INTEGER,
+		zoneSANName  DisplayString,
+		zoneSLICNum  DisplayString,
+		zoneSVDomainName  DisplayString,
+		zoneName  DisplayString,
+		zoneID  DisplayString,
+		zonePublic  INTEGER,
+		zoneHostAdapterCount  INTEGER,
+		zoneDeviceCount  INTEGER
+		}
+
+
+	zoneIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Zone index"
+		::=  {  zoneEntry  2  }
+
+
+	zoneSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  zoneEntry  4  }
+
+
+	zoneSLICNum	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Initiator number."
+		::=  {  zoneEntry  6  }
+
+
+	zoneSVDomainName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Domain name of this zone."
+		::=  {  zoneEntry  8  }
+
+
+	zoneName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Zone name description."
+		::=  {  zoneEntry  10  }
+
+
+	zoneID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Zone ID description."
+		::=  {  zoneEntry  12  }
+
+
+	zonePublic	OBJECT-TYPE	
+		SYNTAX			INTEGER  { public-zone ( 1 ) , private-zone ( 2 ) } 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Is this a public zone or not?"
+		::=  {  zoneEntry  14  }
+
+
+	zoneHostAdapterCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of host adapter in this zone."
+		::=  {  zoneEntry  16  }
+
+
+	zoneDeviceCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of devices in this zone."
+		::=  {  zoneEntry  18  }
+
+	zoneViewHostAdapterTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ZoneViewHostAdapterEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of host adapter in the zones."
+		::=  { vSVZoneMgmt  16 }
+
+	zoneViewHostAdapterEntry	OBJECT-TYPE
+		SYNTAX		ZoneViewHostAdapterEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"host adapter in the zone entries."
+		INDEX		{  connSANIndex, connSLICIndex, zoneIndex  }
+		::=  { zoneViewHostAdapterTable 1 }
+
+	ZoneViewHostAdapterEntry  ::=  SEQUENCE {
+		zoneViewHASANName  DisplayString,
+		zoneViewHAZoneID  DisplayString,
+		zoneViewHAName  DisplayString,
+		zoneViewHAUID  DisplayString,
+		zoneViewHAStatus  INTEGER
+		}
+
+
+	zoneViewHASANName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  zoneViewHostAdapterEntry  2  }
+
+
+	zoneViewHAZoneID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Zone ID description."
+		::=  {  zoneViewHostAdapterEntry  4  }
+
+
+	zoneViewHAName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter name."
+		::=  {  zoneViewHostAdapterEntry  6  }
+
+
+	zoneViewHAUID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host adapter UID (world wide name)."
+		::=  {  zoneViewHostAdapterEntry  8  }
+
+
+	zoneViewHAStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Column Description"
+		::=  {  zoneViewHostAdapterEntry  10  }
+
+	zoneViewDeviceTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ZoneViewDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Zone Device list."
+		::=  { vSVZoneMgmt  18 }
+
+	zoneViewDeviceEntry	OBJECT-TYPE
+		SYNTAX		ZoneViewDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Zone device entries."
+		INDEX		{  connSANIndex, connSLICIndex, zoneIndex  }
+		::=  { zoneViewDeviceTable 1 }
+
+	ZoneViewDeviceEntry  ::=  SEQUENCE {
+		zoneViewDevSANName  DisplayString,
+		zoneViewDevZoneID  DisplayString,
+		zoneViewDevTargetID  DisplayString,
+		zoneViewDevUIDName  DisplayString,
+		zoneViewDevCapacity  DisplayString,
+		zoneViewDevMapping  DisplayString
+		}
+
+
+	zoneViewDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  zoneViewDeviceEntry  2  }
+
+
+	zoneViewDevZoneID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Zone ID"
+		::=  {  zoneViewDeviceEntry  4  }
+
+
+	zoneViewDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical drive target number."
+		::=  {  zoneViewDeviceEntry  6  }
+
+
+	zoneViewDevUIDName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Drive UID Name"
+		::=  {  zoneViewDeviceEntry  8  }
+
+
+	zoneViewDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Disk space of the drive in this zone."
+		::=  {  zoneViewDeviceEntry  10  }
+
+
+	zoneViewDevMapping	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Drive mapping in this zone."
+		::=  {  zoneViewDeviceEntry  12  }
+
+	slicViewDeviceTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SlicViewDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"SLIC View of all configured devices."
+		::=  { vSVZoneMgmt  20 }
+
+	slicViewDeviceEntry	OBJECT-TYPE
+		SYNTAX		SlicViewDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"A SLIC View of all configured device entries."
+		INDEX		{  connSANIndex, connSLICIndex  }
+		::=  { slicViewDeviceTable 1 }
+
+	SlicViewDeviceEntry  ::=  SEQUENCE {
+		slicViewDevSANName  DisplayString,
+		slicViewDevSLICNum  DisplayString,
+		slicViewDevTargetID  DisplayString,
+		slicViewDevType  INTEGER,
+		slicViewDevName  DisplayString,
+		slicViewDevCapacity  DisplayString,
+		slicViewDevStatus  INTEGER
+		}
+
+
+	slicViewDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  slicViewDeviceEntry  2  }
+
+
+	slicViewDevSLICNum	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Initiator Number"
+		::=  {  slicViewDeviceEntry  4  }
+
+
+	slicViewDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC View of a device unit Target number, name, or ID description."
+		::=  {  slicViewDeviceEntry  6  }
+
+
+	slicViewDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , other ( 2 ) , simple-drive ( 3 ) , complex-drive ( 4 ) , host-adapter ( 5 ) , sv-domain ( 6 ) , zone ( 7 ) , virtual-drive ( 8 ), instcpy-drive (9), mirror-drive (10), composite-drive (11) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC View of device unit configuration type."
+		::=  {  slicViewDeviceEntry  8  }
+
+
+	slicViewDevName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Name description of the device in this SLIC view."
+		::=  {  slicViewDeviceEntry  10  }
+
+
+	slicViewDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device disk space."
+		::=  {  slicViewDeviceEntry  14  }
+
+
+	slicViewDevStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device status."
+		::=  {  slicViewDeviceEntry  16  }
+
+	hostAdapterViewDeviceTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  HostAdapterViewDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Host adapter view of configured devices."
+		::=  { vSVZoneMgmt  22 }
+
+	hostAdapterViewDeviceEntry	OBJECT-TYPE
+		SYNTAX		HostAdapterViewDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Host adapter view of configured device entries."
+		INDEX		{  connSANIndex, connSLICIndex, hostAdapterIndex  }
+		::=  { hostAdapterViewDeviceTable 1 }
+
+	HostAdapterViewDeviceEntry  ::=  SEQUENCE {
+		haViewDevSANName  DisplayString,
+		haViewDevSLICNum  DisplayString,
+		haViewDevHostAdapterID  DisplayString,
+		haViewDevTargetNameID  DisplayString,
+		haViewDevType  INTEGER,
+		haViewDevMapping  DisplayString,
+		haViewDevCapacity  DisplayString,
+		haViewDevStatus  INTEGER
+		}
+
+
+	haViewDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  hostAdapterViewDeviceEntry  2  }
+
+
+	haViewDevSLICNum	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SV Router (SLIC) number description."
+		::=  {  hostAdapterViewDeviceEntry  4  }
+
+
+	haViewDevHostAdapterID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Host Adapter name description."
+		::=  {  hostAdapterViewDeviceEntry  6  }
+
+
+	haViewDevTargetNameID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device Target ID description."
+		::=  {  hostAdapterViewDeviceEntry  8  }
+
+
+	haViewDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , other ( 2 ) , simple-drive ( 3 ) , complex-drive ( 4 ) , host-adapter ( 5 ) , sv-domain ( 6 ) , zone ( 7 ) , virtual-drive ( 8 ), instcpy-drive (9), mirror-drive (10), composite-drive (11) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Configured device type."
+		::=  {  hostAdapterViewDeviceEntry  10  }
+
+
+	haViewDevMapping	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device LUN Mapping."
+		::=  {  hostAdapterViewDeviceEntry  14  }
+
+
+	haViewDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device disk space"
+		::=  {  hostAdapterViewDeviceEntry  16  }
+
+
+	haViewDevStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device status."
+		::=  {  hostAdapterViewDeviceEntry  18  }
+
+	connSANCount	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of SAN count in the configuration file."
+		::=  {  connSANView  2  }
+
+	connSANTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ConnSANEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"SAN configuration table."
+		::=  { connSANView  4 }
+
+	connSANEntry	OBJECT-TYPE
+		SYNTAX		ConnSANEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"SAN configuration entries."
+		INDEX		{  connSANIndex  }
+		::=  { connSANTable 1 }
+
+	ConnSANEntry  ::=  SEQUENCE {
+		connSANIndex  INTEGER,
+		connSANName  DisplayString,
+		connSANDaemon  DisplayString,
+		connSANStatus  INTEGER,
+		connSANSignonDrive  DisplayString,
+		connSANSignonMapping  DisplayString,
+		connSANSignonPartition  DisplayString,
+		connSANSignonAltPartition  DisplayString,
+		connSANSLICCount  INTEGER,
+		connSANPhysicalDevCount  INTEGER,
+		connSANMirrorDevCount  INTEGER,
+		connSANCompositeDevCount  INTEGER,
+		conSANInstcpyDevCount  INTEGER,
+		connSANGenSpareCount  INTEGER,
+		connSANOfflineDevCount  INTEGER
+		}
+
+
+	connSANIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Column Description"
+		::=  {  connSANEntry  2  }
+
+
+	connSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  connSANEntry  4  }
+
+
+	connSANDaemon	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Daemon Name and Host."
+		::=  {  connSANEntry  6  }
+
+
+	connSANStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Status."
+		::=  {  connSANEntry  8  }
+
+
+	connSANSignonDrive	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Signon drive."
+		::=  {  connSANEntry  10  }
+
+
+	connSANSignonMapping	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"LUN ID Mapping of the Signon drive of this SAN."
+		::=  {  connSANEntry  12  }
+
+
+	connSANSignonPartition	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Signon drive partition."
+		::=  {  connSANEntry  14  }
+
+
+	connSANSignonAltPartition	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Alternate Signon drive partitions."
+		::=  {  connSANEntry  16  }
+
+
+	connSANSLICCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total Initiator SLICs of this SAN."
+		::=  {  connSANEntry  18  }
+
+
+	connSANPhysicalDevCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total Physical devices in this SAN."
+		::=  {  connSANEntry  20  }
+
+
+	connSANMirrorDevCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of Mirror devices in this SAN."
+		::=  {  connSANEntry  22  }
+
+
+	connSANCompositeDevCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total Composite Devices in this SAN."
+		::=  {  connSANEntry  24  }
+
+
+	conSANInstcpyDevCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of Instant Copy drives in this SAN."
+		::=  {  connSANEntry  26  }
+
+
+	connSANGenSpareCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total General Spare drives in this SAN."
+		::=  {  connSANEntry  28  }
+
+
+	connSANOfflineDevCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of Offline devices in this SAN."
+		::=  {  connSANEntry  30  }
+
+	connSLICTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ConnSLICEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"SLIC Router table."
+		::=  { connSANView  8 }
+
+	connSLICEntry	OBJECT-TYPE
+		SYNTAX		ConnSLICEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Connected SLIC Router entries."
+		INDEX		{  connSANIndex, connSLICIndex  }
+		::=  { connSLICTable 1 }
+
+	ConnSLICEntry  ::=  SEQUENCE {
+		connSLICIndex  INTEGER,
+		connSLICSANName  DisplayString,
+		connSLICNum  DisplayString,
+		connSLICName  DisplayString,
+		connSLICType  INTEGER,
+		connSLICUID  DisplayString,
+		connSLICStatus  INTEGER,
+		connSLICMaster  INTEGER,
+		connSLICFCID  INTEGER,
+		connSLICRevision  DisplayString,
+		connSLICVPDDescription  DisplayString,
+		connSLICSerialNum  DisplayString
+		}
+
+
+	connSLICIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Index."
+		::=  {  connSLICEntry  2  }
+
+
+	connSLICSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  connSLICEntry  4  }
+
+
+	connSLICNum	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Initiator number."
+		::=  {  connSLICEntry  6  }
+
+
+	connSLICName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Name."
+		::=  {  connSLICEntry  8  }
+
+
+	connSLICType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , other ( 2 ) , svRouter-FCFC ( 3 ) , svRouter-SCFC ( 4 ) , svRouter-FCSC ( 5 ) , svRouter-FCSL ( 6 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Type."
+		::=  {  connSLICEntry  10  }
+
+
+	connSLICUID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC UID"
+		::=  {  connSLICEntry  12  }
+
+
+	connSLICStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Column Description"
+		::=  {  connSLICEntry  14  }
+
+
+	connSLICMaster	OBJECT-TYPE	
+		SYNTAX			INTEGER  { master ( 1 ) , not-master ( 2 ) } 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Is this a Master SLIC Router?"
+		::=  {  connSLICEntry  16  }
+
+
+	connSLICFCID	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC FC ID setting."
+		::=  {  connSLICEntry  20  }
+
+
+	connSLICRevision	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Revision."
+		::=  {  connSLICEntry  22  }
+
+
+	connSLICVPDDescription	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SLIC Vital Product description."
+		::=  {  connSLICEntry  26  }
+
+
+	connSLICSerialNum	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Serial number of this SLIC router."
+		::=  {  connSLICEntry  28  }
+
+	connPhysicalDevTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ConnPhysicalDevEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Physical devices table."
+		::=  { connSANView  10 }
+
+	connPhysicalDevEntry	OBJECT-TYPE
+		SYNTAX		ConnPhysicalDevEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Physical devices entries."
+		INDEX		{  connSANIndex, connPDevIndex  }
+		::=  { connPhysicalDevTable 1 }
+
+	ConnPhysicalDevEntry  ::=  SEQUENCE {
+		connPDevIndex  INTEGER,
+		connPDevSANName  DisplayString,
+		connPDevTargetID  DisplayString,
+		connPDevType  INTEGER,
+		connPDevGlobalMapping  DisplayString,
+		connPDevUID  DisplayString,
+		connPDevCapacity  DisplayString,
+		connPDevStatus  INTEGER,
+		connPDevAttribute  DisplayString,
+		connPDevRevision  DisplayString,
+		connPDevVPDDescription  DisplayString,
+		connPDevSerialNum  DisplayString
+		}
+
+
+	connPDevIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device index."
+		::=  {  connPhysicalDevEntry  2  }
+
+
+	connPDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  connPhysicalDevEntry  4  }
+
+
+	connPDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device Target number."
+		::=  {  connPhysicalDevEntry  6  }
+
+
+	connPDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , other ( 2 ) , host-adapter ( 3 ) , sv-router ( 4 ) , storage-device ( 5 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device type."
+		::=  {  connPhysicalDevEntry  8  }
+
+
+	connPDevGlobalMapping	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device global LUN ID Mapping."
+		::=  {  connPhysicalDevEntry  10  }
+
+
+	connPDevUID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device Universal ID."
+		::=  {  connPhysicalDevEntry  12  }
+
+
+	connPDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device disk space."
+		::=  {  connPhysicalDevEntry  14  }
+
+
+	connPDevStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device status."
+		::=  {  connPhysicalDevEntry  16  }
+
+
+	connPDevAttribute	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device attribute."
+		::=  {  connPhysicalDevEntry  18  }
+
+
+	connPDevRevision	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Physical device revision description."
+		::=  {  connPhysicalDevEntry  20  }
+
+
+	connPDevVPDDescription	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Vital product data description of this Physical device."
+		::=  {  connPhysicalDevEntry  22  }
+
+
+	connPDevSerialNum	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Serial number of this Physical device."
+		::=  {  connPhysicalDevEntry  24  }
+
+	connOfflineDevTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ConnOfflineDevEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of Offline devices in this SAN"
+		::=  { connSANView  12 }
+
+	connOfflineDevEntry	OBJECT-TYPE
+		SYNTAX		ConnOfflineDevEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Offline device entries."
+		INDEX		{  connSANIndex, connOffDevIndex  }
+		::=  { connOfflineDevTable 1 }
+
+	ConnOfflineDevEntry  ::=  SEQUENCE {
+		connOffDevIndex  INTEGER,
+		connOffDevSANName  DisplayString,
+		connOffDevTargetID  DisplayString,
+		connOffDevType  INTEGER,
+		connOffDevUID  DisplayString
+		}
+
+
+	connOffDevIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Column Description"
+		::=  {  connOfflineDevEntry  2  }
+
+
+	connOffDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name."
+		::=  {  connOfflineDevEntry  4  }
+
+
+	connOffDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Offline device Target number."
+		::=  {  connOfflineDevEntry  6  }
+
+
+	connOffDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , other ( 2 ) , host-adapter ( 3 ) , sv-router ( 4 ) , storage-device ( 5 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Offline device type."
+		::=  {  connOfflineDevEntry  8  }
+
+
+	connOffDevUID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Offline Device UID."
+		::=  {  connOfflineDevEntry  10  }
+
+	globalMappedDeviceTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  GlobalMappedDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of mapped devices."
+		::=  { logicalSANView  2 }
+
+	globalMappedDeviceEntry	OBJECT-TYPE
+		SYNTAX		GlobalMappedDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Mapped device and properties."
+		INDEX		{  connSANIndex, mappedDevIndex  }
+		::=  { globalMappedDeviceTable 1 }
+
+	GlobalMappedDeviceEntry  ::=  SEQUENCE {
+		mappedDevIndex  INTEGER,
+		mappedDevSANName  DisplayString,
+		mappedDevTargetID  DisplayString,
+		mappedDevName  DisplayString,
+		mappedDevType  INTEGER,
+		mappedDevMapping  DisplayString,
+		mappedDevCapacity  DisplayString,
+		mappedDevStatus  INTEGER
+		}
+
+
+	mappedDevIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Mapped device index"
+		::=  {  globalMappedDeviceEntry  1  }
+
+
+	mappedDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  globalMappedDeviceEntry  4  }
+
+
+	mappedDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Target ID description of mapped device."
+		::=  {  globalMappedDeviceEntry  6  }
+
+
+	mappedDevName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device name description."
+		::=  {  globalMappedDeviceEntry  8  }
+
+
+	mappedDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , other ( 2 ) , simple-drive ( 3 ) , composite-drive ( 4 ) , mirror-drive ( 5 ) , instant-copy-drive ( 6 ) , general-spare-drive ( 7 ) , dedicate-spare-drive ( 8 ) , complex-drive ( 9 ) , virtual-drive ( 10 ) , dmp-drive ( 11 ) , active-dmp-drive ( 12 ) , passive-dmp ( 13 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Mapped device type"
+		::=  {  globalMappedDeviceEntry  10  }
+
+
+	mappedDevMapping	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device LUN Mapping"
+		::=  {  globalMappedDeviceEntry  12  }
+
+
+	mappedDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Device Capacity"
+		::=  {  globalMappedDeviceEntry  14  }
+
+
+	mappedDevStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Mapped Device Status."
+		::=  {  globalMappedDeviceEntry  16  }
+
+	generalSpareDevTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  GeneralSpareDevEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of General Spare drives."
+		::=  { logicalSANView  4 }
+
+	generalSpareDevEntry	OBJECT-TYPE
+		SYNTAX		GeneralSpareDevEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"General spare drive entries."
+		INDEX		{  connSANIndex, gspareIndex  }
+		::=  { generalSpareDevTable 1 }
+
+	GeneralSpareDevEntry  ::=  SEQUENCE {
+		gspareIndex  INTEGER,
+		gspareSANName  DisplayString,
+		gspareTargetID  DisplayString,
+		gspareStatus  INTEGER,
+		gspareUIDName  DisplayString,
+		gspareCapacity  DisplayString,
+		gspareAttribute  DisplayString
+		}
+
+
+	gspareIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"General spare drive index."
+		::=  {  generalSpareDevEntry  2  }
+
+
+	gspareSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  generalSpareDevEntry  4  }
+
+
+	gspareTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"General spare drive target number."
+		::=  {  generalSpareDevEntry  6  }
+
+
+	gspareStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Column Description"
+		::=  {  generalSpareDevEntry  7  }
+
+
+	gspareUIDName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"General spare UID or Name"
+		::=  {  generalSpareDevEntry  10  }
+
+
+	gspareCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Disk space of this general spare drive."
+		::=  {  generalSpareDevEntry  12  }
+
+
+	gspareAttribute	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Attribute of this general spare drive."
+		::=  {  generalSpareDevEntry  16  }
+
+	complexDeviceTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  ComplexDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Complex device list (mirror, composite, instant copy)"
+		::=  { logicalSANView  6 }
+
+	complexDeviceEntry	OBJECT-TYPE
+		SYNTAX		ComplexDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Logical device entries."
+		INDEX		{  connSANIndex, cmplxDevIndex  }
+		::=  { complexDeviceTable 1 }
+
+	ComplexDeviceEntry  ::=  SEQUENCE {
+		cmplxDevIndex  INTEGER,
+		cmplxDevSANName  DisplayString,
+		cmplxDevTargetID  DisplayString,
+		cmplxDevName  DisplayString,
+		cmplxDevType  INTEGER,
+		cmplxDevUIDName  DisplayString,
+		cmplxDevCapacity  DisplayString,
+		cmplxDevStatus  INTEGER,
+		cmplxDevMemberCount  INTEGER
+		}
+
+
+	cmplxDevIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( -2147483648 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical device index."
+		::=  {  complexDeviceEntry  2  }
+
+
+	cmplxDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name."
+		::=  {  complexDeviceEntry  4  }
+
+
+	cmplxDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical device target number."
+		::=  {  complexDeviceEntry  6  }
+
+
+	cmplxDevName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical device Name"
+		::=  {  complexDeviceEntry  8  }
+
+
+	cmplxDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER { unknown ( 1 ) , other ( 2 ) , simple-drive ( 3 ) , composite-drive ( 4 ) , mirror-drive ( 5 ) , instant-copy-drive ( 6 ) , general-spare-drive ( 7 ) , dedicate-spare-drive ( 8 ) , complex-drive ( 9 ) , virtual-drive ( 10 ) , dmp-drive ( 11 ) , active-dmp-drive ( 12 ) , passive-dmp ( 13 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical device type"
+		::=  {  complexDeviceEntry  10  }
+
+
+	cmplxDevUIDName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical device UID name description."
+		::=  {  complexDeviceEntry  12  }
+
+
+	cmplxDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total disk capacity of this logical device."
+		::=  {  complexDeviceEntry  14  }
+
+
+	cmplxDevStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical device status."
+		::=  {  complexDeviceEntry  16  }
+
+
+	cmplxDevMemberCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( 0 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of member drives of this logical drive."
+		::=  {  complexDeviceEntry  18  }
+
+	memberDeviceTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  MemberDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of member drives."
+		::=  { logicalSANView  8 }
+
+	memberDeviceEntry	OBJECT-TYPE
+		SYNTAX		MemberDeviceEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Member drive properties entries."
+		INDEX		{  connSANIndex, cmplxDevIndex  }
+		::=  { memberDeviceTable 1 }
+
+	MemberDeviceEntry  ::=  SEQUENCE {
+		memberDevSANName  DisplayString,
+		memberDevLogicalDev  DisplayString,
+		memberDevTargetID  DisplayString,
+		memberDevType  INTEGER,
+		memberDevUIDName  DisplayString,
+		memberDevCapacity  DisplayString
+		}
+
+
+	memberDevSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name"
+		::=  {  memberDeviceEntry  2  }
+
+
+	memberDevLogicalDev	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Logical/Complex drive of this member drive."
+		::=  {  memberDeviceEntry  4  }
+
+
+	memberDevTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Member drive target number."
+		::=  {  memberDeviceEntry  6  }
+
+
+	memberDevType	OBJECT-TYPE	
+		SYNTAX			INTEGER { unknown ( 1 ) , other ( 2 ) , simple-drive ( 3 ) , composite-drive ( 4 ) , mirror-drive ( 5 ) , instant-copy-drive ( 6 ) , general-spare-drive ( 7 ) , dedicate-spare-drive ( 8 ) , complex-drive ( 9 ) , virtual-drive ( 10 ) , dmp-drive ( 11 ) , active-dmp-drive ( 12 ) , passive-dmp ( 13 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Member drive type."
+		::=  {  memberDeviceEntry  8  }
+
+
+	memberDevUIDName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Member drive UID/Name"
+		::=  {  memberDeviceEntry  10  }
+
+
+	memberDevCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Member Drive Capacity (disk space)."
+		::=  {  memberDeviceEntry  12  }
+
+	diskPoolTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  DiskPoolEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"A list of Disk Pools and properties."
+		::=  { logicalSANView  10 }
+
+	diskPoolEntry	OBJECT-TYPE
+		SYNTAX		DiskPoolEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Pool name and properties."
+		INDEX		{  connSANIndex, dPoolIndex  }
+		::=  { diskPoolTable 1 }
+
+	DiskPoolEntry  ::=  SEQUENCE {
+		dPoolIndex  INTEGER,
+		dPoolSANName  DisplayString,
+		dPoolName  DisplayString,
+		dPoolPoolDrvCount  INTEGER,
+		dPoolVirtualDrvCount  INTEGER,
+		dPoolCapacity  DisplayString
+		}
+
+
+	dPoolIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( -2147483648 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Disk Pool index"
+		::=  {  diskPoolEntry  2  }
+
+
+	dPoolSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name of this Disk Pool."
+		::=  {  diskPoolEntry  4  }
+
+
+	dPoolName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Disk Pool Name"
+		::=  {  diskPoolEntry  6  }
+
+
+	dPoolPoolDrvCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( -2147483648 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of physical drives count in this Disk Pool."
+		::=  {  diskPoolEntry  8  }
+
+
+	dPoolVirtualDrvCount	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( -2147483648 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of Virtual drives count in this Disk Pool."
+		::=  {  diskPoolEntry  10  }
+
+
+	dPoolCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total disk space of this Disk Pool."
+		::=  {  diskPoolEntry  12  }
+
+	virtualDriveTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  VirtualDriveEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of Virtual Drives."
+		::=  { logicalSANView  12 }
+
+	virtualDriveEntry	OBJECT-TYPE
+		SYNTAX		VirtualDriveEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"Virtual drives and properties."
+		INDEX		{  connSANIndex, dPoolIndex, virtualDrvIndex  }
+		::=  { virtualDriveTable 1 }
+
+	VirtualDriveEntry  ::=  SEQUENCE {
+		virtualDrvIndex  INTEGER,
+		virtualDrvSANName  DisplayString,
+		virtualDrvTargetID  DisplayString,
+		virtualDrvNameID  DisplayString,
+		virtualDrvGlobalMapping  DisplayString,
+		virtualDrvCapacity  DisplayString,
+		virtualDrvSourceLBA  DisplayString
+		}
+
+
+	virtualDrvIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( -2147483648 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Index of this Virtual drive."
+		::=  {  virtualDriveEntry  2  }
+
+
+	virtualDrvSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN name of this Virtual drive"
+		::=  {  virtualDriveEntry  3  }
+
+
+	virtualDrvTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Target ID number of this Virtual drive."
+		::=  {  virtualDriveEntry  4  }
+
+
+	virtualDrvNameID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Virtual Drive name description."
+		::=  {  virtualDriveEntry  6  }
+
+
+	virtualDrvGlobalMapping	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Virtual drive global LUN mapping."
+		::=  {  virtualDriveEntry  8  }
+
+
+	virtualDrvCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total disk space of this Virtual drive."
+		::=  {  virtualDriveEntry  10  }
+
+
+	virtualDrvSourceLBA	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Location in source drive of this Virtual drive."
+		::=  {  virtualDriveEntry  12  }
+
+	poolDriveTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PoolDriveEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"List of Pool drives (physical drives)."
+		::=  { logicalSANView  14 }
+
+	poolDriveEntry	OBJECT-TYPE
+		SYNTAX		PoolDriveEntry
+		ACCESS		not-accessible
+		STATUS		mandatory
+		DESCRIPTION	
+			"PoolDisk and properties."
+		INDEX		{  connSANIndex, dPoolIndex, poolDrvIndex  }
+		::=  { poolDriveTable 1 }
+
+	PoolDriveEntry  ::=  SEQUENCE {
+		poolDrvIndex  INTEGER,
+		poolDrvSANName  DisplayString,
+		poolDrvTargetID  DisplayString,
+		poolDrvNameID  DisplayString,
+		poolDrvCapacity  DisplayString,
+		poolDrvStatus  INTEGER,
+		poolDrvFreeDiskSpace  DisplayString
+		}
+
+
+	poolDrvIndex	OBJECT-TYPE	
+		SYNTAX			INTEGER  ( -2147483648 .. 2147483647  ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Index of Pool drive (physical drive)."
+		::=  {  poolDriveEntry  2  }
+
+
+	poolDrvSANName	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"SAN Name of this Pool Drive."
+		::=  {  poolDriveEntry  3  }
+
+
+	poolDrvTargetID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Target ID number of this Pool drive (physical drive)."
+		::=  {  poolDriveEntry  4  }
+
+
+	poolDrvNameID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Name description of this Pool drive."
+		::=  {  poolDriveEntry  6  }
+
+
+	poolDrvCapacity	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 255  ) ) 
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total disk space of this Pool drive (physical drive)."
+		::=  {  poolDriveEntry  8  }
+
+
+	poolDrvStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unknown ( 1 ) , active ( 2 ) , inactive ( 3 ) , online ( 4 ) , offline ( 5 ) , unresponsive ( 6 ) , mismatch ( 7 ) , used ( 8 ) , error ( 9 ) }
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Current status of this Pool drive."
+		::=  {  poolDriveEntry  10  }
+
+
+	poolDrvFreeDiskSpace	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		ACCESS			read-only
+		STATUS			mandatory
+		DESCRIPTION		
+				"Total number of free disk space of this Pool drive."
+		::=  {  poolDriveEntry  12  }
+
+	sanDeviceDeleted	TRAP-TYPE
+		ENTERPRISE		vicomSVMgmtMIB
+		VARIABLES		{ connSLICNum, connSANSLICCount, connSANPhysicalDevCount, connPDevTargetID }
+		DESCRIPTION		"A physical connected device has been deleted from this agent. Recommended severity level (for filtering): alert"
+		::=  8
+	sanDaemonStatusChanged	TRAP-TYPE
+		ENTERPRISE		vicomSVMgmtMIB
+		VARIABLES		{ connSANStatus }
+		DESCRIPTION		"General status changed in SAN Logical devices. Recommended severity level (for filtering): warning"
+		::=  2
+	sanConfigurationChanged	TRAP-TYPE
+		ENTERPRISE		vicomSVMgmtMIB
+		VARIABLES		{ zoneID, cmplxDevTargetID }
+		DESCRIPTION		"General status changed in SAN physical connected devices.  Recommended severity level (for filtering): Information"
+		::=  4
+	sanDeviceEventTrap	TRAP-TYPE
+		ENTERPRISE		vicomSVMgmtMIB
+		VARIABLES		{ connSANStatus }
+		DESCRIPTION		"An event has just occured in the SAN.  Recommended severity level (for filtering): info"
+		::=  10     
+	svMgmtAgentEventTrap	TRAP-TYPE
+		ENTERPRISE		vicomSVMgmtMIB
+		VARIABLES		{ connSANStatus }
+		DESCRIPTION		"An event has just occured in the SAN.  Recommended severity level (for filtering): info"
+		::=  6     
+		
+END

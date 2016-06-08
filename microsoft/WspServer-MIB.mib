@@ -1,0 +1,219 @@
+WspServer-MIB DEFINITIONS ::= BEGIN
+
+        IMPORTS
+                enterprises,
+                OBJECT-TYPE,
+                Counter
+                        FROM RFC1155-SMI
+                internetServer
+                        FROM InternetServer-MIB;
+
+--      microsoft       OBJECT IDENTIFIER ::= { enterprises 311 }
+--      software        OBJECT IDENTIFIER ::= { microsoft 1 }
+--      internetServer  OBJECT IDENTIFIER ::= { software 7 }
+        WspServer       OBJECT IDENTIFIER ::= { internetServer 12 }
+        WspStatistics   OBJECT IDENTIFIER ::= { WspServer 1 }
+
+-- WinSock Proxy Server Statistics
+	ActiveSessions OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of active Firewall service sessions."
+		::= { WspStatistics 1 }
+
+	ActiveTCPConnections OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of active TCP connections currently passing data. Connections pending or not yet established are counted elsewhere."
+		::= { WspStatistics 2 }
+
+	ActiveUDPConnections OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of active UDP connections."
+		::= { WspStatistics 3 }
+
+	ConnectingTCPConnections OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of TCP connections pending. This is the total number of connections that are waiting for a connect call to finish."
+		::= { WspStatistics 4 }
+
+	BackConnectingTCPConnections OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of TCP connections awaiting an inbound connect call to finish. These are connections from the Firewall service to a Firewall client after the Firewall service accepted a connection from the Internet on a listening socket."
+		::= { WspStatistics 5 }
+
+	AcceptingTCPConnections OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of connection objects waiting for a TCP connection from the Firewall client after a successful remote connection."
+		::= { WspStatistics 6 }
+
+	ListeningTCPConnections OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of connection objects waiting for TCP connections from remote Internet computers (after a successful listen)."
+		::= { WspStatistics 7 }
+
+	AllocFailureLogs OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of memory allocation errors."
+		::= { WspStatistics 8 }
+
+	PumpTotalRead OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of bytes read by the data-pump per second."
+		::= { WspStatistics 9 }
+
+	PumpTotalWrite OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of bytes written by data-pump per second."
+		::= { WspStatistics 10 }
+
+	PendingGetXByY OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of gethostbyname and gethostbyaddr API calls pending resolution. These are calls used to resolve host DNS domain names and IP addresses for Firewall service connections."
+		::= { WspStatistics 11 }
+
+	SuccessGetXByY OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of gethostbyname and gethostbyaddr API calls successfully returned. These are calls used to resolve host DNS domain names and IP addresses for Firewall service connections."
+		::= { WspStatistics 12 }
+
+	FailedGetXByY OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of gethostbyname and gethostbyaddr API calls that have failed. These are calls used to resolve host DNS domain names and IP addresses for Firewall service connections."
+		::= { WspStatistics 13 }
+
+	CtrlWorkerThreads OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of Firewall service worker threads that are currently alive."
+		::= { WspStatistics 14 }
+
+	CtrlAvailableWorkerThreads OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of Firewall service worker threads that are available (waiting in completion port queue)."
+		::= { WspStatistics 15 }
+
+	Mappings OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of mappings available for UDP connections."
+		::= { WspStatistics 16 }
+
+	PNATMappings OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of mappings created by SecureNAT."
+		::= { WspStatistics 17 }
+
+	KernelDataPumps OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of kernel mode data pumps created by the Firewall service."
+		::= { WspStatistics 18 }
+
+	KernelTotalTCPBytes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of TCP bytes transferred by the kernel mode data-pump per second."
+		::= { WspStatistics 19 }
+
+	KernelTotalUDPBytes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"Number of UDP bytes transferred by the kernel mode data-pump per second."
+		::= { WspStatistics 20 }
+
+	DnsCacheEntries OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The current number of DNS domain name entries cached by the Firewall service."
+		::= { WspStatistics 21 }
+
+	DnsCacheHits OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of times a DNS domain name was found within the DNS Cache."
+		::= { WspStatistics 22 }
+
+	DnsCacheFlushes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of times that the DNS domain name cache has been flushed or cleared by the Web Proxy Server."
+		::= { WspStatistics 23 }
+
+	DnsCacheRetrievals OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total number of DNS domain names that have been retrieved by the Firewall service."
+		::= { WspStatistics 24 }
+
+	DnsCacheRatio OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The percentage of DNS domain names serviced by the DNS cache, out of a total of all DNS entries that have been retrieved by the Firewall service."
+		::= { WspStatistics 25 }
+
+
+END

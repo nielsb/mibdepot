@@ -1,0 +1,41 @@
+PAXNET-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+	    MODULE-IDENTITY, OBJECT-TYPE, enterprises, Counter32, Integer32
+	    	FROM SNMPv2-SMI
+	    DisplayString, RowStatus, DateAndTime
+	        FROM SNMPv2-TC;
+
+    paxnet MODULE-IDENTITY
+              LAST-UPDATED "9903170905Z"
+
+              ORGANIZATION "Telebit Communications A/S, Denmark"
+              CONTACT-INFO
+                      "        "
+              DESCRIPTION
+                      "MIB for configuration and management of PAXNET routers"
+              ::= { enterprises 766 }
+
+    PNIC ::= TEXTUAL-CONVENTION
+              DISPLAY-HINT "4a"
+              STATUS       current
+              DESCRIPTION
+                      "Represents a PNIC"
+              SYNTAX       OCTET STRING (SIZE (4))
+
+    -- the number 2 is allocated by OER for this project
+    -- number 1 is reserved for encapsulating SP in SNMP
+
+
+    paxManagement OBJECT IDENTIFIER ::= { paxnet 2 }
+
+     -- 1 and 2 are reserved for hardware description and software profile
+
+     -- confObjects OBJECT IDENTIFIER ::= { paxManagement 3 }
+     -- stateObjects OBJECT IDENTIFIER ::= { paxManagement 4 }
+
+     -- mib2v6 OBJECT IDENTIFIER ::= { paxManagement 6 }
+
+    pax-idrafts OBJECT IDENTIFIER ::= { paxnet 3 }
+
+END

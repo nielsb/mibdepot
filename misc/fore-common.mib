@@ -1,0 +1,144 @@
+------------------------------------------------------------------------
+-- ($Id: fore-common.mib,v 1.41 1996/01/10 15:32:31 kompella Exp $)
+-- Copyright 1993-1995 by Fore Systems, Inc.
+
+Fore-Common-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	enterprises		FROM RFC1155-SMI;
+
+------------------------------------------------------------------------
+
+fore		OBJECT IDENTIFIER ::= { enterprises 326 }
+fadmin		OBJECT IDENTIFIER ::= { fore 1 }
+systems		OBJECT IDENTIFIER ::= { fore 2 }
+operations	OBJECT IDENTIFIER ::= { fadmin 1 }
+snmpErrors      OBJECT IDENTIFIER ::= { fadmin 2 }
+fileXfr	        OBJECT IDENTIFIER ::= { fadmin 6 } 	-- new
+atmAdapter	OBJECT IDENTIFIER ::= { systems 1 }
+atmSwitch	OBJECT IDENTIFIER ::= { systems 2 }
+lane		OBJECT IDENTIFIER ::= { systems 4 }
+
+
+------------------------------------------------------------------------
+-- Textual Conventions
+
+-- The SPANS ATM Address
+
+SpansAddress ::= OCTET STRING (SIZE (8))
+
+-- ATM Forum ATM Address (allow E.164 addresses)
+AtmAddress   ::= OCTET STRING (SIZE (8 | 20))
+
+-- MAC Addresses
+MacAddress   ::= OCTET STRING (SIZE (6))
+
+-- The NsapPrefix type if used by Q2931 signalling
+-- for setting ATM address.
+
+NsapPrefix ::= OCTET STRING(SIZE(13))
+
+-- The NsapAddress type is used for NSAP (Network Service
+-- Access Point) routing group tables.
+
+NsapAddr ::= OCTET STRING(SIZE(20))
+
+-- TestAndIncr type is originally defined in RFC 1443. But for the
+-- time being it is an INTEGER
+
+--  TestAndIncr ::= TEXTUAL-CONVENTION
+--              STATUS       current
+--              DESCRIPTION
+--                      "Represents integer-valued information used for
+--                      atomic operations.  When the management protocol
+--                      is used to specify that an object instance having
+--                      this syntax is to be modified, the new value
+--                      supplied via the management protocol must
+--                      precisely match the value presently held by the
+--                      instance.  If not, the management protocol set
+--                      operation fails with an error of
+--                      'inconsistentValue'.  Otherwise, if the current
+--                      value is the maximum value of 2^31-1 (2147483647
+--                      decimal), then the value held by the instance is
+--                      wrapped to zero; otherwise, the value held by the
+--                     instance is incremented by one.  (Note that
+--                      regardless of whether the management protocol set
+--                      operation succeeds, the variable-binding in the
+--                      request and response PDUs are identical.)
+--
+--                      The value of the ACCESS clause for objects having
+--                      this syntax is either 'read-write' or 'read-
+--                      create'.  When an instance of a columnar object
+--                      having this syntax is created, any value may be
+--                      supplied via the management protocol."
+--              SYNTAX       INTEGER (0..2147483647)
+
+TestAndIncr ::= INTEGER
+
+------------------------------------------------------------------------
+-- MIB Types Definitions
+
+-- The status of a table entry.
+-- Taken from RFC1271-MIB DEFINITIONS
+
+-- Setting this object to the value invalid(4) has the
+-- effect of invalidating the corresponding entry.
+-- That is, it effectively disassociates the mapping
+-- identified with said entry.
+-- It is an implementation-specific matter as to whether
+-- the agent removes an invalidated entry from the table.
+-- Accordingly, management stations must be prepared to
+-- receive tabular information from agents that corresponds
+-- to entries currently not in use.  Proper
+-- interpretation of such entries requires examination
+-- of the relevant EntryStatus object.
+-- 
+-- An existing instance of this object cannot be set to
+-- createRequest(2).  This object may only be set to
+-- createRequest(2) when this instance is created.  When
+-- this object is created, the agent may wish to create
+-- supplemental object instances to complete a conceptual
+-- row in this table.  Immediately after completing the
+-- create operation, the agent must set this object to
+-- underCreation(3).
+-- 
+-- Entries shall exist in the underCreation(3) state until
+-- the management station is finished configuring the
+-- entry and sets this object to valid(1) or aborts,
+-- setting this object to invalid(4).  If the agent
+-- determines that an entry has been in the
+-- underCreation(3) state for an abnormally long time,
+-- it may decide that the management station has
+-- crashed.  If the agent makes this decision,
+-- it may set this object to invalid(4) to reclaim the
+-- entry.  A prudent agent will understand that the
+-- management station may need to wait for human input
+-- and will allow for that possibility in its
+-- determination of this abnormally long period.
+
+EntryStatus ::= INTEGER
+	   { valid(1),
+	     createRequest(2),
+	     underCreation(3),
+	     invalid(4)
+	   }
+
+
+-- The type of the signaling protocol that 
+-- created the table entry for the path or channel.
+
+AtmSigProtocol ::= INTEGER 
+	  {    	other (1),
+		spans (2),
+	     	q2931 (3),
+	     	pvc (4),
+		spvc (5)
+	   }
+
+-- General State
+GeneralState ::= INTEGER
+	{	normal(1),
+		fail(2)
+	}
+
+END

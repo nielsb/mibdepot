@@ -1,0 +1,198 @@
+------------------------------------------------------------------------
+-- ($Id: fore-filexfr.mib,v 1.6 1996/01/10 15:32:32 kompella Exp $)
+-- Copyright 1995 by Fore Systems, Inc.
+--
+-- This file contains definitions for management information for Fore Systems
+-- physical assemblies.  It is general in nature in order to accomodate all
+-- of the current hardware products as well as any future products in the 
+-- forseeable future, or until an industry standard MIB is adopted.
+------------------------------------------------------------------------------
+
+Fore-FileXfr-MIB DEFINITIONS ::= BEGIN
+
+   IMPORTS
+      IpAddress				FROM RFC1155-SMI
+      OBJECT-TYPE			FROM RFC1212
+      DisplayString			FROM RFC1213-MIB
+--    TestAndIncr			FROM SNMPv2-TC
+      TestAndIncr			FROM Fore-Common-MIB
+      fileXfr, EntryStatus		FROM Fore-Common-MIB;
+
+fore-FileXfr-Module 
+--* MODULE-IDENTITY
+--*	LAST-UPDATED	"9512071530-0500"
+--*	ORGANIZATION	"FORE"
+--*	CONTACT-INFO	"
+--*		Postal:	FORE Systems Inc.
+--*			5800 Corporate Drive
+--*			Pittsburgh, PA 15237-5829
+--*		Tel:	+1 412 772 6600
+--*		Email:	nm_mibs@fore.com
+--*		Web:	http://www.fore.com"
+--*	DESCRIPTION
+--*             "This MIB module defines the FORE Systems generic
+--*             file transfer information.  It provides for a file
+--*             transfer table.  Each table entry contains the
+--*             information necessary for a device to complete
+--*             a file transfer.  Each table entry also contains
+--*             information as to the status of the file transfer."
+ OBJECT IDENTIFIER	
+	::= { fileXfr 1 }
+
+--------------------------------------------------------------------
+-- The file transfer group
+
+fXfrGroup OBJECT IDENTIFIER ::= { fileXfr 2 }
+
+fXfrNextIndex OBJECT-TYPE
+	SYNTAX	TestAndIncr
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION
+		"The index of the next free row in the fXfrTable."
+	::= { fXfrGroup 1}
+
+fXfrTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF FXfrEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+		"A table of pending and completed file transfers."
+	::= { fXfrGroup 2 }
+
+fXfrEntry OBJECT-TYPE
+	SYNTAX	FXfrEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION
+                "A table entry containing information on a pending
+                or completed file transfer."
+	INDEX	{ fXfrIndex }
+	::= { fXfrTable 1 }
+
+FXfrEntry ::=
+	SEQUENCE {
+		fXfrIndex			INTEGER,
+		fXfrRemoteFileUrl		DisplayString,
+		fXfrLocalFile			DisplayString,
+		fXfrDirection			INTEGER,
+		fXfrEntryStatus			EntryStatus,
+		fXfrStatus			INTEGER,
+		fXfrStatusText			DisplayString,
+		fXfrOwnerIpAddress		IpAddress,
+		fXfrOwnerSignature		DisplayString
+	}
+		
+fXfrIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+		"The index of the file transfer."
+        ::= { fXfrEntry 1 }
+
+fXfrRemoteFileUrl OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+		"This is the URL of the file to operate on.  The URL
+		is taken from the snmp agents point of view.  The URL is
+		in the form: <service>://<ip-address>[:port]/<filename>
+		This includes the service (such as tftp), the server to 
+		contact, the port on that server to use, and the file on
+		that server that is to be operated on.  This definition
+		does not specify the local filename.  That name is 
+		specified in fXfrKnownFiles and fXfrLocalFilename."
+        ::= { fXfrEntry 2 }
+
+fXfrLocalFile OBJECT-TYPE
+         SYNTAX  DisplayString
+         ACCESS  read-write
+         STATUS  mandatory
+         DESCRIPTION 
+                "The name of the local file to use in the GET/PUT
+                operations.  This can either be a full pathname or
+                a device specific description of the local file.
+                Some examples of descriptions specific to an ASX
+                are switchCDB, lecsConfig, and switchUpgrade."
+         ::= { fXfrEntry 3 }
+
+fXfrDirection OBJECT-TYPE
+         SYNTAX  INTEGER {
+                    get(1),
+                    put(2)
+                 }
+         ACCESS  read-write
+         STATUS  mandatory
+         DESCRIPTION 
+                 "Indication of the file transfer operation.
+                  A 'get' will retrieve the file from the machine
+                  specified in fXfrRemoteFileUrl.  A 'put' will
+                  send the file to the machine specified in
+                  fXfrRemoteFileUrl."
+         ::= { fXfrEntry 4 }
+
+fXfrEntryStatus OBJECT-TYPE
+        SYNTAX  EntryStatus
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "The status of this table entry."
+        ::= { fXfrEntry 5 }
+
+fXfrStatus OBJECT-TYPE
+        SYNTAX  INTEGER {
+                        idle(1),
+			go(2),
+			inQueue(3),
+                        inProgress(4),
+                        succeeded(5),
+                        failed(6),
+			busy(7)
+                }
+         ACCESS  read-write
+         STATUS  mandatory
+         DESCRIPTION 
+		"The current status of this file transfer.  Is idle when
+		the row becomes valid.  To start the file transfer set this
+		to go.  InQueue signifies that the file transfer is waiting
+		for resources before it begins but it will begin 
+		automatically.  Busy signifies that the file transfer
+		could not begin due to a resource allocation problem.  The
+		manager must try to restart the file transfer by setting
+		this entry to go."
+         ::= { fXfrEntry 6 }
+
+fXfrStatusText OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-only
+        STATUS mandatory
+        DESCRIPTION
+		"A message describing the status of this file transfer.  
+		This must exists when the status is succeeded or failed.
+		This can optionally exists when the status is inQueue,
+		inProgress, or busy."
+        ::= { fXfrEntry 7 }
+
+fXfrOwnerIpAddress OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "Ip address of the entity that requested this 
+                 file transfer."
+        ::= { fXfrEntry 8 }
+
+
+fXfrOwnerSignature OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+                "Signature of the owner of this file transfer.  This is
+                supplied by the management station."
+        ::= { fXfrEntry 9 }
+
+END
+

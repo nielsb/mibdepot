@@ -1,0 +1,44 @@
+CMU-MIB DEFINITIONS ::= BEGIN
+		IMPORTS enterprises FROM RFC1155-SMI;
+
+		Proteon OBJECT IDENTIFIER ::= { enterprises 1 }
+		IBM OBJECT IDENTIFIER ::= { enterprises 2 }
+		cmu OBJECT IDENTIFIER ::= { enterprises 3 }
+		Unix OBJECT IDENTIFIER ::= { enterprises 4 }
+		ACC OBJECT IDENTIFIER ::= { enterprises 5 }
+		TWG OBJECT IDENTIFIER ::= { enterprises 6 }
+		Cayman OBJECT IDENTIFIER ::= { enterprises 7 }
+		PSI OBJECT IDENTIFIER ::= { enterprises 8 }
+--		Cisco OBJECT IDENTIFIER ::= { enterprises 9 }
+		NSC OBJECT IDENTIFIER ::= { enterprises 10 }
+--		HP OBJECT IDENTIFIER ::= { enterprises 11 }
+		Epilogue OBJECT IDENTIFIER ::= { enterprises 12 }
+		UTK OBJECT IDENTIFIER ::= { enterprises 13 }
+		BBN OBJECT IDENTIFIER ::= { enterprises 14 }
+		Xylogics OBJECT IDENTIFIER ::= { enterprises 15 }
+		Timeplex OBJECT IDENTIFIER ::= { enterprises 16 }
+		Canstar OBJECT IDENTIFIER ::= { enterprises 17 }
+--		Wellfleet OBJECT IDENTIFIER ::= { enterprises 18 }
+		TRW OBJECT IDENTIFIER ::= { enterprises 19 }
+		MIT OBJECT IDENTIFIER ::= { enterprises 20 }
+		EON OBJECT IDENTIFIER ::= { enterprises 21 }
+		Spartacus OBJECT IDENTIFIER ::= { enterprises 22 }
+		Excelan OBJECT IDENTIFIER ::= { enterprises 23 }
+--		Spider OBJECT IDENTIFIER ::= { enterprises 24 }
+		NSFNET OBJECT IDENTIFIER ::= { enterprises 25 }
+		HLS OBJECT IDENTIFIER ::= { enterprises 26 }
+		Xyplex OBJECT IDENTIFIER ::= { enterprises 33 }
+		Cray OBJECT IDENTIFIER ::= { enterprises 34 }
+		Sun OBJECT IDENTIFIER ::= { enterprises 42 }
+--		Synoptics OBJECT IDENTIFIER ::= { enterprises 45 }
+		DEC OBJECT IDENTIFIER ::= { enterprises 36 }
+		TGV OBJECT IDENTIFIER ::= { enterprises 58 }
+		Apple OBJECT IDENTIFIER ::= { enterprises 63 }
+		NAT OBJECT IDENTIFIER ::= { enterprises 86 }
+		SNMP-Research OBJECT IDENTIFIER ::= { enterprises 99 }
+		FTP OBJECT IDENTIFIER ::= { enterprises 121 }
+		Shiva OBJECT IDENTIFIER ::= { enterprises 166 }
+		Transarc OBJECT IDENTIFIER ::= { enterprises 257 }
+		Lexcel OBJECT IDENTIFIER ::= { enterprises 379 }
+
+END

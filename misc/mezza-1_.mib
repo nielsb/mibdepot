@@ -1,0 +1,3172 @@
+Spider-MIB DEFINITIONS ::= BEGIN
+
+-- Title:	SpiderIntegrator MEZZA MIB Version 1.0
+-- Date:	13 Sep 93
+
+IMPORTS
+enterprises, OBJECT-TYPE, TimeTicks, IpAddress,
+	Counter, Gauge
+	    FROM RFC1155-SMI
+DisplayString FROM RFC1213-MIB;
+
+
+-- The spider Group
+--
+--   The Spider enterprise node is split into several functional groups.
+--   These are intended to be common to all Spider products, giving one
+--   MIB for every product, and composite MIBs for groups of products.
+
+spider		OBJECT IDENTIFIER ::=	{ enterprises 24 }
+
+-- spProduct:
+--
+--   This contains the Spider product-specific MIB groups.  A separate
+--   group exists for each main class of Spider product (bridge, tserver,
+--   router, probe, software), in which a product subtree is populated with
+--   data common to more than one device of that class (all SpiderBridges,
+--   for example).  In addition, the product trees contain a subtree for
+--   EACH device, allowing the user to associate data with one particular
+--   bridge, for example.
+
+spProduct	OBJECT IDENTIFIER ::=	{ spider 1 }
+
+-- spGeneral:
+--
+--   All Spider products, whatever their type, share a variety of data,
+--   held in the general group.  On a per-variable level the products
+--   implement parts of the subtrees of this group, according to their
+--   capabilities non-booting devices don't support the 'restart' group,
+--   for example.)
+
+spGeneral	OBJECT IDENTIFIER ::=	{ spider 3 }
+
+-- spSnmp:
+--
+--   For historical reasons (our MIB appeared long before any working
+--   groups were set up to consider trap handling, for example) we have a
+--   set of extensions to the basic SNMP administration variables,
+--   controlling trap enabling, destinations, community authentication and
+--   management station validation.  This group, more than any other, will
+--   be deprecated as MIB data sets appear which handle higher level SNMP
+--   admin requirements.
+
+spSnmp		OBJECT IDENTIFIER ::=	{ spider 4 }
+
+-- spInterfaces:
+--
+--   The groups here hold our own MIB extensions, usually because at the time
+--   we need them there are no working group MIBs.  As time goes by we will
+--   replace our groups with the standards.
+
+spInterfaces	OBJECT IDENTIFIER ::=	{ spider 5 }
+
+-- spProtocols:
+--
+--   We include here any protocol data that is (in fact or potentially)
+--   common to many Spider products; this can include protocol groups that
+--   are being worked on by standards bodies, but which are far from
+--   becoming accepted RFCs (the spExperimental' group is intended for
+--   those groups that are firm, but as yet have no final resting place in
+--   the Internet MIB.)
+
+spProtocols	OBJECT IDENTIFIER ::=	{ spider 6 }
+
+-- The bridge Group
+
+bridge		OBJECT IDENTIFIER ::=	{ spProduct 1 }
+
+bridgeID	OBJECT IDENTIFIER ::=	{ bridge 1 }
+
+bridgeData	OBJECT IDENTIFIER ::=	{ bridge 2 }
+
+r285		OBJECT IDENTIFIER ::=	{ bridgeID 3 }
+
+-- The SpiderRouter subgroup
+--
+-- SpiderMIB-III will change the 'router' groups to 'brouter', and all
+-- future ID values for Trilogy products will be placed under 'brouterID'
+--
+
+router		OBJECT IDENTIFIER ::=	{ spProduct 3 }
+
+routerID	OBJECT IDENTIFIER ::=	{ router 1 }
+
+routerData	OBJECT IDENTIFIER ::=	{ router 2 }
+
+pico		OBJECT IDENTIFIER ::=	{ routerID 3 }
+mezza		OBJECT IDENTIFIER ::=	{ routerID 4 }
+atto		OBJECT IDENTIFIER ::=	{ routerID 5 }
+-- The r285 product specific MIB
+
+r285FilterDbase	OBJECT IDENTIFIER ::=	{ r285 1 }
+
+accessGroupChecking OBJECT-TYPE
+	SYNTAX	INTEGER {
+		off(1),
+		on(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The state of Access Group Checking. If this object is
+		ON, then each frame is subject to Access Group
+		Checking."
+	::=	{ r285FilterDbase 2 }
+
+accessGroupLearning OBJECT-TYPE
+	SYNTAX	INTEGER {
+		non(1),
+		free(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"This object determines whether learned addresses
+		belong to the Non Access Group or the Free Access
+		Group. It is only valid when accessGroupChecking is
+		set to ON."
+	::=	{ r285FilterDbase 3 }
+
+accessGroupDbase	OBJECT IDENTIFIER ::=	{ r285FilterDbase 4 }
+
+-- The Access Group Filter filtering database.
+
+accessGroupTableMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of entries in the table
+		accessGroupTable. In the RBLC this value is 2500."
+	::=	{ accessGroupDbase 1 }
+
+accessGroupTableCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The current number of entries in the table
+		accessGroupTable."
+	::=	{ accessGroupDbase 2 }
+
+accessGroupTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF AccessGroupEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A list of Access Group Entries. The number is given by
+		accessGroupTableCurEntries."
+	::=	{ accessGroupDbase 3 }
+
+accessGroupEntry OBJECT-TYPE
+	SYNTAX	AccessGroupEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"An Access Group Entry."
+	INDEX	{ accessGroupAddr }
+	::=	{ accessGroupTable 1 }
+
+AccessGroupEntry ::= SEQUENCE {
+	accessGroupAddr
+		OCTET STRING (SIZE(6)),
+	accessGroupInUse
+		INTEGER,
+	accessGroupNon
+		INTEGER,
+	accessGroupFree
+		INTEGER,
+	accessGroupMgmt
+		INTEGER,
+	accessGroupN1
+		INTEGER,
+	accessGroupN2
+		INTEGER,
+	accessGroupN3
+		INTEGER,
+	accessGroupN4
+		INTEGER,
+	accessGroupN5
+		INTEGER,
+	accessGroupN6
+		INTEGER,
+	accessGroupN7
+		INTEGER,
+	accessGroupN8
+		INTEGER,
+	accessGroupN9
+		INTEGER,
+	accessGroupN10
+		INTEGER,
+	accessGroupN11
+		INTEGER,
+	accessGroupN12
+		INTEGER,
+	accessGroupN13
+		INTEGER,
+	accessGroupN14
+		INTEGER,
+	accessGroupN15
+		INTEGER,
+	accessGroupN16
+		INTEGER,
+	accessGroupMembers
+		INTEGER
+}
+
+
+accessGroupAddr OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The MAC address of this entry."
+	::=	{ accessGroupEntry 1 }
+
+accessGroupInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notInUse(1),
+		inUse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"This object is ON for valid entries. The entry may be
+		removed by setting this object to OFF."
+	::=	{ accessGroupEntry 2 }
+
+accessGroupNon OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to the
+		Non-Access group.Membership of this group is
+		mutually exclusive from all other groups."
+	::=	{ accessGroupEntry 3 }
+
+accessGroupFree OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to the
+		Free Access Group."
+	::=	{ accessGroupEntry 4 }
+
+accessGroupMgmt OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to the
+		Management group.Membership of this group is
+		mutually exclusive from all other groups."
+	::=	{ accessGroupEntry 5 }
+
+
+accessGroupN1 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 1."
+	::=	{ accessGroupEntry 6 }
+
+accessGroupN2 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 2."
+	::=	{ accessGroupEntry 7 }
+
+accessGroupN3 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 3."
+	::=	{ accessGroupEntry 8 }
+
+accessGroupN4 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 4."
+	::=	{ accessGroupEntry 9 }
+
+accessGroupN5 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 5."
+	::=	{ accessGroupEntry 10 }
+
+accessGroupN6 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 6."
+	::=	{ accessGroupEntry 11 }
+
+accessGroupN7 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 7."
+	::=	{ accessGroupEntry 12 }
+
+accessGroupN8 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 8."
+	::=	{ accessGroupEntry 13 }
+
+accessGroupN9 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 9."
+	::=	{ accessGroupEntry 14 }
+
+accessGroupN10 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 10."
+	::=	{ accessGroupEntry 15 }
+
+accessGroupN11 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 11."
+	::=	{ accessGroupEntry 16 }
+
+accessGroupN12 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 12."
+	::=	{ accessGroupEntry 17 }
+
+accessGroupN13 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 13."
+	::=	{ accessGroupEntry 18 }
+
+accessGroupN14 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 14."
+	::=	{ accessGroupEntry 19 }
+
+accessGroupN15 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 15."
+	::=	{ accessGroupEntry 20 }
+
+accessGroupN16 OBJECT-TYPE
+	SYNTAX	INTEGER {
+		inGroup(1),
+		notInGroup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Dictates if this MAC address shall belong to Named
+		Access Group 16."
+	::=	{ accessGroupEntry 21 }
+
+accessGroupMembers OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"This is a bitmap, giving membership of the sixteen named access
+		groups in a single integer.  Bit 0 corresponds to group N1, and
+		bit 15 to group N16.
+		
+		Management stations which can make use of integer bitmaps should
+		obviously use this variable, as it is more compact in PDU
+		bandwidth, and is considerably faster for the agent to generate."
+	::=	{ accessGroupEntry 22 }
+
+accessGroupNamedIdMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The number Named Access Groups. In the RBLC this
+		object has the value 16."
+	::=	{ accessGroupDbase 4 }
+
+accessGroupNamedIdTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF AccessGroupNamedIdEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A list of Named Access Group identifiers. The number
+		is given by accessGroupNamedIdMaxEntries."
+	::=	{ accessGroupDbase 5 }
+
+accessGroupNamedIdEntry OBJECT-TYPE
+	SYNTAX	AccessGroupNamedIdEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	INDEX	{ accessGroupNamedIdIndex }
+	::=	{ accessGroupNamedIdTable 1 }
+
+AccessGroupNamedIdEntry ::= SEQUENCE {
+	accessGroupNamedIdIndex
+		INTEGER,
+	accessGroupNamedIdIdentifier
+		OCTET STRING (SIZE(20))
+}
+
+
+accessGroupNamedIdIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"A unique value for each Named Access Group. Its value
+		ranges between 1 and the value of
+		accessGroupNamedNumber."
+	::=	{ accessGroupNamedIdEntry 1 }
+
+accessGroupNamedIdIdentifier OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"A textual identifier for this Named Access Group."
+
+	::=	{ accessGroupNamedIdEntry 2 }
+
+filterDataBase	OBJECT IDENTIFIER ::=	{ bridgeData 2 }
+
+			 
+
+-- The filter database group used by SpiderBridges
+
+dynDBase	OBJECT IDENTIFIER ::=	{ filterDataBase 1 }
+
+dynType OBJECT-TYPE
+	SYNTAX	INTEGER {
+		hardware(1),
+		software(2)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"This object specifies how the dynamic filtering is
+		implemented."
+	::=	{ dynDBase 1 }
+
+dynTableMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of entries in the dynamic filter
+		table."
+	::=	{ dynDBase 2 }
+
+dynTableCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The current number of entries in the dynamic filter
+		table."
+	::=	{ dynDBase 3 }
+
+dynTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF DynEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"The dynamic filter table"
+	::=	{ dynDBase 4 }
+
+dynEntry OBJECT-TYPE
+	SYNTAX	DynEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A dynamic table entry."
+	INDEX	{ dynAddr }
+	::=	{ dynTable 1 }
+
+DynEntry ::= SEQUENCE {
+	dynAddr
+		OCTET STRING (SIZE(6)),
+	dynHomePort
+		INTEGER,
+	dynInUse
+		INTEGER
+}
+
+
+dynAddr OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The dynamically learned MAC source address."
+	::=	{ dynEntry 1 }
+
+dynHomePort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The port number, sptreePortIndex, on which the
+		dynamic source address was received."
+	::=	{ dynEntry 2 }
+
+dynInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notinuse(1),
+		inuse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"This object is INUSE for valid dynamic table entries.
+		Entries may be removed by setting it to NOTINUSE."
+	::=	{ dynEntry 3 }
+
+typeFltr	OBJECT IDENTIFIER ::=	{ filterDataBase 5 }
+
+typeFltrStt OBJECT-TYPE
+	SYNTAX	INTEGER {
+		disabled(1),
+		only(2),
+		except(3)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"State of type filtering."
+	::=	{ typeFltr 1 }
+
+typeFltrMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of entries allowed in the static
+		type filter table."
+	::=	{ typeFltr 2 }
+
+typeFltrCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The current number of entries in the static type
+		filter table."
+	::=	{ typeFltr 3 }
+
+typeFltrTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TypeFltrEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"Static type filter table."
+	::=	{ typeFltr 4 }
+
+typeFltrEntry OBJECT-TYPE
+	SYNTAX	TypeFltrEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"An entry in the static type filter table."
+	INDEX	{ typeFltrFrom }
+	::=	{ typeFltrTable 1 }
+
+TypeFltrEntry ::= SEQUENCE {
+	typeFltrFrom
+		INTEGER,
+	typeFltrTo
+		INTEGER,
+	typeFltrInUse
+		INTEGER
+}
+
+
+typeFltrFrom OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Type filter table 'from' type (inclusive)."
+	::=	{ typeFltrEntry 1 }
+
+typeFltrTo OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Type filter table 'to' type (inclusive)."
+	::=	{ typeFltrEntry 2 }
+
+typeFltrInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notinuse(1),
+		inuse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Entries are removed by setting this object to
+		NOTINUSE."
+
+	::=	{ typeFltrEntry 3 }
+
+
+-- The spGeneral Group
+--
+--   This group contains those variables and tables which are present
+--(or at least recommended) in all Spider products.  Of course, any
+--   product which temporarily does not support an entry in this group
+--   will indicate this in the 'unSupported' table.
+--
+
+mibVersion OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"This is an object which is unique to a particular MIB in
+		a particular product. It is read by the SpiderManager
+		and is broken down into the following structure:
+		'<product version>:<MIB version>', where 'product
+		version' is a string of the type '2.3.1'
+		(product-specific), and 'MIB version' identifies
+		the particular flavour of SpiderMIB, such as '1:0'"
+	::=	{ spGeneral 1 }
+
+admin		OBJECT IDENTIFIER ::=	{ spGeneral 2 }
+
+admSessionStt OBJECT-TYPE
+	SYNTAX	INTEGER {
+		noManagementSession(1),
+		localManagementSession(2),
+		telnetManagementSession(3),
+		snmpManagementSession(4),
+		remoteBridgeManagementSession(5),
+		latManagementSession(6),
+		tp4ManagementSession(7),
+		vtpManagementSession(8),
+		oslanManagementSession(9)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The state of the management session on the product. Management
+		sessions can only be invoked if the value of this object is
+		noManagementSession(1). Traps may be generated when this
+		object changes (implementation specific)."
+	::=	{ admin 1 }
+
+admManagerAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the product initiating an SNMP or
+		Telnet management session. This object is 0.0.0.0
+		when no management session is underway, and is set to
+		this value automatically when a session closes, or is
+		timed out."
+	::=	{ admin 2 }
+
+admLockDevice OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),
+		no(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The host sets this variable to prevent other hosts from
+		being able to use SNMP SET requests. This is intended for
+		use when a host needs to carry out a series of SET
+		operations as effectively one atomic access.  When this
+		variable is set, the IP address of the host is copied into
+		'admManagerAddr', and the management session timer is
+		started. If the session timer expires without any contact
+		by the locking host, the session lock is cleared, and the
+		IP address zeroed. The standard Spider session time limit
+		is two minutes."
+	::=	{ admin 3 }
+
+admOverrideDevice OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),
+		no(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The host sets this variable to override the current
+		lock owner. This has the effect of zeroing the
+		'admLockDevice' and 'admManagerAddr' variables,
+		and cancelling the management session. A
+		'sessionAborted' trap is sent to the host which
+		locked the previous management session."
+	::=	{ admin 4 }
+
+admPrompt OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The string used for the command line prompt in a local
+		or remote administration session."
+	::=	{ admin 5 }
+
+admPassword OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The password required to start a management session
+		to the administration mode of the product. It is
+		intended that this be encrypted by a simple algorithm
+		before it is sent onto the network."
+	::=	{ admin 6 }
+
+admSignOnMsg OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The sign on message presented at the start of a local
+		or remote administration session. This is typically
+		the product type, name and version."
+	::=	{ admin 7 }
+
+admMgmtSessionTime OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The timeout used for management session closure. If a
+		management session is idle for this time it will close
+		automatically and no configuration change will be
+		made. The unit is seconds."
+	::=	{ admin 8 }
+
+admLastWriteAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the source of the last received SNMP
+		SET request."
+	::=	{ admin 9 }
+
+admRemManagerAddr OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE (0..64))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The address of the product initiating a management session
+		corresponding to admSessionStt. This object is of zero
+		length when no management session is underway, and is
+		set to this value automatically when a session closes,
+		or is timed out."
+	::=	{ admin 10 }
+
+admSetProtocol OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Bit map used to enable licensed protocols as defined by
+		admEnableLicensedProtocol or disable running protocols
+		as defined by admDisableRunningProtocol. If the PROT_DISABLE
+		bit is set then running protocols are disabled otherwise
+		licensed protocols are enabled. Reading this object will return
+		a value of 0. Each protocol is represented by a bit via the
+		following defines:
+		
+		TCP	  		1
+		LAT			2
+		XXX			4
+		IPX			8
+		OSI			16
+		OSLAN		256
+		
+		PROT_DISABLE	0x80000000"
+	::=	{ admin 11 }
+
+admEnabledProtocols OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"Bit map of the protocols that would be running after a restart.
+		The bitmap is defined as for admSetProtocol."
+	::=	{ admin 14 }
+
+admLicensedProtocols OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"Bit map of the protocols that are licensed.
+		The bitmap is defined as for admSetProtocol."
+	::=	{ admin 15 }
+
+admLoadedProtocols OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"Bit map of the protocols that were loaded upon the last restart.
+		The bitmap is defined as for admSetProtocol."
+	::=	{ admin 16 }
+
+
+restart		OBJECT IDENTIFIER ::=	{ spGeneral 5 }
+
+rstDoBoot OBJECT-TYPE
+	SYNTAX	INTEGER {
+		doBoot(1),
+		noMeaning(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"When set to doBoot(1) the product should send the
+		getResponse message using the parameters rstBootFrom and
+		rstBootfilename(if applicable), and then reboot.  Reading
+		this object always returns a value of noMeaning(2)."
+	::=	{ restart 1 }
+
+rstBootFrom OBJECT-TYPE
+	SYNTAX	INTEGER {
+		bootFromROM(1),
+		bootFromNet(2),
+		bootFromDisk(3),
+		bootFromRAM(4)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The source of the boot image to be read and loaded into the
+		product.  The option bootFromNet(2) uses BOOTP and TFTP to
+		load the executable image into memory.  Option bootFromRAM(4)
+		restarts the code currently being executed within the product."
+	::=	{ restart 2 }
+
+rstBootFileName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Depending on the value of 'rstBootFrom', this is the
+		filename of the boot image to be read and loaded into the
+		product, read either from a server or from disk, and then
+		loaded into memory."
+	::=	{ restart 3 }
+
+rstDoRestart OBJECT-TYPE
+	SYNTAX	INTEGER {
+		doRestart(1),
+		noMeaning(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"When set to doRestart(1) the product should restart after
+		sending the getResponse message.  Reading this object
+		always returns a value of noMeaning(2)."
+	::=	{ restart 4 }
+
+rstNeedRestart OBJECT-TYPE
+	SYNTAX	INTEGER {
+		dontNeedRestart(1),
+		needRestart(2)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"If the value of this object is needRestart(2) some
+		configuration parameters have been changed which will not
+		take effect until the product is restarted using
+		rstDoRestart."
+	::=	{ restart 5 }
+
+rstDownLoadStt OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notDownLoading(1),
+		downLoading(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"If the value of this object is downLoading(2) a
+		configuration download is in progress. The following rules
+		apply: If a management session closes normally and
+		rstDownLoadStt has the value downLoading(2) non-volatile
+		storage is updated and the product restarts. If a
+		management session closes for any other reason and
+		rstDownLoadStt has the value downLoading(2) non-volatile
+		storage is NOT updated and the product restarts. This
+		ensures the original configuration is restored leaving the
+		product in a consistent state."
+	::=	{ restart 6 }
+
+rstNumberRestarts OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"A count of the number of restarts (this includes
+		reboots) the product has undergone."
+	::=	{ restart 7 }
+
+rstLastConfigChngTime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The time at which the configuration of the agent was
+		last changed. A configuration change is considered
+		to have been made when non-volatile memory is updated
+		and the value of this object is the value of sysUpTime
+		when this occurs. Note that a configuration change
+		can be made using any access method such as SNMP, a
+		local terminal or a TELNET connection."
+	::=	{ restart 8 }
+
+trapDests	OBJECT IDENTIFIER ::=	{ spSnmp 3 }
+
+trapDestsCheckAddr OBJECT-TYPE
+	SYNTAX	INTEGER {
+		validateAddresses(1),
+		dontValidateAddresses(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The trapDestsCheckAddr object selects whether the
+		IP address of a station requesting a management
+		session is validated for presence in the trapDests
+		table. If validation is enabled and the address in the
+		SNMP request is not present in the trapDests table the
+		request is rejected. A trap may be sent if this occurs,
+		the choice is product specific."
+	::=	{ trapDests 1 }
+
+trapDestsMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of entries in the trapDestsTable."
+	::=	{ trapDests 2 }
+
+trapDestsCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The number of traps in the trapDestsTable at any
+		instant."
+	::=	{ trapDests 3 }
+
+trapDestsTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TrapDestsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A list of the destinations to which traps are sent."
+	::=	{ trapDests 4 }
+
+trapDestsEntry OBJECT-TYPE
+	SYNTAX	TrapDestsEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"An entry for a station address to which traps are sent"
+	INDEX	{ trapDestsIpAddr }
+	::=	{ trapDestsTable 1 }
+
+TrapDestsEntry ::= SEQUENCE {
+	trapDestsIpAddr
+		IpAddress,
+	trapDestsEnable
+		INTEGER,
+	trapDestsCommunityName
+		DisplayString,
+	trapDestsInUse
+		INTEGER
+}
+
+
+trapDestsIpAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of a station to which traps are sent."
+	::=	{ trapDestsEntry 1 }
+
+trapDestsEnable OBJECT-TYPE
+	SYNTAX	INTEGER {
+		sendTraps(1),
+		dontSendTraps(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"When the value is sendTraps(1) traps are sent to this
+		address and are counted in the trapCountTable and
+		entered in the allTrapTable. When the value is
+		dontSendTraps(2) traps are not sent to this address.
+		They are however counted in the trapCountTable and
+		are entered in the allTrapTable."
+	::=	{ trapDestsEntry 5 }
+
+trapDestsCommunityName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The community name to use when sending traps to this
+		address."
+	::=	{ trapDestsEntry 6 }
+
+trapDestsInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notInUse(1),
+		inUse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Whether this entry is in use or not. This field is used
+		to delete entries from this table."
+	::=	{ trapDestsEntry 7 }
+
+
+-- The trap count group/table
+--
+-- The table holds a send count of each of the types of trap supported
+-- by the device, and an enable column to let users turn off transmission
+-- of specific traps
+
+trapEnable	OBJECT IDENTIFIER ::=	{ spSnmp 5 }
+
+trapEnableClear OBJECT-TYPE
+	SYNTAX	INTEGER {
+		clearCounts(1),
+		noMeaning(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"When set to clearCounts(1) the count of all traps in
+		the trapEnableTable is reset to zero. Reading this
+		object always returns a value of noMeaning(2)."
+	::=	{ trapEnable 1 }
+
+trapEnableMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of entries allowed in the trapEnableTable.
+		The actual number is the total of all of the types of
+		generic and enterprise traps that the device can send."
+	::=	{ trapEnable 2 }
+
+trapEnableTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF TrapEnableEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A list of the numbers of traps of each type sent."
+	::=	{ trapEnable 3 }
+
+trapEnableEntry OBJECT-TYPE
+	SYNTAX	TrapEnableEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"An entry of trap counts for a particular trap type."
+	INDEX	{ trapEnableType, trapEnableCode }
+	::=	{ trapEnableTable 1 }
+
+TrapEnableEntry ::= SEQUENCE {
+	trapEnableType
+		INTEGER,
+	trapEnableCode
+		INTEGER,
+	trapEnableEnable
+		INTEGER,
+	trapEnableCount
+		Counter,
+	trapEnableTime
+		TimeTicks,
+	trapEnableDescr
+		DisplayString
+}
+
+
+trapEnableType OBJECT-TYPE
+	SYNTAX	INTEGER {
+		genericTrap(1),
+		enterpriseTrap(2)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The type of trap, generic or enterprise."
+	::=	{ trapEnableEntry 1 }
+
+trapEnableCode OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The enumerated code for the trap, generic as
+		specified in [3] or enterprise as specified in the
+		management information document associated with
+		the product."
+	::=	{ trapEnableEntry 2 }
+
+trapEnableEnable OBJECT-TYPE
+	SYNTAX	INTEGER {
+		enableTrap(1),
+		disableTrap(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"When the value is enableTrap(1) traps of this type are
+		forwarded to all stations in the trapDestsTable,
+		counted in the trapEnableTable and stored in the
+		allTrapTable(if this is supported by the product).
+		When the value is disableTrap(2) traps of this type
+		are not forwarded to all stations in the
+		trapDestsTable. They are however counted in the
+		trapEnableTable and entered in the allTrapTable (if
+		this is supported by the product)."
+	::=	{ trapEnableEntry 3 }
+
+trapEnableCount OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"A count of the number of traps sent of each type since
+		the last reset of the product."
+	::=	{ trapEnableEntry 4 }
+
+trapEnableTime OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The time of the last occurrence of a particular trap
+		type since the last reset of the product in one
+		hundredths of a second."
+	::=	{ trapEnableEntry 5 }
+
+trapEnableDescr OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"A description of the type of enterprise trap being
+		transmitted."
+	::=	{ trapEnableEntry 6 }
+spX25 OBJECT IDENTIFIER ::= { spProtocols 1 }
+
+x25if		OBJECT IDENTIFIER ::= { spX25 1 }
+
+x25ifMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in x25ifTable."
+	::=	{ x25if 1 }
+		
+x25ifCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in x25ifTable."
+	::=	{ x25if 2 }
+
+x25ifTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF X25ifEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The x25ifTable contains the per-interface
+		X25-specific configuration."
+	::=	{ x25if 3 }
+
+x25ifEntry OBJECT-TYPE
+	SYNTAX	X25ifEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The X25-specific configuration for one of this
+		entity's interfaces."
+	INDEX	{ x25ifIndex }
+	::=	{ x25ifTable 1 }	
+
+X25ifEntry ::= SEQUENCE {
+	x25ifIndex
+		INTEGER,
+	x25ifDteAddress
+		OCTET STRING,
+	x25ifLineSpeed
+		INTEGER,
+	x25ifVersion
+		INTEGER,
+	x25ifExtendedFormat
+		INTEGER,
+	x25ifDefPacketSize
+		INTEGER,
+	x25ifDefWindowSize
+		INTEGER,
+	x25ifAcceptReverseCharging
+		INTEGER,
+	x25ifBaseTimer
+		INTEGER,
+	x25ifLowestSVCBothwayChannel
+		INTEGER,
+	x25ifHighestSVCBothwayChannel
+		INTEGER,
+	x25ifLineType
+		INTEGER
+}
+				
+x25ifIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ x25ifEntry 1 }
+
+x25ifDteAddress OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(0..15))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"DTE address currently used by this interface."
+--	DEFVAL { ''h }
+	::=	{ x25ifEntry 2 }
+
+x25ifLineSpeed OBJECT-TYPE
+	SYNTAX	INTEGER {
+		unknown(1),
+		b1200(2),
+		b2400(3),
+		b4800(4),
+		b9600(5),
+		b19200(6),
+		b38400(7),
+		b48K(8),
+		b56K(9),
+		b64K(10),
+		b128K(11)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The line speed."
+	::=	{ x25ifEntry 3 }
+
+x25ifVersion OBJECT-TYPE
+	SYNTAX	INTEGER {
+		version1980(1),    
+		version1984(2) 
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"Identifies the desired revision of X.25."
+	::=	{ x25ifEntry 4 }
+
+x25ifExtendedFormat OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),    
+		no(2) 
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"If your X.25 service allows negotiation of packet and
+		window size, you should choose extended facilities."
+	::=	{ x25ifEntry 5 }
+
+x25ifDefPacketSize OBJECT-TYPE
+	SYNTAX	INTEGER {
+		unknown(1),
+		ps128(2),
+		ps256(3),
+		ps512(4)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The default packet size. Choose the maximum allowed
+		by the X.25 service. This value may be overridden on
+		a per-circuit basis."
+	::=	{ x25ifEntry 6 }
+
+x25ifDefWindowSize OBJECT-TYPE
+	SYNTAX	INTEGER (1..7)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The default window size. Choose the maximum
+		allowed by the X.25 service. This value may be
+		overridden on a per-circuit basis."
+	::=	{ x25ifEntry 7 }
+
+x25ifAcceptReverseCharging OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),
+		no(2)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"You can decide to accept or reject reverse
+		charge calls from other routers or X.25 hosts."
+	::=	{ x25ifEntry 8 }
+
+x25ifBaseTimer OBJECT-TYPE
+	SYNTAX	INTEGER (30..600)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The values of other X.25 timers depend on this value, though
+		they stay in the same ratio; 180 seconds is recommended
+		by CCITT. The unit is a second."
+	::=	{ x25ifEntry 9 }
+
+x25ifLowestSVCBothwayChannel OBJECT-TYPE
+	SYNTAX	INTEGER (1..4095) -- (0x001..0xFFF)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The X.25 service provides a range of switched virtual
+		circuits. Calls will not be accepted outside this range.
+		The default range, 001-040, is appropriate for Datex-P
+		(Germany) and Transpac (France). The correct values for
+		GNS are 400 and 41D, depending on the number of channels
+		you have subscribed to."
+	::=	{ x25ifEntry 10 }
+	      
+
+x25ifHighestSVCBothwayChannel OBJECT-TYPE
+	SYNTAX	INTEGER (1..4095) -- (0x001..0xFFF)
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"See x25ifLowestBothwayChannel."
+	::=	{ x25ifEntry 11 }
+
+
+x25ifLineType OBJECT-TYPE
+	SYNTAX	INTEGER {
+		unknown(1),
+		x25(2),
+		point(3)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The line type is point if it is directly connected
+		whereas x25 is a _normal_ X25 connection"
+	::=	{ x25ifEntry 12 }
+
+x25ifNewMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in x25ifNewTable."
+	::=	{ x25if 4 }
+		
+x25ifNewCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in x25ifNewTable."
+	::=	{ x25if 5 }
+
+x25ifNewTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF X25ifNewEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The x25ifNewTable contains the per-interface
+		X25-specific changeable configuration."
+	::=	{ x25if 6 }
+
+x25ifNewEntry OBJECT-TYPE
+	SYNTAX	X25ifNewEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The X25-specific changeable configuration for one of this
+		entity's interfaces."
+	INDEX	{ x25ifNewIndex }
+	::=	{ x25ifNewTable 1 }	
+
+X25ifNewEntry ::= SEQUENCE {
+	x25ifNewIndex
+		INTEGER,
+	x25ifNewDteAddress
+		OCTET STRING,
+	x25ifNewLineSpeed
+		INTEGER,
+	x25ifNewVersion
+		INTEGER,
+	x25ifNewExtendedFormat
+		INTEGER,
+	x25ifNewDefPacketSize
+		INTEGER,
+	x25ifNewDefWindowSize
+		INTEGER,
+	x25ifNewAcceptReverseCharging
+		INTEGER,
+	x25ifNewBaseTimer
+		INTEGER,
+	x25ifNewLowestSVCBothwayChannel
+		INTEGER,
+	x25ifNewHighestSVCBothwayChannel
+		INTEGER
+}
+				
+x25ifNewIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ x25ifNewEntry 1 }
+
+x25ifNewDteAddress OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(0..15))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"DTE address that will be used by this interface after restart."
+--	DEFVAL { ''h }
+	::=	{ x25ifNewEntry 2 }
+
+x25ifNewLineSpeed OBJECT-TYPE
+	SYNTAX	INTEGER {
+		unknown(1),
+		b1200(2),
+		b2400(3),
+		b4800(4),
+		b9600(5),
+		b19200(6),
+		b38400(7),
+		b48K(8),
+		b56K(9),
+		b64K(10),
+		b128K(11)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The line speed that will be used by this interface after restart."
+	::=	{ x25ifNewEntry 3 }
+
+x25ifNewVersion OBJECT-TYPE
+	SYNTAX	INTEGER {
+		version1980(1),    
+		version1984(2) 
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Identifies the desired revision of X.25 after restart."
+	::=	{ x25ifNewEntry 4 }
+
+x25ifNewExtendedFormat OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),    
+		no(2) 
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"If your X.25 service allows negotiation of packet and
+		window size, you should choose extended facilities and restart."
+	::=	{ x25ifNewEntry 5 }
+
+x25ifNewDefPacketSize OBJECT-TYPE
+	SYNTAX	INTEGER {
+		unknown(1),
+		ps128(2),
+		ps256(3),
+		ps512(4)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The default packet size. Choose the maximum allowed
+		by the X.25 service and restart. This value may be overridden 
+		on a per-circuit basis."
+	::=	{ x25ifNewEntry 6 }
+
+x25ifNewDefWindowSize OBJECT-TYPE
+	SYNTAX	INTEGER (1..7)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The default window size. Choose the maximum
+		allowed by the X.25 service and restart. This value 
+		may be overridden on a per-circuit basis."
+	::=	{ x25ifNewEntry 7 }
+
+x25ifNewAcceptReverseCharging OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),
+		no(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"You can decide to accept or reject reverse
+		charge calls from other routers or X.25 hosts aftter 
+		unit has restarted."
+	::=	{ x25ifNewEntry 8 }
+
+x25ifNewBaseTimer OBJECT-TYPE
+	SYNTAX	INTEGER (30..600)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The values of other X.25 timers depend on this value 
+		(after restart), though they stay in the same ratio;
+		180 seconds is recommended by CCITT. The unit is a second."
+	::=	{ x25ifNewEntry 9 }
+
+x25ifNewLowestSVCBothwayChannel OBJECT-TYPE
+	SYNTAX	INTEGER (1..4095) -- (0x001..0xFFF)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The X.25 service provides a range of switched virtual
+		circuits. Calls will not be accepted outside this range.
+		The default range, 001-040, is appropriate for Datex-P
+		(Germany) and Transpac (France). The correct values for
+		GNS are 400 and 41D, depending on the number of channels
+		you have subscribed to. Changes are effective after restart."
+	::=	{ x25ifNewEntry 10 }
+	      
+
+x25ifNewHighestSVCBothwayChannel OBJECT-TYPE
+	SYNTAX	INTEGER (1..4095) -- (0x001..0xFFF)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"See x25ifNewLowestBothwayChannel."
+	::=	{ x25ifNewEntry 11 }
+
+x25circuit	OBJECT IDENTIFIER ::= { spX25 3 }
+	
+x25circuitMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ x25circuit 1 }
+
+x25circuitCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ x25circuit 2 }
+
+x25circuitTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF X25circuitEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ x25circuit 3 }
+
+x25circuitEntry OBJECT-TYPE
+	SYNTAX	X25circuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		""
+	INDEX	{ x25circuitIfIndex, x25circuitName }
+	::=	{ x25circuitTable 1 }
+
+X25circuitEntry ::= SEQUENCE {
+	x25circuitIfIndex
+		INTEGER,
+	x25circuitName
+		DisplayString,
+	x25circuitDteAddress
+		OCTET STRING,
+	x25circuitPacketSize
+		INTEGER,
+	x25circuitWindowSize
+		INTEGER,
+	x25circuitInUse
+		INTEGER
+}
+
+
+x25circuitIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ x25circuitEntry 1 }
+
+x25circuitName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE (1..15))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ x25circuitEntry 2 }
+
+x25circuitDteAddress OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(0..15))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"DTE address currently used by this interface."
+--	DEFVAL { ''h }
+	::=	{ x25circuitEntry 3 }
+
+x25circuitPacketSize OBJECT-TYPE
+	SYNTAX	INTEGER {
+		unknown(1),
+		p128(2),
+		p256(3),
+		p512(4)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The packet size to be used. Choose the maximum allowed
+		by your X.25 service."
+	::=	{ x25circuitEntry 4 }
+
+x25circuitWindowSize OBJECT-TYPE
+	SYNTAX	INTEGER (1..7)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The window size to be used. Choose the maximum allowed
+		by your X.25 service."
+	::=	{ x25circuitEntry 5 }
+
+x25circuitInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notInUse(1),
+		inUse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ x25circuitEntry 6 }
+
+
+--
+-- Spider ISDN group
+--
+
+spIsdn OBJECT IDENTIFIER ::= { spProtocols 9 }
+isdnIf	OBJECT IDENTIFIER ::= { spIsdn 1 }
+
+isdnifMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in isdnifTable."
+	::=	{ isdnIf 1 }
+		
+isdnifCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in isdnifTable."
+	::=	{ isdnIf 2 }
+
+isdnIfTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF IsdnIfEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The isdnIfTable contains the per-interface
+		ISDN-specific configuration."
+	::=	{ isdnIf 3 }
+
+isdnIfEntry OBJECT-TYPE
+	SYNTAX	IsdnIfEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The ISDN-specific configuration for one of this
+		entity's interfaces."
+	INDEX	{ isdnIfIndex }
+	::=	{ isdnIfTable 1 }	
+
+IsdnIfEntry ::= SEQUENCE {
+	isdnIfIndex
+		INTEGER,
+	isdnIfIsdnAddress
+		OCTET STRING,
+	isdnIfDefIdleTimer
+		INTEGER,
+	isdnIfDefNonPreemptionTimer
+		INTEGER,
+	isdnIfNewIsdnAddress
+		OCTET STRING
+}
+				
+isdnIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ isdnIfEntry 1 }
+
+isdnIfIsdnAddress OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(0..17))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The ISDN address currently used by this interface."
+--	DEFVAL { ''h }
+	::=	{ isdnIfEntry 2 }
+
+isdnIfDefIdleTimer OBJECT-TYPE
+	SYNTAX	INTEGER (0..3600)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The length of time the connection may remain idle
+		before being closed. INFINITY means the connection
+		may remain permanently idle. The value 0 represents
+		INFINITY. The unit is a second."
+--	DEFVAL { 10 }
+	::=	{ isdnIfEntry 3 }
+
+isdnIfDefNonPreemptionTimer OBJECT-TYPE
+	SYNTAX	INTEGER (0..43200)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The length of time the connection is guaranteed before
+		it may be pre-empted by another call. INFINITY means the
+		connection will not be pre-empted. The value 0 represents
+		INFINITY. The unit is a second."
+--	DEFVAL { 10 }
+	::=	{ isdnIfEntry 4 }
+						
+isdnIfNewIsdnAddress OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(0..17))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The ISDN address to be used by this interface
+		after the next reboot."
+--	DEFVAL { ''h }
+	::=	{ isdnIfEntry 5 }
+
+						
+isdnCircuit	OBJECT IDENTIFIER ::= { spIsdn 3 }
+	
+isdnCircuitMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ isdnCircuit 1 }
+
+isdnCircuitCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ isdnCircuit 2 }
+
+isdnCircuitTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF IsdnCircuitEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ isdnCircuit 3 }
+
+isdnCircuitEntry OBJECT-TYPE
+	SYNTAX	IsdnCircuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		""
+	INDEX	{ isdnCircuitIfIndex, isdnCircuitName }
+	::=	{ isdnCircuitTable 1 }
+
+IsdnCircuitEntry ::= SEQUENCE {
+	isdnCircuitIfIndex
+		INTEGER,
+	isdnCircuitName
+		DisplayString,
+	isdnCircuitAddressOut
+		OCTET STRING,
+	isdnCircuitAddressIn
+		OCTET STRING,
+	isdnCircuitInUse
+		INTEGER
+}
+
+
+isdnCircuitIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ isdnCircuitEntry 1 }
+
+isdnCircuitName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE (1..15))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ isdnCircuitEntry 2 }
+
+isdnCircuitAddressOut OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(1..17))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The ISDN address used when initiating a call on this
+		circuit." 
+--	DEFVAL { ''h }
+	::=	{ isdnCircuitEntry 3 }
+
+isdnCircuitAddressIn OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(1..17))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The ISDN address expected when receiving a call on this
+		circuit." 
+--	DEFVAL { ''h }
+	::=	{ isdnCircuitEntry 4 }
+
+isdnCircuitInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notInUse(1),
+		inUse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ isdnCircuitEntry 5 }
+
+-- The spantree group used by Spider products
+
+spantree	OBJECT IDENTIFIER ::=	{ spProtocols 14 }
+
+sptreeGroupAddr OBJECT-TYPE
+	SYNTAX	OCTET STRING
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The multicast address used by BPDUs."
+	::=	{ spantree 15 }
+
+sptreeStt OBJECT-TYPE
+	SYNTAX	INTEGER {
+		disabled(1),
+		enabled(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The Spanning Tree State of the bridge."
+	::=	{ spantree 16 }
+
+sptreeInit OBJECT-TYPE
+	SYNTAX	INTEGER {
+		noinitialise(1),
+		initialise(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"When set to INITIALISE the parameters and timers of
+		the Spanning Tree algorithm and protocol are
+		initialised."
+	::=	{ spantree 17 }
+
+
+-- This document describes the stcp-ip MIB, which is a part of the SpiderMIB.
+-- It contains those objects, which are associated with IP routing, but are
+-- also configurable by the user from the ADMIN interface.  There are
+-- effectively two copies of the folowing variables: one in the
+-- EEROM, and another dynamic copy in the kernel. The values in the tcpIpRouteTable
+-- are copied into the kernel when the system is started.
+
+spTcpIp		OBJECT IDENTIFIER ::=	{ spProtocols 17 }
+
+sTRoute		OBJECT IDENTIFIER ::= { spTcpIp 1 }
+
+sTRouteTableMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of entries allowed in the sTRouteTable.
+		The value for the SpiderPort M250 V4.0 is 32.
+		The value for the SpiderRouter M290 V2.0 is 256."             
+	::=	{ sTRoute 1 }
+
+sTRouteTableCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The current number of entries in the sTRouteTable."
+	::=	{ sTRoute 2 }
+
+sTRouteTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF STRouteTableEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"The static routing table."
+	::=	{ sTRoute 3 }
+
+sTRouteTableEntry OBJECT-TYPE
+	SYNTAX	STRouteTableEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"An entry in the sTRouteTable."
+	INDEX	{ sTRouteDestIp }
+	::=	{ sTRouteTable 1 }
+
+STRouteTableEntry ::= SEQUENCE {
+	sTRouteDestIp
+		IpAddress,
+	sTRouteNextHopIp
+		IpAddress,
+	sTRouteMetric
+		INTEGER,
+	sTRouteInUse
+		INTEGER
+}
+
+
+sTRouteDestIp OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the remote network or host. An address on a
+		locally connected network is not allowed. This is the table
+		index. It is not allowed to be changed and a badValue error
+		is returned if such an event is attempted."
+	::=	{ sTRouteTableEntry 1 }
+
+sTRouteNextHopIp OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the routeway used to route IP packets
+		to sTRouteDestIp. It cannot be the address of the box
+		itself, a network address or a broadcast address."
+	::=	{ sTRouteTableEntry 2 }
+
+sTRouteMetric OBJECT-TYPE
+	SYNTAX	INTEGER (0..15)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The RIP distance metric for the route. If RIP is disabled on a
+		box wide basis then this object shall default to 2.
+		A metric of INFINITY is represented by a value of 0."
+	::=	{ sTRouteTableEntry 3 }
+
+sTRouteInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notInUse(1),
+		inUse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Whether the entry is in use or not. This object is used
+		to delete entries from the table."
+	::=	{ sTRouteTableEntry 4 }
+
+
+sThandles		OBJECT IDENTIFIER ::=	{ spTcpIp 4 }
+
+sThdlHostNameTableClear OBJECT-TYPE
+	SYNTAX	INTEGER {
+		clearTable(1),
+		noMeaning(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"This clears the sThdlHostNameTable of all name/IP
+		address pairings. The table is left with zero
+		entries. Reading this object always returns a value
+		of noMeaning(2)."
+	::=	{ sThandles 1 }
+
+sThdlHostNameMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The maximum number of name/IP address pairings
+		allowed in the sThdlHostNameTable. The actual number
+		is implementation dependent and may vary from
+		product to product."
+	::=	{ sThandles 2 }
+
+sThdlHostNameCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The number of name/IP address pairings in the
+		sThdlHostNameTable at any instant."
+	::=	{ sThandles 3 }
+
+sThdlHostNameTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF SThdlHostNameEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A list of host name/IP address pairings with the
+		associated TCP port number for Telnet connection."
+	::=	{ sThandles 4 }
+
+sThdlHostNameEntry OBJECT-TYPE
+	SYNTAX	SThdlHostNameEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		"A name/IP address pairing entry."
+	INDEX	{ sThdlHostNameIndex }
+	::=	{ sThdlHostNameTable 1 }
+
+SThdlHostNameEntry ::= SEQUENCE {
+	sThdlHostNameIndex
+		INTEGER,
+	sThdlHostNameName
+		DisplayString,
+	sThdlHostNameAddr
+		IpAddress,
+	sThdlHostNameTcpPort
+		INTEGER,
+	sThdlHostNameInUse
+		INTEGER
+}
+
+
+sThdlHostNameIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"A numeric index used to index the sThdlHostNameTable.
+		Its value ranges between 1 and the value of
+		sThdlHostNameMaxEntries."
+	::=	{ sThdlHostNameEntry 1 }
+
+sThdlHostNameName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The name of a host in an ASCII form. This will be in the
+		same form as those in /etc/hosts."
+	::=	{ sThdlHostNameEntry 2 }
+
+sThdlHostNameAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the host that corresponds to
+		sThdlHostNameName at the same sThdlHostNameIndex
+		entry."
+	::=	{ sThdlHostNameEntry 3 }
+
+sThdlHostNameTcpPort OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The TCP port number to use when attempting a Telnet
+		connection to the host with IP address
+		sThdlHostNameAddr at the same sThdlHostNameIndex
+		entry."
+	::=	{ sThdlHostNameEntry 4 }
+
+sThdlHostNameInUse OBJECT-TYPE
+	SYNTAX	INTEGER {
+		notinuse(1),
+		inuse(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Whether this entry is in use or not. This field is used
+		to delete entries from this table."
+	::=	{ sThdlHostNameEntry 5 }
+
+sThdlNodeName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The node name assigned by the network manager for this
+		product"
+	::=	{ sThandles 5 }
+
+sThdlDomainName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The name of the domain in which the product resides"
+	::=	{ sThandles 6 }
+
+sThdlHostNameFirstFree OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The value of sThdlHostNameIndex that should be used
+		when adding a new entry to the sThdlHostNameTable. It
+		indicates the first empty table slot."
+	::=	{ sThandles 7 }
+
+sTresources	OBJECT IDENTIFIER ::=	{ spTcpIp 5 }
+
+sTresNameServerAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the name server used by the product."
+	::=	{ sTresources 1 }
+
+sTresNameServerBackupAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the backup name server used by the
+		product."
+	::=	{ sTresources 2 }
+
+sTresSmartGatewayAddr OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The IP address of the default gateway for the product.
+		A value of 0.0.0.0 is used if there is no default
+		gateway."
+	::=	{ sTresources 3 }
+sTicmp	OBJECT IDENTIFIER ::= { spTcpIp 7 }
+
+sTicmpIfMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in sTicmpIfTable."
+	::=	{ sTicmp 1 }
+		
+sTicmpIfCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in sTicmpIfTable."
+	::=	{ sTicmp 2 }
+
+sTicmpIfTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF STicmpIfEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The sTicmpIfTable contains the per-interface
+		ICMP-specific configuration."
+	::=	{ sTicmp 3 }
+
+sTicmpIfEntry OBJECT-TYPE
+	SYNTAX	STicmpIfEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The ICMP-specific configuration for one of this
+		entity's interfaces."
+	INDEX	{ sTicmpIfIndex }
+	::=	{ sTicmpIfTable 1 }	
+
+STicmpIfEntry ::= SEQUENCE {
+	sTicmpIfIndex
+		INTEGER,
+	sTicmpIfTransmitRedirects
+		INTEGER(1..2),
+	sTicmpIfListenForRedirects
+		INTEGER(1..2)
+}
+				
+sTicmpIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ sTicmpIfEntry 1 }
+
+sTicmpIfTransmitRedirects OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),    
+		no(2) 
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The indication of whether this interface will
+		transmit ICMP redirects."
+	::=	{ sTicmpIfEntry 2 }
+
+sTicmpIfListenForRedirects OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),    
+		no(2) 
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The indication of whether this interface will
+		listen for ICMP redirects."
+	::=	{ sTicmpIfEntry 3}
+
+						
+
+sTrip 	OBJECT IDENTIFIER	::= { spTcpIp 8 }
+
+sTripIfMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in sTripIfTable."
+	::=	{ sTrip 1 }
+		
+sTripIfCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in sTripIfTable."
+	::=	{ sTrip 2 }
+
+sTripIfTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF STripIfEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The sTripIfTable contains the per-interface
+		RIP-specific configuration."
+	::=	{ sTrip 3 }
+
+sTripIfEntry OBJECT-TYPE
+	SYNTAX	STripIfEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The RIP-specific configuration for one of this
+		entity's interfaces."
+	INDEX	{ sTripIfIndex }
+	::=	{ sTripIfTable 1 }	
+
+STripIfEntry ::= SEQUENCE {
+	sTripIfIndex
+		INTEGER,
+	sTripIfDoRip
+		INTEGER,
+	sTripIfMetric
+		INTEGER
+}
+				
+sTripIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ sTripIfEntry 1 }
+
+sTripIfDoRip OBJECT-TYPE
+	SYNTAX	INTEGER {
+		rip(1),    
+		no-rip(2) 
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The indication of whether this interface will
+		do RIP."
+	::=	{ sTripIfEntry 2 }
+
+sTripIfMetric OBJECT-TYPE
+	SYNTAX	INTEGER (0..15)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"The RIP metric associated with this interface.
+		The value 0 represents INFINITY."
+	::=	{ sTripIfEntry 3}
+
+						
+
+
+
+
+ipCircuit 	OBJECT IDENTIFIER	::= { spTcpIp 10 }
+
+ipCircuitMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in ipCircuitTable."
+	::=	{ ipCircuit 1 }
+		
+ipCircuitCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in ipCircuitTable."
+	::=	{ ipCircuit 2 }
+
+ipCircuitTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF IpCircuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The ipCircuitTable contains the per-circuit
+		IP-specific configuration."
+	::=	{ ipCircuit 3 }
+
+ipCircuitEntry OBJECT-TYPE
+	SYNTAX	IpCircuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The IP-specific configuration for one of this
+		entity's circuits."
+	INDEX	{ ipCircuitIfIndex, ipCircuitName }
+	::=	{ ipCircuitTable 1 }	
+
+IpCircuitEntry ::= SEQUENCE {
+	ipCircuitIfIndex
+		INTEGER,
+	ipCircuitName
+		DisplayString,
+	ipCircuitEnabled
+		INTEGER,
+	ipCircuitIpAddress
+		IpAddress,
+	ipCircuitWarning
+		DisplayString
+}
+				
+ipCircuitIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ ipCircuitEntry 1 }
+
+ipCircuitName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ ipCircuitEntry 2 }
+
+ipCircuitEnabled OBJECT-TYPE
+	SYNTAX	INTEGER {
+		enabled(1),
+		disabled(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ ipCircuitEntry 3}
+
+ipCircuitIpAddress OBJECT-TYPE
+	SYNTAX	IpAddress
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ ipCircuitEntry 4 }
+
+ipCircuitWarning OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ ipCircuitEntry 5 }
+
+
+
+
+spOsi		OBJECT IDENTIFIER ::=	{ spProtocols 18 }
+
+osiStats	OBJECT IDENTIFIER ::= { spOsi 5 }
+
+osiInReceives OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"OSI datagrams received on all interfaces."
+	::=	{ osiStats 1 }
+
+osiOutRequests OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"OSI datagrams transmitted on all interfaces."
+	::=	{ osiStats 2 }
+
+osiForwDatagrams OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"OSI datagrams forwarded on all interfaces."
+	::=	{ osiStats 3 }
+osiForward	OBJECT IDENTIFIER ::= { spOsi 6 }
+
+osiForwardMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Max. no of entries in the OSI Forwarding table."
+	::=	{ osiForward 1 }
+ 
+osiForwardCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Cur. no of entries in the OSI Forwarding table."
+	::=	{ osiForward 2 }
+ 
+osiForwardTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF OsiForwardEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The osiForwardTable contains all osi forwarding info."
+	::=	{ osiForward 3 }
+
+osiForwardEntry OBJECT-TYPE
+	SYNTAX	OsiForwardEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"An entry in the OSI Forwarding table."
+	INDEX	{ osiForwardLevel, osiForwardNsap } 
+	::=	{ osiForwardTable 1 }
+
+OsiForwardEntry ::= SEQUENCE {
+	osiForwardLevel
+		INTEGER,
+	osiForwardNsap
+		OCTET STRING,
+	osiForwardNextHopSnpa
+		OCTET STRING,
+	osiForwardIfIndex
+		INTEGER,
+	osiForwardTimeToExpire
+		INTEGER
+}
+
+
+osiForwardLevel OBJECT-TYPE
+	SYNTAX	INTEGER {
+		level1(1),
+		level2(2)
+	}
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"Indicates whether a Level 1 or Level 2 Forwarding entry."
+	::=	{ osiForwardEntry 1 }
+
+osiForwardNsap OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(1..20))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The destination for forwarding.
+		In Level 1 routing, this will be a destination NSAP.
+		In Level 2 routing, this will be a destination NET,
+		area address or prefix."
+	::=	{ osiForwardEntry 2 }
+
+osiForwardNextHopSnpa OBJECT-TYPE
+	SYNTAX	OCTET STRING (SIZE(1..8))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The physical address of the next hop router."
+	::=	{ osiForwardEntry 3 }
+
+osiForwardIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The value of ifIndex for this entry."
+	::=	{ osiForwardEntry 4 }
+
+osiForwardTimeToExpire OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The unit is a second."
+	::=	{ osiForwardEntry 5 }
+
+osiCircuit 	OBJECT IDENTIFIER	::= { spOsi 11 }
+
+osiCircuitMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in osiCircuitTable."
+	::=	{ osiCircuit 1 }
+		
+osiCircuitCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in osiCircuitTable."
+	::=	{ osiCircuit 2 }
+
+osiCircuitTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF OsiCircuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The osiCircuitTable contains the per-circuit
+		OSI-specific configuration."
+	::=	{ osiCircuit 3 }
+
+osiCircuitEntry OBJECT-TYPE
+	SYNTAX	OsiCircuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The OSI-specific configuration for one of this
+		entity's circuits."
+	INDEX	{ osiCircuitIfIndex, osiCircuitName }
+	::=	{ osiCircuitTable 1 }	
+
+OsiCircuitEntry ::= SEQUENCE {
+	osiCircuitIfIndex
+		INTEGER,
+	osiCircuitName
+		DisplayString,
+	osiCircuitEnabled
+		INTEGER,
+	osiCircuitISH
+		INTEGER,
+	osiCircuitWarning
+		DisplayString
+}
+				
+osiCircuitIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ osiCircuitEntry 1 }
+
+osiCircuitName OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ osiCircuitEntry 2 }
+
+osiCircuitEnabled OBJECT-TYPE
+	SYNTAX	INTEGER {
+		enabled(1),
+		disabled(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ osiCircuitEntry 3}
+
+osiCircuitISH OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),
+		no(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ osiCircuitEntry 4 }
+
+osiCircuitWarning OBJECT-TYPE
+	SYNTAX	DisplayString
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ osiCircuitEntry 5 }
+
+
+
+xe OBJECT IDENTIFIER ::= { spProtocols 22 }
+
+xeCircuit OBJECT IDENTIFIER ::= { xe 1 }
+
+xeCircuitMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuit 1 }
+
+xeCircuitCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuit 2 }
+
+xeCircuitTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF XeCircuitEntry
+	ACCESS	not-accessible
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuit 3 }
+
+xeCircuitEntry OBJECT-TYPE
+	SYNTAX	XeCircuitEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		""
+	INDEX	{ xeCircuitIfIndex, xeCircuitName }
+	::=	{ xeCircuitTable 1 }
+
+XeCircuitEntry ::= SEQUENCE {
+	xeCircuitIfIndex
+		INTEGER,
+	xeCircuitName
+		DisplayString,
+	xeCircuitEncapsulation
+		INTEGER,
+	xeCircuitType
+		INTEGER,
+	xeCircuitEnabled
+		INTEGER,
+	xeCircuitPriority
+		INTEGER,
+	xeCircuitIdleTimer
+		INTEGER,
+	xeCircuitNonPreEmptionTimer
+		INTEGER,
+	xeCircuitMaxVCs
+		INTEGER
+}
+
+
+xeCircuitIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 1 }
+
+xeCircuitName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE (1..15))
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 2 }
+
+xeCircuitEncapsulation OBJECT-TYPE
+	SYNTAX	INTEGER {
+		none(1),
+		snap(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 3 }
+
+xeCircuitType OBJECT-TYPE
+	SYNTAX	INTEGER {
+		primary(1),
+		backup(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 4 }
+
+xeCircuitEnabled OBJECT-TYPE
+	SYNTAX	INTEGER {
+		yes(1),
+		no(2)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 5 }
+
+xeCircuitPriority OBJECT-TYPE
+	SYNTAX	INTEGER {
+		high(1),
+		medium(2),
+		low(3)
+	}
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 6 }
+
+xeCircuitIdleTimer OBJECT-TYPE
+	SYNTAX	INTEGER (0..3600)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Unit is a second. INFINITY is represented by zero."
+	::=	{ xeCircuitEntry 7 }
+
+xeCircuitNonPreEmptionTimer OBJECT-TYPE
+	SYNTAX	INTEGER (0..43200)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		"Unit is a second. INFINITY is represented by zero."
+	::=	{ xeCircuitEntry 8 }
+
+xeCircuitMaxVCs OBJECT-TYPE
+	SYNTAX	INTEGER (1..3)
+	ACCESS	read-write
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCircuitEntry 9 }
+
+
+
+
+
+
+
+
+
+
+xeCctStats	OBJECT IDENTIFIER ::= { xe 2 }
+
+xeCctStatsMaxEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Maximum no. of entries in xeCctStatsTable."
+	::=	{ xeCctStats 1 }
+		
+xeCctStatsCurEntries OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	optional
+	DESCRIPTION	
+		"Current no. of entries in xeCctStatsTable."
+	::=	{ xeCctStats 2 }
+
+xeCctStatsTable OBJECT-TYPE
+	SYNTAX	SEQUENCE OF XeCctStatsEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The xeCctStatsTable contains the per-circuit 
+		XE statistics."
+	::=	{ xeCctStats 3 }
+
+xeCctStatsEntry OBJECT-TYPE
+	SYNTAX	XeCctStatsEntry
+	ACCESS	not-accessible
+	STATUS	optional
+	DESCRIPTION	
+		"The XE-specific statistics for one of this
+		entity's circuits."
+	INDEX	{ xeCctStatsIfIndex, xeCctStatsCircuitName }
+	::=	{ xeCctStatsTable 1 }	
+
+XeCctStatsEntry ::= SEQUENCE {
+	xeCctStatsIfIndex
+		INTEGER,
+	xeCctStatsCircuitName
+		DisplayString,
+	xeCctStatsInCallsTotal
+		Counter,
+	xeCctStatsInCallsRejected
+		Counter,
+	xeCctStatsInCallsCurrent
+		Counter,
+	xeCctStatsInDurationTotal
+		TimeTicks,
+	xeCctStatsInDurationCurrent
+		TimeTicks,
+	xeCctStatsInPkts
+		Counter,
+	xeCctStatsInOctets
+		Counter,
+	xeCctStatsOutCallsTotal
+		Counter,
+	xeCctStatsOutCallsRejected
+		Counter,
+	xeCctStatsOutCallsCurrent
+		Counter,
+	xeCctStatsOutDurationTotal
+		TimeTicks,
+	xeCctStatsOutDurationCurrent
+		TimeTicks,
+	xeCctStatsOutPkts
+		Counter,
+	xeCctStatsOutOctets
+		Counter
+}
+
+
+xeCctStatsIfIndex OBJECT-TYPE
+	SYNTAX	INTEGER
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The index value which uniquely identifies the
+		interface to which this entry is applicable.  The
+		interface identified by a particular value of this
+		index is the same interface as identified by the
+		same value of ifIndex."
+	::=	{ xeCctStatsEntry 1 }
+
+xeCctStatsCircuitName OBJECT-TYPE
+	SYNTAX	DisplayString (SIZE (1..15))
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		""
+	::=	{ xeCctStatsEntry 2 }
+
+xeCctStatsInCallsTotal OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of calls received on this circuit."
+	::=	{xeCctStatsEntry 3}
+
+xeCctStatsInCallsRejected OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of calls rejected on this circuit."
+	::=	{xeCctStatsEntry 4}
+
+xeCctStatsInCallsCurrent OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of calls currently open on this circuit."
+	::=	{xeCctStatsEntry 5}
+
+xeCctStatsInDurationTotal OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The total duration of calls on this circuit."
+	::=	{ xeCctStatsEntry 6 }
+
+xeCctStatsInDurationCurrent OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The current duration of a call on this circuit."
+	::=	{ xeCctStatsEntry 7 }
+
+xeCctStatsInPkts OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of packets received over this circuit."
+	::=	{xeCctStatsEntry 8}
+
+xeCctStatsInOctets OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of octets received over this circuit."
+	::=	{xeCctStatsEntry 9}
+
+xeCctStatsOutCallsTotal OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of calls received on this circuit."
+	::=	{xeCctStatsEntry 10}
+
+xeCctStatsOutCallsRejected OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of calls rejected on this circuit."
+	::=	{xeCctStatsEntry 11}
+
+xeCctStatsOutCallsCurrent OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of calls currently open on this circuit."
+	::=	{xeCctStatsEntry 12}
+
+xeCctStatsOutDurationTotal OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The total duration of calls on this circuit."
+	::=	{ xeCctStatsEntry 13 }
+
+xeCctStatsOutDurationCurrent OBJECT-TYPE
+	SYNTAX	TimeTicks
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"The current duration of a call on this circuit."
+	::=	{ xeCctStatsEntry 14 }
+
+xeCctStatsOutPkts OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of packets received over this circuit."
+	::=	{xeCctStatsEntry 15}
+
+xeCctStatsOutOctets OBJECT-TYPE
+	SYNTAX	Counter
+	ACCESS	read-only
+	STATUS	mandatory
+	DESCRIPTION	
+		"No. of octets received over this circuit."
+	::=	{xeCctStatsEntry 16}
+
+END
+

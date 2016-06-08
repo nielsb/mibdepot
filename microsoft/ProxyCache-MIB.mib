@@ -1,0 +1,195 @@
+ProxyCache-MIB DEFINITIONS ::= BEGIN
+
+        IMPORTS
+                enterprises,
+                OBJECT-TYPE,
+                Counter
+                        FROM RFC1155-SMI
+                internetServer
+                        FROM InternetServer-MIB;
+
+--      microsoft       OBJECT IDENTIFIER ::= { enterprises 311 }
+--      software        OBJECT IDENTIFIER ::= { microsoft 1 }
+--      internetServer  OBJECT IDENTIFIER ::= { software 7 }
+        proxyServer     OBJECT IDENTIFIER ::= { internetServer 11 }
+        cacheStatistics OBJECT IDENTIFIER ::= { proxyServer 2 }
+
+-- Proxy Cache Statistics
+	UrlsInCache OBJECT-TYPE
+		SYNTAX	Integer
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The current number of URLs in the cache."
+		::= { cacheStatistics 1 }
+
+	TotalMemoryBytesRetrieved OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The cumulative number of bytes that have been retrieved from the memory cache."
+		::= { cacheStatistics 2 }
+
+	TotalDiskBytesRetrieved OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The cumulative number of bytes that have been retrieved from the disk cache."
+		::= { cacheStatistics 3 }
+
+	TotalUrlsCached OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The cumulative number of URLs that have been stored in the cache."
+		::= { cacheStatistics 4 }
+
+	TotalMemoryUrlsRetrieved OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The cumulative number of URLs that have been retrieved from the memory cache."
+		::= { cacheStatistics 5 }
+
+	TotalDiskUrlsRetrieved OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The cumulative number of URLs that have been retrieved from the disk cache."
+		::= { cacheStatistics 6 }
+
+	MaxUrlsCached OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The maximum number of URLs that have been stored in the cache."
+		::= { cacheStatistics 7 }
+
+	TotalActiveRefreshes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The cumulative number of popular URLs in the cache that have been actively refreshed from the Internet."
+		::= { cacheStatistics 8 }
+
+	TotalActiveRefreshBytes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The total bytes retrieved from the Internet to actively refresh popular URLs in the cache."
+		::= { cacheStatistics 9 }
+
+	TotalDiskFailures OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of times that ISA Server failed to read from or write to disk cache, due to an I/O failure, since the Web Proxy service started."
+		::= { cacheStatistics 10 }
+
+	DiskFailuresRate OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The number of I/O failures per second. An I/O failure occurs when ISA Server fails to read from or write to disk cache."
+		::= { cacheStatistics 11 }
+
+	MemoryCacheAllocatedSpace OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The amount of space being used for the memory cache, from the memory allocated for memory caching."
+		::= { cacheStatistics 12 }
+
+	DiskCacheAllocatedSpaceSum OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The amount of space being used for the disk cache, from the disk space allocated for disk caching."
+		::= { cacheStatistics 13 }
+
+	MemoryUsageRatioPercent OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The amount of memory cache fetches, in proportion to total cache fetches."
+		::= { cacheStatistics 14 }
+
+	ContentDiskWritesRate OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The amount of writes of content to the disk cache, per second."
+		::= { cacheStatistics 15 }
+
+	MemoryRetrieves OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which URLs are retrieved from the memory cache."
+		::= { cacheStatistics 16 }
+
+	DiskRetrieves OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which URLs are retrieved from the disk cache."
+		::= { cacheStatistics 17 }
+
+	MemoryRetrieveBytes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which bytes of data are retrieved from the memory cache."
+		::= { cacheStatistics 18 }
+
+	DiskRetrieveBytes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which bytes of data are retrieved from the disk cache."
+		::= { cacheStatistics 19 }
+
+	Commits OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which URLs are committed to the cache."
+		::= { cacheStatistics 20 }
+
+	ActiveRefreshes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which popular URLs in the cache are actively refreshed from the Internet."
+		::= { cacheStatistics 21 }
+
+	ActiveRefreshBytes OBJECT-TYPE
+		SYNTAX	Counter
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION 
+			"The rate at which bytes of data are retrieved from the Internet to actively refresh popular URLs in the cache."
+		::= { cacheStatistics 22 }
+
+
+END

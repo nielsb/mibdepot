@@ -1,0 +1,185 @@
+--  Sybase-Common-MIB
+
+-- This is a Sybase private MIB definition to be used in conjunction with 
+-- SNMP and CSMI (Client Server Management Interface) tools.  It is intended
+-- to be a common MIB for all Sybase products.
+
+-- It is Sybase's intention to make this information freely available
+-- and encourage widespread use of this MIB in connection with
+-- the agents and adaptors that monitor and administer Sybase products.
+-- However, Sybase retains exclusive ownership and title.
+
+--  Confidential Property of Sybase, Inc.
+--  (c) Copyright Sybase, Inc., 2002 
+--  All rights reserved
+--  Use, duplication or disclosure by the Government is subject to restrictions
+--  as set forth in subparagraph (c) (1) (ii) of DFARS 52.227-7013 for the DOD
+--  and as set forth in FAR 52.227-19 (a) - (d) for civilian agencies.
+--  Sybase, Inc. 5000 Hacienda Drive, Dublin, CA  94568
+
+--  Notes:
+--    Sybase is a registered IAB number {897} under the enterprises node.
+--
+--  ===============================================================
+
+SYBASE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS  
+     MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+     Counter32, Gauge32, Integer32, enterprises
+       FROM SNMPv2-SMI
+      DisplayString, DateAndTime, AutonomousType
+	FROM SNMPv2-TC;
+
+sybase   MODULE-IDENTITY
+    LAST-UPDATED "0206182100Z"
+    ORGANIZATION "Sybase Inc."
+    CONTACT-INFO
+              " Bill Cox 
+
+                Sybase Inc.
+                5000 Hacienda Drive
+                Dublin, CA 94568 
+                US
+                Tel USA  (603) 230 7106 
+                E-mail: bcox@sybase.com"
+    DESCRIPTION
+       "The MIB module to describe objects for Sybase proprietary products"  
+
+    ::= { enterprises 897 }
+
+-- ------------------------------------------------------------------------
+--
+--   Adaptive Server Enterprise related objects
+--
+
+ase		OBJECT IDENTIFIER ::= { sybase 1}
+
+aseObjects      OBJECT IDENTIFIER ::= { ase 1 }
+
+   aseErrorTable	OBJECT-TYPE
+      SYNTAX		SEQUENCE OF AseErrorEntry
+      MAX-ACCESS	not-accessible
+      STATUS      	current
+      DESCRIPTION
+          "A table relating databases and servers present on a host."
+      ::= { aseObjects 1 }
+
+
+  aseErrorEntry   OBJECT-TYPE
+      SYNTAX      AseErrorEntry
+      MAX-ACCESS  not-accessible
+      STATUS      current
+      DESCRIPTION
+      	" "
+      INDEX { sybErrorIndex }
+      ::= { aseErrorTable 1 }
+
+
+  AseErrorEntry ::=
+      SEQUENCE {
+      	   sybErrorIndex	INTEGER,
+           sybServerName	DisplayString,
+	   sybErrorNumber	INTEGER,
+	   sybErrorSeverity	INTEGER,
+	   sybErrorState	INTEGER,
+	   sybUserName		DisplayString,
+	   sybServerProcess	INTEGER,
+	   sybEngine		INTEGER,
+	   sybErrorMessage	DisplayString
+      }
+
+
+  sybErrorIndex    OBJECT-TYPE
+      SYNTAX		INTEGER (1..2147483647) 	
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "An index value used to uniquely identify an entry in this table."
+      ::= {aseErrorEntry 1}
+
+  sybServerName    OBJECT-TYPE
+      SYNTAX		DisplayString
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Name of the Adaptive Server Enterprise reporting an error condition"
+      ::= {aseErrorEntry 2}
+  
+  sybErrorNumber   OBJECT-TYPE
+      SYNTAX		INTEGER	
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Number of error condition being raised."
+      ::= {aseErrorEntry 3}
+  
+
+  sybErrorSeverity OBJECT-TYPE
+      SYNTAX		INTEGER	
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Severity level of error condition being raised."
+      ::= {aseErrorEntry 4}
+
+  sybErrorState    OBJECT-TYPE
+      SYNTAX		INTEGER	
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "SQL State of error condition."
+      ::= {aseErrorEntry 5}
+
+  sybUserName      OBJECT-TYPE
+      SYNTAX		DisplayString
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Database user name"
+      ::= {aseErrorEntry 6}
+
+  sybServerProcess OBJECT-TYPE
+      SYNTAX		INTEGER	
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Server process number (spid)"
+      ::= {aseErrorEntry 7}
+
+  sybEngine OBJECT-TYPE
+      SYNTAX		INTEGER	
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Server engine number"
+      ::= {aseErrorEntry 8}
+
+  sybErrorMessage  OBJECT-TYPE
+      SYNTAX		DisplayString
+      MAX-ACCESS	read-only
+      STATUS		current
+      DESCRIPTION
+          "Text message associated with an error"
+      ::= {aseErrorEntry 9}
+
+
+sybASEtraps        OBJECT IDENTIFIER ::= { ase 2 }
+
+  sybRaiseError    NOTIFICATION-TYPE
+      OBJECTS         { sybErrorIndex, sybServerName, sybErrorNumber, sybErrorSeverity, 
+                        sybErrorState, sybUserName, sybServerProcess, sybEngine, 
+                        sybErrorMessage }
+      STATUS          current
+      DESCRIPTION
+          "An error condition was raised within an instance of ASE.  The condition could
+           have been raised either internally, or from within a user written stored
+           procedure."
+      ::= { sybASEtraps 1 }
+
+
+ 
+------------------------------------------------------------------------
+
+END
+

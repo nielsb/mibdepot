@@ -1,0 +1,328 @@
+PAX-IP-ENT-MIB DEFINITIONS ::= BEGIN
+
+
+    IMPORTS
+	    MODULE-IDENTITY, OBJECT-TYPE, enterprises, Counter32, Integer32
+	    	FROM SNMPv2-SMI
+	    DisplayString, RowStatus, DateAndTime
+	        FROM SNMPv2-TC
+	    paxnet, paxManagement
+		FROM PAXNET-MIB
+            SnmpAdminString
+                FROM SNMP-FRAMEWORK-MIB;
+
+    paxIPentMIB MODULE-IDENTITY
+	      LAST-UPDATED "200003211335Z"
+
+              ORGANIZATION "Telebit Communications A/S, Denmark"
+              CONTACT-INFO
+                      "        "
+              DESCRIPTION
+                      "MIB for configuration and management of virtual
+			private IP services in PAXNET routers"
+              ::= { paxManagement 8 }
+
+paxIPent OBJECT IDENTIFIER ::= { paxIPentMIB 1}
+paxIPentMIBConformance OBJECT IDENTIFIER ::= { paxIPentMIB 2 }
+
+AclPolicy ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "An encoding of access list policies"
+    SYNTAX INTEGER {
+	permit(0),
+	deny(1)
+	}
+
+
+-- the paxIPentTable corresponds to the private IP services
+-- on an un-initialized TBC system, there will be default be one such
+-- service, with the paxIPentInc value "1".  More services are created
+-- in the usual way
+
+paxIPentTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxIPentEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "The table of private IP services"
+    ::= { paxIPent 1 }
+
+paxIPentEntry OBJECT-TYPE
+    SYNTAX PaxIPentEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "A private IP service"
+    INDEX { paxIPentInc }
+    ::= { paxIPentTable 1 }
+
+PaxIPentEntry ::=
+    SEQUENCE {
+	paxIPentInc INTEGER (1..127),
+	paxIPentLoc INTEGER (1..127),
+        paxIPentDescr            DisplayString,
+        paxIPentContextName      SnmpAdminString,
+	paxIPentStatus	RowStatus
+    }
+
+    paxIPentInc OBJECT-TYPE
+        SYNTAX          INTEGER (1..127)
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                 "The incarnation of the IP routing service"
+        ::= { paxIPentEntry 1 }
+
+    paxIPentLoc OBJECT-TYPE
+        SYNTAX          INTEGER (1..127)
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION
+                 "The location of the IP routing service"
+	DEFVAL { 1 }
+        ::= { paxIPentEntry 2 }
+
+    paxIPentDescr OBJECT-TYPE
+	SYNTAX      DisplayString
+	MAX-ACCESS  read-create
+	STATUS      current
+	DESCRIPTION
+            "A textual description of the virtual private IP service.  This
+	    object should be set to a distinct
+            value for each virtual private IP service. "
+	DEFVAL { ''H }
+	::= { paxIPentEntry 3 }
+
+    -- deprecated     paxIPentContextEngineID
+    -- (meaningless, there is only one context engine for the node)
+    --            ::= { paxIPentEntry 4 }
+
+
+    paxIPentContextName    OBJECT-TYPE
+        SYNTAX      SnmpAdminString
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "The contextName that can be used to send an SNMPv3 message
+            concerning information held by this logical entity.
+
+            This object defines the context
+            associated with a particular logical entity.
+
+	    The contextName is not configurable; it is ''H for entity
+	    1 and the ascii string 'iprouter-n' for other entities where
+	    n is the value of the index paxIPentInc"
+    ::= { paxIPentEntry 5 }
+
+    paxIPentRowStatus    OBJECT-TYPE
+        SYNTAX      RowStatus
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+            "Tool for creating new/removing current virtual services.
+	     Note that changing the rowstatus away from 'active' will
+	     kill the entire configuration below this IP entity; setting
+	     it back to 'active' will just get you a very empty service"
+    ::= { paxIPentEntry 6 }
+
+-- the paxIPForw entries are located on individual processors of the TBC.
+-- under normal circumstances, forwarder processes are created automatically
+-- as needed, but creation by management is possible.
+
+-- current implementation fixes location as equal to incarnation, and only
+-- one forwarder process per processor.
+
+paxIPForwTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF PaxIPForwEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "The table of IP forwarder processes"
+    ::= { paxIPent 2 }
+
+paxIPForwEntry OBJECT-TYPE
+    SYNTAX PaxIPForwEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+      "A private IP service"
+    INDEX { paxIPForwInc }
+    ::= { paxIPForwTable 1 }
+
+PaxIPForwEntry ::=
+    SEQUENCE {
+	paxIPForwInc INTEGER (1..127),
+	paxIPForwLoc INTEGER (1..127),
+        paxIPForwEnt INTEGER (1..127),
+	paxIPForwStatus	RowStatus
+    }
+
+    paxIPForwInc OBJECT-TYPE
+        SYNTAX          INTEGER (1..127)
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+                 "The incarnation of the IP forwarder service"
+        ::= { paxIPForwEntry 1 }
+
+    paxIPForwLoc OBJECT-TYPE
+        SYNTAX          INTEGER (1..127)
+        MAX-ACCESS      read-only
+        STATUS          current
+        DESCRIPTION
+                 "The location of the IP forwarder service"
+        ::= { paxIPForwEntry 2 }
+
+    paxIPForwEnt OBJECT-TYPE
+        SYNTAX          INTEGER (1..127)
+        MAX-ACCESS      read-create
+        STATUS          current
+        DESCRIPTION
+                 "The entity to which the IP forwarder belongs"
+        ::= { paxIPForwEntry 3 }
+
+    paxIPForwStatus    OBJECT-TYPE
+        SYNTAX      RowStatus
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+            "Tool for removing forwarder services (for now; later may
+	     allow for managed creation with non-standard parameters)"
+    ::= { paxIPForwEntry 4 }
+
+
+--
+-- IP access lists
+--
+
+paxSmplAclTable OBJECT-TYPE
+    SYNTAX	SEQUENCE OF PaxSmplAclEntry
+    MAX-ACCESS not-accessible
+    STATUS	current
+    DESCRIPTION
+	"Table of simple access entries"
+    ::= { paxIPent 10 }
+
+paxSmplAclEntry OBJECT-TYPE
+    SYNTAX	PaxSmplAclEntry
+    MAX-ACCESS not-accessible
+    STATUS	current
+    DESCRIPTION
+	"Table of simple access entries"
+    INDEX { paxSmplAclHdl, paxSmplAclVersion, paxSmplAclAddr, paxSmplAclPref }
+    ::= { paxSmplAclTable 1 }
+
+PaxSmplAclEntry ::=
+    SEQUENCE {
+        paxSmplAclHdl INTEGER,
+	paxSmplAclVersion INTEGER,
+	paxSmplAclAddr Ipv6Address,
+	paxSmplAclPref INTEGER (0..128),
+	paxSmplAclStatus RowStatus,
+	paxSmplAclPolicy AclPolicy,
+	paxSmplAclMetric INTEGER
+    }
+
+paxSmplAclHdl OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"Opaque, manager-selected handle for a specific simple access list.
+	The value 0 should not be used; it is reserved for the semantics:
+	no access list defined."
+    ::= { paxSmplAclEntry 1 }
+
+paxSmplAclVersion OBJECT-TYPE
+    SYNTAX INTEGER  { v4(4), v6(6) }
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"Type of entry in access list - IPv4 or IPv6"
+    ::= { paxSmplAclEntry 2 }
+
+paxSmplAclAddr OBJECT-TYPE
+    SYNTAX Ipv6Address
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+	"The address part of the access list rule; those bits that are beyond
+	the paxSmplAclPref must be zero.  For IPv4 addresses, use the IPv4-
+	mapped format."
+    ::= { paxSmplAclEntry 3 }
+
+paxSmplAclPref OBJECT-TYPE
+    SYNTAX INTEGER (0..128)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+             "The number of significant bits in this access list rule.  For
+	     IPv4 addresses, the values are in the 96-128 range"
+    ::= { paxSmplAclEntry 4 }
+
+paxSmplAclStatus OBJECT-TYPE
+    SYNTAX RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Tool for creating rows in this table"
+    ::= { paxSmplAclEntry 5 }
+
+paxSmplAclPolicy OBJECT-TYPE
+    SYNTAX AclPolicy
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Policy for entries matching this rule"
+    ::= { paxSmplAclEntry 6 }
+
+paxSmplAclMetric OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+             "Metric for this entry; will be un-instantiated if no metric
+	     override is configured, or if policy is deny"
+    ::= { paxSmplAclEntry 7 }
+
+
+
+-- conformance information
+
+paxIPentMIBConformance OBJECT IDENTIFIER ::= { paxIPentMIB 2 }
+paxIPentMIBCompliances OBJECT IDENTIFIER ::= { paxIPentMIBConformance 1 }
+paxIPentMIBGroups      OBJECT IDENTIFIER ::= { paxIPentMIBConformance 2 }
+
+
+-- compliance statements
+
+paxIPentMIBCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for a paxnet router."
+    MODULE  -- this module
+        MANDATORY-GROUPS { paxIPentMIBGroup }
+
+    ::= { paxIPentMIBCompliances 1 }
+
+
+-- units of conformance
+
+paxIPentMIBGroup OBJECT-GROUP
+    OBJECTS { paxIPentLoc, paxIPentDescr,
+	paxIPentContextName, paxIPentRowStatus,
+	paxIPForwLoc, paxIPForwEnt, paxIPForwStatus,
+	paxSmplAclStatus, paxSmplAclPolicy, paxSmplAclMetric
+	}
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     virtual private ip service of a Paxnet router."
+    ::= { paxIPentMIBGroups 2 }
+
+
+
+END
+
+
+

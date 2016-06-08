@@ -1,0 +1,276 @@
+PAXNET-DS-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+	    MODULE-IDENTITY, OBJECT-TYPE, enterprises, Counter32, Integer32
+	    	FROM SNMPv2-SMI
+	    DisplayString, RowStatus, DateAndTime
+	        FROM SNMPv2-TC
+	    InterfaceIndex
+		FROM IF-MIB
+	    paxnet, paxManagement
+		FROM PAXNET-MIB;
+
+    paxDSMIB MODULE-IDENTITY
+              LAST-UPDATED "200002180905Z"
+
+              ORGANIZATION "Ericsson Telebit A/S, Denmark"
+              CONTACT-INFO
+                      "        "
+              DESCRIPTION
+                      ""
+              ::= { paxManagement 10 }
+
+DsChannelName ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION "A printable identifier, unique per DS1 driver,
+                 used to associate a channel group with a user. It is
+		recommended to use only printable characters in the name.
+		Use of embedded spaces is prohibited.  For use in an
+		environment where a SWIPE CLI coexist with the SNMP agent,
+		only small decimal numbers (the channelgroup ids) should
+		be used.  The ifName of the corresponding ifTable object
+		will be Controller<board>/<connector>:<group id>."
+    SYNTAX OCTET STRING (SIZE(16))
+
+
+paxDS OBJECT IDENTIFIER ::= { paxDSMIB 1 }
+paxDSConformance OBJECT IDENTIFIER ::= { paxDSMIB 2 }
+
+paxDS1Table OBJECT-TYPE
+   SYNTAX SEQUENCE OF PaxDS1Entry
+   MAX-ACCESS  not-accessible
+   STATUS current
+   DESCRIPTION
+	"The table of DS1 interfaces"
+   ::= { paxDS 1 }
+
+paxDS1Entry OBJECT-TYPE
+   SYNTAX PaxDS1Entry
+   MAX-ACCESS not-accessible
+   STATUS current
+   DESCRIPTION
+	"The entry for one DS1 interface"
+   INDEX { ds1Inc }
+   ::= { paxDS1Table 1 }
+
+PaxDS1Entry ::= SEQUENCE
+    {
+	ds1Inc INTEGER,
+	ds1IfIndex InterfaceIndex,
+	ds1Alias DisplayString
+    }
+
+ds1Inc OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+       "Incarnation number of DS1 interface"
+    ::=  { paxDS1Entry 1 }
+
+ds1IfIndex OBJECT-TYPE
+    SYNTAX InterfaceIndex
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "The index value of this interface in the IF-MIB"
+    ::=  { paxDS1Entry 2 }
+
+ds1Alias OBJECT-TYPE
+    SYNTAX DisplayString (SIZE(0..64))
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "The same object as IF-MIB:ifAlias"
+    DEFVAL { ''H }
+    ::=  { paxDS1Entry 3 }
+
+
+
+paxDS0Table OBJECT-TYPE
+   SYNTAX SEQUENCE OF PaxDS0Entry
+   MAX-ACCESS  not-accessible
+   STATUS current
+   DESCRIPTION
+	"The table of DS0 interfaces"
+   ::= { paxDS 2 }
+
+paxDS0Entry OBJECT-TYPE
+   SYNTAX PaxDS0Entry
+   MAX-ACCESS not-accessible
+   STATUS current
+   DESCRIPTION
+	"The entry for one DS0 interface"
+   INDEX { ds0Inc, ds0Slot }
+   ::= { paxDS0Table 1 }
+
+PaxDS0Entry ::= SEQUENCE
+    {
+	ds0Inc INTEGER,
+	ds0Slot INTEGER,
+	ds0IfIndex InterfaceIndex,
+	ds0Alias DisplayString
+    }
+
+ds0Inc OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "Incarnation number of DS1 interface"
+    ::=  { paxDS0Entry 1 }
+
+ds0Slot OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+       "Slot number of DS0 entry"
+    ::=  { paxDS0Entry 2 }
+
+ds0IfIndex OBJECT-TYPE
+    SYNTAX InterfaceIndex
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "The index value of this interface in the IF-MIB"
+    ::=  { paxDS0Entry 3 }
+
+ds0Alias OBJECT-TYPE
+    SYNTAX DisplayString (SIZE(0..64))
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "The same object as IF-MIB:ifAlias"
+    DEFVAL { ''H }
+    ::=  { paxDS0Entry 4 }
+
+-- The paxDSchanTable is the recommended medium for creating channel groups
+-- for HDLC framing on an E1/T1 line.  The tables in the standard DS0-MIB
+-- and DS0BUNDLE-MIB are at the same time too complex and too simple for
+-- actual configuration use.
+
+
+paxDSchanTable OBJECT-TYPE
+   SYNTAX SEQUENCE OF PaxDSchanEntry
+   MAX-ACCESS  not-accessible
+   STATUS current
+   DESCRIPTION
+	"The table of DS1 channel groups"
+   ::= { paxDS 3 }
+
+paxDSchanEntry OBJECT-TYPE
+   SYNTAX PaxDSchanEntry
+   MAX-ACCESS not-accessible
+   STATUS current
+   DESCRIPTION
+	"The entry for one DS1 channel group"
+   INDEX { dsChanInc, dsChanName }
+   ::= { paxDSchanTable 1 }
+
+PaxDSchanEntry ::= SEQUENCE
+    {
+	dsChanInc INTEGER,
+	dsChanName DsChannelName,
+	dsChanStatus RowStatus,
+	dsChanSlots OCTET STRING,
+	dsChanBufSize INTEGER,
+	dsChanBufCount INTEGER,
+	dsChanIfIndex InterfaceIndex
+    }
+
+dsChanInc OBJECT-TYPE
+    SYNTAX INTEGER (1..127)    
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "Incarnation number of DS1 interface"
+    ::=  { paxDSchanEntry 1 }
+
+dsChanName OBJECT-TYPE
+    SYNTAX DsChannelName  
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+       "Paxnet management handle to this channel group"
+    ::=  { paxDSchanEntry 2 }
+
+dsChanStatus OBJECT-TYPE
+    SYNTAX RowStatus  
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "tool for creating entries"
+    ::=  { paxDSchanEntry 3 }
+
+dsChanSlots OBJECT-TYPE
+    SYNTAX OCTET STRING (SIZE (4))
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "bit map for the slots constituting this group"
+    ::=  { paxDSchanEntry 4 }
+
+dsChanBufSize OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Size of receive buffers"
+    DEFVAL { 1500 }
+    ::=  { paxDSchanEntry 5 }
+
+dsChanBufCount OBJECT-TYPE
+    SYNTAX INTEGER
+    MAX-ACCESS read-create
+    STATUS current
+    DESCRIPTION
+       "Number of receive buffers"
+    DEFVAL { 20 }
+    ::=  { paxDSchanEntry 6 }
+
+dsChanIfIndex OBJECT-TYPE
+    SYNTAX InterfaceIndex
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+       "The IfIndex of the channel (a ds0 or a ds0bundle)"
+    ::=  { paxDSchanEntry 7 }
+
+
+-- conformance information
+
+paxDSCompliances OBJECT IDENTIFIER ::= { paxDSConformance 1 }
+paxDSGroups      OBJECT IDENTIFIER ::= { paxDSConformance 2 }
+
+
+-- compliance statements
+
+paxDSCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for a paxnet router."
+    MODULE  -- this module
+        MANDATORY-GROUPS { paxDSGroup }
+
+    ::= { paxDSCompliances 1 }
+
+
+-- units of conformance
+
+paxDSGroup OBJECT-GROUP
+    OBJECTS { ds1IfIndex, ds1Alias,
+	      ds0Inc, ds0Slot, ds0IfIndex, ds0Alias,
+              dsChanInc, dsChanStatus, dsChanSlots, dsChanBufSize,
+	      dsChanBufCount, dsChanIfIndex }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     DS1 and DS0 interfaces in a Paxnet router."
+    ::= { paxDSGroups 1 }
+
+
+END
+
+
+

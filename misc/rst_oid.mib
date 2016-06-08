@@ -1,0 +1,132 @@
+
+-- ======================================================================
+-- SSCS Trap MIB
+-- 
+-- The information in this file is subject to change without notice.
+--
+
+
+SSCS DEFINITIONS ::= BEGIN
+
+IMPORTS enterprises, Counter, Gauge, TimeTicks FROM RFC1155-SMI
+	PhysAddress, DisplayString FROM RFC1213-MIB
+	TRAP-TYPE FROM RFC-1215
+	OBJECT-TYPE FROM RFC-1212;
+
+
+dothill                         OBJECT IDENTIFIER       ::= { enterprises 2294 }
+rst-mib                         OBJECT IDENTIFIER       ::= { dothill 3 }
+trap-section                    OBJECT IDENTIFIER       ::= { rst-mib 1 }
+
+
+agentVersion       OBJECT-TYPE
+   SYNTAX          OCTET STRING (SIZE(4))
+   ACCESS          read-only
+   STATUS          mandatory
+   DESCRIPTION     "Agent's version number as an Intel-ordered integer.
+
+		    AgentVersion[0] Debug (interim) Ident Number
+		    AgentVersion[1] Production Revision Number
+		    AgentVersion[2] Production Release Number
+		    AgentVersion[3] Always Zero
+
+		    Example: 3.14g interim version 'g' of 3.14 is expressed
+		    as 0x07 0x0E 0x03 0x00 ('g' is the 7th alphabet letter).
+		   "
+   ::= { rst-mib 2 }
+
+
+messageText        OBJECT-TYPE
+   SYNTAX          DisplayString
+   ACCESS          not-accessible
+   STATUS          mandatory
+   DESCRIPTION     "This is a text string that is declared simply so that 
+		    it can be referenced in the trap-definition below."
+   ::= { trap-section 4 }
+
+rstErrorCode     OBJECT-TYPE
+   SYNTAX       OCTET STRING (SIZE(4))       
+   ACCESS       not-accessible 
+   STATUS       mandatory 
+   DESCRIPTION  "Error code which is arranged as Intel-order unsigned long number
+			e.g. Error Code 128 is respresented as:
+			0x00 0x00 0x00 0x80 
+			rstErrorCode[0] = 0x00
+			rstErrorCode[1] = 0x00
+			rstErrorCode[2] = 0x00
+			rstErrorCode[3] = 0x80
+			"
+
+   ::= {trap-section 5 }
+
+rstExErrorCode     OBJECT-TYPE
+   SYNTAX       OCTET STRING (SIZE(4))       
+   ACCESS       not-accessible 
+   STATUS       mandatory 
+   DESCRIPTION  "Error code which is arranged as Intel-order unsigned long number
+			e.g. Error Code 128 is respresented as:
+			0x00 0x00 0x00 0x80 
+			rstErrorCode[0] = 0x00
+			rstErrorCode[1] = 0x00
+			rstErrorCode[2] = 0x00
+			rstErrorCode[3] = 0x80
+			"
+
+   ::= {trap-section 6 }
+
+-- ======================================================================
+-- trap-section
+--
+-- This section describes the traps that can be received from the RSTRAP agent.
+-- This section will be expanded in the next release.
+-- ======================================================================
+
+criticalTrap       TRAP-TYPE
+   ENTERPRISE      rst-mib
+   VARIABLES       { messageText, rstErrorCode, rstExErrorCode }
+   DESCRIPTION     "This trap includes a message emitted by a storage
+		    system.  The message describes a critical event
+		    that may imply part of the system is not operating.
+		   "
+   --#TYPE         "SSCS Critical"
+   --#SUMMARY      "%s"
+   --#ARGUMENTS    { 0 }
+   --#SEVERITY     CRITICAL 
+   --#TIMEINDEX    0
+   --#STATE        NONOPERATIONAL
+   ::= 100
+
+
+warningTrap        TRAP-TYPE
+   ENTERPRISE      rst-mib
+   VARIABLES       { messageText, rstErrorCode, rstExErrorCode }
+   DESCRIPTION     "This trap includes a message emitted by a storage
+		    system.  The message is a warning.
+		   "
+   --#TYPE         "SSCS Warning"
+   --#SUMMARY      "%s"
+   --#ARGUMENTS    { 0 }
+   --#SEVERITY     MINOR 
+   --#TIMEINDEX    0
+   --#STATE        OPERATIONAL
+   ::= 200
+
+
+
+infoTrap           TRAP-TYPE
+   ENTERPRISE      rst-mib
+   VARIABLES       { messageText, rstErrorCode, rstExErrorCode }
+   DESCRIPTION     "This trap includes a message emitted by a storage
+		    system.  The message is informative in nature.
+		   "
+   --#TYPE         "SSCS Info"
+   --#SUMMARY      "%s"
+   --#ARGUMENTS    { 0 }
+   --#SEVERITY     INFORMATIONAL
+   --#TIMEINDEX    0
+   --#STATE        OPERATIONAL
+   ::= 300
+
+
+
+END

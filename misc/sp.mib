@@ -1,0 +1,3494 @@
+--/***************************************************************************/
+--/**                                                                        */
+--/**               AKCP, Ltd                                                */
+--/**               Proprietary and Confidential Information                 */
+--/**                                                                        */
+--/** This material contains, and is part of a computer software program     */
+--/** which is, proprietary and confidential information owned by AKCP,Ltd   */
+--/** The program, including this material,                                  */
+--/** may not be duplicated, disclosed or reproduced in whole or in part for */
+--/** any purpose without the express written authorization of AKCP, Ltd     */
+--/** All authorized reproductions must be marked with this legend.          */
+--/**                                                                        */
+--/**                                                                        */
+--/**                         Copyright (c) 1994-2005                        */
+--/**                         AKCP, Ltd                                      */
+--/**                         All rights reserved                            */
+--/**                                                                        */
+--/***************************************************************************/
+
+--/***************************************************************************/
+--/**                                                                        */
+--/** This MIB is a superset which includes all of the features in the       */
+--/** sensorProbe family. Some features may not be implemented in certain    */
+--/** models.                                                                */
+--/**                                                                        */
+--/***************************************************************************/
+
+SPAGENT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+        enterprises, IpAddress, Gauge
+                FROM RFC1155-SMI
+        OBJECT-TYPE
+                FROM RFC-1212
+        DisplayString
+                FROM RFC1213-MIB
+        TRAP-TYPE
+                FROM RFC-1215;
+
+
+   akcp  OBJECT IDENTIFIER ::= { enterprises 3854 }
+   sensorProbe OBJECT IDENTIFIER ::= { akcp 1 }
+
+
+      spSummary OBJECT IDENTIFIER  ::=  {  sensorProbe 1   }
+
+         spStatus OBJECT-TYPE
+            SYNTAX  INTEGER {
+               noStatus(1),
+               normal(2),
+               warning(3),
+               critical(4),
+               sensorError(5)
+            }
+            ACCESS  read-only
+            STATUS  mandatory
+            DESCRIPTION
+            "The current status of this sensorProbe. The status of the sensorProbe is the worst status of all the sensors under the control of this sensorProbe."
+            ::=  {  spSummary 2   }
+
+         spNumberBadSensors OBJECT-TYPE
+            SYNTAX  INTEGER
+            ACCESS  read-only
+            STATUS  mandatory
+            DESCRIPTION
+            "How many sensors controlled by this sensorProbe are not functioning properly"
+            ::=  {  spSummary 4   }
+
+         spLocationBadSensor OBJECT-TYPE
+            SYNTAX  DisplayString
+            ACCESS  read-only
+            STATUS  mandatory
+            DESCRIPTION
+            "The Location of the first bad sensor controlled by this sensorProbe."
+            ::=  {  spSummary 5   }
+
+         spManufName OBJECT-TYPE
+            SYNTAX  DisplayString
+            ACCESS  read-only
+            STATUS  mandatory
+            DESCRIPTION
+            "The manufacturers name"
+            ::=  {  spSummary 6   }
+
+         spHelpUrl OBJECT-TYPE
+            SYNTAX  DisplayString
+            ACCESS  read-only
+            STATUS  mandatory
+            DESCRIPTION
+            "The URL of the web based help"
+            ::=  {  spSummary 7   }
+
+         spProductName OBJECT-TYPE
+            SYNTAX  DisplayString
+            ACCESS  read-only
+            STATUS  mandatory
+            DESCRIPTION
+            "The product name"
+            ::=  {  spSummary 8   }
+
+      spSensor OBJECT IDENTIFIER  ::=  {  sensorProbe 2 }
+
+         sensorProbeDetail OBJECT IDENTIFIER ::= { spSensor 2  }
+ 
+            sensorProbeEntry OBJECT IDENTIFIER ::= { sensorProbeDetail 1  }
+
+               sensorProbeHost OBJECT-TYPE
+                  SYNTAX  IpAddress
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The Host of this sensor, this is the IP address"
+                  ::=  {  sensorProbeEntry 1   }
+
+               sensorProbeUseDHCP OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     yes(1),
+                     no(2)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "To use DHCP enter a 1, to use a static IP address enter a 2"
+                  ::=  {  sensorProbeEntry 2   }
+
+
+               sensorProbeMAC OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The MAC address of this system"
+                  ::=  {  sensorProbeEntry 3   }
+
+               sensorProbeSetCommunity OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The sensorProbe community string used for snmp Sets"
+                  ::=  {  sensorProbeEntry 4   }
+
+               sensorProbeGetCommunity OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The sensorProbe community string used for snmp Gets"
+                  ::=  {  sensorProbeEntry 5   }
+
+               sensorProbeTempTable OBJECT-TYPE
+                  SYNTAX  SEQUENCE OF SensorProbeTempEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This table contains the data for every Temperature Sensor in the SensorArray. Each row in the table contains data for a different Temperature Sensor."
+                  ::=  {  sensorProbeEntry 16   }
+
+               sensorProbeTempEntry OBJECT-TYPE
+                  SYNTAX  SensorProbeTempEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This is an entry in the sensorProbeTempEntry Table"
+                  INDEX         { sensorProbeTempIndex }
+                  ::=  {  sensorProbeTempTable 1 }
+
+                  SensorProbeTempEntry ::= SEQUENCE {
+                     sensorProbeTempDescription
+                        DisplayString,
+                     sensorProbeTempLocation
+                        DisplayString,
+                     sensorProbeTempDegree
+                        INTEGER,
+                     sensorProbeTempStatus
+                        INTEGER,
+                     sensorProbeTempOnline
+                        INTEGER,
+                     sensorProbeTempGoOnline
+                        INTEGER,
+                     sensorProbeTempHighWarning
+                        INTEGER,
+                     sensorProbeTempHighCritical
+                        INTEGER,
+                     sensorProbeTempLowWarning
+                        INTEGER,
+                     sensorProbeTempLowCritical
+                        INTEGER,
+                     sensorProbeTempRearm
+                        INTEGER,
+                     sensorProbeTempDegreeType
+                        INTEGER,
+                     sensorProbeTempSensorType
+                        INTEGER,
+                     sensorProbeTempDegreeRaw
+                        INTEGER,
+                     sensorProbeTempEmailTrapLimit
+                        INTEGER,
+                     sensorProbeTempEmailTrapSchedule
+                        DisplayString,
+                     sensorProbeTempEmailTrapInterval
+                        INTEGER,
+                     sensorProbeTempSendNormalTrap
+                        INTEGER,
+                     sensorProbeTempDelayError
+                        INTEGER,
+                     sensorProbeTempDelayNormal
+                        INTEGER,
+                     sensorProbeTempIndex
+                        INTEGER,
+                     sensorProbeTempRelayCycleTime
+                        INTEGER,
+                     sensorProbeTempRelayOnPort
+                        INTEGER,
+                     sensorProbeTempRelayActiveStatus
+                        INTEGER,
+                     sensorProbeTempRelayAction
+                        INTEGER,
+                     sensorProbeTempEmailInterval
+                        INTEGER,
+                     sensorProbeTempIndexCount
+                        INTEGER,
+                     sensorProbeTempOffset
+                        INTEGER,
+                     sensorProbeTempSirenCycleTime
+                        INTEGER,
+                     sensorProbeTempSirenOnPort
+                        INTEGER,
+                     sensorProbeTempSirenActiveStatus
+                        INTEGER,
+                     sensorProbeTempSirenAction
+                        INTEGER
+                     sensorProbeTempAcknowledgement
+                        INTEGER			
+                     sensorProbeTempSirenDelayAlarm
+                        INTEGER
+                  }
+                  sensorProbeTempDescription OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "A Description of this sensor"
+                     ::=  {  sensorProbeTempEntry 1   }
+
+                  sensorProbeTempLocation OBJECT-TYPE
+                       SYNTAX  DisplayString
+                       ACCESS  read-write
+                       STATUS  mandatory
+                       DESCRIPTION
+                       "The physical location of this sensor"
+                       ::=  {  sensorProbeTempEntry 2   }
+
+                  sensorProbeTempDegree OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The degrees in this sensor"
+                     ::=  {  sensorProbeTempEntry 3   }
+
+                  sensorProbeTempStatus OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        noStatus(1),
+                        normal(2),
+                        highWarning(3),
+                        highCritical(4),
+                        lowWarning(5),
+                        lowCritical(6),
+                        sensorError(7)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The current status of this Sensor"
+                     ::=  {  sensorProbeTempEntry 4   }
+      
+                  sensorProbeTempOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        online(1),
+                        offline(2)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "If this Sensor is currently online"
+                     ::=  {  sensorProbeTempEntry 5   }
+   
+                  sensorProbeTempGoOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        goOnline(1),
+                        goOffline(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To put online enter a 1, to take offline enter a 2"
+                     ::=  {  sensorProbeTempEntry 6   }
+         
+                  sensorProbeTempHighWarning OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How hot this sensor gets before it sends a warning"
+                     ::=  {  sensorProbeTempEntry 7   }
+      
+                  sensorProbeTempHighCritical OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How hot this sensor gets before it sends a critical event"
+                     ::=  {  sensorProbeTempEntry 8   }
+   
+                  sensorProbeTempLowWarning OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How cold this sensor gets before it sends a warning"
+                     ::=  {  sensorProbeTempEntry 9   }
+   
+                  sensorProbeTempLowCritical OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How cold this sensor gets before it sends a critical event"
+                     ::=  {  sensorProbeTempEntry 10   }
+      
+                  sensorProbeTempRearm OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The number of degrees to rearm the status. For example if status goes from normal to warning, the temp must go down spTempRearm degrees below warning before the status goes to normal"
+                     ::=  {  sensorProbeTempEntry 11   }
+   
+                  sensorProbeTempDegreeType OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        fahr(0),
+                        celsius(1)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The degrees are in fahrenheit(0) or in celsius(1)"
+                     ::=  {  sensorProbeTempEntry 12   }
+      
+                  sensorProbeTempSensorType OBJECT-TYPE
+                       SYNTAX  INTEGER {
+                          type1(0),
+                          type2(1)
+                       }
+                       ACCESS  read-write
+                       STATUS  mandatory
+                       DESCRIPTION
+                       "The type of temperture sensor"
+                       ::=  {  sensorProbeTempEntry 13   }
+         
+                  sensorProbeTempDegreeRaw OBJECT-TYPE
+                     SYNTAX  INTEGER 
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: The raw degree data from the temperature sensor, slightly higher resolution"
+                     ::=  {  sensorProbeTempEntry 14   }
+
+                  sensorProbeTempEmailTrapLimit OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        enable(1),
+                        disable(0)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enable email/trap limit feature"
+                     ::=  {  sensorProbeTempEntry 16   }
+
+                  sensorProbeTempEmailTrapSchedule OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: Email/trap limit schedule for this sensor"
+                     ::=  {  sensorProbeTempEntry 17   }
+
+                  sensorProbeTempEmailTrapInterval OBJECT-TYPE
+                     SYNTAX  INTEGER (0..60)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Minimum time between each [email/trap:SP, only trap:CP8] (can be from 0 to 60 minutes)."
+                     ::=  {  sensorProbeTempEntry 18   }
+
+                  sensorProbeTempSendNormalTrap OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        enable(1),
+                        disable(0)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enable sending email/trap when sensor goes to normal"
+                     ::=  {  sensorProbeTempEntry 19   }
+
+                  sensorProbeTempDelayError OBJECT-TYPE
+                     SYNTAX  INTEGER (0..65534)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Time in seconds after the sensor has been in error status before report as an error"
+                     ::=  {  sensorProbeTempEntry 20   }
+
+                  sensorProbeTempDelayNormal OBJECT-TYPE
+                     SYNTAX  INTEGER (0..65534)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Time in seconds after the sensor change from error to normal before report as normal"
+                     ::=  {  sensorProbeTempEntry 21   }
+
+                  sensorProbeTempIndex OBJECT-TYPE
+                     SYNTAX  INTEGER (0..7)
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The index into the temperature sensor table"
+                     ::=  {  sensorProbeTempEntry 22   }
+                     
+                  sensorProbeTempRelayCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Relay toggle period in seconds for Cycle action."
+                     ::= {  sensorProbeTempEntry 23 }
+
+                  sensorProbeTempRelayOnPort OBJECT-TYPE
+                     SYNTAX INTEGER (0..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "The sensor port that the relay will listen to. If this is set to 255, then the relay will not listen to any sensor ports"
+                     ::= {  sensorProbeTempEntry 24 }
+
+                  sensorProbeTempRelayActiveStatus OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        highCritical(4),
+                        highWarning(3),
+                        lowCritical(6),
+                        lowWarning(5),
+                        anyError(7)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Sensor status that will activate the relay"
+                     ::= {  sensorProbeTempEntry 25 }
+
+                  sensorProbeTempRelayAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        cycle(2),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "What the relay will do when the listened to port status turns to the specified active status."
+                     ::= {  sensorProbeTempEntry 26 }
+
+                  sensorProbeTempEmailInterval OBJECT-TYPE
+                     SYNTAX  INTEGER (0..60)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "CP8 Only: Minimum time between each email (can be from 0 to 60 minutes)"
+                     ::=  {  sensorProbeTempEntry 27   }
+
+                  sensorProbeTempIndexCount OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Number of Temperature sensor online"
+                     ::=  {  sensorProbeTempEntry 28   }
+
+                  sensorProbeTempOffset OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Temperature Offset reading"
+                     ::=  {  sensorProbeTempEntry 29   }
+
+                  sensorProbeTempSirenCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Siren toggle period in seconds for Cycle action."
+                     ::= {  sensorProbeTempEntry 30 }
+
+                  sensorProbeTempSirenOnPort OBJECT-TYPE
+                     SYNTAX INTEGER (0..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "The sensor port that the siren will listen to. If this is set to 255, then the siren will not listen to any sensor ports"
+                     ::= {  sensorProbeTempEntry 31 }
+
+                  sensorProbeTempSirenActiveStatus OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        highCritical(4),
+                        highWarning(3),
+                        lowCritical(6),
+                        lowWarning(5),
+                        anyError(7)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Sensor status that will activate the siren"
+                     ::= {  sensorProbeTempEntry 32 }
+
+                  sensorProbeTempSirenAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        cycle(2),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "What the siren will do when the listened to port status turns to the specified active status."
+                     ::= {  sensorProbeTempEntry 33 }
+		     
+                  sensorProbeTempAcknowledgement OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        ack(1),
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Linux Version Only: Acknowledged sensor error and stop notification"
+                     ::= {  sensorProbeTempEntry 34 }
+
+                  sensorProbeTempSirenDelayAlarm OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Linux Version Only: Siren delay in seconds before start Alarm."
+                     ::= {  sensorProbeTempEntry 35 }
+                     
+               sensorProbeHumidityTable OBJECT-TYPE
+                  SYNTAX  SEQUENCE OF SensorProbeHumidityEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This table contains the data for every Humidity Sensor in the SensorArray. Each row in the table contains data for a different Humidity Sensor."
+                  ::=  {  sensorProbeEntry 17   }
+
+               sensorProbeHumidityEntry OBJECT-TYPE
+                  SYNTAX  SensorProbeHumidityEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This is an entry in the sensorProbeHumidityEntry Table"
+                  INDEX         { sensorProbeHumidityIndex }
+                  ::=  { sensorProbeHumidityTable 1 }
+
+                  SensorProbeHumidityEntry ::= SEQUENCE {
+                     sensorProbeHumidityDescription
+                        DisplayString,
+                       sensorProbeHumidityLocation
+                          DisplayString,
+                     sensorProbeHumidityPercent
+                        INTEGER,
+                     sensorProbeHumidityStatus
+                        INTEGER,
+                     sensorProbeHumidityOnline
+                        INTEGER,
+                     sensorProbeHumidityGoOnline
+                        INTEGER,
+                     sensorProbeHumidityHighWarning
+                        INTEGER,
+                     sensorProbeHumidityHighCritical
+                        INTEGER,
+                     sensorProbeHumidityLowWarning
+                        INTEGER,
+                     sensorProbeHumidityLowCritical
+                        INTEGER,
+                     sensorProbeHumidityRearm
+                        INTEGER,
+                     sensorProbeHumidityRaw
+                        INTEGER,
+                     sensorProbeHumidityLowVoltage
+                        INTEGER,
+                     sensorProbeHumidityHighVoltage
+                        INTEGER,
+                     sensorProbeHumidityEmailTrapLimit
+                        INTEGER,
+                     sensorProbeHumidityEmailTrapSchedule
+                        DisplayString,
+                     sensorProbeHumidityEmailTrapInterval
+                        INTEGER,
+                     sensorProbeHumiditySendNormalTrap
+                        INTEGER,
+                     sensorProbeHumidityDelayError
+                        INTEGER,
+                     sensorProbeHumidityDelayNormal
+                        INTEGER,
+                     sensorProbeHumidityIndex
+                        INTEGER,
+                     sensorProbeHumidityAtoDAmountMaxVoltage
+                        INTEGER,
+                     sensorProbeHumidityAtoDAmountBaseVoltage
+                        INTEGER,
+                     sensorProbeHumidityAtoDTypeUnit
+                        INTEGER,
+                     sensorProbeHumidityDcUnit
+                        DisplayString,
+                     sensorProbeHumidityAtoDJumper
+                        INTEGER,
+                     sensorProbeHumidityRelayCycleTime
+                        INTEGER,
+                     sensorProbeHumidityRelayOnPort
+                        INTEGER,
+                     sensorProbeHumidityRelayActiveStatus
+                        INTEGER,
+                     sensorProbeHumidityRelayAction
+                        INTEGER,
+                     sensorProbeHumidityEmailInterval
+                        INTEGER,
+                     sensorProbeHumidity4to20mAUnit
+                        DisplayString,
+                     sensorProbeHumidityIndexCount
+                        INTEGER,
+                     sensorProbeHumidityOffset
+                        INTEGER,
+                     sensorProbeHumiditySirenCycleTime
+                        INTEGER,
+                     sensorProbeHumiditySirenOnPort
+                        INTEGER,
+                     sensorProbeHumiditySirenActiveStatus
+                        INTEGER,
+                     sensorProbeHumiditySirenAction
+                        INTEGER
+                     sensorProbeHumidityAcknowledgement
+                        INTEGER
+                     sensorProbeHumiditySirenDelayAlarm
+                        INTEGER,
+                  }
+                  sensorProbeHumidityDescription OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "A Description of this sensor"
+                     ::=  {  sensorProbeHumidityEntry 1   }
+
+                    sensorProbeHumidityLocation OBJECT-TYPE
+                       SYNTAX  DisplayString
+                       ACCESS  read-write
+                       STATUS  mandatory
+                       DESCRIPTION
+                       "The physical location of this sensor"
+                       ::=  {  sensorProbeHumidityEntry 2   }
+
+                  sensorProbeHumidityPercent OBJECT-TYPE
+                     SYNTAX  INTEGER (-32768..32767)
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The relative humidity percentage measured by this sensor"
+                     ::=  {  sensorProbeHumidityEntry 3   }
+
+                  sensorProbeHumidityStatus OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        noStatus(1),
+                        normal(2),
+                        highWarning(3),
+                        highCritical(4),
+                        lowWarning(5),
+                        lowCritical(6),
+                        sensorError(7)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The current status of this Sensor"
+                     ::=  {  sensorProbeHumidityEntry 4   }
+
+                  sensorProbeHumidityOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        online(1),
+                        offline(2)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "If this Sensor is currently online"
+                        ::=  {  sensorProbeHumidityEntry 5   }
+
+                  sensorProbeHumidityGoOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        goOnline(1),
+                        goOffline(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To put online enter a 1, to take offline enter a 2"
+                     ::=  {  sensorProbeHumidityEntry 6   }
+
+                  sensorProbeHumidityHighWarning OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How high the relative humidity this sensor measures before it sends a warning"
+                     ::=  {  sensorProbeHumidityEntry 7   }
+
+                  sensorProbeHumidityHighCritical OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How high the relative humidity this sensor measures before it becomes critical"
+                     ::=  {  sensorProbeHumidityEntry 8   }
+
+                  sensorProbeHumidityLowWarning OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How low the relative humidity this sensor measures before it sends a warning"
+                     ::=  {  sensorProbeHumidityEntry 9   }
+
+                  sensorProbeHumidityLowCritical OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How low the relative humidity this sensor measures before it becomes critical"
+                     ::=  {  sensorProbeHumidityEntry 10   }
+
+                  sensorProbeHumidityRearm OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The percent relative humidity to rearm the status. For example if status goes from normal to warning, the humidity must go down spHumidityRearm below warning before the status goes to normal"
+                     ::=  {  sensorProbeHumidityEntry 11   }
+
+                  sensorProbeHumidityRaw OBJECT-TYPE
+                     SYNTAX  INTEGER 
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The unformatted, raw, A/D value in this sensor. Contains more resolution than the formated percentage. This number can go from 0 to 1023 depending on the input voltage"
+                     ::=  {  sensorProbeHumidityEntry 13   }
+
+                  sensorProbeHumidityLowVoltage OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: The low voltage range for use in AtoD conversion."
+                     ::=  {  sensorProbeHumidityEntry 14   }
+
+                  sensorProbeHumidityHighVoltage OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: The high voltage range for use in AtoD conversion."
+                     ::=  {  sensorProbeHumidityEntry 15   }
+
+                  sensorProbeHumidityEmailTrapLimit OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        enable(1),
+                        disable(0)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enable email/trap limit feature"
+                     ::=  {  sensorProbeHumidityEntry 17   }
+
+                  sensorProbeHumidityEmailTrapSchedule OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: Email/trap limit schedule for this sensor"
+                     ::=  {  sensorProbeHumidityEntry 18   }
+
+                  sensorProbeHumidityEmailTrapInterval OBJECT-TYPE
+                     SYNTAX  INTEGER (0..60)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Minimum time between each [email/trap:SP, only trap:CP8] (can be from 0 to 60 minutes)"
+                     ::=  {  sensorProbeHumidityEntry 19   }
+
+                  sensorProbeHumiditySendNormalTrap OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        enable(1),
+                        disable(0)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enable sending email/trap when sensor goes to normal"
+                     ::=  {  sensorProbeHumidityEntry 20   }
+
+                  sensorProbeHumidityDelayError OBJECT-TYPE
+                     SYNTAX  INTEGER (0..65534)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Time in seconds after the sensor has been in error status before report as an error"
+                     ::=  {  sensorProbeHumidityEntry 21   }
+
+                  sensorProbeHumidityDelayNormal OBJECT-TYPE
+                     SYNTAX  INTEGER (0..65534)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Time in seconds after the sensor change from error to normal before report as normal"
+                     ::=  {  sensorProbeHumidityEntry 22   }
+
+                  sensorProbeHumidityIndex OBJECT-TYPE
+                     SYNTAX  INTEGER (0..7)
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The index into the Humidity sensor table"
+                     ::=  {  sensorProbeHumidityEntry 23   }
+
+                  sensorProbeHumidityAtoDAmountMaxVoltage OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The maximum scale of DC voltage conversion."
+                     ::=  {  sensorProbeHumidityEntry 24   }
+
+                  sensorProbeHumidityAtoDAmountBaseVoltage OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The base scale of DC voltage conversion."
+                     ::=  {  sensorProbeHumidityEntry 25   }
+
+                  sensorProbeHumidityAtoDTypeUnit OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        absolute(1),
+                        percent(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Type of scale for use in DC voltage conversion."
+                     ::=  {  sensorProbeHumidityEntry 26   }
+                
+                  sensorProbeHumidityDcUnit OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Display unit in DC voltage conversion."
+                     ::=  {  sensorProbeHumidityEntry 27   }
+
+                  sensorProbeHumidityAtoDJumper OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        jumperAt60(600),
+                        jumperAt40(400),
+                        jumperAt30(300),
+                        jumperAtAt20(200),
+                        jumperAt10(100),
+                        jumperAt-10(-100),
+                        jumperAt-20(-200),
+                        jumperAt-30(-300),
+                        jumperAt-40(-400),
+                        jumperAt-60(-600)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Selected voltage scale (jumper 0) in DC voltage conversion."
+                     ::=  {  sensorProbeHumidityEntry 28   }
+
+                  sensorProbeHumidityRelayCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Relay toggle period in seconds for Cycle action."
+                     ::=  {  sensorProbeHumidityEntry 29   }
+
+                  sensorProbeHumidityRelayOnPort OBJECT-TYPE
+                     SYNTAX INTEGER (0..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "The sensor port that the relay will listen to. If this is set to 255, then the relay will not listen to any sensor ports"
+                     ::=  {  sensorProbeHumidityEntry 30   }
+
+                  sensorProbeHumidityRelayActiveStatus OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        highCritical(4),
+                        highWarning(3),
+                        lowCritical(6),
+                        lowWarning(5),
+                        anyError(7)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Sensor status that will activate the relay"
+                     ::=  {  sensorProbeHumidityEntry 31   }
+
+                  sensorProbeHumidityRelayAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        cycle(2),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "What the relay will do when the listened to port status turns to the specified active status."
+                     ::=  {  sensorProbeHumidityEntry 32   }
+
+                  sensorProbeHumidityEmailInterval OBJECT-TYPE
+                     SYNTAX  INTEGER (0..60)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "CP8 Only: Minimum time between each emial (can be from 0 to 60 minutes)"
+                     ::=  {  sensorProbeHumidityEntry 33   }
+
+                  sensorProbeHumidity4to20mAUnit OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Display unit in DC voltage conversion."
+                     ::=  {  sensorProbeHumidityEntry 34   }
+
+                  sensorProbeHumidityIndexCount OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS   read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Number of Humidity sensor online"
+                     ::=  {  sensorProbeHumidityEntry 35   }
+
+                  sensorProbeHumidityOffset OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Humidity Offset reading"
+                     ::=  {  sensorProbeHumidityEntry 36   }
+
+                  sensorProbeHumiditySirenCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Siren toggle period in seconds for Cycle action."
+                     ::=  {  sensorProbeHumidityEntry 37   }
+
+                  sensorProbeHumiditySirenOnPort OBJECT-TYPE
+                     SYNTAX INTEGER (0..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "The sensor port that the siren will listen to. If this is set to 255, then the siren will not listen to any sensor ports"
+                     ::=  {  sensorProbeHumidityEntry 38   }
+
+                  sensorProbeHumiditySirenActiveStatus OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        highCritical(4),
+                        highWarning(3),
+                        lowCritical(6),
+                        lowWarning(5),
+                        anyError(7)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Sensor status that will activate the siren"
+                     ::=  {  sensorProbeHumidityEntry 39   }
+
+                  sensorProbeHumiditySirenAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        cycle(2),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "What the siren will do when the listened to port status turns to the specified active status."
+                     ::=  {  sensorProbeHumidityEntry 40   }
+		     
+                  sensorProbeHumidityAcknowledgement OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        ack(1),
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Linux Version Only: Acknowledged sensor error and stop notification"
+                     ::= {  sensorProbeHumidityEntry 41 }
+
+                  sensorProbeHumiditySirenDelayAlarm OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Linux Version Only: Siren delay in seconds before start Alarm."
+                     ::=  {  sensorProbeHumidityEntry 42   }
+
+               sensorProbeSwitchTable OBJECT-TYPE
+                  SYNTAX  SEQUENCE OF SensorProbeSwitchEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This table contains the data for every Switch Sensor in the SensorArray. Each row in the table contains data for a different Switch Sensor."
+                  ::=  {  sensorProbeEntry 18   }
+
+               sensorProbeSwitchEntry OBJECT-TYPE
+                  SYNTAX  SensorProbeSwitchEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This is an entry in the sensorProbeSwitchEntry Table"
+                  INDEX         { sensorProbeSwitchIndex }
+                  ::=  { sensorProbeSwitchTable 1 }
+
+                  SensorProbeSwitchEntry ::= SEQUENCE {
+                     sensorProbeSwitchDescription
+                        DisplayString,
+                     sensorProbeSwitchLocation
+                        DisplayString,
+                     sensorProbeSwitchStatus
+                        INTEGER,
+                     sensorProbeSwitchOnline
+                        INTEGER,
+                     sensorProbeSwitchGoOnline
+                        INTEGER,
+                     sensorProbeSwitchDirection
+                        INTEGER,
+                     sensorProbeSwitchNormalState
+                        INTEGER,
+                     sensorProbeSwitchOutputLevel
+                        INTEGER,
+                     sensorProbeSensorType
+                        INTEGER,
+                     sensorProbeSwitchEmailTrapLimit
+                        INTEGER,
+                     sensorProbeSwitchEmailTrapSchedule
+                        DisplayString,
+                     sensorProbeSwitchEmailTrapInterval
+                        INTEGER,
+                     sensorProbeSwitchSendNormalTrap
+                        INTEGER,
+                     sensorProbeSwitchDelayError
+                        INTEGER,
+                     sensorProbeSwitchDelayNormal
+                        INTEGER,
+                     sensorProbeSwitchIndex
+                        INTEGER,
+                     sensorProbeSwitchRelayCycleTime
+                        INTEGER,
+                     sensorProbeSwitchRelayOnPort
+                        INTEGER,
+                     sensorProbeSwitchRelayActiveStatus
+                        INTEGER,
+                     sensorProbeSwitchRelayAction
+                        INTEGER,
+                     sensorProbeSwitchEmailInterval
+                        INTEGER,
+                     sensorProbeSwitchRelayOutputVoltStatus
+                        INTEGER,
+                     sensorProbeSwitchManualRelayCycleTime
+                        INTEGER,
+                     sensorProbeSwitchManualRelayAction
+                        INTEGER,
+                     sensorProbeSwitchRelayDescOn
+                        DisplayString,
+                     sensorProbeSwitchRelayDescOff
+                        DisplayString,
+                     sensorProbeSwitchIndexCount
+                        INTEGER,
+                     sensorProbeSwitchSirenCycleTime
+                        INTEGER,
+                     sensorProbeSwitchSirenOnPort
+                        INTEGER,
+                     sensorProbeSwitchSirenActiveStatus
+                        INTEGER,
+                     sensorProbeSwitchSirenAction
+                        INTEGER
+                     sensorProbeSwitchAcknowledgement
+                        INTEGER				
+                     sensorProbeSwitchSirenDelayAlarm
+                        INTEGER
+                  }
+                  sensorProbeSwitchDescription OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "A Description of this sensor Switch"
+                     ::=  {  sensorProbeSwitchEntry 1   }
+
+                    sensorProbeSwitchLocation OBJECT-TYPE
+                       SYNTAX  DisplayString
+                       ACCESS  read-write
+                       STATUS  mandatory
+                       DESCRIPTION
+                       "The physical location of this sensor Switch"
+                       ::=  {  sensorProbeSwitchEntry 2   }
+
+                  sensorProbeSwitchStatus OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        noStatus(1),
+                        normal(2),
+                        highCritical(4),
+                        lowCritical(6),
+                        sensorError(7),
+                        relayOn(8),
+                        relayOff(9)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The current status of this Sensor, only input switches have a status"
+                     ::=  {  sensorProbeSwitchEntry 3  }
+
+                  sensorProbeSwitchOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        online(1),
+                        offline(2)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "If this Sensor is currently online"
+                        ::=  {  sensorProbeSwitchEntry 4  }
+
+                  sensorProbeSwitchGoOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        goOnline(1),
+                        goOffline(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To put online enter a 1, to take offline enter a 2"
+                     ::=  {  sensorProbeSwitchEntry 5  }
+
+                  sensorProbeSwitchDirection OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        input(0),
+                        output(1)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To set a switch to input enter 0. To set a switch to output enter 1"
+                     ::=  {  sensorProbeSwitchEntry 6  }
+
+                  sensorProbeSwitchNormalState OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        closed(0),
+                        open(1)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The normal state of an input switch. If an input switch is in this state it is normal, else it is critical. An open switch senses +5 volts. A closed switch senses 0 volts."
+                     ::=  {  sensorProbeSwitchEntry 7  }
+                     
+                  sensorProbeSwitchOutputLevel OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        low(0),
+                        high(1)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "An output swith can be set to this level"
+                     ::=  {  sensorProbeSwitchEntry 8  }
+                     
+                  sensorProbeSensorType OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        temperature(1),
+                        fourTo20mA(2),
+                        humidity(3),
+                        water(4),
+                        atod(5),
+                        security(6),
+                        airflow(8),
+								siren(9),
+                        dryContact(10),
+                        voltage(12),
+                        relay(13),
+                        motion(14)
+                     }
+
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enter the type of this Sensor"
+                     ::=  {  sensorProbeSwitchEntry 9  }
+
+                  sensorProbeSwitchEmailTrapLimit OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        enable(1),
+                        disable(0)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enable email/trap limit feature"
+                     ::=  {  sensorProbeSwitchEntry 11   }
+
+                  sensorProbeSwitchEmailTrapSchedule OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: Email/trap limit schedule for this sensor"
+                     ::=  {  sensorProbeSwitchEntry 12   }
+
+                  sensorProbeSwitchEmailTrapInterval OBJECT-TYPE
+                     SYNTAX  INTEGER (0..60)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Minimum time between each [email/trap:SP, only trap:CP8] (can be from 0 to 60 minutes)"
+                     ::=  {  sensorProbeSwitchEntry 13   }
+
+                  sensorProbeSwitchSendNormalTrap OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        enable(1),
+                        disable(0)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Enable sending email/trap when sensor goes to normal"
+                     ::=  {  sensorProbeSwitchEntry 14   }
+
+                  sensorProbeSwitchDelayError OBJECT-TYPE
+                     SYNTAX  INTEGER (0..65534)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Time in seconds after the sensor has been in error status before report as an error"
+                     ::=  {  sensorProbeSwitchEntry 15   }
+
+                  sensorProbeSwitchDelayNormal OBJECT-TYPE
+                     SYNTAX  INTEGER (0..65534)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Time in seconds after the sensor change from error to normal before report as normal"
+                     ::=  {  sensorProbeSwitchEntry 16   }
+
+                  sensorProbeSwitchIndex OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The index into the Switch sensor table"
+                     ::=  {  sensorProbeSwitchEntry 17   }
+
+                  sensorProbeSwitchRelayCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Relay toggle period in seconds for Cycle action."
+                     ::=  {  sensorProbeSwitchEntry 18   }
+
+                  sensorProbeSwitchRelayOnPort OBJECT-TYPE
+                     SYNTAX INTEGER (0..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "The sensor port that the relay will listen to. If this is set to 255, then the relay will not listen to any sensor ports"
+                     ::=  {  sensorProbeSwitchEntry 19   }
+
+                  sensorProbeSwitchRelayActiveStatus OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        highCritical(4),
+                        highWarning(3),
+                        lowCritical(6),
+                        lowWarning(5),
+                        anyError(7)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Sensor status that will activate the relay"
+                     ::=  {  sensorProbeSwitchEntry 20   }
+
+                  sensorProbeSwitchRelayAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        cycle(2),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "What the relay will do when the listened to port status turns to the specified active status."
+                     ::=  {  sensorProbeSwitchEntry 21   }
+
+                  sensorProbeSwitchEmailInterval OBJECT-TYPE
+                     SYNTAX  INTEGER (0..60)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "CP8 Only: Minimum time between each email (can be from 0 to 60 minutes)"
+                     ::=  {  sensorProbeSwitchEntry 22   }
+
+                  sensorProbeSwitchRelayOutputVoltStatus OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        sensorError(7),
+                        noVoltagePresent(10),
+                        voltagePresent(11)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: The current voltage status of the relay"
+                        ::=  {  sensorProbeSwitchEntry 23  }
+
+                  sensorProbeSwitchManualRelayCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Relay toggle period in seconds for Manual Cycle action."
+                     ::= { sensorProbeSwitchEntry 24 }
+
+                  sensorProbeSwitchManualRelayAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        allow-sensor-control(1),
+                        cycle-On-Off-On(8),
+                        cycle-Off-On-Off(7),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Control the relay manualy"
+                     ::= { sensorProbeSwitchEntry 25 }
+
+                  sensorProbeSwitchRelayDescOn OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Description of relay On"
+                     ::=  {  sensorProbeSwitchEntry 26   }
+
+                  sensorProbeSwitchRelayDescOff OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Description of relay Off"
+                     ::=  {  sensorProbeSwitchEntry 27   }
+
+                  sensorProbeSwitchIndexCount OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Number of Switch sensor online"
+                     ::=  {  sensorProbeSwitchEntry 28   }
+
+                  sensorProbeSwitchSirenCycleTime OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Siren toggle period in seconds for Cycle action."
+                     ::=  {  sensorProbeSwitchEntry 29   }
+
+                  sensorProbeSwitchSirenOnPort OBJECT-TYPE
+                     SYNTAX INTEGER (0..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "The sensor port that the siren will listen to. If this is set to 255, then the siren will not listen to any sensor ports"
+                     ::=  {  sensorProbeSwitchEntry 30   }
+
+                  sensorProbeSwitchSirenActiveStatus OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        highCritical(4),
+                        highWarning(3),
+                        lowCritical(6),
+                        lowWarning(5),
+                        anyError(7)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Sensor status that will activate the siren"
+                     ::=  {  sensorProbeSwitchEntry 31   }
+
+                  sensorProbeSwitchSirenAction OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        cycle(2),
+                        turn-on(3),
+                        turn-off(4)
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "What the siren will do when the listened to port status turns to the specified active status."
+                     ::=  {  sensorProbeSwitchEntry 32   }
+		     
+                  sensorProbeSwitchAcknowledgement OBJECT-TYPE
+                     SYNTAX INTEGER {
+                        ack(1),
+                     }
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Linux Version Only: Acknowledged sensor error and stop notification"
+                     ::= {  sensorProbeSwitchEntry 33 }
+
+                  sensorProbeSwitchSirenDelayAlarm OBJECT-TYPE
+                     SYNTAX INTEGER (1..255)
+                     ACCESS read-write
+                     STATUS mandatory
+                     DESCRIPTION
+                     "Linux Version Only: Siren delay in seconds before start Alarm."
+                     ::=  {  sensorProbeSwitchEntry 34   }
+
+               sensorProbeSerialTable OBJECT-TYPE
+                  SYNTAX  SEQUENCE OF SensorProbeSerialEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This table contains the data for every Serial Port in the SensorArray. Each row in the table contains data for a different Serial Port."
+                  ::=  {  sensorProbeEntry 19   }
+
+               sensorProbeSerialEntry OBJECT-TYPE
+                  SYNTAX  SensorProbeSerialEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This is an entry in the sensorProbeSerialEntry Table"
+                  INDEX         { sensorProbeSerialIndex }
+                  ::=  { sensorProbeSerialTable 1 }
+
+                  SensorProbeSerialEntry ::= SEQUENCE {
+                     sensorProbeSerialDescription
+                        DisplayString,
+                     sensorProbeSerialLocation
+                        DisplayString,
+                     sensorProbeSerialStatus
+                        INTEGER,
+                     sensorProbeSerialOnline
+                        INTEGER,
+                     sensorProbeSerialGoOnline
+                        INTEGER,
+                     sensorProbeSerialData
+                        DisplayString,
+                     sensorProbeSerialBaud
+                        INTEGER,
+                     sensorProbeSerialDataBits
+                        INTEGER,
+                     sensorProbeSerialParity
+                        INTEGER,
+                     sensorProbeSerialStop
+                        INTEGER,
+                     sensorProbeSerialCTS
+                        INTEGER,
+                     sensorProbeSerialRTS
+                        INTEGER,
+                     sensorProbeSerialConfig
+                        DisplayString,
+                     sensorProbeSerialIndex
+                        INTEGER
+                  }
+                  sensorProbeSerialDescription OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "A Description of this Serial Port"
+                     ::=  {  sensorProbeSerialEntry 1   }
+
+                  sensorProbeSerialLocation OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The physical location of this Serial Port"
+                     ::=  {  sensorProbeSerialEntry 2   }
+
+                  sensorProbeSerialStatus OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        noStatus(1),
+                        normal(2),
+                        critical(4),
+                        sensorError(7)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The current status of this Serial Port"
+                     ::=  {  sensorProbeSerialEntry 3  }
+
+                  sensorProbeSerialOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        online(1),
+                        offline(2)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "If this Serial Port is currently online"
+                        ::=  {  sensorProbeSerialEntry 4  }
+   
+                  sensorProbeSerialGoOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        goOnline(1),
+                        goOffline(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To put online enter a 1, to take offline enter a 2"
+                     ::=  {  sensorProbeSerialEntry 5  }
+
+                  sensorProbeSerialData OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Write sends data, read gets data from this Serial Port"
+                     ::=  {  sensorProbeSerialEntry 6   }
+
+                  sensorProbeSerialBaud OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        baud1200(255),
+                        baud2400(129),
+                        baud4800(64),
+                        baud9600(32),
+                        baud19200(15),
+                        baud28800(10),
+                        baud38400(7),
+                        baud57600(4),
+                        baud115200(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Choose the baud rate for this serial port"
+                     ::=  {  sensorProbeSerialEntry 7  }
+
+                  sensorProbeSerialDataBits OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        eight(8)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Parity bit for this serial port"
+                     ::=  {  sensorProbeSerialEntry 8  }
+
+                  sensorProbeSerialParity OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                     none(1)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Parity bit for this serial port"
+                     ::=  {  sensorProbeSerialEntry 9  }
+
+                  sensorProbeSerialStop OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        one(1)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Stop bits for this serial port"
+                     ::=  {  sensorProbeSerialEntry 10  }
+
+                  sensorProbeSerialCTS OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        on(1),
+                        off(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Turn CTS on or off for this serial port"
+                     ::=  {  sensorProbeSerialEntry 11  }
+
+                  sensorProbeSerialRTS OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        on(1),
+                        off(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Turn RTS on or off for this serial port"
+                     ::=  {  sensorProbeSerialEntry 12  }
+
+                  sensorProbeSerialConfig OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "A Description of this Serial Port"
+                     ::=  {  sensorProbeSerialEntry 13  }
+
+                  sensorProbeSerialIndex OBJECT-TYPE
+                     SYNTAX  INTEGER (0..1)
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The index into the Serial table"
+                     ::=  {  sensorProbeSerialEntry 14   }
+
+               sensorProbeDebug OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     on(1),
+                     off(0)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP only: Turn on or off debug messages"
+                  ::=  {  sensorProbeEntry 20  }
+
+                 sensorProbeDebugIP OBJECT-TYPE
+                    SYNTAX  DisplayString
+                    ACCESS  read-write
+                    STATUS  mandatory
+                    DESCRIPTION
+                    "The IP address to send debug messages to"
+                    ::=  {  sensorProbeEntry 21  }
+
+               sensorProbeTrapResend OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     on(1),
+                     off(0)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "If traps for Warning or Error should be resent. Traps for Normal status are sent once"
+                  ::=  {  sensorProbeEntry 22  }
+
+               sensorProbeTrapResendInterval OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "How often to resend mail or Traps. Enter the number of seconds from 15 to 65535. Mail for WARNING and ERROR are resent at this interval. Traps for Normal status are sent once"
+                  ::=  {  sensorProbeEntry 23  }
+
+               sensorProbeSendTraps OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     on(1),
+                     off(2)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Turn on or off the sending of traps"
+                  ::=  {  sensorProbeEntry 24  }
+
+               sensorProbeTrapDestination OBJECT-TYPE
+                  SYNTAX  IpAddress
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The IP address of the trap destination"
+                  ::=  {  sensorProbeEntry 25  }
+
+               sensorProbeTrapCommunity OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The community string of the trap destination"
+                  ::=  {  sensorProbeEntry 26  }
+
+               sensorProbeDefaultGateway OBJECT-TYPE
+                  SYNTAX  IpAddress
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "If the destination is on another network, enter the IP address of the router"
+                  ::=  {  sensorProbeEntry 27  }
+
+               sensorProbeSubnetMask OBJECT-TYPE
+                  SYNTAX  IpAddress
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "If the trap destination uses the default gateway"
+                  ::=  {  sensorProbeEntry 28  }
+
+               sensorProbeRouteAdd OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP only: Up to 4, Manual additions to the routing table in the form, Network IP Address, Netmask, Gateway IP address"
+                  ::=  {  sensorProbeEntry 29  }
+
+
+               sensorProbeSendMail OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     on(1),
+                     off(2)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Turn on or off the sending of Mail"
+                  ::=  {  sensorProbeEntry 30  }
+
+               sensorProbeMailRecpt OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The email address of the Recipient"
+                  ::=  {  sensorProbeEntry 31  }
+
+               sensorProbeMailFrom OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The email address of the Sender"
+                  ::=  {  sensorProbeEntry 32  }
+
+               sensorProbeMailSMTP OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The Address of the SMTP server"
+                  ::=  {  sensorProbeEntry 33  }
+
+               sensorProbeMailJpgInline OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     inline(1),
+                     link(2)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "If the jpg for this event is sent as an http link or is included with mail as an attachment"
+                  ::=  {  sensorProbeEntry 34  }
+
+               sensorProbeMailResendInterval OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "How often to resend mail or Traps. Enter the number of seconds from 10 to 60. Mail for WARNING and ERROR are resent at this interval. Mail for Normal status are sent once"
+                  ::=  {  sensorProbeEntry 36  }
+
+               sensorProbeMailMaxResend OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The maximum number of times to resend mail. If set to 0 only send once. The maximum value is 5"
+                  ::=  {  sensorProbeEntry 37  }
+
+               sensorProbeMailLastStatus OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The status of the most recent attempt to send an email"
+                  ::=  {  sensorProbeEntry 39  }
+		  
+               sensorProbeSupportMailRcpt OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP8L only: E-Mail address of support"
+                  ::=  {  sensorProbeEntry 40  }
+
+               sensorProbeCameraServerTable OBJECT-TYPE
+                  SYNTAX  SEQUENCE OF SensorProbeCameraServerEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "CP8 Only: This table contains the Camera Server features, This allows the sensorProbe to connect to a sensorProbe"
+                  ::=  {  sensorProbeEntry 42   }
+
+               sensorProbeCameraServerEntry OBJECT-TYPE
+                  SYNTAX  SensorProbeCameraServerEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This is an entry in the sensorProbeCameraServerEntry Table"
+                  INDEX         { sensorProbeCameraServerIndex }
+                  ::=  { sensorProbeCameraServerTable 1 }
+
+                  SensorProbeCameraServerEntry ::= SEQUENCE {
+                     sensorProbeCameraServerClientOnline
+                        INTEGER,
+                     sensorProbeCameraServerClientGoOnline
+                        INTEGER,
+                     sensorProbeCameraServerClientIP
+                        IpAddress,
+                     sensorProbeCameraServerClientSetPassword
+                        DisplayString,
+                     sensorProbeCameraServerIndex
+                          INTEGER,
+                     sensorProbeJavaTimeOut
+                          INTEGER,
+                     sensorProbeJpegQualityFactor
+                        INTEGER
+                  }
+
+
+                  sensorProbeCameraServerClientOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        online(1),
+                        offline(2)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "If this Client is currently online"
+                     ::=  {  sensorProbeCameraServerEntry 1  }
+   
+                  sensorProbeCameraServerClientGoOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        goOnline(1),
+                        goOffline(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To put this Client online enter a 1, to take offline enter a 2"
+                     ::=  {  sensorProbeCameraServerEntry 2  }
+
+                  sensorProbeCameraServerClientIP OBJECT-TYPE
+                     SYNTAX  IpAddress
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The IP address of the sensorProbe, used to send snmp keep alive messages"
+                     ::=  {  sensorProbeCameraServerEntry 3  }
+
+                  sensorProbeCameraServerClientSetPassword OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "SP Only: The Set Password for the snmp keep alive messages sent to the sensorProbes"
+                     ::=  {  sensorProbeCameraServerEntry 4  }
+
+                    sensorProbeCameraServerIndex OBJECT-TYPE
+                       SYNTAX  INTEGER (0..9)
+                       ACCESS  read-only
+                       STATUS  mandatory
+                       DESCRIPTION
+                       "The index into the Camera table"
+                       ::=  {  sensorProbeCameraServerEntry 5  }
+
+                  sensorProbeJavaTimeOut OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Timeout in minutes for Java client"
+                     ::=  {  sensorProbeCameraServerEntry 6  }
+
+                  sensorProbeJpegQualityFactor OBJECT-TYPE
+                     SYNTAX  INTEGER (1..100)
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "Quality factor of jpeg image"
+                     ::=  {  sensorProbeCameraServerEntry 7  }
+
+               sensorProbeCameraClientTable OBJECT-TYPE
+                  SYNTAX  SEQUENCE OF SensorProbeCameraClientEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This table contains the Camera Client features, This allows the sensorProbe to connect to a cameraServer"
+                  ::=  {  sensorProbeEntry 43   }
+
+               sensorProbeCameraClientEntry OBJECT-TYPE
+                  SYNTAX  SensorProbeCameraClientEntry
+                  ACCESS  not-accessible
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP Only: This is an entry in the sensorProbeCameraClientEntry Table"
+                  INDEX         { sensorProbeCameraClientIndex }
+                  ::=  { sensorProbeCameraClientTable 1 }
+
+                  SensorProbeCameraClientEntry ::= SEQUENCE {
+                     sensorProbeCameraClientOnline
+                        INTEGER,
+                     sensorProbeCameraClientGoOnline
+                        INTEGER,
+                     sensorProbeCameraClientIP
+                        IpAddress,
+                     sensorProbeCameraClientWebPort
+                        INTEGER,
+                     sensorProbeCameraClientTrapPort
+                        INTEGER,
+                     sensorProbeCameraClientIPWebTrap
+                        DisplayString,
+                     sensorProbeCameraClientRefreshRate
+                        INTEGER,
+                     sensorProbeCameraClientValidMinsLeft
+                        INTEGER,
+                     sensorProbeCameraClientGetPassword
+                        DisplayString,
+                     sensorProbeCameraClientFrameWidth
+                        INTEGER,
+                     sensorProbeCameraClientFrameHeight
+                        INTEGER,
+                     sensorProbeCameraClientIndex
+                        INTEGER
+                  }
+
+                  sensorProbeCameraClientOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        online(1),
+                        offline(2)
+                     }
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "If this Sensor is currently online"
+                     ::=  {  sensorProbeCameraClientEntry 1  }
+   
+                  sensorProbeCameraClientGoOnline OBJECT-TYPE
+                     SYNTAX  INTEGER {
+                        goOnline(1),
+                        goOffline(2)
+                     }
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "To put online enter a 1, to take offline enter a 2"
+                     ::=  {  sensorProbeCameraClientEntry 2  }
+
+                  sensorProbeCameraClientIP OBJECT-TYPE
+                     SYNTAX  IpAddress
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The IP address of the PC containing the Camera"
+                     ::=  {  sensorProbeCameraClientEntry 3  }
+
+                  sensorProbeCameraClientWebPort OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The port that the web server listens on"
+                     ::=  {  sensorProbeCameraClientEntry 4  }
+
+                  sensorProbeCameraClientTrapPort OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The port that the trap server listens on"
+                     ::=  {  sensorProbeCameraClientEntry 5  }
+
+                  sensorProbeCameraClientIPWebTrap OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The Ip address, Web port and Trap port of the Camera server"
+                     ::=  {  sensorProbeCameraClientEntry 6  }
+
+                  sensorProbeCameraClientRefreshRate OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "How often to refresh the image on the browser in seconds from 0 to 254"
+                     ::=  {  sensorProbeCameraClientEntry 7  }
+
+                  sensorProbeCameraClientValidMinsLeft OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The Camera Server sends an snmp refresh message to the sensorProbe every 15 minutes. If the sensorProbe does not hear from the server after 60 minutes, the server is no longer valid"
+                     ::=  {  sensorProbeCameraClientEntry 8  }
+
+                  sensorProbeCameraClientGetPassword OBJECT-TYPE
+                     SYNTAX  DisplayString
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The Get Password for the Camera Server"
+                     ::=  {  sensorProbeCameraClientEntry 9  }
+
+                  sensorProbeCameraClientFrameWidth OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The Width in pixels of a single camera frame, including border and title"
+                     ::=  {  sensorProbeCameraClientEntry 10  }
+
+                  sensorProbeCameraClientFrameHeight OBJECT-TYPE
+                     SYNTAX  INTEGER
+                     ACCESS  read-write
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The Height in pixels of a single camera frame, including border and title"
+                     ::=  {  sensorProbeCameraClientEntry 11  }
+
+                  sensorProbeCameraClientIndex OBJECT-TYPE
+                     SYNTAX  INTEGER (0..5)
+                     ACCESS  read-only
+                     STATUS  mandatory
+                     DESCRIPTION
+                     "The index into the Camera table"
+                     ::=  {  sensorProbeCameraClientEntry 12  }
+
+
+
+               sensorProbeTrapMailPollInterval OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP Only: How often the sensor thresholds are tested before sending traps or mail. This can vary from 3 to 15 seconds"
+                  ::=  {  sensorProbeEntry 50  }
+
+               sensorProbeSendTestMail OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Send out an email test message"
+                  ::=  {  sensorProbeEntry 51  }
+
+               sensorProbeLastSystemError OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "A text string containing the description of the last system error"
+                  ::=  {  sensorProbeEntry 52  }
+
+               sensorProbeDataCollectionPeriod OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The number of minutes between collections of the data logger. This can vary from 1 to 60 minutes"
+                  ::=  {  sensorProbeEntry 53  }
+
+               sensorProbeMailTimeout OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The number of seconds to wait for a timeout while sending email This can vary from 10 to 30 seconds"
+                  ::=  {  sensorProbeEntry 54  }
+
+               sensorProbeAutoSense OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     enable(1),
+                     disable(0)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Enable Auto-sense feature"
+                  ::=  {  sensorProbeEntry 55  }
+
+               sensorProbeChecksum OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP Only: The Flash Checksum, computed dynamically whenever this object is read"
+                  ::=  {  sensorProbeEntry 56  }
+
+               sensorProbeUsePassword OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     doNotUsePassword(1),
+                     usePassword(0)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Determines whether or not the set and get community are used to check for access rights"
+                  ::=  {  sensorProbeEntry 57  }
+
+               sensorProbeDisplayLogo OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     enable(1),
+                     disable(0)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Enable or Disable the display of the logo"
+                  ::=  {  sensorProbeEntry 59  }
+
+               sensorProbeTrapType OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     specificTypeTrap(1),
+                     generalTypeTrap(2),
+                     bothTypeTraps(3),
+                     statusTypeTraps(4)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Whether to generate a trap that covers all sensors, a specific trap for each sensor, or both types of traps"
+                  ::=  {  sensorProbeEntry 60  }
+
+               sensorProbeMailCC OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The email address of the CC"
+                  ::=  {  sensorProbeEntry 61  }
+
+               sensorProbeAllowIPChange OBJECT-TYPE
+                SYNTAX  INTEGER {
+                    enable(1),
+                    disable(2)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This disables the changing of the IP address. The default is to enable changing the IP address"
+                  ::=  {  sensorProbeEntry 62  }
+
+               sensorProbeTimeOfDay OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The time of day in the format day/month/year hour(1-24):minutes:seconds for example 23/10/02 12:45:06"
+                  ::=  {  sensorProbeEntry 65  }
+
+               sensorProbeEnableSysLog OBJECT-TYPE
+                SYNTAX  INTEGER {
+                     enableLogToFlash(1),
+                     enableLogToNetAndFlash(2),
+                     disable(3)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This enables sysLog Messages,including logging to the Net. The Destination IP of the net messages is the same as the source IP of the sender of this command"
+                  ::=  {  sensorProbeEntry 66  }
+
+               sensorProbeReadSysLog OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     lastMessage(1),
+                     allMessages(2)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Return the sysLog Message in the snmp PDU and if enableLogToNetAndFlash in sensorProbeEnableSysLog, also send in debug message format, A Write of a 2 will return all of the messages in debug format"
+                  ::=  {  sensorProbeEntry 67  }
+
+               sensorProbeClearSysLog OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     allMessages(2)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Delete all entries in the sys log"
+                  ::=  {  sensorProbeEntry 68  }
+
+               sensorProbeSyslogDestIP OBJECT-TYPE
+                  SYNTAX  IpAddress
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The IP Address of the Syslog server. Note: This must be in dotted decimal form"
+                  ::=  {  sensorProbeEntry 69  }
+
+               sensorProbeSyslogPort OBJECT-TYPE
+                  SYNTAX  Gauge 
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The Port Number of the Syslog server."
+                  ::=  {  sensorProbeEntry 70  }
+
+               sensorProbeSetSyslogMsgPrefix OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "SP Only: The Prefix message of the Syslog message"
+                  ::=  {  sensorProbeEntry 71  }
+
+               sensorProbeTimeZone OBJECT-TYPE
+                  SYNTAX  INTEGER  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "System time zone" 
+                  ::=  {  sensorProbeEntry 81  }
+
+               sensorProbeMegaVersion OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Version number of mega board"
+                  ::=  {  sensorProbeEntry 83  }
+
+               sensorProbeNtpMode OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     notUse(0),
+                     oneTime(1),
+                     onSystemStartUp(2),
+                     onceAMounth(3),
+                     onceAWeek(4),
+                     onceADay(5),
+                     onceAnHour(6),
+                     continuous(7)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Mode to synchronous with ntp server" 
+                  ::=  {  sensorProbeEntry 84  }
+
+               sensorProbeNtpServer OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "NTP server which this machine synchronous with"
+                  ::=  {  sensorProbeEntry 85  }
+
+--
+-- sensorProbeEntry 86 is reserved for SensorProbeModel string which is used internaly (AKCP).
+--
+
+               sensorProbeSMTPAuth OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     enable(1),
+                     disable(2)
+                  }                  
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "This enables the SMTP authentication"
+                  ::=  {  sensorProbeEntry 87  }
+
+               sensorProbeSMTPLogin OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The username used to login into SMTP server"
+                  ::=  {  sensorProbeEntry 88  }
+
+               sensorProbeSMTPPassword OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The password used to login into SMTP server"
+                  ::=  {  sensorProbeEntry 89  }
+
+               sensorProbeDNSServer OBJECT-TYPE
+                  SYNTAX  IpAddress
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "IP address of the DNS server"
+                  ::=  {  sensorProbeEntry 90  }
+
+               sensorProbeAltWebPort OBJECT-TYPE
+                  SYNTAX  Gauge
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The alternative for a port number 80 used to access the web interface"
+                  ::=  {  sensorProbeEntry 91  }
+
+               sensorProbeNumberOfSensorPort OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-only
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "The number of sensor ports(regardless of their current state)"
+                  ::=  {  sensorProbeEntry 92  }
+               
+               sensorProbeSendTrapsAlive OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     on(1),
+                     off(2)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "On or off send keep alive traps."
+                  ::=  {  sensorProbeEntry 93  }
+               
+               sensorProbeTrapReIntervalAlive OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Time between each keep alive trap."
+                  ::=  {  sensorProbeEntry 94  }
+               
+               sensorProbeUseCamera OBJECT-TYPE
+                  SYNTAX  INTEGER {
+                     on(1),
+                     off(0)
+                  }
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "On or off camera."
+                  ::=  {  sensorProbeEntry 95  }
+                                 
+               sensorProbeAdcCalibratePort OBJECT-TYPE
+                  SYNTAX  INTEGER
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Calibrate value for analog sensor."
+                  ::=  {  sensorProbeEntry 96  }
+
+--
+-- sensorProbeEntry 97 is reseverd for future using with Linux version (AKCP).
+--
+
+               sensorProbeMailSubject OBJECT-TYPE
+                  SYNTAX  DisplayString
+                  ACCESS  read-write
+                  STATUS  mandatory
+                  DESCRIPTION
+                  "Email Subject."
+                  ::=  {  sensorProbeEntry 98  }
+
+--
+-- Varbinds used in TRAP Definitions
+--
+
+      sensorProbeTraps      OBJECT IDENTIFIER  ::=  {  sensorProbe 7   }
+
+      spSensorStatus OBJECT-TYPE
+            SYNTAX  INTEGER {
+               noStatus(1),
+               normal(2),
+               highWarning(3),
+               highCritical(4),
+               lowWarning(5),
+               lowCritical(6),
+               sensorError(7),
+               turnOn(8),
+               turnOff(9)
+            }
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "The current integer status of the sensor causing this trap to be sent"
+         ::=  {  sensorProbeTraps 1  }
+      
+      spSensorValue OBJECT-TYPE
+         SYNTAX  INTEGER
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "The current integer value of the sensor causing this trap to be sent"
+         ::=  {  sensorProbeTraps 2  }
+      
+      spSensorLevelExceeded OBJECT-TYPE
+         SYNTAX  INTEGER
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "The integer level that was exceeded causing this trap to be sent"
+         ::=  {  sensorProbeTraps 3  }
+      
+
+      spSensorIndex OBJECT-TYPE
+         SYNTAX  INTEGER
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "The integer index of the sensor causing this trap to be sent"
+         ::=  {  sensorProbeTraps 4  }
+      
+
+      spSensorName OBJECT-TYPE
+         SYNTAX  DisplayString
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "The name of the sensor causing this trap to be sent"
+         ::=  {  sensorProbeTraps 5  }
+      
+      spSensorDescription OBJECT-TYPE
+         SYNTAX  DisplayString
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "The description of the sensor causing this trap to be sent"
+         ::=  {  sensorProbeTraps 6  }
+      
+      spSensorProbeKeepAlive OBJECT-TYPE
+         SYNTAX  INTEGER
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "Keep alive trap to be sent"
+         ::=  {  sensorProbeTraps 7  }
+      
+      spSensorType OBJECT-TYPE
+         SYNTAX  INTEGER {
+            temperature(1),
+            fourTo20mA(2),
+            humidity(3),
+            water(4),
+            atod(5),
+            security(6),
+            airflow(8),
+            dryContact(10),
+            voltage(12),
+            relay(13),
+            motion(14)
+         }
+         ACCESS  read-only
+         STATUS  mandatory
+         DESCRIPTION
+         "Type of this sensor"
+         ::=  {  sensorProbeTraps 8  }
+      
+
+-- TRAP Definitions
+
+
+   spUnknownStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      DESCRIPTION
+         "sensorProbe status went to Unknown"
+      --#TYPE "sensorProbe Unknown Status"
+      --#SEVERITY INFORMATIONAL
+      ::= 0
+
+   spNormalStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      DESCRIPTION
+         "sensorProbe status is Normal"
+      --#TYPE "sensorProbe Normal Status"
+      --#SEVERITY INFORMATIONAL
+      ::= 1
+
+   spWarningStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      DESCRIPTION
+         "sensorProbe status went to Warning"
+      --#TYPE "sensorProbe Warning Status"
+      --#SEVERITY MINOR
+      ::= 2
+
+   spCriticalStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      DESCRIPTION
+         "sensorProbe status went to Critical"
+      --#TYPE "sensorProbe Critical Status"
+      --#SEVERITY MAJOR
+      ::= 3
+
+   spDownStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      DESCRIPTION
+         "sensorProbe status went to Disabled"
+      --#TYPE "sensorProbe Down Status"
+      --#SEVERITY MINOR
+      ::= 4
+
+   spKeepAliveTrap TRAP-TYPE
+      ENTERPRISE sensorProbe
+      DESCRIPTION
+         "sensorProbe send keep alive trap."
+      --#SEVERITY  INFORMATIONAL
+      ::= 5
+
+-- sensorProbeTrapType = generalTypeTrap(2)
+
+   spTemperatureStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 10
+
+   spHumidityStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 20
+
+   spSwitchStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 30
+
+
+   spPowerMonitorStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Power Monitor sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 40
+
+-- sensorProbeTrapType = statusTypeTraps(4)
+
+   spSenUnknownStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "sensorProbe sensor status went to Unknown"
+      --#TYPE "sensorProbe Unknown Status"
+      --#SUMMARY "%s(%s) Status is now %d on port %d."
+      --#ARGUMENTS {4,5,1,3}
+      --#SEVERITY MAJOR
+      --#TIMEINDEX 4
+      ::= 51
+
+   spSenNormalStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "sensorProbe sensor status is Normal"
+      --#TYPE "sensorProbe Normal Status"
+      --#SUMMARY "%s(%s) Status is now %d on port %d."
+      --#ARGUMENTS {4,5,1,3}
+      --#SEVERITY INFORMATIONAL
+      --#TIMEINDEX 4
+      ::= 52
+
+   spSenWarningStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "sensorProbe sensor status went to Warning"
+      --#TYPE "sensorProbe Warning Status"
+      --#SUMMARY "%s(%s) Status is now %d on port %d."
+      --#ARGUMENTS {4,5,1,3}
+      --#SEVERITY MINOR
+      --#TIMEINDEX 4
+      ::= 53
+
+   spSenCriticalStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "sensorProbe sensor status went to Critical"
+      --#TYPE "sensorProbe Critical Status"
+      --#SUMMARY "%s(%s) Status is now %d on port %d."
+      --#ARGUMENTS {4,5,1,3}
+      --#SEVERITY MAJOR
+      --#TIMEINDEX 4
+      ::= 54
+
+   spSenDownStatus TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "sensorProbe sensor status went to Disabled"
+      --#TYPE "sensorProbe Down Status"
+      --#SUMMARY "%s(%s) Status is now %d on port %d."
+      --#ARGUMENTS {4,5,1,3}
+      --#SEVERITY INFORMATIONAL
+      --#TIMEINDEX 4
+      ::= 55
+
+-- sensorProbeTrapType = specificTypeTrap(1)
+
+   spTemperature1Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 101
+
+   spTemperature2Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 102
+
+   spTemperature3Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 103
+
+   spTemperature4Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 104
+
+   spTemperature5Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 105
+
+   spTemperature6Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 106
+
+   spTemperature7Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 107
+
+   spTemperature8Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Temperature sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 108
+
+
+
+   spHumidity1Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 201
+
+   spHumidity2Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 202
+
+   spHumidity3Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 203
+
+   spHumidity4Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 204
+
+   spHumidity5Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 205
+
+   spHumidity6Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 206
+
+   spHumidity7Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 207
+
+   spHumidity8Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Humidity sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 208
+
+
+
+   spSwitch1Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 301
+
+   spSwitch2Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 302
+
+   spSwitch3Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 303
+
+   spSwitch4Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 304
+
+   spSwitch5Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 305
+
+   spSwitch6Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 306
+
+   spSwitch7Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 307
+
+   spSwitch8Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 308
+
+   spSwitch9Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 309
+
+   spSwitch10Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 310
+
+   spSwitch11Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 311
+
+   spSwitch12Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 312
+
+   spSwitch13Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 313
+
+   spSwitch14Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 314
+
+   spSwitch15Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 315
+
+   spSwitch16Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 316
+
+   spSwitch17Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 317
+
+   spSwitch18Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 318
+
+   spSwitch19Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 319
+
+   spSwitch20Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 320
+
+   spSwitch21Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 321
+
+   spSwitch22Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 322
+
+   spSwitch23Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 323
+
+   spSwitch24Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 324
+
+   spSwitch25Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 325
+
+   spSwitch26Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 326
+
+   spSwitch27Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 327
+
+   spSwitch28Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 328
+
+   spSwitch29Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 329
+
+   spSwitch30Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 330
+
+   spSwitch31Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 331
+
+   spSwitch32Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 332
+
+   spSwitch33Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 333
+
+   spSwitch34Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded, 
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 334
+
+   spSwitch35Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 335
+
+   spSwitch36Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 336
+
+   spSwitch37Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 337
+
+   spSwitch38Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 338
+
+   spSwitch39Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 339
+
+   spSwitch40Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 340
+
+   spSwitch41Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 341
+
+   spSwitch42Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 342
+
+   spSwitch43Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 343
+
+   spSwitch44Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 344
+
+   spSwitch45Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 345
+
+   spSwitch46Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 346
+
+   spSwitch47Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 347
+
+   spSwitch48Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 348
+
+   spSwitch49Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 349
+
+   spSwitch50Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 350
+
+   spSwitch51Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 351
+
+   spSwitch52Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 352
+
+   spSwitch53Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 353
+
+   spSwitch54Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 354
+
+   spSwitch55Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 355
+
+   spSwitch56Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 356
+
+   spSwitch57Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 357
+
+   spSwitch58Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 358
+
+   spSwitch59Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 359
+
+   spSwitch60Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 360
+
+   spSwitch61Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 361
+
+   spSwitch62Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 362
+
+   spSwitch63Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 363
+
+   spSwitch64Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 364
+
+   spSwitch65Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 365
+
+   spSwitch66Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 366
+
+   spSwitch67Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 367
+
+   spSwitch68Status TRAP-TYPE
+      ENTERPRISE sensorProbe
+      VARIABLES
+         { spSensorStatus, spSensorValue, spSensorLevelExceeded,
+         spSensorIndex, spSensorName, spSensorDescription }
+      DESCRIPTION
+         "Switch sensor trap"
+      --#SEVERITY  MAJOR
+      ::= 368
+
+
+
+END

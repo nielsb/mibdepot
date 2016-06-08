@@ -1,0 +1,33 @@
+-- HP ProLiant Switch MIBs
+-- hpswitchpl
+-- Version 0.0.2  05-19-2003
+-- HISTORY
+-- $Log: hpswitchpl.mib $
+-- Revision 1.2  2005/02/10 15:55:36  aminchew
+-- Changes from Bruce Guertler.
+-- Revision submit_zoe_432/1 2003/06/11 00:54:09 smiao
+-- Removed the strange characters.
+--
+-- Revision submit_zoe_370/1 2003/05/22 00:05:43 smiao
+-- Updated to the new HP version for supporting SNMPv1 only.
+--
+-- Revision submit_zoe_181/1 2003/02/14 18:19:42 smiao
+-- Creaed BERT MIB root file from HP.
+-- $EndLog$
+HP-SWITCH-PL-MIB    DEFINITIONS ::= BEGIN
+    IMPORTS
+        enterprises    FROM RFC1155-SMI;
+    hp                                     OBJECT IDENTIFIER ::= { enterprises 11 }
+    nm                                     OBJECT IDENTIFIER ::= { hp 2 }
+    hpSystem                               OBJECT IDENTIFIER ::= { nm 3 }
+    netElement                             OBJECT IDENTIFIER ::= { hpSystem 7 }
+    hpEtherSwitch                          OBJECT IDENTIFIER ::= { netElement 11 }
+    hpSwitchProliant                       OBJECT IDENTIFIER ::= { hpEtherSwitch 33 }
+    hpSwitchModuleBladetype2               OBJECT IDENTIFIER ::= { hpSwitchProliant 1 }
+    hpSwitchBladeType2-Products            OBJECT IDENTIFIER ::= { hpSwitchModuleBladetype2 1 }
+    hpSwitchBladeType2-Mgmt                OBJECT IDENTIFIER ::= { hpSwitchModuleBladetype2 2 }
+--   SysObjId for p-GbE2 Interconnect Switch (1.3.6.1.4.1.11.2.3.7.11.33.1.1.1)
+    hpProLiant-p-GbE2-InterconnectSwitch   OBJECT IDENTIFIER ::= { hpSwitchBladeType2-Products 1 }
+--   SysObjId for e-GbE2 Interconnect Switch (1.3.6.1.4.1.11.2.3.7.11.33.1.1.2)
+    hpProLiant-e-GbE2-InterconnectSwitch   OBJECT IDENTIFIER ::= { hpSwitchBladeType2-Products 2 }
+END

@@ -1,0 +1,152 @@
+PAXNET-SW-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+	MODULE-IDENTITY
+	    FROM SNMPv2-SMI
+	RowStatus, DisplayString, DateAndTime
+	    FROM SNMPv2-TC
+	paxManagement
+	    FROM PAXNET-MIB;
+
+    paxnetSWMIB MODULE-IDENTITY
+		LAST-UPDATED "9902110000Z"
+
+		ORGANIZATION "Telebit Communications A/S, Denmark"
+		CONTACT-INFO
+			"      "
+		DESCRIPTION
+			"MIB for management of SW and configuations
+                         for PAXNET routers"
+		::= { paxManagement 2 }
+
+
+    paxnetSW OBJECT IDENTIFIER ::= { paxnetSWMIB 1 }
+    paxnetSWMIBConformance OBJECT IDENTIFIER ::= { paxnetSWMIB 2 }
+
+    -- make space for several statistics
+
+cnfFileTable     OBJECT-TYPE
+    SYNTAX       SEQUENCE OF CnfFileEntry
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION "The table of configurations available in the system.
+                 At system startup time it is initialized from the
+                 information on the flash prom. "
+    ::= { paxnetSW 10 }
+
+cnfFileEntry     OBJECT-TYPE
+    SYNTAX       CnfFileEntry
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION "Contains information ablot a single configuration."
+    INDEX       { cnfFileNumber
+                }
+    ::= { cnfFileTable 1 }
+
+CnfFileEntry ::= SEQUENCE
+    {
+        cnfFileNumber         INTEGER,
+        cnfFileDescr          DisplayString,
+        cnfFileDate           DateAndTime,
+        cnfFileStatus         RowStatus,
+        cnfFileDumpState      INTEGER
+    }
+
+cnfFileNumber OBJECT-TYPE
+    SYNTAX       INTEGER
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION "A user specified number of a configuration file."
+    ::= { cnfFileEntry 1 }
+
+cnfFileDescr OBJECT-TYPE
+    SYNTAX       DisplayString
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION "Users description of the configuration file."
+    DEFVAL      { ''H }    -- the empty string
+    ::= { cnfFileEntry 2 }
+
+cnfFileDate OBJECT-TYPE
+    SYNTAX       DateAndTime
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION "Date of configuration dump, inserted by the dump application."
+    DEFVAL      { ''H }    -- the empty string
+    ::= { cnfFileEntry 3 }
+
+cnfFileStatus OBJECT-TYPE
+    SYNTAX       RowStatus
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION ""
+    ::= { cnfFileEntry 4 }
+
+cnfFileDumpState OBJECT-TYPE
+    SYNTAX       INTEGER { uninitialized(1), dumping(2), valid(3), failed(4) }
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION "Holds information about the status of the configaration
+                 file."
+    ::= { cnfFileEntry 5 }
+
+dumpTo OBJECT-TYPE
+    SYNTAX       INTEGER
+    MAX-ACCESS   read-write
+    STATUS       current
+    DESCRIPTION "Points to an entry in the cnfFileTable. Whenever 
+                 dumpTo is written a dump of the running configuration
+                 to the corresponding cnfFile is initiated."
+    ::= { paxnetSW 2 }
+
+dumpState OBJECT-TYPE
+    SYNTAX       INTEGER { passive(1), running(2) }
+    MAX-ACCESS   read-write
+    STATUS       current
+    DESCRIPTION "When dumpState is running a dump is in progress, 
+                 otherwise not. A dump may be cancelled by setting
+                 the passive state, and it may be restarted by
+                 setting the running state."
+    ::= { paxnetSW 3 }
+
+cnfLogFile OBJECT-TYPE
+    SYNTAX       DisplayString
+    MAX-ACCESS   read-write
+    STATUS       current
+    DESCRIPTION "This is the file for logging of configuration
+                 setup information. The file is placed in the /log
+                 directory."
+    DEFVAL      { ''H }
+    ::= { paxnetSW 4 }
+
+
+paxnetSWMIBCompliances OBJECT IDENTIFIER ::= { paxnetSWMIBConformance 1 }
+paxnetSWMIBGroups      OBJECT IDENTIFIER ::= { paxnetSWMIBConformance 2 }
+
+
+-- compliance statements
+
+paxnetSWMIBCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for a paxnet router."
+    MODULE  -- this module
+        MANDATORY-GROUPS { paxnetSWMIBGroup }
+
+    ::= { paxnetSWMIBCompliances 1 }
+
+
+-- units of conformance
+
+paxnetSWMIBGroup OBJECT-GROUP
+    OBJECTS { dumpTo, dumpState, cnfLogFile, cnfFileNumber,
+             cnfFileDescr, cnfFileDate,
+             cnfFileStatus, cnfFileDumpState }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects to support management of the
+	     configuration dump of a Paxnet router."
+    ::= { paxnetSWMIBGroups 2 }
+
+
+END

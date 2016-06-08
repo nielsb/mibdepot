@@ -1,0 +1,113 @@
+ATM-FORUM-SRVC-REG DEFINITIONS ::= BEGIN
+
+IMPORTS
+        atmfSrvcRegTypes,
+        atmfSrvcRegistryGroup,
+        AtmAddress                      FROM ATM-FORUM-TC-MIB
+        OBJECT-TYPE                     FROM RFC-1212;
+
+
+--              Object Identifier definitions
+
+-- The following values are defined for use as possible values
+-- of the atmfSrvcRegServiceID object.
+
+-- LAN Emulation Configuration Server (LECS)
+atmfSrvcRegLecs         OBJECT IDENTIFIER ::= { atmfSrvcRegTypes 1 }
+-- When atmfSrvcRegServiceID has a value of atmfSrvcRegLecs,
+-- the value of atmfSrvcRegParm1 is ignored.
+
+-- ATM Name Server (ANS)
+atmfSrvcRegAns         OBJECT IDENTIFIER ::= { atmfSrvcRegTypes 2 }
+-- When atmfSrvcRegServiceID has a value of atmfSrvcRegAns,
+-- the value of atmfSrvcRegParm1 is ignored.
+
+
+--          The Service Registry Table
+--
+-- The Service Registry Table is implemented by the network-side IME
+
+atmfSrvcRegTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF AtmfSrvcRegEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "The table implemented by the IME on the network side of
+                the ATM UNI port contains all of the services that are
+                available to the user-side IME indexed by service
+                identifier."
+        ::= { atmfSrvcRegistryGroup 1 }
+
+atmfSrvcRegEntry OBJECT-TYPE
+        SYNTAX  AtmfSrvcRegEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "Information about a single service provider that is 
+                available to the user-side IME."
+        INDEX   { atmfSrvcRegPort, atmfSrvcRegServiceID, 
+                  atmfSrvcRegAddressIndex }
+        ::= { atmfSrvcRegTable 1 }
+
+AtmfSrvcRegEntry ::=
+        SEQUENCE {
+                atmfSrvcRegPort
+                        INTEGER,
+                atmfSrvcRegServiceID
+                        OBJECT IDENTIFIER,
+                atmfSrvcRegATMAddress
+                        AtmAddress,
+                atmfSrvcRegAddressIndex
+                        INTEGER,
+                atmfSrvcRegParm1
+                        OCTET STRING
+        }
+
+atmfSrvcRegPort OBJECT-TYPE
+        SYNTAX  INTEGER (0..2147483647)
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "The value of 0 which has the special meaning of
+                identifying the ATM Interface over which this message
+                was received."
+       ::= { atmfSrvcRegEntry 1 }
+
+atmfSrvcRegServiceID OBJECT-TYPE
+        SYNTAX  OBJECT IDENTIFIER
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "This is the service identifier which uniquely identifies
+                the type of service at the address provided in the table."
+        ::= { atmfSrvcRegEntry 2 }
+
+atmfSrvcRegATMAddress OBJECT-TYPE
+        SYNTAX  AtmAddress
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "This is the full address of the service.  The user-side
+                IME may use this address to establish a connection
+                with the service."
+        ::= { atmfSrvcRegEntry 3 }
+
+atmfSrvcRegAddressIndex OBJECT-TYPE
+        SYNTAX INTEGER (1..2147483647)
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+                "An arbitrary integer to differentiate multiple rows
+                containing different ATM addresses for the same service
+                on the same port."
+        ::= { atmfSrvcRegEntry 4 }
+
+atmfSrvcRegParm1 OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE (1..255))
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                "An octet string whose size and meaning is determined
+                by the value of atmfSrvcRegServiceID."
+        ::= { atmfSrvcRegEntry 5 }
+END
