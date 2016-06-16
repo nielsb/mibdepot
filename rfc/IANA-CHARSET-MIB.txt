@@ -65,7 +65,7 @@ ianaCharsetMIB MODULE-IDENTITY
     DESCRIPTION     "Registration of new charset 2107."
 
     REVISION        "200612070000Z"
-    DESCRIPTION     "Registration of new charsets numbered 118, 119, 
+    DESCRIPTION     "Registration of new charsets numbered 118, 119,
                     and 2106."
 
     REVISION        "200406080000Z"

@@ -50,27 +50,27 @@ ianaPrinterMIB MODULE-IDENTITY
     DESCRIPTION   "Added 35-36 in PrtMarkerSuppliesTypeTC."
 
     REVISION      "201005170000Z" -- May 17, 2010
-    DESCRIPTION   "Added 72-83 in PrtInterpreterLangFamilyTC, 
+    DESCRIPTION   "Added 72-83 in PrtInterpreterLangFamilyTC,
                   600+ lines from 30203-31838 in PrtAlertCodeTC."
 
     REVISION      "201004070000Z" -- April 7, 2010
-    DESCRIPTION   "Added langJDF(68), langJMF(69), langPPML(70), 
+    DESCRIPTION   "Added langJDF(68), langJMF(69), langPPML(70),
                   and langXHTMLPrint(71)."
 
     REVISION      "200911230000Z" -- November 23, 2009
     DESCRIPTION   "Added langXPS(66) and langOpenXPS(67)."
 
     REVISION      "200910140000Z" -- October 14, 2009
-    DESCRIPTION   "Added references for langPCLXL(47), 
+    DESCRIPTION   "Added references for langPCLXL(47),
                   langART(48), and langTIPSI(49)."
 
     REVISION      "200902060000Z" -- February 6, 2009
-    DESCRIPTION   "Added chWSPrint(46) 'Channel Type' for Web 
-                  Services based printing." 
+    DESCRIPTION   "Added chWSPrint(46) 'Channel Type' for Web
+                  Services based printing."
 
     REVISION      "200509140000Z"  -- September 14, 2005
     DESCRIPTION   "Updates to include missing 'unknown' values
-	               for PrtCoverStatusTC, PrtChannelTypeTC, 
+                       for PrtCoverStatusTC, PrtChannelTypeTC,
                   PrtAlertGroupTC and removal of comment for
                   for PrtAlertGroupTC."
 
@@ -561,7 +561,7 @@ PrtChannelTypeTC ::= TEXTUAL-CONVENTION
                   chWSPrint(46) -- Not in RFC 3805
                       -- Web Services on Devices Printer (WS-Print),
                       -- (WS-Print 1.0 - see [WS-Print])
-                      -- 
+                      --
                       -- WS-Print Service URL
                       -- Keyword: ServiceURL
                       -- Syntax: URI (Unicode UTF-8 per
@@ -576,7 +576,7 @@ PrtChannelTypeTC ::= TEXTUAL-CONVENTION
                       -- characters (per [RFC3986]).
                       -- Conformance: A WS-Print Printer shall list
                       -- all URLs it
-                      -- 
+                      --
                       -- WS-Print Web Services Target Namespace
                       -- Keyword: Namespace
                       -- Syntax: 'URI (Unicode UTF-8 per RFC 3986)

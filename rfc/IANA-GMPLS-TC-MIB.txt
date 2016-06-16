@@ -160,7 +160,7 @@ IANA-GMPLS-TC-MIB DEFINITIONS ::= BEGIN
              2. Generalized Multi-Protocol Label Switching (GMPLS)
                 Signaling Functional Description, RFC 3471, section
                 3.1.1.
-             3. Revised Definition of The GMPLS Switching Capability 
+             3. Revised Definition of The GMPLS Switching Capability
                 and Type Fields, RFC7074, section 5."
        SYNTAX  INTEGER {
                   unknown(0),   -- none of the following, or not known
@@ -213,7 +213,7 @@ IANA-GMPLS-TC-MIB DEFINITIONS ::= BEGIN
                 Transport Networks Control, RFC 4328, section 3.1.3.
              3. Generalized Multi-Protocol Label Switching (GMPLS)
                 Signaling Extensions for the evolving G.709 Optical
-                Transport Networks Control,[RFC7139], sections 4 and 11." 
+                Transport Networks Control,[RFC7139], sections 4 and 11."
         SYNTAX  INTEGER {
                   unknown(0),      -- unknown or none of the following
                   -- the values 1, 2, 3 and 4 are reserved in RFC 3471
