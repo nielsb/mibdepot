@@ -1,50 +1,71 @@
-IEEE8021-MVRPX-MIB DEFINITIONS ::= BEGIN
+
+IEEE8021-MVRPX-MIB
+ DEFINITIONS ::= BEGIN
 
 -- ******************************************************************
--- IEEE P802.1Qbe(TM) Multiple VLAN Registration Protocol Extension MIB
+-- IEEE P802.1Q(TM) Multiple VLAN Registration Protocol Extension MIB
 -- ******************************************************************
 
 IMPORTS
     MODULE-IDENTITY,
-    OBJECT-TYPE          FROM SNMPv2-SMI    -- [RFC2578]
-    TruthValue           FROM SNMPv2-TC     -- [RFC2579]
+    OBJECT-TYPE
+          FROM SNMPv2-SMI    -- [RFC2578]
+    TruthValue
+           FROM SNMPv2-TC     -- [RFC2579]
     MODULE-COMPLIANCE,
     OBJECT-GROUP         FROM SNMPv2-CONF   -- [RFC2580]
-    systemGroup          FROM SNMPv2-MIB    -- [RFC3418]
+    systemGroup
+          FROM SNMPv2-MIB    -- [RFC3418]
     ieee8021BridgeBasePortEntry
-                         FROM IEEE8021-BRIDGE-MIB -- IEEE Std. 802.1ap
+
+                         FROM IEEE8021-BRIDGE-MIB -- IEEE Std 802.1Q
    ;
 
-ieee8021MvrpxMib MODULE-IDENTITY
-    LAST-UPDATED "201104050000Z"    -- (YYYYMMDDHHMM Zulu=GMT)
+ieee8021MvrpxMib
+ MODULE-IDENTITY
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
        "WG-URL:   http://grouper.ieee.org/groups/802/1/index.html
         WG-EMail: stds-802-1@ieee.org 
-        Contact:  Norman Finn
-                  c/o Tony Jeffree, IEEE 802.1 Working Group Chair
+        Contact:  IEEE 802.1 Working Group Chair
         Postal:   IEEE Standards Board
                   445 Hoes Lane
                   P.O. Box 1331
                   Piscataway, NJ 08855-1331
                   USA
-        E-mail:   tony@jeffree.co.uk
+        E-mail:   stds-802-1@ieee.org
        "
    DESCRIPTION 
        "Multiple VLAN Registration Protocol extension module for
-        managing MVRP extensions defined in IEEE 802.1Qbe
+        managing MVRP extensions defined in IEEE Std 802.1Q
+
+        Unless otherwise indicated, the references in this MIB
+        module are to IEEE Std 802.1Q-2014.
+
+        Copyright (C) IEEE (2014).
+        This version of this MIB module is part of IEEE802.1Q;
+        see the draft itself for full legal notices.
        "
+
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected."
+
    REVISION       "201104050000Z"    -- (YYYYMMDDHHMM Zulu=GMT)
    DESCRIPTION 
-      "Included in IEEE Std. 802.1Qbe-2011
+      "Included in IEEE Std 802.1Qbe-2011
 
-        Copyright (C) IEEE802.1."
+        Copyright (C) IEEE (2011)."
     ::= { iso(1) org(3) ieee(111)
          standards-association-numbers-series-standards (2)
          lan-man-stds (802) ieee802dot1 (1) ieee802dot1mibs (1) 22 }
 
-ieee8021MvrpxMIBObjects   OBJECT IDENTIFIER ::= { ieee8021MvrpxMib 1 }
-ieee8021MvrpxConformance  OBJECT IDENTIFIER ::= { ieee8021MvrpxMib 2 }
+ieee8021MvrpxMIBObjects
+   OBJECT IDENTIFIER ::= { ieee8021MvrpxMib 1 }
+ieee8021MvrpxConformance
+  OBJECT IDENTIFIER ::= { ieee8021MvrpxMib 2 }
 
 
 
@@ -52,7 +73,8 @@ ieee8021MvrpxConformance  OBJECT IDENTIFIER ::= { ieee8021MvrpxMib 2 }
 -- MVRP extension augmentation of the Generic Bridge Port Table
 -- =============================================================
 
-ieee8021MvrpxPortTable OBJECT-TYPE
+ieee8021MvrpxPortTable
+ OBJECT-TYPE
     SYNTAX SEQUENCE OF Ieee8021MvrpxPortEntry
     MAX-ACCESS  not-accessible
     STATUS      current
@@ -63,7 +85,8 @@ ieee8021MvrpxPortTable OBJECT-TYPE
     REFERENCE   "12.9.2"
     ::= { ieee8021MvrpxMIBObjects 1 }
 
-ieee8021MvrpxPortEntry OBJECT-TYPE
+ieee8021MvrpxPortEntry
+ OBJECT-TYPE
     SYNTAX Ieee8021MvrpxPortEntry
     MAX-ACCESS  not-accessible
     STATUS      current
@@ -72,13 +95,15 @@ ieee8021MvrpxPortEntry OBJECT-TYPE
 AUGMENTS { ieee8021BridgeBasePortEntry }
     ::= { ieee8021MvrpxPortTable 1 }
 
-Ieee8021MvrpxPortEntry ::= SEQUENCE {
+Ieee8021MvrpxPortEntry
+ ::= SEQUENCE {
         ieee8021MvrpxPortNewOnly             TruthValue,
         ieee8021MvrpxPortMvrpNewPropagated   TruthValue,
         ieee8021MvrpxPortXmitZero            TruthValue
     }
 
-ieee8021MvrpxPortNewOnly OBJECT-TYPE
+ieee8021MvrpxPortNewOnly
+ OBJECT-TYPE
     SYNTAX      TruthValue
     MAX-ACCESS  read-create
     STATUS      current
@@ -111,7 +136,8 @@ ieee8021MvrpxPortNewOnly OBJECT-TYPE
     DEFVAL      { false }
     ::= { ieee8021MvrpxPortEntry 1 }
 
-ieee8021MvrpxPortMvrpNewPropagated OBJECT-TYPE
+ieee8021MvrpxPortMvrpNewPropagated
+ OBJECT-TYPE
     SYNTAX      TruthValue
     MAX-ACCESS  read-create
     STATUS      current
@@ -132,7 +158,8 @@ ieee8021MvrpxPortMvrpNewPropagated OBJECT-TYPE
     DEFVAL      { false }
     ::= { ieee8021MvrpxPortEntry 2 }
 
-ieee8021MvrpxPortXmitZero OBJECT-TYPE
+ieee8021MvrpxPortXmitZero
+ OBJECT-TYPE
     SYNTAX      TruthValue
     MAX-ACCESS  read-create
     STATUS      current
@@ -157,16 +184,19 @@ ieee8021MvrpxPortXmitZero OBJECT-TYPE
 -- IEEE 802.1Qbe MVRP extension Module - Conformance Information
 -- ******************************************************************
 
-ieee8021MvrpxCompliances     OBJECT IDENTIFIER
+ieee8021MvrpxCompliances
+     OBJECT IDENTIFIER
     ::= { ieee8021MvrpxConformance 1 }
-ieee8021MvrpxGroups          OBJECT IDENTIFIER
+ieee8021MvrpxGroups
+          OBJECT IDENTIFIER
     ::= { ieee8021MvrpxConformance 2 }
 
 -- ******************************************************************
 -- Units of conformance
 -- ******************************************************************
 
-ieee8021MvrpxReqdGroup OBJECT-GROUP
+ieee8021MvrpxReqdGroup
+ OBJECT-GROUP
     OBJECTS {
         ieee8021MvrpxPortNewOnly,
         ieee8021MvrpxPortMvrpNewPropagated,
@@ -183,10 +213,11 @@ ieee8021MvrpxReqdGroup OBJECT-GROUP
 -- MIB Module Compliance statements
 -- ******************************************************************
 
-ieee8021MvrpxCompliance MODULE-COMPLIANCE
+ieee8021MvrpxCompliance
+ MODULE-COMPLIANCE
     STATUS      current
     DESCRIPTION
-       "The compliance statement for support by a bridge of
+       "The compliance statement for support by a Bridge of
         the IEEE8021-MVRPX-MIB module."
 
     MODULE SNMPv2-MIB -- The SNMPv2-MIB, RFC 3418
@@ -202,3 +233,8 @@ ieee8021MvrpxCompliance MODULE-COMPLIANCE
     ::= { ieee8021MvrpxCompliances 1 }
 
 END
+
+
+
+
+

@@ -1,4 +1,9 @@
+
 IEEE8021-PBBTE-MIB DEFINITIONS ::= BEGIN
+
+-- =============================================================
+-- MIB for IEEE 802.1Q PBB-TE Devices
+-- =============================================================
 
 IMPORTS
     MODULE-IDENTITY,
@@ -33,23 +38,13 @@ IMPORTS
         FROM SNMPv2-CONF;
 
 ieee8021PbbTeMib MODULE-IDENTITY
-    LAST-UPDATED "201102270000Z" -- February 27, 2011
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
        "  WG-URL: http://grouper.ieee.org/groups/8021/1/index.html
         WG-EMAIL: stds-802-1@ieee.org
 
-        Contact: Kevin Nolish
-           Postal: C/O IEEE 802.1 Working Group
-                   IEEE Standards Association
-                   445 Hoes Lane
-                   P.O. Box 1331
-                   Piscataway
-                   NJ 08855-1331
-                   USA
-           E-mail: STDS-802-1-L@LISTSERV.IEEE.ORG
-
-          Contact: David Levi
+        Contact:   IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
@@ -60,13 +55,18 @@ ieee8021PbbTeMib MODULE-IDENTITY
            E-mail: STDS-802-1-L@LISTSERV.IEEE.ORG"
 
     DESCRIPTION
-       "Copyright (C) IEEE.  All Rights Reserved
+       "Copyright (C) IEEE (2014).  All Rights Reserved
         This version of this MIB module is part of IEEE 802.1Q;
         See the standard itself for full legal notices.
 
         Unless otherwise indicated, the references in this MIB    
-        module  are to IEEE 802.1Q-2011"
+        module  are to IEEE Std 802.1Q-2014"
 
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected."
+            
     REVISION     "201102270000Z" -- February 27, 2011
     DESCRIPTION
          "Minor edits to contact information etc. as part of 
@@ -96,7 +96,7 @@ ieee8021PbbTeProtectionGroupListTable OBJECT-TYPE
          corresponds to a configured PBB-TE Protection Group configured on
          the B-Component of an IB-BEB."
     REFERENCE
-        "12.19.1"
+        "12.18.1"
     ::= { ieee8021PbbTeObjects 1 }
 
 ieee8021PbbTeProtectionGroupListEntry OBJECT-TYPE
@@ -127,7 +127,7 @@ ieee8021PbbTeProtectionGroupListGroupId OBJECT-TYPE
     DESCRIPTION
          "The unique identifier for the protection group."
     REFERENCE
-        "12.19.2"
+        "12.18.2"
     ::= { ieee8021PbbTeProtectionGroupListEntry 1 }
 
 ieee8021PbbTeProtectionGroupListMD OBJECT-TYPE
@@ -144,7 +144,7 @@ ieee8021PbbTeProtectionGroupListMD OBJECT-TYPE
       of this row to be set to Active.  Furthermore, this column may
       not be modified while the RowStatus for this row is Active"
       REFERENCE
-          "12.19.1.1.3 b)"
+          "12.18.1.1.3 b)"
 ::= { ieee8021PbbTeProtectionGroupListEntry 2 }
 
 
@@ -161,7 +161,7 @@ ieee8021PbbTeProtectionGroupListWorkingMA OBJECT-TYPE
         for this row can be set to Active.  Furthermore, this column
         may not be modified when the RowStatus for this row is Active."
     REFERENCE
-        "12.19.1.1.3 b)"
+        "12.18.1.1.3 b)"
 ::= { ieee8021PbbTeProtectionGroupListEntry 3 }
 
 ieee8021PbbTeProtectionGroupListProtectionMA OBJECT-TYPE
@@ -177,7 +177,7 @@ ieee8021PbbTeProtectionGroupListProtectionMA OBJECT-TYPE
         for this row can be set to Active.  Furthermore, this column
         may not be modified when the RowStatus for this row is Active."
     REFERENCE
-        "12.19.1.1.3 c)"
+        "12.18.1.1.3 c)"
 ::= { ieee8021PbbTeProtectionGroupListEntry 4 }
 
 ieee8021PbbTeProtectionGroupListStorageType OBJECT-TYPE
@@ -202,7 +202,7 @@ ieee8021PbbTeProtectionGroupListRowStatus OBJECT-TYPE
         PbbTeProtectionGroupListProtectionMA columns must be specified
         before the row can be activated."
     REFERENCE
-        "12.19.1.2"
+        "12.18.1.2"
     ::= { ieee8021PbbTeProtectionGroupListEntry 6 }
 
 ieee8021PbbTeMASharedGroupTable OBJECT-TYPE
@@ -214,7 +214,7 @@ ieee8021PbbTeMASharedGroupTable OBJECT-TYPE
          share a working or protection entity with a given protection
          group."
     REFERENCE
-        "12.19.1.1.3 d)"
+        "12.18.1.1.3 d)"
     ::= { ieee8021PbbTeObjects 2 }
 
 ieee8021PbbTeMASharedGroupEntry OBJECT-TYPE
@@ -295,7 +295,7 @@ ieee8021PbbTeTesiId OBJECT-TYPE
     DESCRIPTION
         "This is the unique identifier for a PBB-TE TE-SID."
     REFERENCE
-        "802.1Qay 3.11"
+        "3.241"
     ::= { ieee8021PbbTeTesiEntry 1 }
 
 ieee8021PbbTeTesiComponent OBJECT-TYPE
@@ -303,7 +303,7 @@ ieee8021PbbTeTesiComponent OBJECT-TYPE
     MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
-    "This is the component upon which the bridge port of the
+    "This is the component upon which the Bridge Port of the
      TESI is located."
     REFERENCE
         "12.16.5.3.2 a)"
@@ -314,7 +314,7 @@ ieee8021PbbTeTesiBridgePort OBJECT-TYPE
     MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
-    "This is the bridge port of the TESI."
+    "This is the Bridge Port of the TESI."
     REFERENCE
         "12.16.5.3.2 b)"
     ::= { ieee8021PbbTeTesiEntry 3 }
@@ -429,7 +429,7 @@ ieee8021PbbTeProtectionGroupConfigTable OBJECT-TYPE
          created implicitly by the creation of entries in the
          ieee8021PbbTeProtectionGroupListTable table."
      REFERENCE
-         "12.19.2"
+         "12.18.2"
      ::= { ieee8021PbbTeObjects 5 }
 
 ieee8021PbbTeProtectionGroupConfigEntry OBJECT-TYPE
@@ -478,7 +478,7 @@ ieee8021PbbTeProtectionGroupConfigState OBJECT-TYPE
     DESCRIPTION
     "This column indicates the current state of the protection
      switching state machine for a protection group."
-    REFERENCE "26.10.3.5 12.19.2.1.3 c)"
+    REFERENCE "26.10.3.5 12.18.2.1.3 c)"
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 1 }
 
 ieee8021PbbTeProtectionGroupConfigCommandStatus OBJECT-TYPE
@@ -490,7 +490,7 @@ ieee8021PbbTeProtectionGroupConfigCommandStatus OBJECT-TYPE
         within the protection group.  It reflects the current
         operational administrative command being acted upon by the
         protection group."
-     REFERENCE "12.19.2.1.3 d)"
+     REFERENCE "12.18.2.1.3 d)"
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 2 }
 
 ieee8021PbbTeProtectionGroupConfigCommandLast OBJECT-TYPE
@@ -503,7 +503,7 @@ ieee8021PbbTeProtectionGroupConfigCommandLast OBJECT-TYPE
     whenever a write is made to the CommandAdmin column of
     this table and is a record of the last attempted
         administrative operation."
-     REFERENCE "12.19.2.1.3 d)"
+     REFERENCE "12.18.2.1.3 d)"
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 3 }
 
 ieee8021PbbTeProtectionGroupConfigCommandAdmin OBJECT-TYPE
@@ -518,7 +518,7 @@ ieee8021PbbTeProtectionGroupConfigCommandAdmin OBJECT-TYPE
        command that it is performing by setting the value of the
        CommandStatus column of this table.  This column always reads
        back as clear(1)."
-     REFERENCE "12.19.2.3.2"
+     REFERENCE "12.18.2.3.2"
      DEFVAL { clear }
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 4 }
 
@@ -529,7 +529,7 @@ ieee8021PbbTeProtectionGroupConfigActiveRequests OBJECT-TYPE
     DESCRIPTION
     "This column shows the status of active requests within
     the TE protection group."
-    REFERENCE "12.19.2.1.3 d)"
+    REFERENCE "12.18.2.1.3 d)"
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 5 }
 
 ieee8021PbbTeProtectionGroupConfigWTR OBJECT-TYPE
@@ -543,7 +543,7 @@ ieee8021PbbTeProtectionGroupConfigWTR OBJECT-TYPE
         default being 5.  Additionally, the value 0 is used to
         indicate that the protection group is to operate
         non-revertively."
-    REFERENCE "26.10.3.3.8 12.19.2.1.3 e)"
+    REFERENCE "26.10.3.3.8 12.18.2.1.3 e)"
     DEFVAL { 5 }
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 6 }
 
@@ -559,7 +559,7 @@ ieee8021PbbTeProtectionGroupConfigHoldOff OBJECT-TYPE
         protected domain to switch before a downsream domain.  The
         hold off timer has a period of from 0 to 10 seconds, the
         default being 0, with a 100ms granularity."
-    REFERENCE "12.19.2.1.3 f)"
+    REFERENCE "12.18.2.1.3 f)"
     DEFVAL { 0 }
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 7 }
 
@@ -569,9 +569,10 @@ ieee8021PbbTeProtectionGroupConfigNotifyEnable OBJECT-TYPE
     STATUS     current
     DESCRIPTION
         "This column is used to enable or disable transmission
-         of ieee8021PbbTeProtectionGroupAdminFailure notifications.
-     These notifications are generated whenever an administrative
-     command cannot be performed by the protection group."
+         of ieee8021PbbTeProtectionGroupAdminFailure
+         notifications. These notifications are generated
+         whenever an administrative command cannot be performed 
+         by the protection group."
     DEFVAL { false }
     ::= { ieee8021PbbTeProtectionGroupConfigEntry 8 }
 
@@ -596,7 +597,7 @@ ieee8021PbbTeProtectionGroupISidTable OBJECT-TYPE
         "This table contains entries for each I-SID that is
         transported over TE-SIDs that belong to protection groups.
         Each I-SID maps to a single protection group."
-    REFERENCE "12.19.2.1.3 b)"
+    REFERENCE "12.18.2.1.3 b)"
     ::= { ieee8021PbbTeObjects 6 }
 
 ieee8021PbbTeProtectionGroupISidEntry OBJECT-TYPE
@@ -610,11 +611,11 @@ ieee8021PbbTeProtectionGroupISidEntry OBJECT-TYPE
 
 Ieee8021PbbTeProtectionGroupISidEntry ::=
     SEQUENCE {
-        ieee8021PbbTeProtectionGroupISidIndex       IEEE8021PbbServiceIdentifier,
-        ieee8021PbbTeProtectionGroupISidComponentId IEEE8021PbbComponentIdentifier,
-        ieee8021PbbTeProtectionGroupISidGroupId     IEEE8021PbbTeProtectionGroupId,
-        ieee8021PbbTeProtectionGroupISidStorageType StorageType,
-        ieee8021PbbTeProtectionGroupISidRowStatus   RowStatus
+     ieee8021PbbTeProtectionGroupISidIndex       IEEE8021PbbServiceIdentifier,
+     ieee8021PbbTeProtectionGroupISidComponentId IEEE8021PbbComponentIdentifier,
+     ieee8021PbbTeProtectionGroupISidGroupId     IEEE8021PbbTeProtectionGroupId,
+     ieee8021PbbTeProtectionGroupISidStorageType StorageType,
+     ieee8021PbbTeProtectionGroupISidRowStatus   RowStatus
     }
 
  ieee8021PbbTeProtectionGroupISidIndex OBJECT-TYPE
@@ -662,7 +663,7 @@ ieee8021PbbTeProtectionGroupISidRowStatus OBJECT-TYPE
     DESCRIPTION
         "This column contains the status for this row.  Once active
          none of the columns in the row may be modified.  All columns
-         must be specfied when creating the row."
+         must be specified when creating the row."
     ::= { ieee8021PbbTeProtectionGroupISidEntry 5 }
 
 ieee8021PbbTeBridgeStaticForwardAnyUnicastTable OBJECT-TYPE
@@ -789,14 +790,15 @@ ieee8021PbbTeProtectionGroupAdminFailure NOTIFICATION-TYPE
          manual switch cannot be performed because of a signal
          failure condition.
 
-         The management entity receiving the notification can identify
-     the system from the network source address of the notification
-     and can identify the protection group by the indices of the OID
-     of the ieee8021PbbTeProtectionGroupConfigState variable in the
+         The management entity receiving the notification can
+         identify the system from the network source address of
+         the notification and can identify the protection group
+         by the indices of the OID
+         of the ieee8021PbbTeProtectionGroupConfigState variable in the
      notification:
                
                 ieee8021BridgeBaseComponentId - Identifies the
-                  component on the bridge where the protection group
+                  component on the Bridge where the protection group
                   is configured.
 
                 ieee8021PbbTeProtectionGroupListGroupId - The id
@@ -807,9 +809,6 @@ ieee8021PbbTeProtectionGroupAdminFailure NOTIFICATION-TYPE
 --
 -- MIB Module Compliance Statements
 --
--- EDITOR's NOTE
---   These module compilance statements are simply a first cut.  Mainly
---   they are here to keep smilint quiet.
 
 ieee8021PbbTeCompliances OBJECT IDENTIFIER ::= { ieee8021PbbTeConformance 1 }
 ieee8021PbbTeGroups      OBJECT IDENTIFIER ::= { ieee8021PbbTeConformance 2 }
@@ -970,3 +969,8 @@ ieee8021PbbTeCompliance MODULE-COMPLIANCE
     ::= { ieee8021PbbTeCompliances 1 }
 
 END
+
+
+
+
+

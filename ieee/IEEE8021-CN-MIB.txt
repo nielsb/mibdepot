@@ -1,34 +1,44 @@
+
 IEEE8021-CN-MIB
  DEFINITIONS ::= BEGIN
 
 -- ******************************************************************
--- IEEE Std 802.1Qau(TM) Congestion Management MIB
+-- IEEE Std 802.1Q(TM) Congestion Management MIB
 -- ******************************************************************
 
 IMPORTS
     MODULE-IDENTITY,
     OBJECT-TYPE,
-    Integer32,
-    Counter32,
-    Counter64,
+    Integer32
+               FROM SNMPv2-SMI    -- [RFC2578]
+    Counter32
+               FROM SNMPv2-SMI    -- [RFC2578]
+    Counter64
+               FROM SNMPv2-SMI    -- [RFC2578]
     Unsigned32
                FROM SNMPv2-SMI    -- [RFC2578]
     TEXTUAL-CONVENTION,
-    TimeInterval,
-    RowStatus,
-    TruthValue,
+    TimeInterval
+               FROM SNMPv2-TC     -- [RFC2579]
+    RowStatus
+               FROM SNMPv2-TC     -- [RFC2579]
+    TruthValue
+               FROM SNMPv2-TC     -- [RFC2579]
     MacAddress
                FROM SNMPv2-TC     -- [RFC2579]
     MODULE-COMPLIANCE,
     OBJECT-GROUP             FROM SNMPv2-CONF   -- [RFC2580]
-    InterfaceIndex,
+    InterfaceIndex
+                             FROM IF-MIB        -- [RFC2863]
     ifGeneralInformationGroup
                              FROM IF-MIB        -- [RFC2863]
-    IEEE8021PriorityValue,
+    ieee802dot1mibs
+                             FROM IEEE8021-TC-MIB
+    IEEE8021PriorityValue
+                             FROM IEEE8021-TC-MIB 
     IEEE8021PbbComponentIdentifier
                              FROM IEEE8021-TC-MIB -- [IEEE 802.1ap]
     LldpV2DestAddressTableIndex
-
                              FROM LLDP-V2-TC-MIB
     systemGroup
               FROM SNMPv2-MIB    -- [RFC3418]
@@ -36,13 +46,13 @@ IMPORTS
 
 ieee8021CnMib
  MODULE-IDENTITY
-    LAST-UPDATED "201102270000Z" -- February 27, 2011
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
           "WG-URL: http://grouper.ieee.org/groups/802/1/index.html
          WG-EMail: stds-802-1@ieee.org 
 
-          Contact: Norman Finn
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
@@ -55,11 +65,18 @@ ieee8021CnMib
    DESCRIPTION 
      "Congestion notification module.
       Unless otherwise indicated, the references in this MIB
-      module are to IEEE Std 802.1Q-2011.
+      module are to IEEE Std 802.1Q-2014.
 
-      Copyright (C) IEEE.
-      This version of this MIB module is part of IEEE802.1Q;
+      Copyright (C) IEEE (2014).
+      This version of this MIB module is part of IEEE Std 802.1Q;
       see the draft itself for full legal notices."
+
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected.
+            Imports tidied up to remove orphaned commas."
+            
    REVISION     "201102270000Z" -- February 27, 2011
    DESCRIPTION
      "Minor edits to contact information etc. as part of 
@@ -70,9 +87,7 @@ ieee8021CnMib
       "Included in IEEE 802.1Qau-2010
 
         Copyright (C) IEEE."
-    ::= { iso(1) org(3) ieee(111)
-         standards-association-numbers-series-standards (2)
-         lan-man-stds (802) ieee802dot1 (1) ieee802dot1mibs (1) 18 }
+    ::= { ieee802dot1mibs 18 }
 
 ieee8021CnMIBObjects
       OBJECT IDENTIFIER ::= { ieee8021CnMib 1 }
@@ -89,8 +104,8 @@ Ieee8021CnControlChoice
     DESCRIPTION
        "This controls what other object selects the CND defense mode and
         the Congestion Notification Priority Value (CNPV) alternate
-        priority for a CNPV in an end station or bridge component, or
-        for a CNPV on a particular Port in an end station or bridge
+        priority for a CNPV in an end station or Bridge component, or
+        for a CNPV on a particular Port in an end station or Bridge
         component.  It can take the following values:
 
         cpcAdmin(1) The CND defense mode and alternate priority are
@@ -104,7 +119,7 @@ Ieee8021CnControlChoice
                     both controlled by ieee8021CnPortPriTable.
        "
     REFERENCE
-       "IEEE 802.1Qau clauses 32.3.1, 32.4.1, Table 32-2"
+       "32.3.1, 32.4.1, Table 32-2"
     SYNTAX  INTEGER {
         cpcAdmin    (1),
         cpcAuto     (2),
@@ -120,37 +135,37 @@ Ieee8021CnDefenseMode
         defense mode determines whether congestion notification is
         enabled or not, and if enabled, whether the port translates the
         CNPV to a non-CNPV value on input, and whether the port removes
-        CN-TAGs on output.
+        CNTAGs on output.
 
         cptDisabled(1)      The congestion notification capability is
                             administratively disabled for this priority
                             value and port. This priority is not a CNPV.
                             The priority regeneration table controls the
                             remapping of input frames on this port for
-                            this priority. CN-TAGs are neither added by
-                            an end station nor stripped by a bridge.
+                            this priority. CNTAGs are neither added by
+                            an end station nor stripped by a Bridge.
         cptInterior(2)      On this port and for this CNPV, the priority
                             parameters of input frames are not remapped,
                             regardless of the priority regeneration
-                            table. CN-TAGs are not added by an end
+                            table. CNTAGs are not added by an end
                             station, and are removed from frames before
-                            being output by a bridge.
+                            being output by a Bridge.
         cptInteriorReady(3) On this port and for this CNPV, the priority
                             parameters of input frames are not remapped,
                             regardless of the priority regeneration
-                            table. CN-TAGs can be added by an end
+                            table. CNTAGs can be added by an end
                             station, and are not removed from frames by
-                            a bridge.
+                            a Bridge.
         cptEdge(4)          On this port and for this CNPV, the priority
                             parameters of input frames are remapped to
                             an alternate (non-CNPV) value, regardless of
-                            the priority regeneration table. CN-TAGs are
+                            the priority regeneration table. CNTAGs are
                             not added by an end station, and are removed
-                            from frames before being output by a bridge.
+                            from frames before being output by a Bridge.
                             This mode is optional for an end station.
        "
     REFERENCE
-       "IEEE 802.1Qau clause 32.1.1, 32.3.4, 32.4.2, 32.4.3, Table 32-2"
+       "32.1.1, 32.3.4, 32.4.2, 32.4.3, Table 32-2"
     SYNTAX  INTEGER {
         cptDisabled      (1),
         cptInterior      (2),
@@ -187,7 +202,7 @@ Ieee8021CnLldpChoice
                             priority.
        "
     REFERENCE
-       "IEEE 802.1Qau clause 32.3.6, 32.4.4, Table 32-1"
+       "32.3.6, 32.4.4, Table 32-1"
     SYNTAX  INTEGER {
         cnlNone         (1),
         cnlAdmin        (2),
@@ -198,7 +213,7 @@ Ieee8021CnLldpChoice
 
 -- ******************************************************************
 -- The Global Table. This group will contain the MIB objects that
--- apply to the whole bridge component or end station.
+-- apply to the whole Bridge component or end station.
 -- ******************************************************************
 
 ieee8021CnGlobalTable
@@ -208,14 +223,14 @@ ieee8021CnGlobalTable
     STATUS      current
     DESCRIPTION
        "A table containing the global variables for each component of
-        a bridge or for an end station.  A value of 1 is used in a
-        bridge or end station that does not have multiple components.
+        a Bridge or for an end station.  A value of 1 is used in a
+        Bridge or end station that does not have multiple components.
 
         The contents of this table SHALL be maintained across a restart
         of the system.
        "
     REFERENCE
-       "802.1Qau clause 12.21.1"
+       "12.21.1"
     ::= { ieee8021CnMIBObjects 1 }
 
 ieee8021CnGlobalEntry
@@ -224,7 +239,7 @@ ieee8021CnGlobalEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "A list of objects pertaining to a whole bridge component or
+       "A list of objects pertaining to a whole Bridge component or
         end station.
        "
     INDEX { ieee8021CnGlobalComponentId }
@@ -244,7 +259,7 @@ ieee8021CnGlobalComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnGlobalEntry applies.  If the system is not
         a Bridge, or if only one component is present in the Bridge,
         then this variable (index) MUST be equal to 1.
@@ -257,12 +272,12 @@ ieee8021CnGlobalMasterEnable
     MAX-ACCESS  read-write
     STATUS      current
     DESCRIPTION
-       "The state of the congestion notification feature on this bridge
+       "The state of the congestion notification feature on this Bridge
         component or system.  If true, Congestion notification is
         enabled, and if false, congestion notification is disabled.
        "
     REFERENCE
-       "802.1Qau clause 32.2.1"
+       "32.2.1"
     ::= { ieee8021CnGlobalEntry 2 }
 
 ieee8021CnGlobalCnmTransmitPriority
@@ -272,10 +287,10 @@ ieee8021CnGlobalCnmTransmitPriority
     STATUS      current
     DESCRIPTION
        "The priority to use for all Congestion Notification Messages
-        transmitted by this bridge component or end station.
+        transmitted by this Bridge component or end station.
        "
     REFERENCE
-       "802.1Qau clause 32.2.2"
+       "32.2.2"
     ::= { ieee8021CnGlobalEntry 3 }
 
 ieee8021CnGlobalDiscardedFrames
@@ -299,13 +314,13 @@ ieee8021CnGlobalDiscardedFrames
         interface (if any).
        "
     REFERENCE
-       "802.1Qau clause 32.2.3"
+       "32.2.3"
     ::= { ieee8021CnGlobalEntry 4 }
 
 
 
 -- ******************************************************************
--- The CCF Errored Port Table.  One per bridge component or end station.
+-- The CCF Errored Port Table.  One per Bridge component or end station.
 -- Scanning this table reveals which Interfaces at which priorities
 -- have an Alternate Priority value that is a
 -- Congestion Notification Priority Value.
@@ -317,13 +332,13 @@ ieee8021CnErroredPortTable
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "There is one Errored Port Table per bridge component or end
+       "There is one Errored Port Table per Bridge component or end
         station. It permits the retrieval of information about which
         interfaces have congestion notification configuration errors,
         namely, those specifying an alternate priority that is a CNPV.
        "
     REFERENCE
-       "802.1Qau clause 32.2.4"
+       "32.2.4"
     ::= { ieee8021CnMIBObjects 2 }
 
 ieee8021CnErroredPortEntry
@@ -337,7 +352,7 @@ ieee8021CnErroredPortEntry
         value that is a Congestion Notification Priority Value.
        "
     REFERENCE
-       "802.1Qau clause 32.2.4"
+       "32.2.4"
     INDEX { ieee8021CnEpComponentId,
             ieee8021CnEpPriority,
             ieee8021CnEpIfIndex}
@@ -356,13 +371,13 @@ ieee8021CnEpComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnErroredPortEntry applies.  If the system is
         not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
        "
     REFERENCE
-       "802.1Qau clause 32.2.4"
+       "32.2.4"
     ::= { ieee8021CnErroredPortEntry 1 }
 
 ieee8021CnEpPriority
@@ -374,7 +389,7 @@ ieee8021CnEpPriority
        "The priority value whose alternate priority is misconfigured.
        "
     REFERENCE
-       "802.1Qau clause 32.2.4"
+       "32.2.4"
     ::= { ieee8021CnErroredPortEntry 2 }
 
 ieee8021CnEpIfIndex
@@ -394,12 +409,12 @@ ieee8021CnEpIfIndex
         ieee8021CnErroredPortTable.
        "
     REFERENCE
-       "802.1Qau clause 32.2.4"
+       "32.2.4"
     ::= { ieee8021CnErroredPortEntry 3 }
 
 
 -- ******************************************************************
--- The CCF Per-component per-priority table.  One table per bridge
+-- The CCF Per-component per-priority table.  One table per Bridge
 -- component or end station, one entry per
 -- Congestion Notification Priority Value
 -- ******************************************************************
@@ -411,7 +426,7 @@ ieee8021CnCompntPriTable
     STATUS      current
     DESCRIPTION
        "Each row in this table supplies default values for one
-        Congestion Notification Priority Value for a whole bridge 
+        Congestion Notification Priority Value for a whole Bridge 
         component or end station.
 
         Creating a row in this table makes the priority value of
@@ -430,7 +445,7 @@ ieee8021CnCompntPriTable
         of the system.
        "
     REFERENCE
-       "802.1Qau clause 12.21.2, 12.21.2.1, 12.21.2.2"
+       "12.21.2, 12.21.2.1, 12.21.2.2"
     ::= { ieee8021CnMIBObjects 3 }
 
 ieee8021CnCompntPriEntry
@@ -440,10 +455,10 @@ ieee8021CnCompntPriEntry
     STATUS      current
     DESCRIPTION
        "One entry per Congestion Notification Priority Value per
-        bridge component or end station.
+        Bridge component or end station.
        "
     REFERENCE
-       "802.1Qau clause 12.21.2, 12.21.2.1, 12.21.2.2"
+       "12.21.2, 12.21.2.1, 12.21.2.2"
     INDEX { ieee8021CnComPriComponentId,
             ieee8021CnComPriPriority }
     ::= { ieee8021CnCompntPriTable 1 }
@@ -468,13 +483,13 @@ ieee8021CnComPriComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnCompntPriEntry applies.  If the system is
         not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
        "
     REFERENCE
-       "802.1Qau clause 12.21.2, 12.21.2.1, 12.21.2.2"
+       "12.21.2, 12.21.2.1, 12.21.2.2"
     ::= { ieee8021CnCompntPriEntry 1 }
 
 ieee8021CnComPriPriority
@@ -501,7 +516,7 @@ ieee8021CnComPriDefModeChoice
     DESCRIPTION
        "Specifies how the default CND defense mode and alternate
         priority for this Congestion Notification Priority Value on all
-        ports on this bridge component or end station are to be chosen,
+        ports on this Bridge component or end station are to be chosen,
         either:
 
             cpcAdmin(1) Default CND defense mode is chosen by
@@ -515,7 +530,7 @@ ieee8021CnComPriDefModeChoice
         ieee8021CnPortPriDefModeChoice.
        "
     REFERENCE
-       "802.1Qau clause 32.1.3, 32.3.1"
+       "32.1.3, 32.3.1"
     DEFVAL { cpcAuto }
     ::= { ieee8021CnCompntPriEntry 3 }
 
@@ -561,7 +576,7 @@ ieee8021CnComPriAutoAltPri
         whenever a row in the ieee8021CnCompntPriTable is created or
         deleted.  The value of this object is not dependent upon
         whether congestion notification is enabled or disabled for any
-        priority or for the whole bridge component or end station; it
+        priority or for the whole Bridge component or end station; it
         depends only upon whether the ieee8021CnCompntPriTable row
         exists.
        "
@@ -577,13 +592,13 @@ ieee8021CnComPriAdminDefenseMode
     DESCRIPTION
        "The default CND defense mode for this
         Congestion Notification Priority Value on all ports on this
-        bridge component or end station.
+        Bridge component or end station.
 
         This variable can be overridden by
         ieee8021CnPortPriAdminDefenseMode.
        "
     REFERENCE
-       "802.1Qau clause 32.1.3, 32.3.4"
+       "32.1.3, 32.3.4"
     DEFVAL { cptInterior }
     ::= { ieee8021CnCompntPriEntry 6 }
 
@@ -607,7 +622,7 @@ ieee8021CnComPriCreation
                                 objects take the value cpcAdmin (1).
        "
     REFERENCE
-       "802.1Qau clause 32.3.5"
+       "32.3.5"
     DEFVAL { cncpAutoEnable }
     ::= { ieee8021CnCompntPriEntry 7 }
 
@@ -633,7 +648,7 @@ ieee8021CnComPriLldpInstanceChoice
         ieee8021CnPortPriLldpInstanceChoice.
        "
     REFERENCE
-       "802.1Qau clause 32.1.3, 32.3.6"
+       "32.1.3, 32.3.6"
     DEFVAL { cnlAdmin }
     ::= { ieee8021CnCompntPriEntry 8 }
 
@@ -656,7 +671,7 @@ ieee8021CnComPriLldpInstanceSelector
         ieee8021CnPortPriLldpInstanceChoice.
        "
     REFERENCE
-       "802.1Qau clause 32.1.3, 32.3.7"
+       "32.1.3, 32.3.7"
     DEFVAL { 1 }
     ::= { ieee8021CnCompntPriEntry 9 }
 
@@ -677,13 +692,13 @@ ieee8021CnComPriRowStatus
         notReady(3), and the return of an inconsistentValue error.
        "
     REFERENCE
-       "802.1Qau clause 30.4"
+       "30.4"
     ::= { ieee8021CnCompntPriEntry 10 }
 
 
 -- ******************************************************************
 -- The CCF Per-component per-interface per-priority table.  One table
--- per end station or bridge component.  One entry per interface per
+-- per end station or Bridge component.  One entry per interface per
 -- priority value, but only for priority values that are
 -- Congestion Notification Priority Values (CNPVs).  Controls
 -- a CNPV on a specific port when the default values in
@@ -700,17 +715,17 @@ ieee8021CnPortPriTable
         Congestion Notification Priority Value (CNPV).
 
         Creating an entry in ieee8021CnCompntPriTable creates this
-        entry, with the default values, on all ports in the bridge
+        entry, with the default values, on all ports in the Bridge
         component or end station.  Deleting an entry in
         ieee8021CnCompntPriTable deletes this ieee8021CnCompntPriEntry
-        on all ports in the bridge component or end station.
+        on all ports in the Bridge component or end station.
 
         The contents of this table SHALL be maintained across a restart
         of the system, except as noted in the description of
         ieee8021CnPortPriIfIndex.
        "
     REFERENCE
-       "802.1Qau clause 12.21.3"
+       "12.21.3"
     ::= { ieee8021CnMIBObjects 4 }
 
 ieee8021CnPortPriEntry
@@ -720,10 +735,10 @@ ieee8021CnPortPriEntry
     STATUS      current
     DESCRIPTION
        "One entry per port per Congestion Notification Priority Value
-        per bridge component or end station.
+        per Bridge component or end station.
        "
     REFERENCE
-       "802.1Qau clause 12.21.3"
+       "12.21.3"
     INDEX { ieee8021CnPortPriComponentId,
             ieee8021CnPortPriority,
             ieee8021CnPortPriIfIndex }
@@ -749,13 +764,13 @@ ieee8021CnPortPriComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnPortPriEntry applies.  If the system is
         not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
        "
     REFERENCE
-       "802.1Qau clause 12.21.3"
+       "12.21.3"
     ::= { ieee8021CnPortPriEntry 1 }
 
 ieee8021CnPortPriority
@@ -789,7 +804,7 @@ ieee8021CnPortPriIfIndex
         the system SHALL delete the row in the ieee8021CnPortPriTable.
        "
     REFERENCE
-       "802.1Qau clause 12.21.3"
+       "12.21.3"
     ::= { ieee8021CnPortPriEntry 3 }
 
 ieee8021CnPortPriDefModeChoice
@@ -815,7 +830,7 @@ ieee8021CnPortPriDefModeChoice
         This variable can override ieee8021CnComPriDefModeChoice.
        "
     REFERENCE
-       "IEEE 802.1Qau clause 32.1.3, 32.4.1"
+       "IEEE 32.1.3, 32.4.1"
     DEFVAL { cpcComp }
     ::= { ieee8021CnPortPriEntry 4 }
 
@@ -832,7 +847,7 @@ ieee8021CnPortPriAdminDefenseMode
         This variable can override ieee8021CnComPriDefModeChoice.
        "
     REFERENCE
-       "IEEE 802.1Qau clause 32.1.3, 32.4.1"
+       "IEEE 32.1.3, 32.4.1"
     DEFVAL { cptDisabled }
     ::= { ieee8021CnPortPriEntry 5 }
 
@@ -851,7 +866,7 @@ ieee8021CnPortPriAutoDefenseMode
         Congestion Notification TLV.
        "
     REFERENCE
-       "IEEE 802.1Qau clause 32.4.3"
+       "IEEE 32.4.3"
     ::= { ieee8021CnPortPriEntry 6 }
 
 
@@ -880,7 +895,7 @@ ieee8021CnPortPriLldpInstanceChoice
         This object can override ieee8021CnComPriLldpInstanceChoice.
        "
     REFERENCE
-       "802.1Qau clause 32.1.3, 32.4.4"
+       "32.1.3, 32.4.4"
     DEFVAL { cnlComponent }
     ::= { ieee8021CnPortPriEntry 7 }
 
@@ -897,7 +912,7 @@ ieee8021CnPortPriLldpInstanceSelector
         This object can override ieee8021CnComPriLldpInstanceSelector.
        "
     REFERENCE
-       "802.1Qau clause 32.1.3, 32.4.5"
+       "32.1.3, 32.4.5"
     DEFVAL { 3 }
     ::= { ieee8021CnPortPriEntry 8 }
 
@@ -917,14 +932,14 @@ ieee8021CnPortPriAlternatePriority
         contains the value cpcAdmin (1).
        "
     REFERENCE
-       "802.1Qau clause 32.4.6"
+       "32.4.6"
     DEFVAL { 0 }
     ::= { ieee8021CnPortPriEntry 9 }
 
 
 
 -- ******************************************************************
--- The CCF per-CP table.  One table per end station or bridge component.
+-- The CCF per-CP table.  One table per end station or Bridge component.
 -- One entry per Congestion Point.  An entry in this table controls one
 -- Congestion Point (CP).
 -- ******************************************************************
@@ -945,7 +960,7 @@ ieee8021CnCpTable
 
         Creating an entry in ieee8021CnCompntPriTable can create an
         entry in this table, with the default values, on all ports in
-        the bridge component or end station.  Because more than one
+        the Bridge component or end station.  Because more than one
         Congestion Notification Priority Value (CNPV) can flow
         through a single CP, the creation of an entry in
         ieee8021CnCompntPriTable does not necessarily create a new
@@ -954,16 +969,16 @@ ieee8021CnCpTable
         ieee8021CnCompntPriTable can create multiple entries in this
         table.
 
-        Because each port in a bridge component or end station can have
+        Because each port in a Bridge component or end station can have
         a different relationship between CNPVs and CPs, the entries
         created or deleted on each port can be different.
 
         Deleting the last entry in ieee8021CnCompntPriTable for a
         CNPV passing through the CP controlled by this entry deletes
-        the entry on some or all of the ports in the bridge component
+        the entry on some or all of the ports in the Bridge component
         or end station.
 
-        Because each port in a bridge component or end station can have
+        Because each port in a Bridge component or end station can have
         a different relationship between CNPVs and CPs, the entries
         created or deleted on each port can be different.
 
@@ -975,7 +990,7 @@ ieee8021CnCpTable
         ieee8021CnCpIfIndex.
        "
     REFERENCE
-       "802.1Qau clause 12.21.4"
+       "12.21.4"
     ::= { ieee8021CnMIBObjects 5 }
 
 ieee8021CnCpEntry
@@ -985,10 +1000,10 @@ ieee8021CnCpEntry
     STATUS      current
     DESCRIPTION
        "An entry in the Congestion Point table controls a single
-        Congestion Point on a port in a bridge component or end station.
+        Congestion Point on a port in a Bridge component or end station.
        "
     REFERENCE
-       "802.1Qau clause 12.21.4"
+       "12.21.4"
     INDEX { ieee8021CnCpComponentId,
             ieee8021CnCpIfIndex,
             ieee8021CnCpIndex }
@@ -1017,13 +1032,13 @@ ieee8021CnCpComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnCpEntry applies.  If the system is
         not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
        "
     REFERENCE
-       "802.1Qau clause 12.21.4"
+       "12.21.4"
     ::= { ieee8021CnCpEntry 1 }
 
 ieee8021CnCpIfIndex
@@ -1044,7 +1059,7 @@ ieee8021CnCpIfIndex
         the row in the ieee8021CnCpTable.
        "
     REFERENCE
-       "802.1Qau clause 12.21.4"
+       "12.21.4"
     ::= { ieee8021CnCpEntry 2 }
 
 ieee8021CnCpIndex
@@ -1063,7 +1078,7 @@ ieee8021CnCpIndex
         value.
        "
     REFERENCE
-       "802.1Qau clause 12.21.4"
+       "12.21.4"
     ::= { ieee8021CnCpEntry 3 }
 
 ieee8021CnCpPriority
@@ -1077,7 +1092,7 @@ ieee8021CnCpPriority
         Congestion Point serves.
        "
     REFERENCE
-       "802.1Qau clause 12.21.4"
+       "12.21.4"
     ::= { ieee8021CnCpEntry 4 }
 
 ieee8021CnCpMacAddress
@@ -1091,7 +1106,7 @@ ieee8021CnCpMacAddress
         by this Congestion Point.
        "
     REFERENCE
-       "802.1Qau clause 32.8.1"
+       "32.8.1"
     ::= { ieee8021CnCpEntry 5 }
 
 ieee8021CnCpIdentifier
@@ -1109,7 +1124,7 @@ ieee8021CnCpIdentifier
         for its different CNPVs.
        "
     REFERENCE
-       "802.1Qau clause 32.8.2"
+       "32.8.2"
     ::= { ieee8021CnCpEntry 6 }
 
 ieee8021CnCpQueueSizeSetPoint
@@ -1126,7 +1141,7 @@ ieee8021CnCpQueueSizeSetPoint
         the queue at this set point.
        "
     REFERENCE
-       "802.1Qau clause 30.2, 32.8.3"
+       "30.2, 32.8.3"
     DEFVAL { 26000 }
     ::= { ieee8021CnCpEntry 7 }
 
@@ -1144,7 +1159,7 @@ ieee8021CnCpFeedbackWeight
         Thus, if this object contains a -1, cpW = 1/2.
        "
     REFERENCE
-       "802.1Qau clause 32.8.6"
+       "32.8.6"
     DEFVAL { 1 }
     ::= { ieee8021CnCpEntry 8 }
 
@@ -1160,7 +1175,7 @@ ieee8021CnCpMinSampleBase
         of Congestion Notification Messages.
        "
     REFERENCE
-       "802.1Qau clause 32.8.11"
+       "32.8.11"
     DEFVAL { 150000 }
     ::= { ieee8021CnCpEntry 9 }
 
@@ -1181,7 +1196,7 @@ ieee8021CnCpDiscardedFrames
         interface (if any).
        "
     REFERENCE
-       "802.1Qau clause 32.8.12"
+       "32.8.12"
     ::= { ieee8021CnCpEntry 10 }
 
 ieee8021CnCpTransmittedFrames
@@ -1202,7 +1217,7 @@ ieee8021CnCpTransmittedFrames
         interface (if any).
        "
     REFERENCE
-       "802.1Qau clause 32.8.13"
+       "32.8.13"
     ::= { ieee8021CnCpEntry 11 }
 
 ieee8021CnCpTransmittedCnms
@@ -1222,7 +1237,7 @@ ieee8021CnCpTransmittedCnms
         interface (if any).
        "
     REFERENCE
-       "802.1Qau clause 32.8.14"
+       "32.8.14"
     ::= { ieee8021CnCpEntry 12 }
 
 ieee8021CnCpMinHeaderOctets
@@ -1240,7 +1255,7 @@ ieee8021CnCpMinHeaderOctets
         in the CNM.
        "
     REFERENCE
-       "802.1Qau clause 32.8.15, 32.9.4 k)"
+       "32.8.15, 32.9.4 k)"
     DEFVAL { 0 }
     ::= { ieee8021CnCpEntry 13 }
 
@@ -1266,7 +1281,7 @@ ieee8021CnCpidToInterfaceTable
         update this table to be consistent with the ieee8021CnCpTable.
        "
     REFERENCE
-       "802.1Qau clause 17.2.13, 12.21.4, 32.8.2"
+       "17.2.13, 12.21.4, 32.8.2"
     ::= { ieee8021CnMIBObjects 6 }
 
 ieee8021CnCpidToInterfaceEntry
@@ -1280,7 +1295,7 @@ ieee8021CnCpidToInterfaceEntry
         interface index, and CP index
        "
     REFERENCE
-       "802.1Qau clause 17.2.13"
+       "17.2.13"
     INDEX { ieee8021CnCpidToIfCpid }
     ::= { ieee8021CnCpidToInterfaceTable 1 }
 
@@ -1300,11 +1315,11 @@ ieee8021CnCpidToIfCpid
     DESCRIPTION
        "This object is the Congestion Point Identifier (CPID)
         transmitted in Congestion Notification Message by a
-        Congestion Point residing in this bridge component or
+        Congestion Point residing in this Bridge component or
         end station.
        "
     REFERENCE
-       "802.1Qau clause 17.2.13, 32.8.2"
+       "17.2.13, 32.8.2"
     ::= { ieee8021CnCpidToInterfaceEntry 1 }
 
 ieee8021CnCpidToIfComponentId
@@ -1313,13 +1328,13 @@ ieee8021CnCpidToIfComponentId
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnCpidToInterfaceEntry applies.  If the system
         is not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
        "
     REFERENCE
-       "802.1Qau clause 17.2.13"
+       "17.2.13"
     ::= { ieee8021CnCpidToInterfaceEntry 2 }
 
 ieee8021CnCpidToIfIfIndex
@@ -1334,7 +1349,7 @@ ieee8021CnCpidToIfIfIndex
         in the ieee8021CnCpTable.
        "
     REFERENCE
-       "802.1Qau clause 17.2.13"
+       "17.2.13"
     ::= { ieee8021CnCpidToInterfaceEntry 3 }
 
 ieee8021CnCpidToIfCpIndex
@@ -1349,7 +1364,7 @@ ieee8021CnCpidToIfCpIndex
         to find the Congestion Point in the ieee8021CnCpTable.
        "
     REFERENCE
-       "802.1Qau clause 17.2.13"
+       "17.2.13"
     ::= { ieee8021CnCpidToInterfaceEntry 4 }
 
 
@@ -1367,7 +1382,7 @@ ieee8021CnRpPortPriTable
     DESCRIPTION
        "Each row in this table supplies values for all of the
         Reaction Points (RPs) on one Port and one priority of an end
-        station or bridge component.  This table is indexed by
+        station or Bridge component.  This table is indexed by
         component, port (interface), and priority.
 
         Creating an entry in ieee8021CnCompntPriTable can create an
@@ -1383,7 +1398,7 @@ ieee8021CnRpPortPriTable
         ieee8021CnRpPortPriIfIndex.
        "
     REFERENCE
-       "802.1Qau clause 12.21.5"
+       "12.21.5"
     ::= { ieee8021CnMIBObjects 7 }
 
 ieee8021CnRpPortPriEntry
@@ -1397,7 +1412,7 @@ ieee8021CnRpPortPriEntry
         priority value.
        "
     REFERENCE
-       "802.1Qau clause 12.21.5"
+       "12.21.5"
     INDEX { ieee8021CnRpPortPriComponentId, ieee8021CnRpPortPriPriority,
             ieee8021CnRpPortPriIfIndex
           }
@@ -1419,7 +1434,7 @@ ieee8021CnRpPortPriComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnRpGroupEntry applies.  If the system is
         not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
@@ -1437,7 +1452,7 @@ ieee8021CnRpPortPriPriority
         Reaction Point serves.
        "
     REFERENCE
-       "802.1Qau clause 12.21.5"
+       "12.21.5"
     ::= { ieee8021CnRpPortPriEntry 2 }
 
 ieee8021CnRpPortPriIfIndex
@@ -1459,7 +1474,7 @@ ieee8021CnRpPortPriIfIndex
         ieee8021CnRpPortPriTable.
        "
     REFERENCE
-       "802.1Qau clause 12.21.5"
+       "12.21.5"
     ::= { ieee8021CnRpPortPriEntry 3 }
 
 ieee8021CnRpPortPriMaxRps
@@ -1474,7 +1489,7 @@ ieee8021CnRpPortPriMaxRps
         but it MAY create fewer.
        "
     REFERENCE
-       "802.1Qau clause 32.10.1"
+       "32.10.1"
     DEFVAL { 1 }
     ::= { ieee8021CnRpPortPriEntry 4 }
 
@@ -1494,7 +1509,7 @@ ieee8021CnRpPortPriCreatedRps
         lifetime of an active RP during that interval.
        "
     REFERENCE
-       "802.1Qau clause 32.10.2, 32.10.3, 32.13.1"
+       "32.10.2, 32.10.3, 32.13.1"
     ::= { ieee8021CnRpPortPriEntry 5 }
 
 ieee8021CnRpPortPriCentiseconds
@@ -1519,7 +1534,7 @@ ieee8021CnRpPortPriCentiseconds
         interval.
        "
     REFERENCE
-       "802.1Qau clause 32.10.3, 32.13.1"
+       "32.10.3, 32.13.1"
     ::= { ieee8021CnRpPortPriEntry 6 }
 
 
@@ -1546,7 +1561,7 @@ ieee8021CnRpGroupTable
         (CNPV), so creating an entry in ieee8021CnCompntPriTable can
         create multiple entries in this table.
 
-        Because each port in a bridge component or end station can have
+        Because each port in a Bridge component or end station can have
         a different relationship between CNPVs and RPs, the entries
         created or deleted on each port can be different.
 
@@ -1566,7 +1581,7 @@ ieee8021CnRpGroupTable
         ieee8021CnRpgIfIndex.
        "
     REFERENCE
-       "802.1Qau clause 12.21.6"
+       "12.21.6"
     ::= { ieee8021CnMIBObjects 8 }
 
 ieee8021CnRpGroupEntry
@@ -1608,7 +1623,7 @@ ieee8021CnRpgComponentId
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-       "The bridge component within the system to which the information
+       "The Bridge component within the system to which the information
         in this ieee8021CnRpGroupEntry applies.  If the system is
         not a Bridge, or if only one component is present in the
         Bridge, then this variable (index) MUST be equal to 1.
@@ -1626,7 +1641,7 @@ ieee8021CnRpgPriority
         Reaction Point serves.
        "
     REFERENCE
-       "802.1Qau clause 12.21.5"
+       "12.21.5"
     ::= { ieee8021CnRpGroupEntry 2 }
 
 ieee8021CnRpgIfIndex
@@ -1647,7 +1662,7 @@ ieee8021CnRpgIfIndex
         system SHALL delete the row in the ieee8021CnRpGroupTable.
        "
     REFERENCE
-       "802.1Qau clause 12.21.5"
+       "12.21.5"
     ::= { ieee8021CnRpGroupEntry 3 }
 
 ieee8021CnRpgIdentifier
@@ -1663,7 +1678,7 @@ ieee8021CnRpgIdentifier
         Reaction Point.
        "
     REFERENCE
-       "802.1Qau clause 12.21.6"
+       "12.21.6"
     ::= { ieee8021CnRpGroupEntry 4 }
 
 ieee8021CnRpgEnable
@@ -1685,7 +1700,7 @@ ieee8021CnRpgEnable
                         CNMs.
        "
     REFERENCE
-       "802.1Qau clause 32.11.1, 32.13.1"
+       "32.11.1, 32.13.1"
     DEFVAL { true }
     ::= { ieee8021CnRpGroupEntry 5 }
 
@@ -1700,7 +1715,7 @@ ieee8021CnRpgTimeReset
         variables, rpgTimeReset, used to reset the timers RpWhile.
        "
     REFERENCE
-       "802.1Qau clause 32.11.2"
+       "32.11.2"
     DEFVAL { 15 }
     ::= { ieee8021CnRpGroupEntry 6 }
 
@@ -1716,7 +1731,7 @@ ieee8021CnRpgByteReset
         rpByteCount.
        "
     REFERENCE
-       "802.1Qau clause 32.11.3"
+       "32.11.3"
     DEFVAL { 150000 }
     ::= { ieee8021CnRpGroupEntry 7 }
 
@@ -1731,7 +1746,7 @@ ieee8021CnRpgThreshold
         RP rate control state machine advances states.
        "
     REFERENCE
-       "802.1Qau clause 32.11.4"
+       "32.11.4"
     DEFVAL { 5 }
     ::= { ieee8021CnRpGroupEntry 8 }
 
@@ -1750,7 +1765,7 @@ ieee8021CnRpgMaxRate
         LAN, including preamble, inter-frame gap, etc.
        "
     REFERENCE
-       "802.1Qau clause 32.11.5"
+       "32.11.5"
     ::= { ieee8021CnRpGroupEntry 9 }
 
 ieee8021CnRpgAiRate
@@ -1766,7 +1781,7 @@ ieee8021CnRpgAiRate
         frame on the LAN, including preamble, inter-frame gap, etc.
        "
     REFERENCE
-       "802.1Qau clause 32.11.6"
+       "32.11.6"
     DEFVAL { 5 }
     ::= { ieee8021CnRpGroupEntry 10 }
 
@@ -1783,7 +1798,7 @@ ieee8021CnRpgHaiRate
         frame on the LAN, including preamble, inter-frame gap, etc.
        "
     REFERENCE
-       "802.1Qau clause 32.11.7"
+       "32.11.7"
     DEFVAL { 50 }
     ::= { ieee8021CnRpGroupEntry 11 }
 
@@ -1799,7 +1814,7 @@ ieee8021CnRpgGd
         negative power of this object, e.g., 7 means rpgGd = 1/128.
        "
     REFERENCE
-       "802.1Qau clause 32.11.8"
+       "32.11.8"
     DEFVAL { 7 }
     ::= { ieee8021CnRpGroupEntry 12 }
 
@@ -1816,7 +1831,7 @@ ieee8021CnRpgMinDecFac
         represents a percentage, from 1% to 100%.
        "
     REFERENCE
-       "802.1Qau clause 32.11.9"
+       "32.11.9"
     DEFVAL { 50 }
     ::= { ieee8021CnRpGroupEntry 13 }
 
@@ -1834,7 +1849,7 @@ ieee8021CnRpgMinRate
         frame on the LAN, including preamble, inter-frame gap, etc.
        "
     REFERENCE
-       "802.1Qau clause 32.11.10"
+       "32.11.10"
     DEFVAL { 5 }
     ::= { ieee8021CnRpGroupEntry 14 }
 
@@ -2007,8 +2022,8 @@ ieee8021CnBridgeCompliance
  MODULE-COMPLIANCE
     STATUS      current
     DESCRIPTION
-       "The compliance statement for support by a bridge of
-        the IEEE8021-CN-MIB module."
+       "The compliance statement for support by a Bridge of
+        the IEEE8021-MIRP-MIB module."
 
     MODULE SNMPv2-MIB -- The SNMPv2-MIB, RFC 3418
         MANDATORY-GROUPS {
@@ -2047,7 +2062,7 @@ ieee8021CnStationCompliance
     STATUS      current
     DESCRIPTION
        "The compliance statement for support by an end station of
-        the IEEE8021-CN-MIB module."
+        the IEEE8021-MIRP-MIB module."
 
     MODULE SNMPv2-MIB -- The SNMPv2-MIB, RFC 3418
         MANDATORY-GROUPS {
@@ -2100,3 +2115,8 @@ ieee8021CnStationCompliance
 
     ::= { ieee8021CnCompliances 2 }
 END
+
+
+
+
+

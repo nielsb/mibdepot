@@ -1,7 +1,8 @@
+
 IEEE8021-PFC-MIB DEFINITIONS ::= BEGIN
 
 -- ******************************************************************
--- IEEE P802.1Qbb(TM) Priority-based Flow Control MIB
+-- IEEE P802.1Q(TM) Priority-based Flow Control MIB
 -- ******************************************************************
 
 IMPORTS
@@ -9,6 +10,7 @@ IMPORTS
     OBJECT-TYPE,
     Counter32,
     Unsigned32               FROM SNMPv2-SMI    -- [RFC2578]   
+    ieee802dot1mbs           FROM IEEE8021-TC-MIB
     MODULE-COMPLIANCE,
     OBJECT-GROUP             FROM SNMPv2-CONF   -- [RFC2580]
     ifEntry,
@@ -18,29 +20,41 @@ IMPORTS
    ;
 
 ieee8021PFCMib MODULE-IDENTITY
-    LAST-UPDATED "201002080000Z"    -- 02/08/2010 00:00GMT
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
        "WG-URL:   http://grouper.ieee.org/groups/802/1/index.html
         WG-EMail: stds-802-1@ieee.org 
-
-        Contact:  Claudio DeSanti
-
-                  Cisco Systems
-                  170 W. Tasman Drive
-                  San Jose, CA 95134, USA
-
-        E-mail:   cds@cisco.com"
+        Contact:  IEEE 802.1 Working Group Chair
+        Postal:   IEEE Standards Board
+                  445 Hoes Lane
+                  P.O. Box 1331
+                  Piscataway, NJ 08855-1331
+                  USA
+        E-mail:   stds-802-1@ieee.org
+        "
    DESCRIPTION 
-     "Priority-based Flow Control module for managing IEEE 802.1Qbb"
+     "Priority-based Flow Control module for IEEE 802.1Q.
+
+        Unless otherwise indicated, the references in this MIB
+        module are to IEEE Std 802.1Q-2014.
+
+        Copyright (C) IEEE (2014).
+        This version of this MIB module is part of IEEE802.1Q;
+        see the draft itself for full legal notices.
+      "
+
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected."
+
    REVISION       "201002080000Z"    -- 02/08/2010 00:00GMT
    DESCRIPTION 
       "Included in IEEE P802.1Qbb
 
         Copyright (C) IEEE."
-    ::= { iso(1) org(3) ieee(111)
-         standards-association-numbers-series-standards (2)
-         lan-man-stds (802) ieee802dot1 (1) ieee802dot1mibs (1) 21 }
+    ::= { ieee802dot1mibs 21 }
 
 
 ieee8021PfcMIBObjects      OBJECT IDENTIFIER ::= { ieee8021PFCMib 1 }
@@ -54,7 +68,7 @@ ieee8021PfcIfTable OBJECT-TYPE
     DESCRIPTION
        "A table of PFC information for all interfaces of a system."
     REFERENCE
-       "802.1Qbb clause 12.18"
+       "12.23"
     ::= { ieee8021PfcMIBObjects 1 }
 
 ieee8021PfcIfEntry OBJECT-TYPE
@@ -65,7 +79,7 @@ ieee8021PfcIfEntry OBJECT-TYPE
        "Each entry contains information about
         the PFC function on a single interface."
     REFERENCE
-       "802.1Qbb clause 12.18"
+       "12.23"
     AUGMENTS { ifEntry }
     ::= { ieee8021PfcIfTable 1 }
 
@@ -170,3 +184,8 @@ ieee8021PfcCompliance MODULE-COMPLIANCE
 
 
 END
+
+
+
+
+

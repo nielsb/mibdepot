@@ -1,6 +1,10 @@
 
 IEEE8021-PBB-MIB DEFINITIONS ::= BEGIN
 
+-- =============================================================
+-- MIB for IEEE 802.1Q Provider Backbone Bridge Devices
+-- =============================================================
+
 IMPORTS
     MODULE-IDENTITY, OBJECT-TYPE, Unsigned32, Integer32
         FROM SNMPv2-SMI
@@ -23,13 +27,13 @@ IMPORTS
         FROM SNMPv2-CONF;
 
 ieee8021PbbMib MODULE-IDENTITY
-    LAST-UPDATED "201102270000Z" -- February 27, 2011
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://grouper.ieee.org/groups/802/1/index.html
          WG-EMail: stds-802-1@ieee.org
 
-          Contact: David Levi
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
@@ -43,11 +47,20 @@ ieee8021PbbMib MODULE-IDENTITY
          devices that support PBB.
 
          Unless otherwise indicated, the references in this MIB
-         module are to IEEE 802.1Q-2011.
+         module are to IEEE Std 802.1Q-2014.
 
-         Copyright (C) IEEE.
+         Copyright (C) IEEE (2014).
          This version of this MIB module is part of IEEE802.1Q;
          see the draft itself for full legal notices."
+
+    REVISION "201412150000Z" -- December 15, 2014
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected.
+            ieee8021PbbVipType and ieee8021PbbCBPServiceMappingType
+            deprecated."
+            
     REVISION     "201102270000Z" -- February 27, 2011
     DESCRIPTION
          "Minor edits to contact information etc. as part of 
@@ -75,7 +88,7 @@ ieee8021PbbProviderBackboneBridge
     OBJECT IDENTIFIER ::= { ieee8021PbbObjects 1 }
 
 -- ===========================================================
--- 12.16.1.1/2 Backbone Edge Bridge (BEB) configuration
+-- 12.16.1.1/12.16.1.2 Backbone Edge Bridge (BEB) configuration
 -- ===========================================================
 --    items a), b), c), e), and g), see below
 --    d) ieee8021BridgeBaseBridgeAddress from IEEE8021-BRIDGE-MIB
@@ -142,7 +155,7 @@ ieee8021PbbNextAvailablePipIfIndex OBJECT-TYPE
     DESCRIPTION
         "This object provides an available ifIndex value that can
         be used for creation of a PIP."
-    REFERENCE   "12.16.4.1/2"
+    REFERENCE   "12.16.4.1, 12.16.4.2"
     ::= { ieee8021PbbBackboneEdgeBridgeObjects 6 }
 
 -- ===========================================================
@@ -157,7 +170,7 @@ ieee8021PbbVipTable OBJECT-TYPE
         "This table lists the additional PBB parameters for each
          VIP.  Entries in this table must be persistent over power
          up restart/reboot."
-    REFERENCE   "12.16.3.1/2"
+    REFERENCE   "12.16.3.1, 12.16.3.2"
     ::= { ieee8021PbbProviderBackboneBridge 2 }
 
 ieee8021PbbVipEntry OBJECT-TYPE
@@ -229,7 +242,7 @@ ieee8021PbbVipDefaultDstBMAC OBJECT-TYPE
 ieee8021PbbVipType OBJECT-TYPE
     SYNTAX      IEEE8021PbbIngressEgress
     MAX-ACCESS  read-create
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
         "This feature is used to support asymmetic VLANs.
 
@@ -268,7 +281,7 @@ ieee8021PbbVipEnableConnectionId OBJECT-TYPE
     ::= { ieee8021PbbVipEntry 6 }
 
 -- ===========================================================
--- 12.16.3.1/2 I-SID to VIP cross-reference table
+-- 12.16.3.1/12.16.3.2 I-SID to VIP cross-reference table
 -- ===========================================================
 
 ieee8021PbbISidToVipTable OBJECT-TYPE
@@ -279,7 +292,7 @@ ieee8021PbbISidToVipTable OBJECT-TYPE
         "This table contains a cross-reference of I-SID values
          to the VIPs with which they are associated.  This allows
          VIPs to be located easily by their associated I-SID."
-    REFERENCE   "12.16.3.1/2"
+    REFERENCE   "12.16.3.1, 12.16.3.2"
     ::= { ieee8021PbbProviderBackboneBridge 3 }
 
 ieee8021PbbISidToVipEntry OBJECT-TYPE
@@ -329,7 +342,7 @@ ieee8021PbbISidToVipPort OBJECT-TYPE
     ::= { ieee8021PbbISidToVipEntry 3 }
 
 -- ===========================================================
--- 12.16.4.1/2 Provider Instance Port (PIP) configuration
+-- 12.16.4.1/12.16.4.2 Provider Instance Port (PIP) configuration
 --             table
 -- ===========================================================
 
@@ -342,7 +355,7 @@ ieee8021PbbPipTable OBJECT-TYPE
          can be used to configure the PIP port names.  Entries
          in this table must be persistent over power up
          restart/reboot."
-    REFERENCE   "12.16.4.1/2"
+    REFERENCE   "12.16.4.1, 12.16.4.2"
     ::= { ieee8021PbbProviderBackboneBridge 4 }
 
 ieee8021PbbPipEntry OBJECT-TYPE
@@ -419,7 +432,7 @@ ieee8021PbbPipVipMap OBJECT-TYPE
     DESCRIPTION
         "This object contains a bitmap indicating all the VIPs
          in the range 1 through 4094 that are associated with this
-         PIP.  The bits correspond to bridge port numbers in the
+         PIP.  The bits correspond to Bridge Port numbers in the
          range 1 through 4094.  The high-order bit of the first
          octet corresponds to port number 1, and subsequent bits
          of the octet string correspond to subsequent port numbers.
@@ -430,7 +443,7 @@ ieee8021PbbPipVipMap OBJECT-TYPE
          associated with this PIP.
 
          The value of this object may be truncated to remove
-         trailing octets of all zeroes."
+         trailing octets of all zeros."
     DEFVAL { ''H }
     ::= { ieee8021PbbPipEntry 5 }
 
@@ -441,7 +454,7 @@ ieee8021PbbPipVipMap1 OBJECT-TYPE
     DESCRIPTION
         "This object contains a bitmap indicating all the VIPs
          in the range 4095 through 20478 that are associated with
-         this PIP.  The bits correspond to bridge port numbers in
+         this PIP.  The bits correspond to Bridge Port numbers in
          the range 4095 through 20478.  The high-order bit of the first
          octet corresponds to port number 1, and subsequent bits
          of the octet string correspond to subsequent port numbers.
@@ -455,7 +468,7 @@ ieee8021PbbPipVipMap1 OBJECT-TYPE
          with xSTP.
 
          The value of this object may be truncated to remove
-         trailing octets of all zeroes."
+         trailing octets of all zeros."
     DEFVAL { ''H }
     ::= { ieee8021PbbPipEntry 6 }
 
@@ -466,7 +479,7 @@ ieee8021PbbPipVipMap2 OBJECT-TYPE
     DESCRIPTION
         "This object contains a bitmap indicating all the VIPs
          in the range 20479 through 36861 that are associated with
-         this PIP.  The bits correspond to bridge port numbers in
+         this PIP.  The bits correspond to Bridge Port numbers in
          the range 20479 through 36861.  The high-order bit of the first
          octet corresponds to port number 1, and subsequent bits
          of the octet string correspond to subsequent port numbers.
@@ -480,7 +493,7 @@ ieee8021PbbPipVipMap2 OBJECT-TYPE
          with xSTP.
 
          The value of this object may be truncated to remove
-         trailing octets of all zeroes."
+         trailing octets of all zeros."
     DEFVAL { ''H }
     ::= { ieee8021PbbPipEntry 7 }
 
@@ -491,7 +504,7 @@ ieee8021PbbPipVipMap3 OBJECT-TYPE
     DESCRIPTION
         "This object contains a bitmap indicating all the VIPs
          in the range 36862 through 53245 that are associated with
-         this PIP.  The bits correspond to bridge port numbers in
+         this PIP.  The bits correspond to Bridge Port numbers in
          the range 36862 through 53245.  The high-order bit of the first
          octet corresponds to port number 1, and subsequent bits
          of the octet string correspond to subsequent port numbers.
@@ -505,7 +518,7 @@ ieee8021PbbPipVipMap3 OBJECT-TYPE
          with xSTP.
 
          The value of this object may be truncated to remove
-         trailing octets of all zeroes."
+         trailing octets of all zeros."
     DEFVAL { ''H }
     ::= { ieee8021PbbPipEntry 8 }
 
@@ -516,7 +529,7 @@ ieee8021PbbPipVipMap4 OBJECT-TYPE
     DESCRIPTION
         "This object contains a bitmap indicating all the VIPs
          in the range 53246 through 65535 that are associated with
-         this PIP.  The bits correspond to bridge port numbers in
+         this PIP.  The bits correspond to Bridge Port numbers in
          the range 53246 through 65535.  The high-order bit of the first
          octet corresponds to port number 1, and subsequent bits
          of the octet string correspond to subsequent port numbers.
@@ -530,7 +543,7 @@ ieee8021PbbPipVipMap4 OBJECT-TYPE
          with xSTP.
 
          The value of this object may be truncated to remove
-         trailing octets of all zeroes."
+         trailing octets of all zeros."
     DEFVAL { ''H }
     ::= { ieee8021PbbPipEntry 9 }
 
@@ -608,7 +621,7 @@ ieee8021PbbPipUseDEI OBJECT-TYPE
         the received PCP value. If the Use_DEI parameter is false(2),
         the DEI shall be transmitted as zero and ignored on receipt.
         The default value of the Use_DEI parameter is false(2)."
-    REFERENCE   "12.16.4.11, 12.16.412"
+    REFERENCE   "12.16.4.11, 12.16.4.12"
     ::= { ieee8021PbbPipPriorityEntry 2 }
 
 ieee8021PbbPipRequireDropEncoding OBJECT-TYPE
@@ -629,7 +642,7 @@ ieee8021PbbPipRequireDropEncoding OBJECT-TYPE
     ::= { ieee8021PbbPipPriorityEntry 3 }
 
 -- =============================================================
--- 12.16.4.7/8 Provider Instance Port (PIP)  
+-- 12.16.4.7/12.16.4.8 Provider Instance Port (PIP)  
 --              Prioity Code Point (PCP) Decoding Table
 -- =============================================================
 
@@ -639,9 +652,9 @@ ieee8021PbbPipDecodingTable OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "A table that contains information about Priority Code
-        Point Decoding Table for a PIP of a provider bridge.
+        Point Decoding Table for a PIP of a provider Bridge.
         Alternative values for each table are specified as rows
-        in Table 6-4 (6.7.3), with each alternative labeled by
+        in Table 6-3 (6.9.3), with each alternative labeled by
         the number of distinct priorities that can be communicated,
         and the number of these for which drop precedence can
         be communicated.  All writable objects in this table must
@@ -655,7 +668,7 @@ ieee8021PbbPipDecodingEntry OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "A list of objects containing Priority Code Point Decoding
-        information for a PIP of a provider bridge."
+        information for a PIP of a provider Bridge."
     INDEX { ieee8021PbbPipIfIndex,
             ieee8021PbbPipDecodingPriorityCodePointRow,
             ieee8021PbbPipDecodingPriorityCodePoint }
@@ -677,7 +690,7 @@ ieee8021PbbPipDecodingPriorityCodePointRow OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "The specific row in Table 6-3 (6.7.3) indicating the PCP."
+        "The specific row in Table 6-3 (6.9.3) indicating the PCP."
     ::= { ieee8021PbbPipDecodingEntry 1 }
 
 ieee8021PbbPipDecodingPriorityCodePoint OBJECT-TYPE
@@ -685,7 +698,7 @@ ieee8021PbbPipDecodingPriorityCodePoint OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "The specific PCP value in Table 6-3 (6.7.3)."
+        "The specific PCP value in Table 6-3 (6.9.3)."
     ::= { ieee8021PbbPipDecodingEntry 2 }
 
 ieee8021PbbPipDecodingPriority OBJECT-TYPE
@@ -693,7 +706,7 @@ ieee8021PbbPipDecodingPriority OBJECT-TYPE
     MAX-ACCESS  read-write
     STATUS      current
     DESCRIPTION
-        "The specific priority value in Table 6-3 (6.7.3)."
+        "The specific priority value in Table 6-3 (6.9.3)."
     REFERENCE   "12.6.2.8, 12.6.2.9"
     ::= { ieee8021PbbPipDecodingEntry 3 }
 
@@ -702,7 +715,7 @@ ieee8021PbbPipDecodingDropEligible OBJECT-TYPE
     MAX-ACCESS  read-write
     STATUS      current
     DESCRIPTION
-        "The drop eligibility value in Table 6-3 (6.7.3)."
+        "The drop eligibility value in 12.6.2.8."
     REFERENCE   "12.6.2.8, 12.6.2.9"
     ::= { ieee8021PbbPipDecodingEntry 4 }
 
@@ -717,9 +730,9 @@ ieee8021PbbPipEncodingTable OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "A table that contains information about Priority Code
-        Point Decoding Table for a PIP of a provider bridge.
+        Point Decoding Table for a PIP of a provider Bridge.
         Alternative values for each table are specified as rows
-        in Table 6-3 (6.7.3), with each alternative labeled by
+        in Table 6-3 (6.9.3), with each alternative labeled by
         the number of distinct priorities that can be communicated,
         and the number of these for which drop precedence can be
         communicated.  All writable objects in this table must be
@@ -733,7 +746,7 @@ ieee8021PbbPipEncodingEntry OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "A list of objects containing Priority Code Point Encoding
-        information for a PIP of a provider bridge."
+        information for a PIP of a provider Bridge."
     INDEX { ieee8021PbbPipIfIndex,
             ieee8021PbbPipEncodingPriorityCodePointRow,
             ieee8021PbbPipEncodingPriorityCodePoint,
@@ -756,7 +769,7 @@ ieee8021PbbPipEncodingPriorityCodePointRow OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "The specific row in Table 6-3 (6.7.3)indicating the PCP row.
+        "The specific row in Table 6-3 (6.9.3)indicating the PCP row.
          (i.e. 8P0D, 7P1D, 6P2D, 5P3D)"
     ::= { ieee8021PbbPipEncodingEntry 1 }
 
@@ -765,7 +778,7 @@ ieee8021PbbPipEncodingPriorityCodePoint OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "The specific row in Table 6-3 (6.7.3) indicating the PCP.
+        "The specific row in Table 6-3 (6.9.3) indicating the PCP.
          (i.e., 0,1,2,3,4,5,6,7)."
     ::= { ieee8021PbbPipEncodingEntry 2 }
 
@@ -774,7 +787,7 @@ ieee8021PbbPipEncodingDropEligible OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "The specific row in Table 6-3 (6.7.3) indicating the drop
+        "The specific row in Table 6-3 (6.9.3) indicating the drop
          eligibility.  A value of true(1) means eligible for drop."
     ::= { ieee8021PbbPipEncodingEntry 3 }
 
@@ -783,12 +796,12 @@ ieee8021PbbPipEncodingPriority OBJECT-TYPE
     MAX-ACCESS  read-write
     STATUS      current
     DESCRIPTION
-        "The encoding priority in Table 6-3 (6.7.3)."
+        "The encoding priority in Table 6-3 (6.9.3)."
     REFERENCE   "12.6.2.10, 12.6.2.11"
     ::= { ieee8021PbbPipEncodingEntry 4 }
 
 -- ===========================================================
--- 12.16.4.3/4 Virtual Instance Port (VIP) to Provider
+-- 12.16.4.3/12.16.4.4 Virtual Instance Port (VIP) to Provider
 --             Instance Port (PIP) mapping table
 -- ===========================================================
 
@@ -801,7 +814,7 @@ ieee8021PbbVipToPipMappingTable OBJECT-TYPE
          associated, and allows the PIP associated with each
          VIP to be configured.  Entries in this table must be
          persistent over power up restart/reboot."
-    REFERENCE   "12.16.4.3/4"
+    REFERENCE   "12.16.4.3, 12.16.4.4"
     ::= { ieee8021PbbProviderBackboneBridge 8 }
 
 ieee8021PbbVipToPipMappingEntry OBJECT-TYPE
@@ -861,7 +874,7 @@ ieee8021PbbVipToPipMappingRowStatus OBJECT-TYPE
     ::= { ieee8021PbbVipToPipMappingEntry 3 }
 
 -- ===========================================================
--- 12.16.5.1/2 Service Mapping configuration table
+-- 12.16.5.1/12.16.5.2 Service Mapping configuration table
 -- ===========================================================
 
 ieee8021PbbCBPServiceMappingTable OBJECT-TYPE
@@ -871,7 +884,7 @@ ieee8021PbbCBPServiceMappingTable OBJECT-TYPE
     DESCRIPTION
         "The CBP table of I-SID values (6.11).  The contents of this
          table are not persistent over power up restart/reboot."
-    REFERENCE   "12.16.5.1/2"
+    REFERENCE   "12.16.5.1, 12.16.5.2"
     ::= { ieee8021PbbProviderBackboneBridge 9 }
 
 ieee8021PbbCBPServiceMappingEntry OBJECT-TYPE
@@ -933,7 +946,7 @@ ieee8021PbbCBPServiceMappingDefaultBackboneDest OBJECT-TYPE
 ieee8021PbbCBPServiceMappingType OBJECT-TYPE
     SYNTAX      IEEE8021PbbIngressEgress
     MAX-ACCESS  read-create
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
         "Used for Pt-MPt service where ingress or egress limiting
          is desired."
@@ -1083,9 +1096,9 @@ ieee8021PbbDefaultPriorityGroup OBJECT-GROUP
     }
     STATUS      current
     DESCRIPTION
-        "A collection of objects defining the User Priority
+        "A collection of objects defining the priority
         applicable to each port for media that do not support
-        native User Priority."
+        native priority."
     ::= { ieee8021PbbGroups 4 }
 
 ieee8021PbbPipDecodingGroup OBJECT-GROUP
@@ -1096,7 +1109,7 @@ ieee8021PbbPipDecodingGroup OBJECT-GROUP
     STATUS      current
     DESCRIPTION
         "A collection of objects providing statistics counters for
-        decoding priority and drop eligibility for bridge ports."
+        decoding priority and drop eligibility for Bridge Ports."
     ::= { ieee8021PbbGroups 5 }
 
 ieee8021PbbPipEncodingGroup OBJECT-GROUP
@@ -1106,7 +1119,7 @@ ieee8021PbbPipEncodingGroup OBJECT-GROUP
     STATUS      current
     DESCRIPTION
         "A collection of objects providing statistics counters for
-        encoding priority and drop eligibility for bridge ports."
+        encoding priority and drop eligibility for Bridge Ports."
     ::= { ieee8021PbbGroups 6 }
 
 ieee8021PbbVipToPipMappingGroup OBJECT-GROUP
@@ -1150,7 +1163,7 @@ ieee8021PbbVipPbbTeGroup OBJECT-GROUP
     }
     STATUS     current
     DESCRIPTION
-        "The collection of objects specific to PBB bridges operating
+        "The collection of objects specific to PBB Bridges operating
          in a PBB-TE aware manner."
     ::= { ieee8021PbbGroups 10 }
 
@@ -1177,18 +1190,18 @@ ieee8021PbbCompliance MODULE-COMPLIANCE
     DESCRIPTION
         "This group is mandatory only for devices supporting
         the priority forwarding operations defined by the
-        extended bridge services with media types, such as
-        Ethernet, that do not support native User Priority."
+        extended Bridge services with media types, such as
+        Ethernet, that do not support native priority."
 
     GROUP       ieee8021PbbPipDecodingGroup
     DESCRIPTION
         "This group is optional and supports Priority Code Point
-        Decoding Table for a PIP of a provider bridge."
+        Decoding Table for a PIP of a provider Bridge."
 
     GROUP       ieee8021PbbPipEncodingGroup
     DESCRIPTION
         "This group is optional and supports Priority Code Point
-        Encoding Table for a PIP of a provider bridge."
+        Encoding Table for a PIP of a provider Bridge."
 
     OBJECT ieee8021PbbPipName
     MIN-ACCESS read-only
@@ -1243,18 +1256,18 @@ ieee8021PbbWithPbbTeCompliance MODULE-COMPLIANCE
     DESCRIPTION
         "This group is mandatory only for devices supporting
         the priority forwarding operations defined by the
-        extended bridge services with media types, such as
-        Ethernet, that do not support native User Priority."
+        extended Bridge services with media types, such as
+        Ethernet, that do not support native priority."
 
     GROUP       ieee8021PbbPipDecodingGroup
     DESCRIPTION
         "This group is optional and supports Priority Code Point
-        Decoding Table for a PIP of a provider bridge."
+        Decoding Table for a PIP of a provider Bridge."
 
     GROUP       ieee8021PbbPipEncodingGroup
     DESCRIPTION
         "This group is optional and supports Priority Code Point
-        Encoding Table for a PIP of a provider bridge."
+        Encoding Table for a PIP of a provider Bridge."
 
     OBJECT ieee8021PbbPipName
     MIN-ACCESS read-only
@@ -1289,3 +1302,8 @@ ieee8021PbbWithPbbTeCompliance MODULE-COMPLIANCE
     ::= { ieee8021PbbCompliances 2 }
 
 END
+
+
+
+
+

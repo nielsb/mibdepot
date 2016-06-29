@@ -1,4 +1,10 @@
-IEEE8021-TEIPS-MIB DEFINITIONS ::= BEGIN
+
+IEEE8021-TEIPS-V2-MIB DEFINITIONS ::= BEGIN
+
+-- =============================================================
+-- MIB for IEEE 802.1Q TEIPS Devices
+-- =============================================================
+
 IMPORTS
     MODULE-IDENTITY,
     NOTIFICATION-TYPE,
@@ -23,20 +29,19 @@ IMPORTS
     OBJECT-GROUP
         FROM SNMPv2-CONF;
 
-ieee8021TeipsMib MODULE-IDENTITY
-    LAST-UPDATED "201108170000Z" -- (YYYYMMDDHHMM Zulu=GMT)
+ieee8021TeipsV2Mib MODULE-IDENTITY
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
        "WG-URL:   http://grouper.ieee.org/groups/802/1/index.html
         WG-EMail: stds-802-1@ieee.org 
-        Contact:  Bob Sultan
-                  c/o Tony Jeffree, IEEE 802.1 Working Group Chair
+        Contact:  IEEE 802.1 Working Group Chair
         Postal:   IEEE Standards Board
                   445 Hoes Lane
                   P.O. Box 1331
                   Piscataway, NJ 08855-1331
                   USA
-        E-mail:   tony@jeffree.co.uk
+        E-mail:   stds-802-1@ieee.org
        "
 
     DESCRIPTION
@@ -45,12 +50,17 @@ ieee8021TeipsMib MODULE-IDENTITY
         See the IEEE 802.1Q standard for full legal notices.
 
         Unless otherwise indicated, the references in this
-        MIB module are to IEEE 802.1Q-2011 as amended by
-        the following standards:
-              IEEE 802.1az
-              IEEE 802.1bb
-              IEEE 802.1bc
-              IEEE 802.1be"
+        MIB module are to IEEE Std 802.1Q-2014
+       "
+
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected.
+            Module and object names changed to V2 and base arc
+            changed from 24 to 27 to remove conflicting OID
+            allocation (see comments below). The old version of 
+            this MIB, and its object names, SHOULD NOT BE USED."
 
     REVISION "201108170000Z" -- (YYYYMMDDHHMM Zulu=GMT)    
     
@@ -58,21 +68,30 @@ ieee8021TeipsMib MODULE-IDENTITY
       "Version 1 of the TEIPS MIB module based upon IEEE 802.1Qbf"
     ::= { iso(1) org(3) ieee(111)
          standards-association-numbers-series-standards (2)
-         lan-man-stds (802) ieee802dot1 (1) ieee802dot1mibs (1) 24 }
-
-ieee8021TeipsNotifications OBJECT IDENTIFIER ::= { ieee8021TeipsMib 0 }
-ieee8021TeipsObjects       OBJECT IDENTIFIER ::= { ieee8021TeipsMib 1 }
-ieee8021TeipsConformance   OBJECT IDENTIFIER ::= { ieee8021TeipsMib 2 }
+         lan-man-stds (802) ieee802dot1 (1) ieee802dot1mibs (1) 27 }
 
 --
--- 802.1Qbf MIB Objects
+-- An earlier version of this MIB was
+-- inadvertently published under the wrong root arc:
+-- { iso(1) org(3) ieee(111)
+--    standards-association-numbers-series-standards (2)
+--    lan-man-stds (802) ieee802dot1 (1) ieee802dot1mibs (1) 24 }
+-- That version of the MIB, and its object names, SHOULD NOT BE USED.
+--
+
+ieee8021TeipsV2Notifications OBJECT IDENTIFIER ::= { ieee8021TeipsV2Mib 0 }
+ieee8021TeipsV2Objects       OBJECT IDENTIFIER ::= { ieee8021TeipsV2Mib 1 }
+ieee8021TeipsV2Conformance   OBJECT IDENTIFIER ::= { ieee8021TeipsV2Mib 2 }
+
+--
+--TEIPS MIB Objects
 --
  
 -- =============================================================
--- the ieee8021TeipsIpgTable
+-- the ieee8021TeipsV2IpgTable
 -- =============================================================
-ieee8021TeipsIpgTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF Ieee8021TeipsIpgEntry
+ieee8021TeipsV2IpgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021TeipsV2IpgEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
@@ -80,42 +99,42 @@ ieee8021TeipsIpgTable OBJECT-TYPE
         Infrastructure Protection Group (IPG) associated with a PBB
         supporting Infrastructure Protection Switching (IPS)."
     REFERENCE
-        "12.20.1"
-    ::= { ieee8021TeipsObjects 1 }
+        "12.24.1"
+    ::= { ieee8021TeipsV2Objects 1 }
 
-ieee8021TeipsIpgEntry OBJECT-TYPE
-    SYNTAX Ieee8021TeipsIpgEntry                   
+ieee8021TeipsV2IpgEntry OBJECT-TYPE
+    SYNTAX Ieee8021TeipsV2IpgEntry                   
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
        "The IPG table entry."
     INDEX {ieee8021BridgeBaseComponentId, 
-           ieee8021TeipsIpgid }
-    ::= { ieee8021TeipsIpgTable 1 }
+           ieee8021TeipsV2Ipgid }
+    ::= { ieee8021TeipsV2IpgTable 1 }
 
-Ieee8021TeipsIpgEntry ::=
+Ieee8021TeipsV2IpgEntry ::=
     SEQUENCE {
-        ieee8021TeipsIpgid                    IEEE8021TeipsIpgid,
-        ieee8021TeipsIpgWorkingMA             Unsigned32,
-        ieee8021TeipsIpgProtectionMA          Unsigned32,
-        ieee8021TeipsIpgWorkingPortNumber     IEEE8021BridgePortNumber,
-        ieee8021TeipsIpgProtectionPortNumber  IEEE8021BridgePortNumber,
-        ieee8021TeipsIpgStorageType           StorageType,
-        ieee8021TeipsIpgRowStatus             RowStatus
+        ieee8021TeipsV2Ipgid                    IEEE8021TeipsIpgid,
+        ieee8021TeipsV2IpgWorkingMA             Unsigned32,
+        ieee8021TeipsV2IpgProtectionMA          Unsigned32,
+        ieee8021TeipsV2IpgWorkingPortNumber     IEEE8021BridgePortNumber,
+        ieee8021TeipsV2IpgProtectionPortNumber  IEEE8021BridgePortNumber,
+        ieee8021TeipsV2IpgStorageType           StorageType,
+        ieee8021TeipsV2IpgRowStatus             RowStatus
     }
 
-ieee8021TeipsIpgid OBJECT-TYPE
+ieee8021TeipsV2Ipgid OBJECT-TYPE
     SYNTAX      IEEE8021TeipsIpgid
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
          "Uniquely identifies an IPG within the PBB."
     REFERENCE
-        "12.20.1.1.3 a"
-    ::= { ieee8021TeipsIpgEntry 1 }
+        "12.24.1.1.3 a"
+    ::= { ieee8021TeipsV2IpgEntry 1 }
 
 
-ieee8021TeipsIpgWorkingMA OBJECT-TYPE
+ieee8021TeipsV2IpgWorkingMA OBJECT-TYPE
     SYNTAX     Unsigned32
     MAX-ACCESS read-create
     STATUS     current
@@ -130,10 +149,10 @@ ieee8021TeipsIpgWorkingMA OBJECT-TYPE
         modified when the RowStatus for this row is
         Active."
     REFERENCE
-        "12.20.1.1.3 b)"
-::= { ieee8021TeipsIpgEntry 2 }     
+        "12.24.1.1.3 b)"
+::= { ieee8021TeipsV2IpgEntry 2 }     
 
-ieee8021TeipsIpgProtectionMA OBJECT-TYPE
+ieee8021TeipsV2IpgProtectionMA OBJECT-TYPE
     SYNTAX     Unsigned32
     MAX-ACCESS read-create
     STATUS     current
@@ -147,10 +166,10 @@ ieee8021TeipsIpgProtectionMA OBJECT-TYPE
         this column may not be modified when the
         RowStatus for this row is Active."
     REFERENCE
-        "12.20.1.1.3 c)"
-::= { ieee8021TeipsIpgEntry 3 }      
+        "12.24.1.1.3 c)"
+::= { ieee8021TeipsV2IpgEntry 3 }      
 
-ieee8021TeipsIpgWorkingPortNumber OBJECT-TYPE
+ieee8021TeipsV2IpgWorkingPortNumber OBJECT-TYPE
     SYNTAX     IEEE8021BridgePortNumber
     MAX-ACCESS read-only
     STATUS     current
@@ -158,10 +177,10 @@ ieee8021TeipsIpgWorkingPortNumber OBJECT-TYPE
        "Identifies the local Port associated with the
         IPG Working Segment." 
     REFERENCE
-        "12.20.2.1.3 b)"
-::= { ieee8021TeipsIpgEntry 4 }     
+        "12.24.1.1.3 b)"
+::= { ieee8021TeipsV2IpgEntry 4 }     
 
-ieee8021TeipsIpgProtectionPortNumber OBJECT-TYPE
+ieee8021TeipsV2IpgProtectionPortNumber OBJECT-TYPE
     SYNTAX     IEEE8021BridgePortNumber
     MAX-ACCESS read-only
     STATUS     current
@@ -169,10 +188,10 @@ ieee8021TeipsIpgProtectionPortNumber OBJECT-TYPE
        "Identifies the local Port associated with the
         IPG Protection Segment." 
     REFERENCE
-        "12.20.2.1.3 c)"
-::= { ieee8021TeipsIpgEntry 5 } 
+        "12.24.1.1.3 c)"
+::= { ieee8021TeipsV2IpgEntry 5 } 
 
-ieee8021TeipsIpgStorageType OBJECT-TYPE
+ieee8021TeipsV2IpgStorageType OBJECT-TYPE
     SYNTAX     StorageType
     MAX-ACCESS read-create
     STATUS     current
@@ -181,9 +200,9 @@ ieee8021TeipsIpgStorageType OBJECT-TYPE
         entry. All read-create columns must be
         writable if this column is set to permanent."
     DEFVAL { nonVolatile }
-    ::= { ieee8021TeipsIpgEntry 6 }
+    ::= { ieee8021TeipsV2IpgEntry 6 }
 
-ieee8021TeipsIpgRowStatus OBJECT-TYPE
+ieee8021TeipsV2IpgRowStatus OBJECT-TYPE
     SYNTAX     RowStatus
     MAX-ACCESS read-create
     STATUS     current
@@ -195,14 +214,14 @@ ieee8021TeipsIpgRowStatus OBJECT-TYPE
         columns must be specified before the row
         can be activated."
     REFERENCE
-        "12.20.1.2"
-    ::= { ieee8021TeipsIpgEntry 7 }    
+        "12.24.1.2"
+    ::= { ieee8021TeipsV2IpgEntry 7 }    
     
 -- =============================================================
--- the ieee8021TeipsTesiTable
+-- the ieee8021TeipsV2TesiTable
 -- =============================================================
-ieee8021TeipsTesiTable OBJECT-TYPE
-    SYNTAX     SEQUENCE OF Ieee8021TeipsTesiEntry
+ieee8021TeipsV2TesiTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF Ieee8021TeipsV2TesiEntry
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
@@ -210,29 +229,29 @@ ieee8021TeipsTesiTable OBJECT-TYPE
          the TE service instances associated with
          an IPG."
     REFERENCE
-        "12.20.2.1.3 e)"
-    ::= { ieee8021TeipsObjects 2 }
+        "12.24.2.1.3 e)"
+    ::= { ieee8021TeipsV2Objects 2 }
 
-ieee8021TeipsTesiEntry  OBJECT-TYPE
-    SYNTAX     Ieee8021TeipsTesiEntry
+ieee8021TeipsV2TesiEntry  OBJECT-TYPE
+    SYNTAX     Ieee8021TeipsV2TesiEntry
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
         "The TE-IPS TESI entry.  Each entry identifies
          a TESI associated with an IPG."
-    INDEX { ieee8021TeipsIpgid,
-      ieee8021TeipsTesiIndex } 
-    ::= { ieee8021TeipsTesiTable 1 }    
+    INDEX { ieee8021TeipsV2Ipgid,
+      ieee8021TeipsV2TesiIndex } 
+    ::= { ieee8021TeipsV2TesiTable 1 }    
     
-Ieee8021TeipsTesiEntry ::=
+Ieee8021TeipsV2TesiEntry ::=
     SEQUENCE {
-        ieee8021TeipsTesiIndex       Unsigned32,
-        ieee8021TeipsTesiId          IEEE8021PbbTeTSidId,
-        ieee8021TeipsTesiStorageType StorageType,
-        ieee8021TeipsTesiRowStatus   RowStatus
+        ieee8021TeipsV2TesiIndex       Unsigned32,
+        ieee8021TeipsV2TesiId          IEEE8021PbbTeTSidId,
+        ieee8021TeipsV2TesiStorageType StorageType,
+        ieee8021TeipsV2TesiRowStatus   RowStatus
     }
 
-ieee8021TeipsTesiIndex OBJECT-TYPE
+ieee8021TeipsV2TesiIndex OBJECT-TYPE
     SYNTAX     Unsigned32 (1..4294967295)
     MAX-ACCESS not-accessible
     STATUS     current
@@ -240,10 +259,10 @@ ieee8021TeipsTesiIndex OBJECT-TYPE
         "This is an identifier, of local signifigance to a
          particular PBB-TE TE-SID associated with an IPG."
     REFERENCE
-        "12.20.2.1.3 e"
-    ::= { ieee8021TeipsTesiEntry 1 }
+        "12.24.2.1.3 e"
+    ::= { ieee8021TeipsV2TesiEntry 1 }
 
-ieee8021TeipsTesiId OBJECT-TYPE
+ieee8021TeipsV2TesiId OBJECT-TYPE
     SYNTAX     IEEE8021PbbTeTSidId
     MAX-ACCESS read-create
     STATUS     current
@@ -251,10 +270,10 @@ ieee8021TeipsTesiId OBJECT-TYPE
         "This column holds the TESI identifier corresponding
          to a TE service instance associated with an IPG."
     REFERENCE
-        "12.20.2.1.3 e"
-    ::= { ieee8021TeipsTesiEntry 2 }
+        "12.24.2.1.3 e"
+    ::= { ieee8021TeipsV2TesiEntry 2 }
 
-ieee8021TeipsTesiStorageType OBJECT-TYPE
+ieee8021TeipsV2TesiStorageType OBJECT-TYPE
     SYNTAX     StorageType
     MAX-ACCESS read-create
     STATUS     current
@@ -263,9 +282,9 @@ ieee8021TeipsTesiStorageType OBJECT-TYPE
         entry. All read-create columns must be
         writable for permanent rows."
     DEFVAL { nonVolatile }
-    ::= { ieee8021TeipsTesiEntry 3 }
+    ::= { ieee8021TeipsV2TesiEntry 3 }
 
-ieee8021TeipsTesiRowStatus OBJECT-TYPE
+ieee8021TeipsV2TesiRowStatus OBJECT-TYPE
     SYNTAX     RowStatus
     MAX-ACCESS read-create
     STATUS     current
@@ -275,13 +294,13 @@ ieee8021TeipsTesiRowStatus OBJECT-TYPE
          this table may be modified.  All columns
          must have a valid value before the row
          can be activated."
-    ::= { ieee8021TeipsTesiEntry 4 } 
+    ::= { ieee8021TeipsV2TesiEntry 4 } 
                                               
 -- =============================================================
--- the ieee8021TeipsCandidatePsTable
+-- the ieee8021TeipsV2CandidatePsTable
 -- =============================================================
-ieee8021TeipsCandidatePsTable OBJECT-TYPE
-    SYNTAX     SEQUENCE OF Ieee8021TeipsCandidatePsEntry
+ieee8021TeipsV2CandidatePsTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF Ieee8021TeipsV2CandidatePsEntry
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
@@ -291,31 +310,31 @@ ieee8021TeipsCandidatePsTable OBJECT-TYPE
          candidate Protection Segments associated with
          an IPG."
     REFERENCE
-        "12.20.2.1.3 d)"
-    ::= { ieee8021TeipsObjects 3 }
+        "12.24.2.1.3 d)"
+    ::= { ieee8021TeipsV2Objects 3 }
 
-ieee8021TeipsCandidatePsEntry  OBJECT-TYPE
-    SYNTAX     Ieee8021TeipsCandidatePsEntry
+ieee8021TeipsV2CandidatePsEntry  OBJECT-TYPE
+    SYNTAX     Ieee8021TeipsV2CandidatePsEntry
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
         "A Candidate PS entry.  Each entry identifies a
          candidate Protection Segment associated with an IPG."
-    INDEX { ieee8021TeipsIpgid,
-      ieee8021TeipsCandidatePsIndex } 
-    ::= { ieee8021TeipsCandidatePsTable 1 }    
+    INDEX { ieee8021TeipsV2Ipgid,
+      ieee8021TeipsV2CandidatePsIndex } 
+    ::= { ieee8021TeipsV2CandidatePsTable 1 }    
     
-Ieee8021TeipsCandidatePsEntry ::=
+Ieee8021TeipsV2CandidatePsEntry ::=
     SEQUENCE {
-        ieee8021TeipsCandidatePsIndex Unsigned32,  
-        ieee8021TeipsCandidatePsMA    Unsigned32, 
-        ieee8021TeipsCandidatePsPort  IEEE8021BridgePortNumber, 
-        ieee8021TeipsCandidatePsOper        TruthValue,
-        ieee8021TeipsCandidatePsStorageType StorageType,
-        ieee8021TeipsCandidatePsRowStatus   RowStatus
+        ieee8021TeipsV2CandidatePsIndex Unsigned32,  
+        ieee8021TeipsV2CandidatePsMA    Unsigned32, 
+        ieee8021TeipsV2CandidatePsPort  IEEE8021BridgePortNumber, 
+        ieee8021TeipsV2CandidatePsOper        TruthValue,
+        ieee8021TeipsV2CandidatePsStorageType StorageType,
+        ieee8021TeipsV2CandidatePsRowStatus   RowStatus
     }
 
-ieee8021TeipsCandidatePsIndex OBJECT-TYPE
+ieee8021TeipsV2CandidatePsIndex OBJECT-TYPE
     SYNTAX     Unsigned32 (1..4294967295)
     MAX-ACCESS not-accessible
     STATUS     current    
@@ -324,10 +343,10 @@ ieee8021TeipsCandidatePsIndex OBJECT-TYPE
          to a particular candidate Protection Segment
          associated with an IPG."
     REFERENCE
-        "12.20.2.1.3 d)"
-    ::= { ieee8021TeipsCandidatePsEntry 1 }
+        "12.24.2.1.3 d)"
+    ::= { ieee8021TeipsV2CandidatePsEntry 1 }
 
-ieee8021TeipsCandidatePsMA OBJECT-TYPE
+ieee8021TeipsV2CandidatePsMA OBJECT-TYPE
     SYNTAX     Unsigned32
     MAX-ACCESS read-create
     STATUS     current
@@ -336,10 +355,10 @@ ieee8021TeipsCandidatePsMA OBJECT-TYPE
          Segment MA corresponding to a candidate
          Protection Segment associated with an IPG."
     REFERENCE
-        "12.20.2.1.3 d)"
-    ::= { ieee8021TeipsCandidatePsEntry 2 }  
+        "12.24.2.1.3 d)"
+    ::= { ieee8021TeipsV2CandidatePsEntry 2 }  
     
-ieee8021TeipsCandidatePsPort OBJECT-TYPE
+ieee8021TeipsV2CandidatePsPort OBJECT-TYPE
     SYNTAX     IEEE8021BridgePortNumber
     MAX-ACCESS read-only
     STATUS     current
@@ -348,10 +367,10 @@ ieee8021TeipsCandidatePsPort OBJECT-TYPE
          corresponding to the candidate Protection
          Segment associated with an IPG."
     REFERENCE
-        "12.20.2.1.3 d)"
-    ::= { ieee8021TeipsCandidatePsEntry 3 }  
+        "12.24.2.1.3 d)"
+    ::= { ieee8021TeipsV2CandidatePsEntry 3 }  
     
-ieee8021TeipsCandidatePsOper OBJECT-TYPE
+ieee8021TeipsV2CandidatePsOper OBJECT-TYPE
     SYNTAX     TruthValue
     MAX-ACCESS read-only
     STATUS     current
@@ -360,10 +379,10 @@ ieee8021TeipsCandidatePsOper OBJECT-TYPE
          the candidate Protection Segment is
          operational."
     REFERENCE
-        "12.20.2.1.3 d)"
-    ::= { ieee8021TeipsCandidatePsEntry 4 }
+        "12.24.2.1.3 d)"
+    ::= { ieee8021TeipsV2CandidatePsEntry 4 }
 
-ieee8021TeipsCandidatePsStorageType OBJECT-TYPE
+ieee8021TeipsV2CandidatePsStorageType OBJECT-TYPE
     SYNTAX     StorageType
     MAX-ACCESS read-create
     STATUS     current
@@ -372,9 +391,9 @@ ieee8021TeipsCandidatePsStorageType OBJECT-TYPE
         of this entry. All read-create
         columns must be writable for permanent rows."
     DEFVAL { nonVolatile }
-    ::= { ieee8021TeipsCandidatePsEntry 5 }
+    ::= { ieee8021TeipsV2CandidatePsEntry 5 }
 
-ieee8021TeipsCandidatePsRowStatus OBJECT-TYPE
+ieee8021TeipsV2CandidatePsRowStatus OBJECT-TYPE
     SYNTAX     RowStatus
     MAX-ACCESS read-create
     STATUS     current
@@ -384,13 +403,13 @@ ieee8021TeipsCandidatePsRowStatus OBJECT-TYPE
          of this table may be modified.  All
          columns must have a valid value before the row
          can be activated."
-    ::= { ieee8021TeipsCandidatePsEntry 6 }      
+    ::= { ieee8021TeipsV2CandidatePsEntry 6 }      
     
 -- =============================================================
--- the ieee8021TeipsIpgConfigTable
+-- the ieee8021TeipsV2IpgConfigTable
 -- =============================================================
-ieee8021TeipsIpgConfigTable OBJECT-TYPE
-    SYNTAX     SEQUENCE OF Ieee8021TeipsIpgConfigEntry
+ieee8021TeipsV2IpgConfigTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF Ieee8021TeipsV2IpgConfigEntry
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
@@ -399,42 +418,42 @@ ieee8021TeipsIpgConfigTable OBJECT-TYPE
          each IPG configured in the system.
          Entries in this table are created implicitly
          by the creation of entries in the
-         ieee8021TeipsIpgTable."
+         ieee8021TeipsV2IpgTable."
      REFERENCE
-         "12.20.2.1.3 f,g,h,i,j,k)"
-     ::= { ieee8021TeipsObjects 4 }
+         "12.24.2.1.3 f,g,h,i,j,k)"
+     ::= { ieee8021TeipsV2Objects 4 }
 
-ieee8021TeipsIpgConfigEntry OBJECT-TYPE
-    SYNTAX     Ieee8021TeipsIpgConfigEntry
+ieee8021TeipsV2IpgConfigEntry OBJECT-TYPE
+    SYNTAX     Ieee8021TeipsV2IpgConfigEntry
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
         "The IPG confguration table entry.  Rows are
          created in this table implicitly when a row
-         is added to the ieee8021TeipsIpgTable."
+         is added to the ieee8021TeipsV2IpgTable."
     INDEX { ieee8021BridgeBaseComponentId,
-            ieee8021TeipsIpgid }
-    ::= { ieee8021TeipsIpgConfigTable 1 }
+            ieee8021TeipsV2Ipgid }
+    ::= { ieee8021TeipsV2IpgConfigTable 1 }
 
-Ieee8021TeipsIpgConfigEntry ::=
+Ieee8021TeipsV2IpgConfigEntry ::=
     SEQUENCE {
-        ieee8021TeipsIpgConfigState INTEGER,
-        ieee8021TeipsIpgConfigCommandStatus
+        ieee8021TeipsV2IpgConfigState INTEGER,
+        ieee8021TeipsV2IpgConfigCommandStatus
             IEEE8021TeipsIpgConfigAdmin,
-        ieee8021TeipsIpgConfigCommandLast
+        ieee8021TeipsV2IpgConfigCommandLast
             IEEE8021TeipsIpgConfigAdmin,
-        ieee8021TeipsIpgConfigCommandAdmin
+        ieee8021TeipsV2IpgConfigCommandAdmin
             IEEE8021TeipsIpgConfigAdmin,
-        ieee8021TeipsIpgConfigActiveRequests
+        ieee8021TeipsV2IpgConfigActiveRequests
             IEEE8021TeipsIpgConfigActiveRequests,
-        ieee8021TeipsIpgConfigWTR          Unsigned32,
-        ieee8021TeipsIpgConfigHoldOff      Unsigned32, 
-        ieee8021TeipsIpgM1ConfigState      INTEGER,        
-        ieee8021TeipsIpgConfigMWTR         Unsigned32,
-        ieee8021TeipsIpgConfigNotifyEnable TruthValue,
-        ieee8021TeipsIpgConfigStorageType  StorageType
+        ieee8021TeipsV2IpgConfigWTR          Unsigned32,
+        ieee8021TeipsV2IpgConfigHoldOff      Unsigned32, 
+        ieee8021TeipsV2IpgM1ConfigState      INTEGER,        
+        ieee8021TeipsV2IpgConfigMWTR         Unsigned32,
+        ieee8021TeipsV2IpgConfigNotifyEnable TruthValue,
+        ieee8021TeipsV2IpgConfigStorageType  StorageType
     }
-ieee8021TeipsIpgConfigState OBJECT-TYPE
+ieee8021TeipsV2IpgConfigState OBJECT-TYPE
     SYNTAX   INTEGER {
                workingSegment(1),
                protectionSegment(2),
@@ -457,10 +476,10 @@ ieee8021TeipsIpgConfigState OBJECT-TYPE
         protAdmin(4)         The protection switching state machine
                              is in the PROT_ADMIN state."
 
-    REFERENCE "12.20.2.1.3 f)"
-    ::= { ieee8021TeipsIpgConfigEntry 1 }
+    REFERENCE "12.24.2.1.3 f)"
+    ::= { ieee8021TeipsV2IpgConfigEntry 1 }
 
-ieee8021TeipsIpgConfigCommandStatus OBJECT-TYPE
+ieee8021TeipsV2IpgConfigCommandStatus OBJECT-TYPE
     SYNTAX     IEEE8021TeipsIpgConfigAdmin
     MAX-ACCESS read-only
     STATUS     current
@@ -470,10 +489,10 @@ ieee8021TeipsIpgConfigCommandStatus OBJECT-TYPE
          protection group.  It reflects the current
          operational administrative command being
          acted upon by the IPG."
-     REFERENCE "12.20.2.1.3 f)"
-    ::= { ieee8021TeipsIpgConfigEntry 2 }
+     REFERENCE "12.24.2.1.3 f)"
+    ::= { ieee8021TeipsV2IpgConfigEntry 2 }
 
-ieee8021TeipsIpgConfigCommandLast OBJECT-TYPE
+ieee8021TeipsV2IpgConfigCommandLast OBJECT-TYPE
     SYNTAX     IEEE8021TeipsIpgConfigAdmin
     MAX-ACCESS read-only
     STATUS     current
@@ -483,10 +502,10 @@ ieee8021TeipsIpgConfigCommandLast OBJECT-TYPE
          whenever a write is made to the CommandAdmin column of
          this table and is essentially record of the last attempted
          administrative operation."
-     REFERENCE "12.20.2.1.3 f)"
-    ::= { ieee8021TeipsIpgConfigEntry 3 }
+     REFERENCE "12.24.2.1.3 f)"
+    ::= { ieee8021TeipsV2IpgConfigEntry 3 }
 
-ieee8021TeipsIpgConfigCommandAdmin OBJECT-TYPE
+ieee8021TeipsV2IpgConfigCommandAdmin OBJECT-TYPE
     SYNTAX     IEEE8021TeipsIpgConfigAdmin
     MAX-ACCESS read-create
     STATUS     current
@@ -499,21 +518,21 @@ ieee8021TeipsIpgConfigCommandAdmin OBJECT-TYPE
         that it is performing by setting the value of the
         CommandStatus column of this table.  This column
         always reads back as clear(1)."
-     REFERENCE "12.20.2.1.3 f"
+     REFERENCE "12.24.2.1.3 f"
      DEFVAL { clear }
-    ::= { ieee8021TeipsIpgConfigEntry 4 }
+    ::= { ieee8021TeipsV2IpgConfigEntry 4 }
 
-ieee8021TeipsIpgConfigActiveRequests OBJECT-TYPE
+ieee8021TeipsV2IpgConfigActiveRequests OBJECT-TYPE
     SYNTAX     IEEE8021TeipsIpgConfigActiveRequests
     MAX-ACCESS read-only
     STATUS     current
     DESCRIPTION
         "This column shows the status of active requests
          associated with the IPG."
-    REFERENCE "12.20.2.1.3 f)"
-    ::= { ieee8021TeipsIpgConfigEntry 5 }
+    REFERENCE "12.24.2.1.3 f)"
+    ::= { ieee8021TeipsV2IpgConfigEntry 5 }
 
-ieee8021TeipsIpgConfigWTR OBJECT-TYPE
+ieee8021TeipsV2IpgConfigWTR OBJECT-TYPE
     SYNTAX     Unsigned32 ( 0 | 5..12 )
     UNITS      "minutes"
     MAX-ACCESS read-create
@@ -527,11 +546,11 @@ ieee8021TeipsIpgConfigWTR OBJECT-TYPE
          that the IPG is to operate non-revertively.  The
          value 0 is not permitted if the IPG is configured
          for M:1 IPS operation."
-    REFERENCE "12.20.2.1.3 h)"
+    REFERENCE "12.24.2.1.3 h)"
     DEFVAL { 5 }
-    ::= { ieee8021TeipsIpgConfigEntry 6 }
+    ::= { ieee8021TeipsV2IpgConfigEntry 6 }
 
-ieee8021TeipsIpgConfigHoldOff OBJECT-TYPE
+ieee8021TeipsV2IpgConfigHoldOff OBJECT-TYPE
     SYNTAX     Unsigned32( 0..100 )   
     UNITS      "deciseconds"
     MAX-ACCESS read-create
@@ -545,11 +564,11 @@ ieee8021TeipsIpgConfigHoldOff OBJECT-TYPE
         IPGs are nested.  The hold off timer has a period of
         from 0 to 10 seconds, the default being 0, with a 100ms
         granularity."
-    REFERENCE "12.20.2.1.3 i)"
+    REFERENCE "12.24.2.1.3 i)"
     DEFVAL { 0 }
-    ::= { ieee8021TeipsIpgConfigEntry 7 }
+    ::= { ieee8021TeipsV2IpgConfigEntry 7 }
 
-ieee8021TeipsIpgM1ConfigState OBJECT-TYPE
+ieee8021TeipsV2IpgM1ConfigState OBJECT-TYPE
     SYNTAX   INTEGER {
                psAssigned(1),
                segmentOk(2),
@@ -575,10 +594,10 @@ ieee8021TeipsIpgM1ConfigState OBJECT-TYPE
         revertToBetterPs(5)  The protection switching state machine
                              is in the REVERT_T0_BETTER_PS state."
 
-    REFERENCE "12.20.2.1.3 j)"
-    ::= { ieee8021TeipsIpgConfigEntry 8 }
+    REFERENCE "12.24.2.1.3 j)"
+    ::= { ieee8021TeipsV2IpgConfigEntry 8 }
 
-ieee8021TeipsIpgConfigMWTR OBJECT-TYPE
+ieee8021TeipsV2IpgConfigMWTR OBJECT-TYPE
     SYNTAX     Unsigned32 ( 0 | 5..12 ) 
     UNITS      "minutes"
     MAX-ACCESS read-create
@@ -590,34 +609,34 @@ ieee8021TeipsIpgConfigMWTR OBJECT-TYPE
          1 minute between 5 and 12 minutes, the default being 5.
          Additionally, the value 0 is used to indicate that the
          IPG is to operate non-revertively."
-    REFERENCE "12.20.2.1.3 k)"
+    REFERENCE "12.24.2.1.3 k)"
     DEFVAL { 5 }
-    ::= { ieee8021TeipsIpgConfigEntry 9 }
+    ::= { ieee8021TeipsV2IpgConfigEntry 9 }
 
 
-ieee8021TeipsIpgConfigNotifyEnable OBJECT-TYPE
+ieee8021TeipsV2IpgConfigNotifyEnable OBJECT-TYPE
     SYNTAX     TruthValue
     MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
         "This column is used to enable or disable transmission
-         of ieee8021TeipsIpgAdminFailure notifications.
+         of ieee8021TeipsV2IpgAdminFailure notifications.
          These notifications are generated whenever an
          administrative command cannot be performed by the IPG."
     DEFVAL { false }
-    ::= { ieee8021TeipsIpgConfigEntry 10 }
+    ::= { ieee8021TeipsV2IpgConfigEntry 10 }
 
-ieee8021TeipsIpgConfigStorageType OBJECT-TYPE
+ieee8021TeipsV2IpgConfigStorageType OBJECT-TYPE
     SYNTAX     StorageType
     MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
        "This object indicates the persistence of this entry. For
-        permanent objects the ieee8021TeipsIpgConfigCommandAdmin
+        permanent objects the ieee8021TeipsV2IpgConfigCommandAdmin
         column must be writable."
 
     DEFVAL { nonVolatile }
-    ::= { ieee8021TeipsIpgConfigEntry 11 }            
+    ::= { ieee8021TeipsV2IpgConfigEntry 11 }            
 
 
 -- ******************************************************************
@@ -626,11 +645,11 @@ ieee8021TeipsIpgConfigStorageType OBJECT-TYPE
 -- whenever an IPG admin command cannot be performed
 -- ******************************************************************
 
-ieee8021TeipsIpgAdminFailure NOTIFICATION-TYPE
+ieee8021TeipsV2IpgAdminFailure NOTIFICATION-TYPE
     OBJECTS {
-        ieee8021TeipsIpgConfigState,
-        ieee8021TeipsIpgConfigCommandStatus,
-        ieee8021TeipsIpgConfigCommandLast
+        ieee8021TeipsV2IpgConfigState,
+        ieee8021TeipsV2IpgConfigCommandStatus,
+        ieee8021TeipsV2IpgConfigCommandLast
     }
     STATUS  current
     DESCRIPTION 
@@ -646,151 +665,156 @@ ieee8021TeipsIpgAdminFailure NOTIFICATION-TYPE
          the system from the network source
          address of the notification and can
          identify the IPG by the indices of 
-         the OID of the ieee8021TeipsIpgConfigState
+         the OID of the ieee8021TeipsV2IpgConfigState
          variable in the notification:
                
          ieee8021BridgeBaseComponentId - Identifies
-         the  component on the bridge where the
+         the  component on the Bridge where the
          protection group is configured.
 
-         ieee8021TeipsIpgid - The ID of the protection group.
+         ieee8021TeipsV2Ipgid - The ID of the protection group.
         "
-    ::= { ieee8021TeipsNotifications 1 }          
+    ::= { ieee8021TeipsV2Notifications 1 }          
        
 --
 -- MIB Module Compliance Statements
 --
 
-ieee8021TeipsCompliances OBJECT IDENTIFIER ::= { ieee8021TeipsConformance 1 }
-ieee8021TeipsGroups      OBJECT IDENTIFIER ::= { ieee8021TeipsConformance 2 }
+ieee8021TeipsV2Compliances OBJECT IDENTIFIER ::= { ieee8021TeipsV2Conformance 1 }
+ieee8021TeipsV2Groups      OBJECT IDENTIFIER ::= { ieee8021TeipsV2Conformance 2 }
 
 --
 -- Units of Conformance
 
-ieee8021TeipsIpgGroup OBJECT-GROUP
+ieee8021TeipsV2IpgGroup OBJECT-GROUP
     OBJECTS {
-        ieee8021TeipsIpgWorkingMA,                     
-        ieee8021TeipsIpgProtectionMA,                    
-        ieee8021TeipsIpgWorkingPortNumber,             
-        ieee8021TeipsIpgProtectionPortNumber,          
-        ieee8021TeipsIpgStorageType,                   
-        ieee8021TeipsIpgRowStatus
+        ieee8021TeipsV2IpgWorkingMA,                     
+        ieee8021TeipsV2IpgProtectionMA,                    
+        ieee8021TeipsV2IpgWorkingPortNumber,             
+        ieee8021TeipsV2IpgProtectionPortNumber,          
+        ieee8021TeipsV2IpgStorageType,                   
+        ieee8021TeipsV2IpgRowStatus
     }
     STATUS  current
     DESCRIPTION
         "Objects for the IPG group."
-    ::= { ieee8021TeipsGroups 1 }         
+    ::= { ieee8021TeipsV2Groups 1 }         
     
-ieee8021TeipsCandidatePsGroup OBJECT-GROUP
+ieee8021TeipsV2CandidatePsGroup OBJECT-GROUP
     OBJECTS {  
-        ieee8021TeipsCandidatePsMA, 
-        ieee8021TeipsCandidatePsPort, 
-        ieee8021TeipsCandidatePsOper,
-        ieee8021TeipsCandidatePsStorageType,
-        ieee8021TeipsCandidatePsRowStatus
+        ieee8021TeipsV2CandidatePsMA, 
+        ieee8021TeipsV2CandidatePsPort, 
+        ieee8021TeipsV2CandidatePsOper,
+        ieee8021TeipsV2CandidatePsStorageType,
+        ieee8021TeipsV2CandidatePsRowStatus
     }
     STATUS  current
     DESCRIPTION
         "Objects for the Candidate PS group."
-    ::= { ieee8021TeipsGroups 2 }    
+    ::= { ieee8021TeipsV2Groups 2 }    
     
-ieee8021TeipsIpgTesiGroup OBJECT-GROUP
+ieee8021TeipsV2IpgTesiGroup OBJECT-GROUP
     OBJECTS {       
-        ieee8021TeipsTesiId,
-        ieee8021TeipsTesiStorageType,
-        ieee8021TeipsTesiRowStatus
+        ieee8021TeipsV2TesiId,
+        ieee8021TeipsV2TesiStorageType,
+        ieee8021TeipsV2TesiRowStatus
     }
     STATUS  current
     DESCRIPTION
         "Objects for the IPG Tuple group."
-    ::= { ieee8021TeipsGroups 3 }                         
+    ::= { ieee8021TeipsV2Groups 3 }                         
 
-ieee8021TeipsIpgConfigManGroup OBJECT-GROUP
+ieee8021TeipsV2IpgConfigManGroup OBJECT-GROUP
     OBJECTS {
-        ieee8021TeipsIpgConfigState,
-        ieee8021TeipsIpgConfigCommandStatus,
-        ieee8021TeipsIpgConfigCommandLast,
-        ieee8021TeipsIpgConfigCommandAdmin,
-        ieee8021TeipsIpgConfigActiveRequests,
-        ieee8021TeipsIpgConfigNotifyEnable,
-        ieee8021TeipsIpgConfigStorageType
+        ieee8021TeipsV2IpgConfigState,
+        ieee8021TeipsV2IpgConfigCommandStatus,
+        ieee8021TeipsV2IpgConfigCommandLast,
+        ieee8021TeipsV2IpgConfigCommandAdmin,
+        ieee8021TeipsV2IpgConfigActiveRequests,
+        ieee8021TeipsV2IpgConfigNotifyEnable,
+        ieee8021TeipsV2IpgConfigStorageType
     }
     STATUS current
     DESCRIPTION
         "Mandatory objects for the TeipsConfiguration group."
-    ::= { ieee8021TeipsGroups 4 }
+    ::= { ieee8021TeipsV2Groups 4 }
 
-ieee8021TeipsIpgConfigOptGroup OBJECT-GROUP
+ieee8021TeipsV2IpgConfigOptGroup OBJECT-GROUP
     OBJECTS {
-        ieee8021TeipsIpgConfigWTR,  
-        ieee8021TeipsIpgConfigMWTR, 
-        ieee8021TeipsIpgM1ConfigState,
-        ieee8021TeipsIpgConfigHoldOff
+        ieee8021TeipsV2IpgConfigWTR,  
+        ieee8021TeipsV2IpgConfigMWTR, 
+        ieee8021TeipsV2IpgM1ConfigState,
+        ieee8021TeipsV2IpgConfigHoldOff
     }
     STATUS current
     DESCRIPTION
         "Optional 0bjects for the TeipsConfiguration group."
-    ::= { ieee8021TeipsGroups 5 }       
+    ::= { ieee8021TeipsV2Groups 5 }       
 
-ieee8021TeipsNotificationsGroup NOTIFICATION-GROUP
+ieee8021TeipsV2NotificationsGroup NOTIFICATION-GROUP
     NOTIFICATIONS {
-       ieee8021TeipsIpgAdminFailure
+       ieee8021TeipsV2IpgAdminFailure
     }
     STATUS    current
     DESCRIPTION
         "Objects for the notifications group."
-    ::= { ieee8021TeipsGroups 6 }
+    ::= { ieee8021TeipsV2Groups 6 }
 
-ieee8021TeipsCompliance MODULE-COMPLIANCE
+ieee8021TeipsV2Compliance MODULE-COMPLIANCE
     STATUS    current
     DESCRIPTION
         "The compliance statement for support
          of the TEIPS MIB module."
     MODULE
         MANDATORY-GROUPS {
-            ieee8021TeipsIpgGroup,
-            ieee8021TeipsIpgTesiGroup,
-            ieee8021TeipsIpgConfigManGroup,   
-            ieee8021TeipsNotificationsGroup
+            ieee8021TeipsV2IpgGroup,
+            ieee8021TeipsV2IpgTesiGroup,
+            ieee8021TeipsV2IpgConfigManGroup,   
+            ieee8021TeipsV2NotificationsGroup
         }
-        GROUP ieee8021TeipsIpgConfigOptGroup
+        GROUP ieee8021TeipsV2IpgConfigOptGroup
         DESCRIPTION
            "This group allows implmementation to
             optionally change the WaitToRestore,
             M:1 WaitToRestore, and HoldOff timers
             for IPGs."  
             
-        GROUP ieee8021TeipsCandidatePsGroup
+        GROUP ieee8021TeipsV2CandidatePsGroup
         DESCRIPTION
            "This group allows implmementation to
             optionally list candidate Protection
             Segments when M:1 IPS is deployed."
 
 
-    OBJECT ieee8021TeipsIpgConfigWTR
+    OBJECT ieee8021TeipsV2IpgConfigWTR
     MIN-ACCESS not-accessible
     DESCRIPTION "This object is optional."
 
-    OBJECT ieee8021TeipsIpgConfigHoldOff
+    OBJECT ieee8021TeipsV2IpgConfigHoldOff
     MIN-ACCESS not-accessible
     DESCRIPTION"This object is optional."  
     
-    OBJECT ieee8021TeipsIpgConfigMWTR
+    OBJECT ieee8021TeipsV2IpgConfigMWTR
     MIN-ACCESS not-accessible
     DESCRIPTION "This object is optional."   
 
-    OBJECT ieee8021TeipsIpgRowStatus
+    OBJECT ieee8021TeipsV2IpgRowStatus
       SYNTAX       RowStatus { active(1), notInService(2) }
       WRITE-SYNTAX RowStatus { notInService(2), createAndGo(4),
                                destroy(6) }
       DESCRIPTION "Support for createAndWait is not required."
 
-    OBJECT ieee8021TeipsTesiRowStatus
+    OBJECT ieee8021TeipsV2TesiRowStatus
       SYNTAX       RowStatus { active(1), notInService(2) }
       WRITE-SYNTAX RowStatus { notInService(2), createAndGo(4),
                                destroy(6) }
       DESCRIPTION "Support for createAndWait is not required."
 
-    ::= { ieee8021TeipsCompliances 1 }
+    ::= { ieee8021TeipsV2Compliances 1 }
 
 END
+
+
+
+
+

@@ -2,7 +2,7 @@
 IEEE8021-FQTSS-MIB DEFINITIONS ::= BEGIN
 
 -- =============================================================
--- MIB for support of 802.1Qav Forwarding & Queuing Enhancements
+-- MIB for support of the Forwarding & Queuing Enhancements
 -- for Time Sensitive Streams (FQTSS) in 802.1Q Bridges.
 -- =============================================================
 
@@ -27,13 +27,13 @@ IMPORTS
     ;
 
 ieee8021FqtssMib MODULE-IDENTITY
-    LAST-UPDATED "201102270000Z" -- February 27, 2011
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://grouper.ieee.org/groups/802/1/index.html
          WG-EMail: stds-802-1@ieee.org
 
-          Contact: Tony Jeffree
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
@@ -48,11 +48,17 @@ ieee8021FqtssMib MODULE-IDENTITY
         for Time Sensitive Streams.
 
         Unless otherwise indicated, the references in this MIB
-        module are to IEEE Std 802.1Q-2011.
+        module are to IEEE Std 802.1Q-2014.
 
-        Copyright (C) IEEE.
+        Copyright (C) IEEE (2014).
         This version of this MIB module is part of IEEE802.1Q;
         see the draft itself for full legal notices."
+
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected."
+            
     REVISION     "201102270000Z" -- February 27, 2011
     DESCRIPTION
          "Minor edits to contact information etc. as part of 
@@ -75,7 +81,7 @@ IEEE8021FqtssTrafficClassValue ::= TEXTUAL-CONVENTION
         This is the numerical value associated with a traffic
         class in a Bridge. Larger values are associated with
         higher priority traffic classes."
-    REFERENCE   "12.21"
+    REFERENCE   "12.20.1"
     SYNTAX      Unsigned32 (0..7)
 
 IEEE8021FqtssDeltaBandwidthValue ::= TEXTUAL-CONVENTION
@@ -85,10 +91,10 @@ IEEE8021FqtssDeltaBandwidthValue ::= TEXTUAL-CONVENTION
         "An 802.1 FQTSS delta bandwidth percentage,
         represented as a fixed point number scaled by
         1,000,000."
-    REFERENCE   "12.21, 34.4"
+    REFERENCE   "12.20.1, 34.4"
     SYNTAX      Unsigned32 (0..100000000)
 
-IEEE8021FtqssTxSelectionAlgorithmIDValue ::= TEXTUAL-CONVENTION
+IEEE8021FqtssTxSelectionAlgorithmIDValue ::= TEXTUAL-CONVENTION
     DISPLAY-HINT "d"
     STATUS      current
     DESCRIPTION
@@ -101,12 +107,12 @@ IEEE8021FtqssTxSelectionAlgorithmIDValue ::= TEXTUAL-CONVENTION
          2-255: Reserved for future standardization,
          256-4294967295: Vendor-specific transmission selection
                          algorithm identifiers, consisting of a 
-                         four-octet integer, where the 3 most
-                         significant octets hold an OUI value,
+                         four-octet integer, where the most
+                         significant 3 octets hold an OUI or CID value,
                          and the least significant octet holds
                          an integer value in the range 0-255
-                         assigned by the owner of the OUI."
-    REFERENCE   "8.6.8, 12.21"
+                         assigned by the owner of the OUI or CID."
+    REFERENCE   "8.6.8, 12.20.2"
     SYNTAX  Unsigned32 
 
 -- =============================================================
@@ -148,7 +154,7 @@ ieee8021FqtssBapTable OBJECT-TYPE
         credit-based shaper algorithm.
         All writable objects in this table must be
         persistent over power up restart/reboot."
-    REFERENCE   "12.21.1"
+    REFERENCE   "12.20.1"
     ::= { ieee8021FqtssBap 1 }
 
 ieee8021FqtssBapEntry OBJECT-TYPE
@@ -197,7 +203,7 @@ ieee8021FqtssBAPTrafficClass OBJECT-TYPE
         recommended mappings of priorities to traffic classes
         for support of the credit-based shaper algorithm are
         described in 34.5."
-    REFERENCE   "12.21.1, 34.3, 34.5"
+    REFERENCE   "12.20.2, 34.3, 34.5"
     ::= { ieee8021FqtssBapEntry 1 }
 
 
@@ -221,7 +227,7 @@ ieee8021FqtssDeltaBandwidth OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "12.21.1, 34.3"
+    REFERENCE   "12.20.1, 34.3"
     ::= { ieee8021FqtssBapEntry 2}
 
 ieee8021FqtssOperIdleSlopeMs OBJECT-TYPE
@@ -244,7 +250,7 @@ ieee8021FqtssOperIdleSlopeMs OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "12.21.1, 34.3"
+    REFERENCE   "12.20.1, 34.3"
     ::= { ieee8021FqtssBapEntry 3 }
 
 ieee8021FqtssOperIdleSlopeLs OBJECT-TYPE
@@ -267,7 +273,7 @@ ieee8021FqtssOperIdleSlopeLs OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "12.21.1, 34.3"
+    REFERENCE   "12.20.1, 34.3"
     ::= { ieee8021FqtssBapEntry 4 }
 
 ieee8021FqtssAdminIdleSlopeMs OBJECT-TYPE
@@ -291,7 +297,7 @@ ieee8021FqtssAdminIdleSlopeMs OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "12.21.1, 34.3"
+    REFERENCE   "12.20.1, 34.3"
     DEFVAL { 0 }
     ::= { ieee8021FqtssBapEntry 5 }
 
@@ -316,7 +322,7 @@ ieee8021FqtssAdminIdleSlopeLs OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "12.21.1, 34.3"
+    REFERENCE   "12.20.1, 34.3"
     DEFVAL { 0 }
     ::= { ieee8021FqtssBapEntry 6 }
 
@@ -373,7 +379,7 @@ ieee8021FqtssTxSelectionAlgorithmTable OBJECT-TYPE
 
         All writable objects in this table must be
         persistent over power up restart/reboot."
-    REFERENCE   "8.6.8, 12.21.2, 34.5"
+    REFERENCE   "8.6.8, 12.20.2, 34.5"
     ::= { ieee8021FqtssMappings 1 }
 
 ieee8021FqtssTxSelectionAlgorithmEntry OBJECT-TYPE
@@ -394,7 +400,7 @@ Ieee8021FqtssTxSelectionAlgorithmEntry ::=
         ieee8021FqtssTrafficClass
             IEEE8021FqtssTrafficClassValue,
         ieee8021FqtssTxSelectionAlgorithmID
-            IEEE8021FtqssTxSelectionAlgorithmIDValue
+            IEEE8021FqtssTxSelectionAlgorithmIDValue
         }
 
 ieee8021FqtssTrafficClass OBJECT-TYPE
@@ -407,11 +413,11 @@ ieee8021FqtssTrafficClass OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "8.6.8, 12.21.2, 34.5"
+    REFERENCE   "8.6.8, 12.20.2, 34.5"
     ::= { ieee8021FqtssTxSelectionAlgorithmEntry 1 }
 
 ieee8021FqtssTxSelectionAlgorithmID OBJECT-TYPE
-    SYNTAX      IEEE8021FtqssTxSelectionAlgorithmIDValue
+    SYNTAX      IEEE8021FqtssTxSelectionAlgorithmIDValue
     MAX-ACCESS  read-write
     STATUS      current
     DESCRIPTION
@@ -420,7 +426,7 @@ ieee8021FqtssTxSelectionAlgorithmID OBJECT-TYPE
 
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "8.6.8, 12.21.2, 34.5"
+    REFERENCE   "8.6.8, 12.20.2, 34.5"
     ::= { ieee8021FqtssTxSelectionAlgorithmEntry 2 }
 
 
@@ -442,7 +448,7 @@ ieee8021FqtssSrpRegenOverrideTable OBJECT-TYPE
 
         All writable objects in this table must be
         persistent over power up restart/reboot."
-    REFERENCE   "12.21.3, 6.6.4, 6.9.4"
+    REFERENCE   "35.1.4, 6.9.4, 12.20.3"
     ::= { ieee8021FqtssMappings 2 }
 
 ieee8021FqtssSrpRegenOverrideEntry OBJECT-TYPE
@@ -477,7 +483,7 @@ ieee8021FqtssSrClassPriority OBJECT-TYPE
     DESCRIPTION
         "The priority value that is overridden at the
         SRP domain boundary. "
-    REFERENCE   "12.21.3, 6.6.4, 6.9.4"
+    REFERENCE   "35.1.4, 6.9.4, 12.20.3"
     ::= { ieee8021FqtssSrpRegenOverrideEntry 1 }
 
 ieee8021FqtssPriorityRegenOverride OBJECT-TYPE
@@ -491,7 +497,7 @@ ieee8021FqtssPriorityRegenOverride OBJECT-TYPE
          
         The value of this object MUST be retained across
         reinitializations of the management system."
-    REFERENCE   "12.21.3, 6.6.4, 6.9.4"
+    REFERENCE   "35.1.4, 6.9.4, 12.20.3"
     ::= { ieee8021FqtssSrpRegenOverrideEntry 2 }
 
 ieee8021FqtssSrpBoundaryPort OBJECT-TYPE
@@ -500,8 +506,8 @@ ieee8021FqtssSrpBoundaryPort OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "The value of the SRPdomainBoundaryPort parameter
-        (6.6.4) for the priority. "
-    REFERENCE   "12.21.3, 6.6.4, 6.9.4"
+        (35.1.4) for the priority. "
+    REFERENCE   "35.1.4, 6.9.4, 12.20.3"
     ::= { ieee8021FqtssSrpRegenOverrideEntry 3 }
 
 
@@ -590,4 +596,8 @@ ieee8021FqtssCompliance MODULE-COMPLIANCE
     ::= { ieee8021FqtssCompliances 1 }
 
 END
+
+
+
+
 

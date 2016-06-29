@@ -1,13 +1,16 @@
 
 IEEE8021-PB-MIB DEFINITIONS ::= BEGIN
 
+-- =============================================================
+-- MIB for IEEE Std 802.1Q Provider Bridge Devices
+-- =============================================================
+
 IMPORTS
     MODULE-IDENTITY, OBJECT-TYPE
         FROM SNMPv2-SMI
     TruthValue, RowStatus
         FROM SNMPv2-TC
     ieee802dot1mibs, IEEE8021PbbComponentIdentifierOrZero,
-    IEEE8021PbbComponentIdentifier, IEEE8021BridgePortNumber,
     IEEE8021PortAcceptableFrameTypes, IEEE8021PriorityValue,
     IEEE8021BridgePortNumberOrZero, IEEE8021BridgePortType
         FROM IEEE8021-TC-MIB
@@ -19,13 +22,13 @@ IMPORTS
         FROM SNMPv2-CONF;
 
 ieee8021PbMib MODULE-IDENTITY
-    LAST-UPDATED  "201202100000Z" -- February 10, 2012
+    LAST-UPDATED  "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://grouper.ieee.org/groups/802/1/index.html
          WG-EMail: stds-802-1@ieee.org
 
-          Contact: David Levi
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
@@ -38,12 +41,20 @@ ieee8021PbMib MODULE-IDENTITY
         "Provider Bridge MIB module.
 
          Unless otherwise indicated, the references in this MIB
-         module are to IEEE 802.1Q-2011.
+         module are to IEEE Std 802.1Q-2014.
 
-         Copyright (C) IEEE.
+         Copyright (C) IEEE (2014).
          This version of this MIB module is part of IEEE802.1Q;
          see the draft itself for full legal notices."
- 
+
+    REVISION "201412150000Z" -- December 15, 2014
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected.
+            Bug fixes to conformance section."
+            
+
     REVISION     "201202100000Z" -- February 10, 2012"
     DESCRIPTION
          "Deprecated ieee8021PbVidTranslationTable
@@ -84,8 +95,8 @@ ieee8021PbVidTranslationTable OBJECT-TYPE
     STATUS      deprecated
     DESCRIPTION
         "This table is used to configure the VID Translation Table
-        defined in 12.13.2 a) of 802.1Q-2006.  The VID
-        Translation Table is used to implement a bi-directional
+        defined in 12.10.1.8.  The VID
+        Translation Table is used to implement a bidirectional
         mapping between a local S-VID, used in data and protocol
         frames transmitted and received through a CNP or PNP,
         and a relay S-VID, used by the filtering and forwarding
@@ -100,7 +111,7 @@ ieee8021PbVidTranslationTable OBJECT-TYPE
 
         Entries in this table must be persistent over power up
         restart/reboot."
-    REFERENCE   "12.13.2 a), 12.13.2.1, 12.13.2.2"
+    REFERENCE   "12.10.1.8"
     ::= { ieee8021PbObjects 1 }
 
 ieee8021PbVidTranslationEntry OBJECT-TYPE
@@ -179,7 +190,7 @@ ieee8021PbCVidRegistrationTable OBJECT-TYPE
 
         Entries in this table must be persistent over power up
         restart/reboot."
-    REFERENCE   "12.13.3.1, 12.13.3.2"
+    REFERENCE   "12.13.2.1, 12.13.2.2"
     ::= { ieee8021PbObjects 2 }
 
 ieee8021PbCVidRegistrationEntry OBJECT-TYPE
@@ -188,7 +199,7 @@ ieee8021PbCVidRegistrationEntry OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "An element of the C-VID registration table accessed by PB
-        C-VLAN component, Customer Edge Port bridge port number, and
+        C-VLAN component, Customer Edge Port Bridge Port number, and
         C-VID.  Each element contains the mapping between a C-VID and
         the S-VID which carries the service and booleans for handling
         untagged frames at the PEP and CEP."
@@ -273,7 +284,7 @@ ieee8021PbEdgePortTable OBJECT-TYPE
     DESCRIPTION
         "A Provider Edge Port (PEP) table which indicate the subset of
         parameters needed for each PEP."
-    REFERENCE   "12.13.3.3, 12.13.3.4"
+    REFERENCE   "12.13.2.3, 12.13.2.4"
     ::= { ieee8021PbObjects 3 }
 
 ieee8021PbEdgePortEntry OBJECT-TYPE
@@ -285,11 +296,11 @@ ieee8021PbEdgePortEntry OBJECT-TYPE
         containing parameters used to configure ingress filtering on
         the PEP, thus affecting traffic transiting from the provider
         network to the customer edge port.  The columns allow the
-        default C-VID value and default User Priority to be specified
+        default C-VID value and default priority to be specified
         and PEP's ingress filtering operation to be controlled.
 
         Note that the component ID of entries in this table must refer
-        to an S-VLAN component of a provider edge bridge and the Bridge
+        to an S-VLAN component of a provider edge Bridge and the Bridge
         Port number must refer to the port number of a Customer Edge
         Port associated with that Provider Edge Bridge."
     INDEX { ieee8021BridgeBasePortComponentId,
@@ -344,8 +355,8 @@ ieee8021PbEdgePortAcceptableFrameTypes OBJECT-TYPE
         "the Acceptable Frame Types for frames received at the PEP.
         The permissible values for the parameter are:
             1) Admit all frames;
-            2) Admit only Untagged and Priority-Tagged frames;
-            3) Admit only VLAN-Tagged frames."
+            2) Admit only untagged and Priority-tagged frames;
+            3) Admit only VLAN-tagged frames."
     DEFVAL { admitAll }
     ::= { ieee8021PbEdgePortEntry 4 }
 
@@ -371,7 +382,7 @@ ieee8021PbServicePriorityRegenerationTable OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "The priority regeneration table for this PEP."
-    REFERENCE   "12.13.3.5, 12.13.3.6"
+    REFERENCE   "12.13.2.5, 12.13.2.6"
     ::= { ieee8021PbObjects 4 }
 
 ieee8021PbServicePriorityRegenerationEntry OBJECT-TYPE
@@ -380,7 +391,7 @@ ieee8021PbServicePriorityRegenerationEntry OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "An element of the PEP priority regeneration table indexed
-        by Component ID, bridge port number, S-VID, and received
+        by Component ID, Bridge Port number, S-VID, and received
         priority.  Each element contains the regenerated priority.
 
         Note that the component ID of entries in this table must refer
@@ -443,7 +454,7 @@ ieee8021PbCnpTable OBJECT-TYPE
 
         Entries in this table must be persistent across reinitializations
         of the management system."
-    REFERENCE   "12.3.3"
+    REFERENCE   "12.13.2"
     ::= { ieee8021PbObjects 5 }
 
 ieee8021PbCnpEntry OBJECT-TYPE
@@ -523,7 +534,7 @@ ieee8021PbPnpTable OBJECT-TYPE
 
         Entries in this table must be persistent across reinitializations
         of the management system."
-    REFERENCE   "12.13.3"
+    REFERENCE   "12.13.1"
     ::= { ieee8021PbObjects 6 }
 
 ieee8021PbPnpEntry OBJECT-TYPE
@@ -560,7 +571,7 @@ ieee8021PbCepTable OBJECT-TYPE
     STATUS      current
     DESCRIPTION
        "This table is used to create Customer Edge Ports, CEPs, on a
-        provider edge bridge.  It is indexed by the ComponentId of the
+        provider edge Bridge.  It is indexed by the ComponentId of the
         PEB's S-VLAN component and by the port number for the CEP.  Note that
         the CEP's port number belongs to the set of port numbers
         associated with the PEB's S-VLAN component.
@@ -595,7 +606,7 @@ ieee8021PbCepCComponentId OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-        "This column is an implmentation specific column that may be
+        "This column is an implementation specific column that may be
          used to map the C component associated with this CEP to other
          tables within the system, such as the Entity MIB.  This
          column may not be created or modified by management station
@@ -638,7 +649,7 @@ ieee8021PbRcapTable OBJECT-TYPE
     STATUS      current
     DESCRIPTION
        "This table is used to create Remote Customer Access Ports, on a
-        provider edge bridge.  It is indexed by the ComponentId of the
+        provider edge Bridge.  It is indexed by the ComponentId of the
         PEB's S-VLAN component and by the port number for the RCAP.  Note that
         the index port number belongs to the set of port numbers
         associated with the PEB's primary S-VLAN component.
@@ -726,7 +737,7 @@ ieee8021PbInternalInterfaceTable OBJECT-TYPE
 
         Entries in this table must be persistent over power up
         restart/reboot."
-    REFERENCE   "12.13.4.1, 12.13.4.2"
+    REFERENCE   "12.13.3.1, 12.13.3.2"
     ::= { ieee8021PbObjects 9 }
 
 ieee8021PbIiEntry OBJECT-TYPE
@@ -735,7 +746,7 @@ ieee8021PbIiEntry OBJECT-TYPE
     STATUS      current
     DESCRIPTION
         "An element of the internal interface table accessed by PB
-        S-VLAN component ID, Remnote Customer Access Port bridge port
+        S-VLAN component ID, Remnote Customer Access Port Bridge Port
         number, and external S-VID.  Each element contains the mapping
         between an external S-VID and the internal port it selects and,
         except in the case of a C-tagged service interface the
@@ -911,7 +922,7 @@ ieee8021PbDynamicRcapGroup OBJECT-GROUP
         ieee8021PbRcapRcapPortNumber,
         ieee8021PbCepRowStatus
     }
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
         "A set of objects used for dynamic creation and deletion
         of remote customer access ports."
@@ -930,13 +941,25 @@ ieee8021PbInternalInterfaceGroup OBJECT-GROUP
         of internal interfaces on a Port-mapping S-VLAN component."
     ::= { ieee8021PbGroups 9 }
 
+ieee8021PbDynamicRcapV2Group OBJECT-GROUP
+    OBJECTS {
+        ieee8021PbRcapSComponentId,
+        ieee8021PbRcapRcapPortNumber,
+        ieee8021PbRcapRowStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "A set of objects used for dynamic creation and deletion
+        of remote customer access ports."
+    ::= { ieee8021PbGroups 10 }
+
 
 -- =============================================================
 -- Compliance statements
 -- =============================================================
 
 ieee8021PbCompliance MODULE-COMPLIANCE
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
         "The compliance statement for device support of Provider
          Bridge services."
@@ -977,5 +1000,50 @@ ieee8021PbCompliance MODULE-COMPLIANCE
 
     ::= { ieee8021PbCompliances 1 }
 
+ieee8021PbComplianceV2 MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for device support of Provider
+         Bridge services."
+
+    MODULE
+        MANDATORY-GROUPS {
+            ieee8021PbCVidRegistrationGroup,
+            ieee8021PbEdgePortGroup,
+            ieee8021PbServicePriorityRegenerationGroup
+        }
+
+        GROUP       ieee8021PbDynamicCnpGroup
+        DESCRIPTION
+            "This group is optional and supports dynamic creation
+            and deletion of customer network ports."
+
+        GROUP       ieee8021PbDynamicPnpGroup
+        DESCRIPTION
+            "This group is optional and supports dynamic creation
+            and deletion of provider network ports."
+
+        GROUP       ieee8021PbDynamicCepGroup
+        DESCRIPTION
+            "This group is optional and supports dynamic creation
+            and deletion of customer edge ports."
+
+        GROUP       ieee8021PbDynamicRcapV2Group
+        DESCRIPTION
+            "This group is optional and supports dynamic creation
+            and deletion of remote customer access ports."
+
+        GROUP       ieee8021PbInternalInterfaceGroup
+        DESCRIPTION
+            "This group is optional and supports dynamic creation
+            and deletion of internal interfaces on Port-mapping
+            S-VLAN components."
+
+    ::= { ieee8021PbCompliances 2 }
+
 END
+
+
+
+
 

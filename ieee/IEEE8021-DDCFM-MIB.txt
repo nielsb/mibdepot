@@ -1,29 +1,34 @@
+
 IEEE8021-DDCFM-MIB DEFINITIONS ::= BEGIN
 
 -- ******************************************************************
--- IEEE802.1Qaw DDCFM MIB
+-- IEEE802.1Q DDCFM MIB
 -- ******************************************************************
+
 IMPORTS
-    MODULE-IDENTITY,
-    OBJECT-TYPE,
-    Integer32,
-    Unsigned32 FROM SNMPv2-SMI -- [RFC2578]
-    TruthValue, RowStatus,
-    MacAddress FROM SNMPv2-TC -- [RFC2579]
-    MODULE-COMPLIANCE, OBJECT-GROUP FROM SNMPv2-CONF -- [RFC2580]
-    InterfaceIndex FROM IF-MIB -- [RFC2863]
-    VlanIdOrNone FROM Q-BRIDGE-MIB  -- [RFC4363]
-    Dot1agCfmMDLevel, Dot1agCfmMpDirection FROM IEEE8021-CFM-MIB
-    ieee802dot1mibs FROM IEEE8021-TC-MIB
-    ;
+    MODULE-IDENTITY,OBJECT-TYPE, Integer32, Unsigned32 
+        FROM SNMPv2-SMI -- [RFC2578]
+    TruthValue, RowStatus, MacAddress 
+        FROM SNMPv2-TC -- [RFC2579]
+    ieee802dot1mibs 
+        FROM IEEE8021-TC-MIB
+    MODULE-COMPLIANCE, OBJECT-GROUP 
+        FROM SNMPv2-CONF -- [RFC2580]
+    InterfaceIndex 
+        FROM IF-MIB -- [RFC2863]
+    VlanIdOrNone 
+        FROM Q-BRIDGE-MIB  -- [RFC4363]
+    Dot1agCfmMDLevel, Dot1agCfmMpDirection 
+        FROM IEEE8021-CFM-MIB;
 
 ieee8021DdcfmMIB MODULE-IDENTITY
-    LAST-UPDATED "201102270000Z" -- February 27, 2011
+    LAST-UPDATED "201412150000Z" -- December 15, 2014
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
           "WG-URL: http://grouper.ieee.org/groups/802/1/index.html
          WG-EMail: stds-802-1@ieee.org
-          Contact: Linda Dunbar 
+
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
@@ -33,14 +38,21 @@ ieee8021DdcfmMIB MODULE-IDENTITY
                    USA
            E-mail: STDS-802-1-L@LISTSERV.IEEE.ORG"
     DESCRIPTION
-        "module for managing Data Dependent and Data Driven Connectivity Fault Management.
+        "module for managing Data Dependent and Data Driven
+         Connectivity Fault Management.
         
          Unless otherwise indicated, the references in this MIB
-         module are to IEEE 802.1Q-2011.
+         module are to IEEE Std 802.1Q-2014.
 
-         Copyright (C) IEEE.
-         This version of this MIB module is part of IEEE802.1Q;
+         Copyright (C) IEEE (2014).
+         This version of this MIB module is part of IEEE Std 802.1Q;
          see the draft itself for full legal notices."
+
+    REVISION "201412150000Z" -- December 15, 2014
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected."
+            
     REVISION     "201102270000Z" -- February 27, 2011
     DESCRIPTION
          "Minor edits to contact information etc. as part of 
@@ -52,8 +64,6 @@ ieee8021DdcfmMIB MODULE-IDENTITY
          Copyright (c) IEEE"
     ::= {ieee802dot1mibs 11}      
         
-
-
 ieee8021MIBObjects OBJECT IDENTIFIER ::= { ieee8021DdcfmMIB 1 }
 ieee8021DdcfmConformance OBJECT IDENTIFIER ::= { ieee8021DdcfmMIB 2 }
 
@@ -79,7 +89,7 @@ ieee8021DdcfmStackTable OBJECT-TYPE
         retrieve all the DDCFM entities defined on a specified interface. 
         This table is created by default."
     REFERENCE
-        "clauses 12.18.1"
+        "12.17.1"
     ::= { ieee8021DdcfmStack 1 }
 
 ieee8021DdcfmStackEntry OBJECT-TYPE
@@ -109,12 +119,12 @@ ieee8021DdcfmStackIfIndex OBJECT-TYPE
     STATUS current
     DESCRIPTION
         "This object is the interface index of the interface either a
-         bridge port, or an aggregated IEEE802.3 port within a Bridge
+         Bridge Port, or an aggregated port within a Bridge
          Port. When the ifIndex value corresponds to the ifIndex of a
          Bridge Port, the value in this column must match the value in the
-         ieee8021BridgeBasePortIfIndex column for the bridge port."
+         ieee8021BridgeBasePortIfIndex column for the Bridge Port."
     REFERENCE
-        "clause 12.18.1.1.2 a.1"
+        "12.17.1.1.2 a.1"
     ::= { ieee8021DdcfmStackEntry 1 }
 
 ieee8021DdcfmStackRrMdLevel OBJECT-TYPE
@@ -124,7 +134,7 @@ ieee8021DdcfmStackRrMdLevel OBJECT-TYPE
     DESCRIPTION
         "MD level of the Reflection Responder managed object."
     REFERENCE
-        "clause 12.18.1.1.3 b.1"
+        "12.17.1.1.3 b.1"
     ::= { ieee8021DdcfmStackEntry 2 }
 
 ieee8021DdcfmStackRrDirection OBJECT-TYPE
@@ -134,7 +144,7 @@ ieee8021DdcfmStackRrDirection OBJECT-TYPE
     DESCRIPTION
         "The direction in which the RR faces."
     REFERENCE
-        "clause 12.18.1.1.3 b1"
+        "12.17.1.1.3 b1"
     ::= { ieee8021DdcfmStackEntry 3 }
 
 ieee8021DdcfmStackRFMreceiverMdLevel OBJECT-TYPE
@@ -144,7 +154,7 @@ ieee8021DdcfmStackRFMreceiverMdLevel OBJECT-TYPE
     DESCRIPTION
         "MD level of the RFM Receiver MO configured on the interface."
     REFERENCE
-        "clause 12.18.1.1.3 b.2"
+        "12.17.1.1.3 b.2"
     ::= { ieee8021DdcfmStackEntry 4 }
 
 ieee8021DdcfmStackDrMdLevel OBJECT-TYPE
@@ -154,7 +164,7 @@ ieee8021DdcfmStackDrMdLevel OBJECT-TYPE
     DESCRIPTION
         "MD level of the Deflection Responder managed object."
     REFERENCE
-        "clause 12.18.1.1.3 b.3"
+        "12.17.1.1.3 b.3"
     ::= { ieee8021DdcfmStackEntry 5 }
 
 ieee8021DdcfmStackDrVlanIdOrNone OBJECT-TYPE
@@ -164,7 +174,7 @@ ieee8021DdcfmStackDrVlanIdOrNone OBJECT-TYPE
     DESCRIPTION
         "The MA of the DR configured on the interface."
     REFERENCE
-        "clause 12.18.1.1.3 b.3"
+        "12.17.1.1.3 b.3"
     ::= { ieee8021DdcfmStackEntry 6 }
 
 ieee8021DdcfmStackSFMOriginatorMdLevel OBJECT-TYPE
@@ -174,7 +184,7 @@ ieee8021DdcfmStackSFMOriginatorMdLevel OBJECT-TYPE
     DESCRIPTION
         "MD level of the SFM Originator MO configured on the interface."
     REFERENCE
-        "clause 12.18.1.1.3 b.4"
+        "12.17.1.1.3 b.4"
     ::= { ieee8021DdcfmStackEntry 7 }
 
 ieee8021DdcfmStackSFMOriginatorVlanIdOrNone OBJECT-TYPE
@@ -184,7 +194,7 @@ ieee8021DdcfmStackSFMOriginatorVlanIdOrNone OBJECT-TYPE
     DESCRIPTION
         "The MA of the SFM Originator configured on the interface."
     REFERENCE
-        "clause 12.18.1.1.3 b.4"
+        "12.17.1.1.3 b.4"
     ::= { ieee8021DdcfmStackEntry 8 }
 
 ieee8021DdcfmStackSFMOriginatorDirection OBJECT-TYPE
@@ -194,7 +204,7 @@ ieee8021DdcfmStackSFMOriginatorDirection OBJECT-TYPE
     DESCRIPTION
         "The direction of which the SFM Originator is facing."
     REFERENCE
-        "clause 12.18.1.1.3 b.4"
+        "12.17.1.1.3 b.4"
     ::= { ieee8021DdcfmStackEntry 9 }
 
 -- ******************************************************************
@@ -205,11 +215,13 @@ ieee8021DdcfmRrTable OBJECT-TYPE
     MAX-ACCESS not-accessible
     STATUS current
     DESCRIPTION
-        "The Reflection Responder MIB object table. Each row in the table 
-        represents a different Reflection Responder. All rows in this
-        table persist across a system restart, however after such a restart             the value of the ActivationStatus column will be false."
+        "The Reflection Responder MIB object table. Each row
+        in the table represents a different Reflection Responder. 
+        All rows in this table persist across a system restart, 
+        however after such a restart, the value of the 
+        ActivationStatus column will be false."
     REFERENCE
-        "clauses 12.18.2"
+        "12.17.2"
     ::= { ieee8021DdcfmRr 1 }
 
 ieee8021DdcfmRrEntry OBJECT-TYPE
@@ -252,13 +264,13 @@ ieee8021DdcfmRrIfIndex OBJECT-TYPE
     STATUS current
     DESCRIPTION
         "This object is the interface index of the interface either a
-         bridge port, or an aggregated IEEE802.3 port within a Bridge
+         Bridge Port, or an aggregated port within a Bridge
          Port, on which Reflection Responder is defined. 
          When the ifIndex value corresponds to the ifIndex of a
          Bridge Port, the value in this column must match the value in the
-         ieee8021BridgeBasePortIfIndex column for the bridge port."
+         ieee8021BridgeBasePortIfIndex column for the Bridge Port."
     REFERENCE
-        "clause 12.18.2.1.2 a.1"
+        "12.17.2.1.2 a.1"
     ::= { ieee8021DdcfmRrEntry 1 }
 
 ieee8021DdcfmRrMdIndex   OBJECT-TYPE
@@ -268,7 +280,7 @@ ieee8021DdcfmRrMdIndex   OBJECT-TYPE
     DESCRIPTION
         "MD level of the Reflection Responder managed object."
     REFERENCE
-        "clause 12.18.2.1.2 a.2"
+        "12.17.2.1.2 a.2"
     ::= { ieee8021DdcfmRrEntry 2 }
 
 ieee8021DdcfmRrDirection   OBJECT-TYPE
@@ -278,7 +290,7 @@ ieee8021DdcfmRrDirection   OBJECT-TYPE
     DESCRIPTION
         "The direction in which the RR faces."
     REFERENCE
-        "clause 12.18.2.1.2 a.3"
+        "12.17.2.1.2 a.3"
     ::= { ieee8021DdcfmRrEntry 3 }
 
 ieee8021DdcfmRrPrimaryVlanIdOrNone   OBJECT-TYPE
@@ -288,7 +300,7 @@ ieee8021DdcfmRrPrimaryVlanIdOrNone   OBJECT-TYPE
     DESCRIPTION
         "The VID to be used on RFM frames."
     REFERENCE
-        "clause 12.18.2.2.2 b.1"
+        "12.17.2.2.2 b.1"
     DEFVAL { 0 }
     ::= { ieee8021DdcfmRrEntry 4 }
 
@@ -312,7 +324,7 @@ ieee8021DdcfmRrFilter OBJECT-TYPE
         1500, messages carrying this object may be fragmented on some
         segments."
     REFERENCE
-        "clause 12.18.2.2.2 b.2"
+        "12.17.2.2.2 b.2"
     ::= { ieee8021DdcfmRrEntry 5 }
 
 ieee8021DdcfmRrSamplingInterval OBJECT-TYPE
@@ -324,7 +336,7 @@ ieee8021DdcfmRrSamplingInterval OBJECT-TYPE
         "Indicates a time interval in which only the first frame matching
         the filter conditions is refected."
     REFERENCE
-        "clause 12.18.2.2.2 b.3"
+        "12.17.2.2.2 b.3"
     ::= { ieee8021DdcfmRrEntry 6 }
 
 ieee8021DdcfmRrTargetAddress OBJECT-TYPE
@@ -338,7 +350,7 @@ ieee8021DdcfmRrTargetAddress OBJECT-TYPE
         If not specified, the source_address of the selected data frame is
         used for Reflection Target Address."
     REFERENCE
-        "clause 12.18.2.2.2 b.4"
+        "12.17.2.2.2 b.4"
     ::= { ieee8021DdcfmRrEntry 7 }
 
 ieee8021DdcfmRrContinueFlag OBJECT-TYPE
@@ -350,7 +362,7 @@ ieee8021DdcfmRrContinueFlag OBJECT-TYPE
          towards the DA specified in the frame header.
          False indicates that the selected data frames are terminated."
     REFERENCE
-        "clause 12.18.2.2.2 b.5"
+        "12.17.2.2.2 b.5"
     DEFVAL { true }
     ::= { ieee8021DdcfmRrEntry 8 }
 
@@ -364,7 +376,7 @@ ieee8021DdcfmRrDuration OBJECT-TYPE
          remain active after activation; Minimum 2 octets (65536
          seconds) are needed for the duration of time;"
     REFERENCE
-        "clause 12.18.2.2.2 b.7"
+        "12.17.2.2.2 b.7"
     ::= { ieee8021DdcfmRrEntry 9 }
 
 ieee8021DdcfmRrDurationInTimeFlag OBJECT-TYPE
@@ -375,7 +387,7 @@ ieee8021DdcfmRrDurationInTimeFlag OBJECT-TYPE
         "True indicates that duration is in seconds;
          False indicates that duration is by the total number of frames reflected."
     REFERENCE
-        "clause 12.18.2.2.2 b.6"
+        "12.17.2.2.2 b.6"
     DEFVAL { true }
     ::= { ieee8021DdcfmRrEntry 10 }
 
@@ -388,7 +400,7 @@ ieee8021DdcfmRrVlanPriority OBJECT-TYPE
          transmitted encapsulated frames. The default value is the highest 
          priority."
     REFERENCE
-        "clause 12.18.2.2.2 b.9"
+        "12.17.2.2.2 b.9"
     DEFVAL { 7 }
     ::= { ieee8021DdcfmRrEntry 11 }
 
@@ -401,7 +413,7 @@ ieee8021DdcfmRrVlanDropEligible OBJECT-TYPE
         the VLAN tag which to be used in the transmitted encapsulated
         frames is set as True or False accordingly."
     REFERENCE
-        "clause 12.18.2.2.2 b.9"
+        "12.17.2.2.2 b.9"
     DEFVAL { false }
     ::= { ieee8021DdcfmRrEntry 12 }
 
@@ -410,10 +422,10 @@ ieee8021DdcfmRrFloodingFlag OBJECT-TYPE
     MAX-ACCESS read-create
     STATUS current
     DESCRIPTION
-        "True indicates that flooding is allowed if Egress port can't be
+        "True indicates that flooding is allowed if Egress port cannot be
          identified for RFM by the Filtering Database, False otherwise."
     REFERENCE
-        "clause 12.18.2.2.2 b.10"
+        "12.17.2.2.2 b.10"
     DEFVAL { true }
     ::= { ieee8021DdcfmRrEntry 13 }
 
@@ -424,10 +436,10 @@ ieee8021DdcfmRrTruncationFlag OBJECT-TYPE
     STATUS current
     DESCRIPTION
         "True indicates that the received data frame will be truncated to
-         keep the contructed RFM size not exceeding the egress port’s 
-    Maximum Service Data Unit Size, False otherwise."
+        keep the contructed RFM size not exceeding the egress port's 
+        Maximum Service Data Unit Size, False otherwise."
     REFERENCE
-        "clause 12.18.2.2.2 b.11"
+        "12.17.2.2.2 b.11"
     DEFVAL { true }
     ::= { ieee8021DdcfmRrEntry 14 }
 
@@ -440,7 +452,7 @@ ieee8021DdcfmRrActivationStatus OBJECT-TYPE
         False When receiving a request to stop Reflection Responder or
         its timer expires."
     REFERENCE
-        "clause 12.18.2.3.3 b.12"
+        "12.17.2.2.2 b.12"
     DEFVAL { false }
     ::= { ieee8021DdcfmRrEntry 15 }
 
@@ -453,7 +465,7 @@ ieee8021DdcfmRrRemainDuration OBJECT-TYPE
         "The value indicates the time, in the unit of seconds, or count
         left for Reflection Responder to be active."
     REFERENCE
-        "clause 12.18.2.3.3 b.13"
+        "12.17.2.2.2 b.13"
     ::= { ieee8021DdcfmRrEntry 16 }
 
 ieee8021DdcfmRrNextRfmTransID OBJECT-TYPE
@@ -465,7 +477,7 @@ ieee8021DdcfmRrNextRfmTransID OBJECT-TYPE
         next RFM transmitted. It is incremented by 1 with each
         transmission of RFM."
     REFERENCE
-        "clause 12.18.2.3.3 b.14"
+        "12.17.2.2.2 b.14"
     ::= { ieee8021DdcfmRrEntry 17 }
 
 ieee8021DdcfmRrRowStatus OBJECT-TYPE
@@ -491,7 +503,7 @@ ieee8021DdcfmRFMReceiverTable OBJECT-TYPE
         represents a different RFM Receiver.
         All rows associated with this table persist across system restart."
     REFERENCE
-        "clauses 12.18.3"
+        "12.17.3"
     ::= { ieee8021DdcfmRFMReceiver 1 }
 
 ieee8021DdcfmRFMReceiverEntry OBJECT-TYPE
@@ -517,13 +529,13 @@ ieee8021DdcfmRfmReceiverIfIndex OBJECT-TYPE
     STATUS current
     DESCRIPTION
         "The interface index of the interface either a
-         bridge port, or an aggregated IEEE802.3 port within a Bridge
+         Bridge Port, or an aggregated port within a Bridge
          Port, on which the RFM Receiver is created.
          When the ifIndex value corresponds to the ifIndex of a
          Bridge Port, the value in this column must match the value in the
-         ieee8021BridgeBasePortIfIndex column for the bridge port."
+         ieee8021BridgeBasePortIfIndex column for the Bridge Port."
     REFERENCE
-        "clause 12.18.3.1.2 a.2 "
+        "12.17.3.1.2 a.2 "
     ::= { ieee8021DdcfmRFMReceiverEntry 1 }
 
 ieee8021DdcfmRfmReceiverMdIndex   OBJECT-TYPE
@@ -533,7 +545,7 @@ ieee8021DdcfmRfmReceiverMdIndex   OBJECT-TYPE
     DESCRIPTION
         "MD level of the RFM Receiver managed object."
     REFERENCE
-        "clause 12.18.3.1.2 a.2"
+        "12.17.3.1.2 a.2"
     ::= { ieee8021DdcfmRFMReceiverEntry 2 }
 
 ieee8021DdcfmRFMRowStatus OBJECT-TYPE
@@ -559,7 +571,7 @@ ieee8021DdcfmDrTable OBJECT-TYPE
         in this table persist across a system restart; however after such
         a restart, the value of the ActivationStatus column will be false."
     REFERENCE
-        "clauses 12.18.4"
+        "12.17.4"
     ::= { ieee8021DdcfmDr 1 }
 
 ieee8021DdcfmDrEntry OBJECT-TYPE
@@ -594,13 +606,13 @@ ieee8021DdcfmDrIfIndex OBJECT-TYPE
     STATUS current
     DESCRIPTION
         "The interface index of the interface either a Bridge
-         Port, or an aggregated IEEE802.3 port within a Bridge
+         Port, or an aggregated port within a Bridge
          Port, on which the Decapsulator Responder is created.
          When the ifIndex value corresponds to the ifIndex of a
          Bridge Port, the value in this column must match the value in the
-         ieee8021BridgeBasePortIfIndex column for the bridge port."
+         ieee8021BridgeBasePortIfIndex column for the Bridge Port."
     REFERENCE
-        "clause 12.18.4.1.2 a.2 "
+        "12.17.4.1.2 a.2 "
     ::= { ieee8021DdcfmDrEntry 1 }
 
 ieee8021DdcfmDrMdIndex   OBJECT-TYPE
@@ -610,7 +622,7 @@ ieee8021DdcfmDrMdIndex   OBJECT-TYPE
     DESCRIPTION
         "MD level of the Decapsulator Responder managed object."
     REFERENCE
-        "clause 12.18.4.1.2 a.2"
+        "12.17.4.1.2 a.2"
     ::= { ieee8021DdcfmDrEntry 2 }
 
 ieee8021DdcfmDrVlanIdOrNone   OBJECT-TYPE
@@ -621,7 +633,7 @@ ieee8021DdcfmDrVlanIdOrNone   OBJECT-TYPE
         "An integer indicating the VID expected from the Send Frame Message
         frames."
     REFERENCE
-        "clause 12.18.4.1.2 a.2"
+        "12.17.4.1.2 a.2"
     ::= { ieee8021DdcfmDrEntry 3 }
 
 ieee8021DdcfmDrSfmOriginator OBJECT-TYPE
@@ -632,7 +644,7 @@ ieee8021DdcfmDrSfmOriginator OBJECT-TYPE
         "MAC address reference to the corresponding Send Frame Message
         Originator."
     REFERENCE
-        "clause 12.18.4.2.3 b.2"
+        "12.17.4.2.3 b.2"
     ::= { ieee8021DdcfmDrEntry 4 }
 
 ieee8021DdcfmDrSourceAddressStayFlag OBJECT-TYPE
@@ -644,7 +656,7 @@ ieee8021DdcfmDrSourceAddressStayFlag OBJECT-TYPE
         source_address field of the decapsulated frame with the
         Decapsulator Responder's own MAC address, False otherwise."
     REFERENCE
-        "clause 12.18.4.2.3 b.3"
+        "12.17.4.2.3 b.3"
     DEFVAL { true }
     ::= { ieee8021DdcfmDrEntry 5 }
 
@@ -653,10 +665,10 @@ ieee8021DdcfmDrFloodingFlag OBJECT-TYPE
     MAX-ACCESS read-create
     STATUS current
     DESCRIPTION
-        "True indicates that broadcast is allowed if Egress port can't be
+        "True indicates that broadcast is allowed if Egress port cannot be
          identified by the Filtering Database, False otherwise."
     REFERENCE
-        "clause 12.18.4.3.2 b.3"
+        "12.17.4.3.2 b.3"
     DEFVAL { true }
     ::= { ieee8021DdcfmDrEntry 6 }
 
@@ -669,7 +681,7 @@ ieee8021DdcfmDrDuration OBJECT-TYPE
         "The time that the Decapsulator Responder can stay active after
         its activation in the unit of seconds."
     REFERENCE
-        "clause 12.18.4.3.2 b.4"
+        "12.17.4.3.2 b.4"
     ::= { ieee8021DdcfmDrEntry 7 }
 
 ieee8021DdcfmDrActivationStatus OBJECT-TYPE
@@ -681,7 +693,7 @@ ieee8021DdcfmDrActivationStatus OBJECT-TYPE
         Responder, false When receiving a request to stop the Decapsulator
         Responder or its timer expires."
     REFERENCE
-        "clause 12.18.4.2.3 b.6"
+        "12.17.4.2.3 b.6"
     DEFVAL { false }
     ::= { ieee8021DdcfmDrEntry 8 }
 
@@ -694,7 +706,7 @@ ieee8021DdcfmDrRemainDuration OBJECT-TYPE
         "The value indicates the time left for Decapsulator Responder keep
          active. Its granularity is in seconds."
     REFERENCE
-        "clause 12.18.4.2.3 b.7"
+        "12.17.4.2.3 b.7"
     ::= { ieee8021DdcfmDrEntry 9 }
 
 ieee8021DdcfmDrSFMsequenceErrors OBJECT-TYPE
@@ -705,7 +717,7 @@ ieee8021DdcfmDrSFMsequenceErrors OBJECT-TYPE
     DESCRIPTION
         "The value indicates the total number of out-of-sequence SFMs."
     REFERENCE
-        "clause 12.18.4.2.3 b.8"
+        "12.17.4.2.3 b.8"
     ::= { ieee8021DdcfmDrEntry 10 }
 
 ieee8021DdcfmDrRowStatus OBJECT-TYPE
@@ -732,7 +744,7 @@ ieee8021DdcfmSoTable OBJECT-TYPE
         however after such a restart, the value of the ActivationStatus
         column will be false."
     REFERENCE
-        "clauses 12.18.5"
+        "12.17.5"
     ::= { ieee8021DdcfmSFMOriginator 1 }
 
 ieee8021DdcfmSoEntry OBJECT-TYPE
@@ -764,14 +776,14 @@ ieee8021DdcfmSfmIfIndex OBJECT-TYPE
     MAX-ACCESS not-accessible
     STATUS current
     DESCRIPTION
-        "The interface index of the interface either a bridge
-         port, or an aggregated IEEE802.3 port within a bridge
+        "The interface index of the interface either a Bridge
+         port, or an aggregated port within a Bridge
          port, on which Send Frame Message Originator is created.
          When the ifIndex value corresponds to the ifIndex of a
          Bridge Port, the value in this column must match the value in the
-         ieee8021BridgeBasePortIfIndex column for the bridge port."
+         ieee8021BridgeBasePortIfIndex column for the Bridge Port."
     REFERENCE
-        "clause 12.18.5.1.2 a.2"
+        "12.17.5.1.2 a.2"
     ::= { ieee8021DdcfmSoEntry 1 }
 
 ieee8021DdcfmSoMdIndex   OBJECT-TYPE
@@ -781,7 +793,7 @@ ieee8021DdcfmSoMdIndex   OBJECT-TYPE
     DESCRIPTION
         "MD level of the Send Frame Message Originator managed object."
     REFERENCE
-        "clause 12.18.5.1.2 a.2"
+        "12.17.5.1.2 a.2"
     ::= { ieee8021DdcfmSoEntry 2 }
 
 ieee8021DdcfmSoVlanIdOrNone   OBJECT-TYPE
@@ -792,7 +804,7 @@ ieee8021DdcfmSoVlanIdOrNone   OBJECT-TYPE
         "An integer indicating the VID to be used on Send Frame Message
         frames."
     REFERENCE
-        "clause 12.18.5.1.2 a.2"
+        "12.17.5.1.2 a.2"
     ::= { ieee8021DdcfmSoEntry 3 }
 
 ieee8021DdcfmSoDirection   OBJECT-TYPE
@@ -802,7 +814,7 @@ ieee8021DdcfmSoDirection   OBJECT-TYPE
     DESCRIPTION
         "The direction in which the SFM Originator faces."
     REFERENCE
-        "clause 12.18.5.1.2 a.2"
+        "12.17.5.1.2 a.2"
     ::= { ieee8021DdcfmSoEntry 4 }
 
 ieee8021DdcfmSoDrMacAddress OBJECT-TYPE
@@ -812,7 +824,7 @@ ieee8021DdcfmSoDrMacAddress OBJECT-TYPE
     DESCRIPTION
         "MAC Address of the corresponding Decapsulator Responder."
     REFERENCE
-        "clause 12.18.5.4.2 b"
+        "12.17.5.4.2 b"
     ::= { ieee8021DdcfmSoEntry 5 }
 
 ieee8021DdcfmSoDuration OBJECT-TYPE
@@ -824,7 +836,7 @@ ieee8021DdcfmSoDuration OBJECT-TYPE
         "Duration, in the unit of seconds, of Send Frame Message Originator 
          staying active once activated."
     REFERENCE
-        "clause 12.18.5.4.2 c"
+        "12.17.5.4.2 c"
     ::= { ieee8021DdcfmSoEntry 6 }
 
 ieee8021DdcfmSoActivationStatus OBJECT-TYPE
@@ -836,7 +848,7 @@ ieee8021DdcfmSoActivationStatus OBJECT-TYPE
         Originator, false When receiving a request to stop the Send Frame
         Message Originator or its timer expires."
     REFERENCE
-        "clause 12.18.5.2.3 b.4"
+        "12.17.5.2.3 b.4"
     DEFVAL { false }
     ::= { ieee8021DdcfmSoEntry 7 }
 
@@ -849,7 +861,7 @@ ieee8021DdcfmSoRemainDuration OBJECT-TYPE
         "The value indicates the time left for Send Frame Message
         Originator keep active. Its granularity is in seconds."
     REFERENCE
-        "clause 12.18.5.2.3 b.5"
+        "12.17.5.2.3 b.5"
     ::= { ieee8021DdcfmSoEntry 8 }
 
 ieee8021DdcfmSoRowStatus OBJECT-TYPE
@@ -992,3 +1004,8 @@ ieee8021DdcfmCompliance MODULE-COMPLIANCE
     ::= { ieee8021DdcfmCompliances 1 }
 
 END
+
+
+
+
+
