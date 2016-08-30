@@ -18,7 +18,7 @@ IMPORTS
 		FROM CISCO-SMI;
 
 ciscoProductsMIB MODULE-IDENTITY
-	LAST-UPDATED	"201604300000Z"
+	LAST-UPDATED	"201607080000Z"
 	ORGANIZATION	"Cisco Systems, Inc."
 	CONTACT-INFO
 		"       Cisco Systems
@@ -2045,6 +2045,11 @@ ciscoISA30004Csc                    OBJECT IDENTIFIER ::= { ciscoProducts 2263 }
 ciscoIOSXRv9000                     OBJECT IDENTIFIER ::= { ciscoProducts 2264 } -- Cisco IOS-XR vRouter
 ciscoSNS3515K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2265 } -- Cisco Secure Network Server platform SNS-3515 appliance
 ciscoSNS3595K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2266 } -- Cisco Secure Network Server platform SNS-3595 appliance
+ciscoISA30002C2F                    OBJECT IDENTIFIER ::= { ciscoProducts 2267 } -- ISA 30002C2F Industrial Security Appliance
+ciscoISA30004C                      OBJECT IDENTIFIER ::= { ciscoProducts 2268 } -- ISA 30004C Industrial Security Appliance
+ciscoRAISA1783SAD4T0S               OBJECT IDENTIFIER ::= { ciscoProducts 2269 } -- Cisco Rockwell ISA 30004C (1783SAD4T0S) Industrial Security Appliance
+ciscoRAISA1783SAD2T2S               OBJECT IDENTIFIER ::= { ciscoProducts 2270 } -- Cisco Rockwell ISA 30002C2F (1783SAD2T2SS)Industrial Security Appliance
+ciscoISA4000                        OBJECT IDENTIFIER ::= { ciscoProducts 2271 } -- ISA 4000 Industrial Security Appliance
 ciscoC888EAK9                       OBJECT IDENTIFIER ::= { ciscoProducts 2272 } -- Cisco Multimode 888EA G.SHDSL (EFM/ATM) Router with 802.3 ah EFM
 ciscoC6816xle                       OBJECT IDENTIFIER ::= { ciscoProducts 2273 } -- Catalyst C6816-X-LE with 16x10G ports
 ciscoC6832xle                       OBJECT IDENTIFIER ::= { ciscoProducts 2274 } -- Catalyst C6832-X-LE with 32x10G ports
@@ -2112,6 +2117,15 @@ ciscoStealthWatch2404               OBJECT IDENTIFIER ::= { ciscoProducts 2385 }
 ciscoStealthWatch2420               OBJECT IDENTIFIER ::= { ciscoProducts 2386 } -- Cisco StealthWatch Packet Analyzer 2420
 ciscoNamApp2404                     OBJECT IDENTIFIER ::= { ciscoProducts 2387 } -- Cisco Prime NAM Appliance 2404
 ciscoASR9910                        OBJECT IDENTIFIER ::= { ciscoProducts 2390 } -- Cisco Aggregation Services Router (ASR) 9910 Chassis
+cisco819HGLTEMNAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 2392 } -- C819HG-LTE-MNA-K9 Hardened Fixed router with multi-carrier North America SKU LTE Modem
+ciscoIR829GWLTEGASK9                OBJECT IDENTIFIER ::= { ciscoProducts 2393 } -- IR829 Hardened WAN GE 4G LTE secure platform multi-mode Global (Singapore) LTE/HSPA+ with 802.11n, PoE, Australia Compliant
+ciscoIR829GWLTEGACK9                OBJECT IDENTIFIER ::= { ciscoProducts 2394 } -- IR829 Hardened WAN GE 4G LTE secure platform multi-mode Global (Malaysia) LTE/HSPA+ with 802.11n, PoE, Australia Compliant
+ciscoCSP2100                        OBJECT IDENTIFIER ::= { ciscoProducts 2397 } -- Cloud Services Platform Model CSP-2100
+ciscoNCS4216F2BSA                   OBJECT IDENTIFIER ::= { ciscoProducts 2402 } -- NCS 4216 Front to Back Shelf Assembly (16 slots - 14 RU) - Includes Air Deflector Plenum and Brackets/Guides
+ciscoFpr2110td                      OBJECT IDENTIFIER ::= { ciscoProducts 2404 } -- Cisco FirePOWER 2110 Security Appliance, 1U with embedded security module 
+ciscoFpr2120td                      OBJECT IDENTIFIER ::= { ciscoProducts 2405 } -- Cisco FirePOWER 2120 Security Appliance, 1U with embedded security module  
+ciscoFpr2130td                      OBJECT IDENTIFIER ::= { ciscoProducts 2406 } -- Cisco FirePOWER 2130 Security Appliance, 1U with embedded security module
+ciscoFpr2140td                      OBJECT IDENTIFIER ::= { ciscoProducts 2407 } -- Cisco FirePOWER 2140 Security Appliance, 1U with embedded security module 
 END
 
 
