@@ -12,6 +12,6 @@ rm -fr $DIR
 mkdir -p $DIR
 for f in *
 do
-    g=$(echo $f | sed 's/-[0-9Z]*.txt/.txt/')
+    g=$(echo $f | sed 's/-[-0-9Z]*.txt/.txt/')
     sed -e 's/\r//' $f | awk '{if(NR==1)sub(/^[\xef\xbb\xbf]*/,"");print}' >$DIR/$g
 done
