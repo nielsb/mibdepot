@@ -132,3 +132,39 @@ diff -ru auto/mibs/v2/CISCO-SDSL-LINE-MIB.my cisco/CISCO-SDSL-LINE-MIB.my
      MAX-ACCESS  read-write
      STATUS      current
      DESCRIPTION
+diff --git a/cisco/CISCO-IEEE-CFM-MIB.my b/cisco/CISCO-IEEE-CFM-MIB.my
+index 698f7b9..188ea68 100644
+--- a/cisco/CISCO-IEEE-CFM-MIB.my
++++ b/cisco/CISCO-IEEE-CFM-MIB.my
+@@ -19,7 +19,7 @@
+ -- this MIB.
+ 
+ 
+-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
++CISCO-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
+ 
+ -- ******************************************************************
+ -- IEEE P802.1ag(TM) CFM MIB
+diff --git a/cisco/CISCO-SWITCH-QOS-MIB.my b/cisco/CISCO-SWITCH-QOS-MIB.my
+index 28b1b63..ddc51f1 100644
+--- a/cisco/CISCO-SWITCH-QOS-MIB.my
++++ b/cisco/CISCO-SWITCH-QOS-MIB.my
+@@ -3032,12 +3032,12 @@ csqHwSharedPoolUsageInstNo OBJECT-TYPE
+ 
+ csqHwSharedPoolStatsDirection OBJECT-TYPE
+     SYNTAX          INTEGER  {
+-                        inputStats_ingressStraight(1),
+-                        inputStats_ingressHairpin(2),
+-                        inputStats_egress(3),
+-                        outputStats_ingressStraight(4),
+-                        outputStats_ingressHairpin(5),
+-                        outputStats_egress(6)
++                        inputStats-ingressStraight(1),
++                        inputStats-ingressHairpin(2),
++                        inputStats-egress(3),
++                        outputStats-ingressStraight(4),
++                        outputStats-ingressHairpin(5),
++                        outputStats-egress(6)
+                     }
+     MAX-ACCESS      not-accessible
+     STATUS          current
