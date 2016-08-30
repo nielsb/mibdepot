@@ -19,7 +19,7 @@
 -- this MIB.
 
 
-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
+CISCO-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
 
 -- ******************************************************************
 -- IEEE P802.1ag(TM) CFM MIB
