@@ -1,0 +1,20 @@
+#!/bin/sh
+
+TMP=tmp/docsis
+DIR=$PWD/new/docsis
+
+rm -fr $TMP
+mkdir -p $TMP
+( cd $TMP
+  wget -r -A .txt -np -nd -nv -l 1 http://mibs.cablelabs.com/MIBs/DOCSIS
+)
+
+rm -fr $DIR
+mkdir -p $DIR
+for f in $TMP/*
+do
+    g=$(echo $f | sed -e 's/[-0-9Z]*.txt/.txt/' -e s%$TMP/%%)
+    sed -e 's/\r//' $f | awk '{if(NR==1)sub(/^[\xef\xbb\xbf]*/,"");print}' >$DIR/$g
+done
+
+patch -d $DIR <docsis.diff

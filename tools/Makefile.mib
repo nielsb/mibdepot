@@ -1,0 +1,38 @@
+RFCHOST =	ftp://ftp.ietf.org
+RFCDIR =	rfc
+
+IANAHOST =	http://www.iana.org
+IANADIR =	assignments
+
+ALLDIR =	tmp/rfc.orig
+INSTDIR =	new/rfc
+
+rfc:	ianamibs rfcmibs
+	rm -fr $(INSTDIR)
+	mkdir -p $(INSTDIR)
+	cp $(ALLDIR)/* $(INSTDIR)
+	if test `uname` = SunOS ; \
+	then gpatch -d $(INSTDIR) < rfcmibs.diff; \
+	else patch -d $(INSTDIR) < rfcmibs.diff; \
+	fi
+	rm -f $(INSTDIR)/*orig
+
+ianamibs:	ianalist
+	[ -d $(ALLDIR) ] || mkdir $(ALLDIR)
+	cat ianalist | while read file mibs; \
+		do \
+		  if [ "$$file" != "#" ]; \
+		  then \
+		    ./mibfetch -d $(ALLDIR) -x $(IANAHOST) $(IANADIR) $$file $$mibs; \
+		  fi; \
+		done
+
+rfcmibs:	rfclist
+	[ -d $(ALLDIR) ] || mkdir $(ALLDIR)
+	cat rfclist | while read rfc mibs; \
+		do \
+		  if [ "$$rfc" != "#" ]; \
+		  then \
+		    ./mibfetch -d $(ALLDIR) $(RFCHOST) $(RFCDIR) $$rfc $$mibs; \
+		  fi; \
+		done

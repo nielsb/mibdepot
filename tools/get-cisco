@@ -1,0 +1,57 @@
+#!/bin/sh
+
+set -e
+
+TMPDIR=tmp
+NEWDIR=new
+
+TMPDL=$TMPDIR/cisco-ftp
+
+rm -fr $TMPDL
+mkdir -p $TMPDL
+( cd $TMPDL
+  wget ftp://ftp.cisco.com/pub/mibs/v2/v2.tar.gz
+  tar zxf v2.tar.gz
+)
+
+rm -fr $NEWDIR/cisco $NEWDIR/altiga $NEWDIR/docsis $NEWDIR/lanoptics $NEWDIR/clab
+mkdir -p $NEWDIR
+
+mkdir $TMPDL/non-cisco
+cp -p $TMPDL/auto/mibs/v2/* $TMPDL/non-cisco
+rm $TMPDL/non-cisco/CISCO*
+
+mkdir $NEWDIR/cisco
+cp -p $TMPDL/auto/mibs/v2/CISCO* $NEWDIR/cisco
+rm $NEWDIR/cisco/*CAPABILITY*
+rm $NEWDIR/cisco/CISCO-LWAPP*
+for m in BASIS-GENERIC-MIB.my \
+    BASIS-MIB.my \
+    BASIS-ONLINE-DIAG-MIB.my \
+    BASIS-RAS-DISK-MIB.my \
+    BASIS-SERIAL-MIB.my \
+    BASIS-SHELF-MIB.my \
+    GENERICOBJECT-MIB.my \
+    IGMP-MIB.my \
+    INT-SERV-MIB.my \
+    MPLS-VPN-MIB.my \
+    RTM-MIB.my \
+    OLD-CISCO-CHASSIS-MIB.my
+do mv $TMPDL/non-cisco/$m $NEWDIR/cisco
+done
+
+patch -d $NEWDIR/cisco <cisco.diff
+
+mkdir $NEWDIR/altiga
+mv $TMPDL/non-cisco/ALTIGA* $TMPDL/non-cisco/ADMIN-AUTH-STATS-MIB.my $NEWDIR/altiga
+
+mkdir $NEWDIR/docsis
+mv $TMPDL/non-cisco/DOCS-* $NEWDIR/docsis
+
+patch -d $NEWDIR/docsis <docsis.diff
+
+mkdir $NEWDIR/lanoptics
+mv $TMPDL/non-cisco/LANOPT* $NEWDIR/lanoptics
+
+mkdir $NEWDIR/clab
+mv $TMPDL/non-cisco/CLAB* $TMPDL/non-cisco/DTI-MIB.my $TMPDL/non-cisco/DSG-IF-MIB.my $NEWDIR/clab
