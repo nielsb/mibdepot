@@ -3,10 +3,11 @@
 --
 -- January 1995, Jeffrey T. Johnson
 --
--- Copyright (c) 1995-2016 by cisco Systems, Inc.
+-- Copyright (c) 1995-2017 by cisco Systems, Inc.
 -- All rights reserved.
 -- 
 -- *****************************************************************
+
 
 CISCO-PRODUCTS-MIB DEFINITIONS ::= BEGIN
 
@@ -18,7 +19,7 @@ IMPORTS
 		FROM CISCO-SMI;
 
 ciscoProductsMIB MODULE-IDENTITY
-	LAST-UPDATED	"201612220000Z"
+	LAST-UPDATED	"201703070000Z"
 	ORGANIZATION	"Cisco Systems, Inc."
 	CONTACT-INFO
 		"       Cisco Systems
@@ -1534,6 +1535,7 @@ cisco819G4GAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 1495 } -- 
 cisco819G4GVK9                  OBJECT IDENTIFIER ::= { ciscoProducts 1496 } -- C819G-4G-V-K9 None-Hardened Fixed router with Verizon LTE modem
 cisco819G4GGK9                  OBJECT IDENTIFIER ::= { ciscoProducts 1497 } -- C819G-4G-G-K9 Non-Hardened Fixed router with Global SKU LTE modem
 
+
 ciscoUcsC200                    OBJECT IDENTIFIER ::= { ciscoProducts 1512 } -- The C200 is a Cisco Unified Computing System C-Series Rack-Mount Server. This is a high-density, two-socket, 1 Rack Unit rack-mount server
 ciscoUcsC210                    OBJECT IDENTIFIER ::= { ciscoProducts 1513 } -- The C210 is a Cisco Unified Computing System C-Series Rack-Mount Server. This is a general purpose, 2-socket, 2 rack unit (RU) rack-mount server
 ciscoUcsC250                    OBJECT IDENTIFIER ::= { ciscoProducts 1514 } -- The C250 is a Cisco Unified Computing System C-Series Rack-Mount Server. This is a high-performance, memory-intensive, 2-socket, 2 rack unit (RU) rack-mount server
@@ -2165,7 +2167,11 @@ ciscoNCS5011                        OBJECT IDENTIFIER ::= { ciscoProducts 2411 }
 ciscoIR809G3GGAK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2425 } -- Cisco 809 3G Industrial Integrated Service Routers with multi-mode HSPA+, ETSI compliant
 ciscoIR809GLTELAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 2426 } -- Cisco 809 4G LTE Industrial Integrated Service Routers with multi-mode LTE/HSPA+, ETSI compliant
 ciscoCXP2270GSR12                   OBJECT IDENTIFIER ::= { ciscoProducts 2433 } -- CXP2 Optical Transceiver with Optical Connector
+ciscoNCS4216F2B                     OBJECT IDENTIFIER ::= { ciscoProducts 2434 } -- NCS 4216-F2B System (14RU and 16 SLOT)
+ciscoASR914                         OBJECT IDENTIFIER ::= { ciscoProducts 2480 } -- ASR 914 Series Router
 ciscoNCSFFC2                        OBJECT IDENTIFIER ::= { ciscoProducts 2481 } -- NCS-F-FC2: NCS6000 Fabric Chassis 2nd Gen Fabric Card
+ciscoUCSS3260                       OBJECT IDENTIFIER ::= { ciscoProducts 2487 } -- Cisco UCS S3260 Rack server
+ciscoWSC365048TSE                   OBJECT IDENTIFIER ::= { ciscoProducts 2491 } -- Catalyst Switch
+ciscoUCSC220M5                      OBJECT IDENTIFIER ::= { ciscoProducts 2492 } -- Cisco UCS C220 M5 Rack server
+ciscoUCSC240M5                      OBJECT IDENTIFIER ::= { ciscoProducts 2493 } -- Cisco UCS C240 M5 Rack server
 END
-
-
