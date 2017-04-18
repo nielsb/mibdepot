@@ -1,4 +1,4 @@
---$Id$
+
 -- $Source$
 -- *****************************************************************
 --CISCO-ENTITY-VENDORTYPE-OID-MIB.my: OID assignments for Cisco components
@@ -24,7 +24,7 @@ IMPORTS
 		FROM CISCO-SMI;
 
 ciscoEntityVendortypeOIDMIB MODULE-IDENTITY
-	LAST-UPDATED	"201703070000Z"
+	LAST-UPDATED	"201703150000Z"
 	ORGANIZATION	"Cisco Systems, Inc."
 	CONTACT-INFO
 		"       Cisco Systems
@@ -1446,6 +1446,10 @@ cevChassisISA4000                       OBJECT IDENTIFIER ::= { cevChassis 1681 
 cevChassisNCS5508CHASSIS                OBJECT IDENTIFIER ::= { cevChassis 1682 } -- NCS5500 8 Slot Single Chassis 
 cevChassisDSC9718                       OBJECT IDENTIFIER ::= { cevChassis 1683 } -- DS-C9718, Chassis for MDS 18-Slot Director Switch
 cevChassisN2KC2348TQ10GE                OBJECT IDENTIFIER ::= { cevChassis 1684 } -- This product belongs to nexus 2k family of Fex's. This Fex is   Currently in bringup stage.   This FEX has 48 HIF ports (copper) and 6 NIF (uplink) ports.
+cevChassisC6816xle                      OBJECT IDENTIFIER ::= { cevChassis 1685 } -- Catalyst C6816-X-LE with 16x10G ports
+cevChassisC6832xle                      OBJECT IDENTIFIER ::= { cevChassis 1686 } -- Catalyst C6832-X-LE with 32x10G ports
+cevChassisC6824xle                      OBJECT IDENTIFIER ::= { cevChassis 1687 } -- Catalyst C6824-X-LE with 24x10GE ports plus 2x40GE uplinks
+cevChassisC6840xle                      OBJECT IDENTIFIER ::= { cevChassis 1688 } -- Catalyst C6840-X-LE with 40x10GE ports plus 2x40GE uplinks
 cevChassisN9KC9264PQ                    OBJECT IDENTIFIER ::= { cevChassis 1690 } -- Cisco chassis for 2RU TOR, 64x40GE QSFP, configurable as 32x100GE
 cevChassisN3KC31128PQ                   OBJECT IDENTIFIER ::= { cevChassis 1691 } -- Cisco Chassis for 2RU TOR, 96x1/10G SFP + 8x40G QSFP
 cevChassisN3KC3132QXOE                  OBJECT IDENTIFIER ::= { cevChassis 1692 } -- Neptune-CR chassis Nexus 3000 Series 1 RU fixed chassis with Nexus 3132Q 32 x QSFP+ ports, 2 Power Supplies and 4 FANs, configured as open environment hardware.
@@ -7339,6 +7343,7 @@ cevQSFPH40GCU2M               OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 34 } --
 cevQSFPH40GCU3M               OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 35 } -- 40GBASE-CR4 Passive Copper Cable, 3m
 cevQSFPH40GCU4M               OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 36 } -- 40GBASE-CR4 Passive Copper Cable, 4m
 cevQSFPH40GCU5M               OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 37 } -- 40GBASE-CR4 Passive Copper Cable, 5m
+cevQSFP40GBDRX                OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 39 } -- QSFP-40G-BD-RX Bi-Directional QSFP+ Module for MMF, but this transceiver is RX only, no signal is transmitted
 
 
 
@@ -7620,6 +7625,9 @@ cevFprUS23071                           OBJECT IDENTIFIER ::= { cevModuleFPRType
 cevFprUS23072                           OBJECT IDENTIFIER ::= { cevModuleFPRType 16 } -- 8x1/10GE SFP/SFP+ EPM (Regents Park)
 cevFprUS23073                           OBJECT IDENTIFIER ::= { cevModuleFPRType 17 } -- 8x10GE LR Fiber EPM with programmable fail-to-wire (FTW) functionality
 cevFprUS23074                           OBJECT IDENTIFIER ::= { cevModuleFPRType 18 } -- 8x10GE SR Fiber EPM with programmable fail-to-wire (FTW) functionality
+cevFPRNM8X1F                            OBJECT IDENTIFIER ::= { cevModuleFPRType 19 } -- 8x1GE multi-mode copper EPM with programmable fail-to-wire (FTW) functionality 
+cevFPRNM2X40GF	                         OBJECT IDENTIFIER ::= { cevModuleFPRType 20 } -- Cisco FirePower 2 port 40G FTW (Fail to Wire) Network Module
+
 
 cevModuleQSFP28                         OBJECT IDENTIFIER ::= { cevModule 117 } --  QSFP28 group of Optics
 cevQSFP100GELR4                         OBJECT IDENTIFIER ::= { cevModuleQSFP28 1 } --  100GE-LR4 QSFP Module
@@ -7691,6 +7699,8 @@ cevModuleSM8FXS12FXO                   OBJECT IDENTIFIER ::= { cevModuleSMType 1
 cevModuleSM16FXS2FXO                   OBJECT IDENTIFIER ::= { cevModuleSMType 2 } -- 16 port Analog FXS and 2 port Analog FXO RJ21 Single Wide Service Module
 cevModuleSM24FXS4FXO                   OBJECT IDENTIFIER ::= { cevModuleSMType 3 } -- 24 port Analog FXS and 4 port Analog FXO RJ21 Single Wide Service Module
 cevModuleSM72FXS                       OBJECT IDENTIFIER ::= { cevModuleSMType 4 } -- 72 port Analog FXS RJ21 Double Wide Service Module
+
+
 
 
 
