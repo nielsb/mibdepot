@@ -18,7 +18,7 @@ rfc:	ianamibs rfcmibs
 	rm -f $(INSTDIR)/*orig
 
 ianamibs:	ianalist
-	[ -d $(ALLDIR) ] || mkdir $(ALLDIR)
+	[ -d $(ALLDIR) ] || mkdir -p $(ALLDIR)
 	cat ianalist | while read file mibs; \
 		do \
 		  if [ "$$file" != "#" ]; \
@@ -28,7 +28,7 @@ ianamibs:	ianalist
 		done
 
 rfcmibs:	rfclist
-	[ -d $(ALLDIR) ] || mkdir $(ALLDIR)
+	[ -d $(ALLDIR) ] || mkdir -p $(ALLDIR)
 	cat rfclist | while read rfc mibs; \
 		do \
 		  if [ "$$rfc" != "#" ]; \
