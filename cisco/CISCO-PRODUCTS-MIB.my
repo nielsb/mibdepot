@@ -19,7 +19,7 @@ IMPORTS
 		FROM CISCO-SMI;
 
 ciscoProductsMIB MODULE-IDENTITY
-	LAST-UPDATED	"201703070000Z"
+	LAST-UPDATED	"201708170000Z"
 	ORGANIZATION	"Cisco Systems, Inc."
 	CONTACT-INFO
 		"       Cisco Systems
@@ -2072,6 +2072,7 @@ ciscoflowAgent3300                  OBJECT IDENTIFIER ::= { ciscoProducts 2284 }
 ciscoFpr9300K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2285 } -- Cisco FirePOWER 9300 Security Appliance, 3U
 ciscoFpr9000SM24                    OBJECT IDENTIFIER ::= { ciscoProducts 2286 } -- Cisco FirePOWER 9000 Security Module 24
 ciscoFpr9000SM36                    OBJECT IDENTIFIER ::= { ciscoProducts 2288 } -- Cisco FirePOWER 9000 Security Module 36
+ciscoFpr4150K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2292 } -- Cisco FirePOWER 4150 Security Appliance, 1U with embedded security module 44 
 ciscoFpr4140K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2293 } -- Cisco FirePOWER 4140 Security Appliance, 1U with embedded security module 36
 ciscoFpr4120K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2294 } -- Cisco FirePOWER 4120 Security Appliance, 1U with embedded security module 24
 ciscoFpr4110K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2295 } -- Cisco FirePOWER 4110 Security Appliance, 1U with embedded security module 12
@@ -2092,6 +2093,7 @@ cisco819GLTEMNAK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2309 }
 ciscoFpr4110SM12                    OBJECT IDENTIFIER ::= { ciscoProducts 2313 } -- Cisco FirePOWER 4110 Security Module 12
 ciscoFpr4120SM24                    OBJECT IDENTIFIER ::= { ciscoProducts 2314 } -- Cisco FirePOWER 4120 Security Module 24
 ciscoFpr4140SM36                    OBJECT IDENTIFIER ::= { ciscoProducts 2315 } -- Cisco FirePOWER 4140 Security Module 36
+ciscoFpr4150SM44                    OBJECT IDENTIFIER ::= { ciscoProducts 2316 } -- Cisco FirePOWER 4150 Security Module 44 
 ciscoNCS5001                        OBJECT IDENTIFIER ::= { ciscoProducts 2317 } -- Cisco NCS 5001 Series Router
 ciscoNCS5002                        OBJECT IDENTIFIER ::= { ciscoProducts 2318 } -- Cisco NCS 5002 Series Router
 ciscoFpvK9                          OBJECT IDENTIFIER ::= { ciscoProducts 2319 } -- Cisco FirePOWER Virtual Appliance
@@ -2147,6 +2149,8 @@ cisco866VAEK9V2                     OBJECT IDENTIFIER ::= { ciscoProducts 2379 }
 cisco867VAEV2                       OBJECT IDENTIFIER ::= { ciscoProducts 2380 } -- Cisco 867VAE router with VDSL2/ADSL2+ over POTS
 cisco899GLTELAK9                    OBJECT IDENTIFIER ::= { ciscoProducts 2381 } -- C899G-LTE-LA-K9 4G router with 1 Giga Ethernet WAN, 1 SFP (Small Form-factor Pluggable) Giga Ethernet WAN, 1 EFM over G.SH DSL WAN, 8 Giga Ethernet LAN, 4 PoE Optional, 1 USB 2.0 port, 1 Console/Aux port, 1GB flash memory and 1GB DRAM
 cisco819GLTELAK9                    OBJECT IDENTIFIER ::= { ciscoProducts 2382 } -- C819G-LTE-LA-K9 Router with 1 Gigabit Ethernet WAN, 4 Fast Ethernet LAN, 1 AT&T LTE modem, 1 Serial, 1 Console/Aux ports,256MB flash memory, 512MB DRAM
+ciscoRAIE1783LMS5                   OBJECT IDENTIFIER ::= { ciscoProducts 2383 } -- Cisco Rockwell brand Industrial Ethernet 1000 switch with 5x 10/100 BaseT Copper ports 
+ciscoRAIE1783LMS8                   OBJECT IDENTIFIER ::= { ciscoProducts 2384 } -- Cisco Rockwell brand Industrial Ethernet 1000 switch with 8x 10/100 BaseT Copper ports 
 ciscoStealthWatch2404               OBJECT IDENTIFIER ::= { ciscoProducts 2385 } -- Cisco StealthWatch Packet Analyzer 2404
 ciscoStealthWatch2420               OBJECT IDENTIFIER ::= { ciscoProducts 2386 } -- Cisco StealthWatch Packet Analyzer 2420
 ciscoNamApp2404                     OBJECT IDENTIFIER ::= { ciscoProducts 2387 } -- Cisco Prime NAM Appliance 2404
@@ -2155,6 +2159,8 @@ cisco819HGLTEMNAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 2392 }
 ciscoIR829GWLTEGASK9                OBJECT IDENTIFIER ::= { ciscoProducts 2393 } -- IR829 Hardened WAN GE 4G LTE secure platform multi-mode Global (Singapore) LTE/HSPA+ with 802.11n, PoE, Australia Compliant
 ciscoIR829GWLTEGACK9                OBJECT IDENTIFIER ::= { ciscoProducts 2394 } -- IR829 Hardened WAN GE 4G LTE secure platform multi-mode Global (Malaysia) LTE/HSPA+ with 802.11n, PoE, Australia Compliant
 ciscoCSP2100                        OBJECT IDENTIFIER ::= { ciscoProducts 2397 } -- Cloud Services Platform Model CSP-2100
+ciscoCDB8U                          OBJECT IDENTIFIER ::= { ciscoProducts 2398 } -- Catalyst Digital Building 8 Port UPoE 
+ciscoCDB8P                          OBJECT IDENTIFIER ::= { ciscoProducts 2399 } -- Catalyst Digital Building 8 Port PoE+ 
 ciscoNCS5501                        OBJECT IDENTIFIER ::= { ciscoProducts 2400 } -- Network Convergence Services NCS5501 Fixed 48x10G and 6x100G chassis
 ciscoNCS5502                        OBJECT IDENTIFIER ::= { ciscoProducts 2401 } -- Network Convergence Services NCS5502 Fixed 48x100G chassis
 ciscoNCS4216F2BSA                   OBJECT IDENTIFIER ::= { ciscoProducts 2402 } -- NCS 4216 Front to Back Shelf Assembly (16 slots - 14 RU) - Includes Air Deflector Plenum and Brackets/Guides
@@ -2164,8 +2170,10 @@ ciscoFpr2130td                      OBJECT IDENTIFIER ::= { ciscoProducts 2406 }
 ciscoFpr2140td                      OBJECT IDENTIFIER ::= { ciscoProducts 2407 } -- Cisco FirePOWER 2140 Security Appliance, 1U with embedded security module 
 ciscoFpr9000SM44                    OBJECT IDENTIFIER ::= { ciscoProducts 2409 } -- Cisco FirePOWER 9000 Security Module 44
 ciscoNCS5011                        OBJECT IDENTIFIER ::= { ciscoProducts 2411 } -- Cisco NCS 5011 Series Router
+ciscoNCS1001                        OBJECT IDENTIFIER ::= { ciscoProducts 2423 } -- NCS 1001 System (1RU, 3 SLOTS, 1 RP, 4 FANs, 2 PSU)
 ciscoIR809G3GGAK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2425 } -- Cisco 809 3G Industrial Integrated Service Routers with multi-mode HSPA+, ETSI compliant
 ciscoIR809GLTELAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 2426 } -- Cisco 809 4G LTE Industrial Integrated Service Routers with multi-mode LTE/HSPA+, ETSI compliant
+cisco3504WLC                        OBJECT IDENTIFIER ::= { ciscoProducts 2427 } -- Cisco 3500 Series Wireless Controller
 ciscoCXP2270GSR12                   OBJECT IDENTIFIER ::= { ciscoProducts 2433 } -- CXP2 Optical Transceiver with Optical Connector
 ciscoNCS4216F2B                     OBJECT IDENTIFIER ::= { ciscoProducts 2434 } -- NCS 4216-F2B System (14RU and 16 SLOT)
 ciscoASR914                         OBJECT IDENTIFIER ::= { ciscoProducts 2480 } -- ASR 914 Series Router
@@ -2174,4 +2182,13 @@ ciscoUCSS3260                       OBJECT IDENTIFIER ::= { ciscoProducts 2487 }
 ciscoWSC365048TSE                   OBJECT IDENTIFIER ::= { ciscoProducts 2491 } -- Catalyst Switch
 ciscoUCSC220M5                      OBJECT IDENTIFIER ::= { ciscoProducts 2492 } -- Cisco UCS C220 M5 Rack server
 ciscoUCSC240M5                      OBJECT IDENTIFIER ::= { ciscoProducts 2493 } -- Cisco UCS C240 M5 Rack server
+ciscoASR903U                        OBJECT IDENTIFIER ::= { ciscoProducts 2502 } -- Cisco Aggregation Services Router 900U Series with 3RU Chassis  
+ciscoASR902U                        OBJECT IDENTIFIER ::= { ciscoProducts 2503 } -- Cisco Aggregation Services Router 900U Series with 2RU Chassis  
+ciscoASR920U16SZIM                  OBJECT IDENTIFIER ::= { ciscoProducts 2504 } -- Cisco ASR920U Series - 12GE and 4-10GE - Modular PSU and IM         
+ciscoUCSE180DM3K9                   OBJECT IDENTIFIER ::= { ciscoProducts 2562 } -- UCSE 8 Core Double Wide service module
+ciscoUCSE1120DM3K9                  OBJECT IDENTIFIER ::= { ciscoProducts 2563 } -- UCSE 12 Core Double Wide service module
+ciscoNFVIS                          OBJECT IDENTIFIER ::= { ciscoProducts 2565 } -- Cisco Network Functions Virtualization Infrastructure Software (NFVIS)
+ciscoIR829GWLTEGAxK9                OBJECT IDENTIFIER ::= { ciscoProducts 2569 } -- Cisco 829 4G LTE Industrial Integrated Service Routers with multi-mode Global LTE/HSPA+ with 802.11n, contact pakulka2
+ciscoASR9906                        OBJECT IDENTIFIER ::= { ciscoProducts 2572 } -- Cisco Aggregation Services Router (ASR) 9906 Chassis 
 END
+
