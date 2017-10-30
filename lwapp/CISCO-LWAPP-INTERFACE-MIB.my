@@ -295,7 +295,7 @@ clInterfaceMdnsProfileName OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object represents the name of the Mdns
-	 profile added on the Interface."
+     profile added on the Interface."
     ::= { clInterfaceConfigEntry 6 }
 
 clInterfaceNasId OBJECT-TYPE
@@ -437,10 +437,10 @@ clInterfaceVpnSelectVpnId OBJECT-TYPE
           MAX-ACCESS  read-write
           STATUS      current
           DESCRIPTION
-	              "This object represents the Vpn Id of DHCP Option 82 for
-		       Vpn Select, The VPN-ID is sequence of 7 octets,
-		       3 octet VPN authority Organizationally Unique Identifier,
-		       followed by 4 octet VPN index identifying VPN according to OUI"
+                  "This object represents the Vpn Id of DHCP Option 82 for
+               Vpn Select, The VPN-ID is sequence of 7 octets,
+               3 octet VPN authority Organizationally Unique Identifier,
+               followed by 4 octet VPN index identifying VPN according to OUI"
           ::= { clInterfaceConfigEntry 21 }
 
 clInterfaceVpnselectVrfName OBJECT-TYPE
@@ -449,7 +449,7 @@ clInterfaceVpnselectVrfName OBJECT-TYPE
           STATUS      current
           DESCRIPTION
                       "This object represents the DHCP Opt 82 
-		       VrfName for the Vpn Select. "
+               VrfName for the Vpn Select. "
            ::= { clInterfaceConfigEntry 22 }
 
            
@@ -490,7 +490,7 @@ clInterfaceLinkLocalIpv6AddrStatus OBJECT-TYPE
         DESCRIPTION
          "This objest represents the Link local Ipv6 Address status"
      ::= { clInterfaceConfigEntry 24 }
-	
+    
 -- ********************************************************************
 -- * Begin of clInterfaceGroupsConfigTable
 -- ********************************************************************
@@ -517,10 +517,10 @@ clInterfaceGroupsConfigEntry OBJECT-TYPE
     ::= { clInterfaceGroupsConfigTable 1 }
 
 ClInterfaceGroupsConfigEntry ::= SEQUENCE {
-        clInterfaceGroupName         	   SnmpAdminString,
-        clInterfaceGroupDescr        	   SnmpAdminString,
-        clInterfaceGroupIsQuarantine 	   TruthValue,
-        clInterfaceGroupRowStatus    	   RowStatus,
+        clInterfaceGroupName               SnmpAdminString,
+        clInterfaceGroupDescr              SnmpAdminString,
+        clInterfaceGroupIsQuarantine       TruthValue,
+        clInterfaceGroupRowStatus          RowStatus,
         clInterfaceGroupMdnsProfileName  SnmpAdminString,
         clInterfaceGroupFailDetectMode   INTEGER
     }
@@ -829,7 +829,7 @@ ciscoLwappInterfaceConfigGroup OBJECT-GROUP
 
 ciscoLwappInterfaceConfigGroupSup1 OBJECT-GROUP
     OBJECTS         { clInterfaceDhcpOpt82Enabled
-					}
+                    }
     STATUS          current
     DESCRIPTION
         "This collection of objects represent the configuration of
@@ -837,3 +837,4 @@ ciscoLwappInterfaceConfigGroupSup1 OBJECT-GROUP
     ::= { ciscoLwappInterfaceMIBGroups 3 }
 
 END
+

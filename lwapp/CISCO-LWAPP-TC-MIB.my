@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-TC-MIB.my:  Cisco LWAPP MIBs Textual Conventions
 -- March 2006, Prasanna Viswakumar
 --
--- Copyright (c) 2006,2007 by Cisco Systems, Inc.
+-- Copyright (c) 2006-2007, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -800,7 +800,10 @@ CLApMode ::= TEXTUAL-CONVENTION
                         roguedetector(3),
                         sniffer(4),
                         bridge(5),
-                        seConnect(6)
+                        seConnect(6),
+                        remoteBridge(7),
+                        remoteHybrid(8),
+                        sensor(9)
                     } 
 
 

@@ -592,6 +592,9 @@ BsnDot11EssEntry ::= SEQUENCE {
         bsnDot11Ess80211ePolicySetting      INTEGER,
         bsnDot11EssWebPassthroughEmail       INTEGER,
         bsnDot11Ess7920PhoneSupport          INTEGER,
+        bsnDot11EssDhcpScopeName             DisplayString,
+        bsnDot11EssCentralNatEnable          INTEGER,
+        bsnDot11EssP2PBlockingEnable         INTEGER,
         bsnDot11EssRadiusAuthPrimaryServer   DisplayString,
         bsnDot11EssRadiusAuthSecondaryServer DisplayString,
         bsnDot11EssRadiusAuthTertiaryServer  DisplayString,
@@ -1414,6 +1417,40 @@ bsnDot11Ess7920PhoneSupport OBJECT-TYPE
          WLAN."
     DEFVAL { disable }
     ::= {  bsnDot11EssEntry 64 }
+
+bsnDot11EssDhcpScopeName OBJECT-TYPE
+        SYNTAX DisplayString (SIZE(0..32))
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+             "Name of DHCP Scope to which the WLAN will be mapped. 
+              An empty string value indicates that no scope has been mapped."
+    ::= { bsnDot11EssEntry 65 }
+
+bsnDot11EssCentralNatEnable OBJECT-TYPE
+        SYNTAX          INTEGER  {
+                        disable(0),
+                        enable(1)
+                    }
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                "Shows DHCP Scope Central NAT status."
+    ::= { bsnDot11EssEntry 66 }
+
+bsnDot11EssP2PBlockingEnable OBJECT-TYPE
+        SYNTAX          INTEGER  {
+                        disable(0),
+                        enable(1)
+                    }
+        MAX-ACCESS read-create
+        STATUS current
+        DESCRIPTION
+                "Shows P2P blocking status. Set optionally depending on central-NAT status.
+                 It is disabled by default."
+        DEFVAL { disable }
+    ::= { bsnDot11EssEntry 67 }
+
     
 bsnDot11EssRadiusAuthPrimaryServer OBJECT-TYPE
         SYNTAX DisplayString (SIZE(0..21))
@@ -1520,7 +1557,7 @@ bsnDot11QosProfileDesc OBJECT-TYPE
 bsnDot11QosAverageDataRate OBJECT-TYPE
         SYNTAX INTEGER(0..60000)
         MAX-ACCESS read-write
-        STATUS current
+        STATUS deprecated
         DESCRIPTION
                 "This is one of the per user bandwidth contracts(k).
                  Specifies Average Data Rate per user. Value of 0 
@@ -1530,7 +1567,7 @@ bsnDot11QosAverageDataRate OBJECT-TYPE
 bsnDot11QosBurstDataRate OBJECT-TYPE
         SYNTAX INTEGER(0..60000)
         MAX-ACCESS read-write
-        STATUS current
+        STATUS deprecated
         DESCRIPTION
                 "This is one of the per user bandwidth contracts(k).
                  Specifies Average Burst Data Rate per user. Value of 
@@ -1540,7 +1577,7 @@ bsnDot11QosBurstDataRate OBJECT-TYPE
 bsnDot11QosAvgRealTimeDataRate OBJECT-TYPE
         SYNTAX INTEGER(0..60000)
         MAX-ACCESS read-write
-        STATUS current
+        STATUS deprecated
         DESCRIPTION
                 "This is one of the per user bandwidth contracts(k).
                  Specifies Average Real Time Data Rate per user. 
@@ -1550,7 +1587,7 @@ bsnDot11QosAvgRealTimeDataRate OBJECT-TYPE
 bsnDot11QosBurstRealTimeDataRate OBJECT-TYPE
         SYNTAX INTEGER(0..60000)
         MAX-ACCESS read-write
-        STATUS current
+        STATUS deprecated
         DESCRIPTION
                 "This is one of the per user bandwidth contracts(k).
                  Specifies Burst Real Time Data Rate per user. Value 
@@ -1569,7 +1606,7 @@ bsnDot11QosMaxRFUsagePerAP OBJECT-TYPE
 bsnDot11QosProfileQueueDepth OBJECT-TYPE
         SYNTAX INTEGER(10..255)
         MAX-ACCESS read-write
-        STATUS current
+        STATUS deprecated
         DESCRIPTION
                 "This is one of the over the Air QOS parameter.
                  Specifies Queue depth for the current profile."
@@ -1777,6 +1814,7 @@ bsnMobileStationReasonCode OBJECT-TYPE
              cipherSuiteRejected(46),
              missingReasonCode (99),
              maxAssociatedClientsReached(101),
+             maxAssociatedClientsReachedOnAP(102),
              maxAssociatedClientsReachedOnRadio(105),
              maxAssociatedClientsReachedOnWlan(106),
              unSpecifiedQosFailure(200),
@@ -3790,7 +3828,9 @@ bsnAPMonitorOnlyMode OBJECT-TYPE
                         sniffer(4),
                         bridge(5),
                         seConnect(6),
-                        remoteBridge(7)
+                        remoteBridge(7),
+                        remoteHybrid(8),
+                        sensor(9)
                     }
     MAX-ACCESS read-write
     STATUS current
@@ -4002,12 +4042,34 @@ bsnAPType OBJECT-TYPE
                         ap1700e(52),
                         ap1570e(53),
                         ap1570i(54),
-                        ap1802e(55),
-                        ap1802i(56),
-                        ap752i(57),
-                        ap752t(58),
+                        ap1852e(55),
+                        ap1852i(56),
+                        ap1832i(57),
                         apmr24(59),
-			ap3702(60)
+			ap3702(60),
+                        ap1802i(61),
+			ap1810w(62),
+			apoeap1810(63),
+                        ap3802e(64),
+                        ap3802i(65),
+                        ap3802p(66),
+                        ap3802q(67),
+                        ap2802e(68),
+                        ap2802i(69),
+                        ap2802q(70),
+                        ap1815w(71),
+                        apoeap1815(72),
+                        ap1815I(73),
+                        ap1562e(74),
+                        ap1562i(75),
+                        ap1562d(76),
+                        ap1562ps(77),
+                        ap1800I(78),
+                        ap1800S(79),
+                        ap1815M(80),
+                        ap1542D(81),
+                        ap1542I(82),
+                        ap1815TSN(83)
                     }
     MAX-ACCESS read-only
     STATUS current
@@ -4195,7 +4257,9 @@ BsnAPIfEntry ::= SEQUENCE {
         bsnAPIfAbsolutePowerList     DisplayString,
         bsnAPIfRegulatoryDomainSupport INTEGER,
         bsnAPIfAdminStatus           INTEGER,       
-        bsnAPIfPhyAntennaPID         DisplayString 
+        bsnAPIfPhyAntennaPID         DisplayString,
+        bsnAPIfFRACoverageOverlapFactor OCTET STRING,
+        bsnAPIfFRASuggestedMode      OCTET STRING 
     }
 
 bsnAPIfSlotId OBJECT-TYPE
@@ -4278,6 +4342,7 @@ bsnAPIfPhyChannelNumber OBJECT-TYPE
                         ch132(132),
                         ch136(136),
                         ch140(140),
+                        ch144(144),
                         ch149(149),
                         ch153(153),
                         ch157(157),
@@ -4511,6 +4576,7 @@ bsnAPIfSniffChannel OBJECT-TYPE
                         ch132(132),
                         ch136(136),
                         ch140(140),
+                        ch144(144),
                         ch149(149),
                         ch153(153),
                         ch157(157),
@@ -4591,6 +4657,29 @@ bsnAPIfPhyAntennaPID   OBJECT-TYPE
     "Displays antenna product ID for expansion module.
      Display 'NA' for slot 0 and slot 1."
     ::= { bsnAPIfEntry 25 }
+
+bsnAPIfFRACoverageOverlapFactor OBJECT-TYPE 
+	SYNTAX        OCTET STRING (SIZE(0..32))
+	MAX-ACCESS    read-only
+	STATUS        current
+	DESCRIPTION  
+       "This object identifies COF (Coverage Overlap Factor) in percentage.
+	COF represents percentage overlap on a given radio's transmit cell 
+	size by its adjacent neighbors.When COF value is higher than FRA 
+	Sensitivity, a radio will be most likely marked as redundant by FRA algorithm. "
+	::={ bsnAPIfEntry 26 }
+		
+bsnAPIfFRASuggestedMode OBJECT-TYPE
+	SYNTAX        OCTET STRING (SIZE(0..32))
+	MAX-ACCESS    read-only  
+	STATUS        current
+	DESCRIPTION   
+		"This object suggests the AP to move to a
+   		 mentioned band for better performance"
+	
+	
+	DEFVAL{none}
+		::={ bsnAPIfEntry 27 }
 
 -- *******************************************************************
 -- * End of bsnAPIfTable
@@ -6635,7 +6724,7 @@ bsnGlobalDot11PrivacyOptionImplemented OBJECT-TYPE
     ::= { bsnGlobalDot11Config 1 }
 
 bsnGlobalDot11AuthenticationResponseTimeOut OBJECT-TYPE
-        SYNTAX Unsigned32 (5..60)
+        SYNTAX Unsigned32 (5..600)
         MAX-ACCESS read-write
         STATUS current
         DESCRIPTION
@@ -9499,6 +9588,20 @@ bsnGlobalDot11hConfig  OBJECT IDENTIFIER
                  to 0 does not impose any requirement on the receiving
                  STA."
       ::= { bsnGlobalDot11hConfig 3 }
+ 
+    bsnGlobalDot11hSmartDfs OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        disable(0),
+                        enable(1)
+                    }
+      MAX-ACCESS          read-write
+      STATUS              current
+      DESCRIPTION
+               "To enable or disable  Smart-Dfs feature. It Configures to use 
+                nonoccupancy time for Radar interference channel. Used to Enable/Disable
+                non occupancy time doubling for Radar interfere channel"
+      ::= { bsnGlobalDot11hConfig 4 }
+
 
 -- ********************************************************************
 -- *  bsnRrm - Information about RF Groups that this Airespace Switch 
@@ -10123,11 +10226,12 @@ BsnRadiusAuthServerEntry ::= SEQUENCE {
       bsnRadiusAuthServerKeyWrapFormat            INTEGER,
       bsnRadiusAuthServerRowStatus                RowStatus,
       bsnRadiusAuthServerInetAddressType          InetAddressType,
-      bsnRadiusAuthServerInetAddress              InetAddress 
+      bsnRadiusAuthServerInetAddress              InetAddress,
+      bsnRadiusAuthServerIPSecProfName            SnmpAdminString
 }
 
 bsnRadiusAuthServerIndex OBJECT-TYPE
-      SYNTAX     Integer32 (1..17)
+      SYNTAX     Integer32 (1..32)
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
@@ -10400,6 +10504,13 @@ bsnRadiusAuthServerInetAddress OBJECT-TYPE
              referred to in this table entry."
       ::= { bsnRadiusAuthServerEntry 28 }
 
+bsnRadiusAuthServerIPSecProfName OBJECT-TYPE
+      SYNTAX SnmpAdminString (SIZE  (1..31)) 
+      MAX-ACCESS read-create
+      STATUS current
+      DESCRIPTION
+            "The IPsec profile to be used for the RADIUS over IPSec."
+      ::= { bsnRadiusAuthServerEntry 29 }      
 -- *******************************************************************
 -- * Begin of bsnRadiusAccServerTable
 -- *******************************************************************
@@ -10440,11 +10551,12 @@ BsnRadiusAccServerEntry ::= SEQUENCE {
       bsnRadiusAccServerRetransmitTimeout      INTEGER,
       bsnRadiusAccServerRowStatus              RowStatus,
       bsnRadiusAccServerInetAddressType        InetAddressType,
-      bsnRadiusAccServerInetAddress            InetAddress
+      bsnRadiusAccServerInetAddress            InetAddress,
+      bsnRadiusAccServerIPSecProfName          SnmpAdminString 
 }
 
 bsnRadiusAccServerIndex OBJECT-TYPE
-      SYNTAX     Integer32 (1..17)
+      SYNTAX     Integer32 (1..32)
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
@@ -10641,8 +10753,13 @@ bsnRadiusAccServerInetAddress OBJECT-TYPE
             "The IP address of the RADIUS accounting server
              referred to in this table entry."
       ::= { bsnRadiusAccServerEntry 28 }
-
-
+ bsnRadiusAccServerIPSecProfName OBJECT-TYPE
+       SYNTAX SnmpAdminString (SIZE  (1..31))
+       MAX-ACCESS read-create
+       STATUS current
+       DESCRIPTION
+             "The IPsec profile to be used for the RADIUS over IPSec."
+       ::= { bsnRadiusAccServerEntry 29 }  
 -- *******************************************************************
 -- * Begin of bsnRadiusAuthServerStatsTable
 -- *******************************************************************
@@ -11176,7 +11293,7 @@ BsnLocalNetUserEntry ::= SEQUENCE {
 }
 
 bsnLocalNetUserName OBJECT-TYPE
-      SYNTAX     OCTET STRING (SIZE(1..24))
+      SYNTAX     OCTET STRING (SIZE(1..49))
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
@@ -11679,7 +11796,8 @@ bsnAAARadiusCallStationIdType OBJECT-TYPE
                         apMacEthAddress(10),
                         apMacEthAddressSsid(11),
                         apLabelAddress(12),
-                        apLabelAddressSsid(13)
+                        apLabelAddressSsid(13),
+                        apMacSsidApGroup(14)
                     }
       MAX-ACCESS read-write
       STATUS     current
@@ -11690,24 +11808,24 @@ bsnAAARadiusCallStationIdType OBJECT-TYPE
       ::= { bsnAAA 17 }
 
 bsnAAALocalDatabaseSize OBJECT-TYPE
-      SYNTAX Integer32 (512..2048)
+      SYNTAX Integer32 (512..12000)
       MAX-ACCESS read-write
       STATUS     current
       DESCRIPTION
              "This attribute is the total number of entries permitted 
               in the local users database. This is the combined total 
               of entries for Local Management Users, Local Net Users, 
-              Disabled Clients (previously known as blacklistclients 
-              and the MAC Filters. If the database size limit is 
-              reached, no more entries in any of these user lists are 
-              allowed to be created. To continue creating more entries,
-              one should increase the size of the database. This value 
-              is applied on reboot and then matches the 
+              Disabled Clients (previously known as blacklistclients), 
+              whitelist clients and the MAC Filters. If the database 
+              size limit is reached, no more entries in any of these 
+              user lists are allowed to be created. To continue creating 
+              more entries, one should increase the size of the database. 
+              This value is applied on reboot and then matches the 
               bsnAACurrentLocalDatabaseSize."
       ::= { bsnAAA 20 }
 
 bsnAAACurrentLocalDatabaseSize OBJECT-TYPE
-      SYNTAX Integer32 (512..2048)
+      SYNTAX Integer32 (512..12000)
       MAX-ACCESS read-only
       STATUS     current
       DESCRIPTION
@@ -11715,8 +11833,8 @@ bsnAAACurrentLocalDatabaseSize OBJECT-TYPE
               local users database that is effective currently.
               This is the combined total of entries for Local 
               Management Users, Local Net Users, Disabled Clients
-              (previously known as blacklist clients) and the MAC 
-              Filters."
+              (previously known as blacklist clients), whitelist clients
+               and the MAC Filters."
       ::= { bsnAAA 21 }
 
 -- *******************************************************************
@@ -11951,7 +12069,8 @@ bsnAPAuthCertificateType OBJECT-TYPE
                         locMic(3),
                         locSsc(4),
                         none(5),
-                        locSsc256(6)
+                        locSsc256(6),
+                        lsc(7)
                     }
       MAX-ACCESS read-create
       STATUS     current
@@ -13450,6 +13569,7 @@ bsnStationReasonCode OBJECT-TYPE
         cipherSuiteRejected(46),
         missingReasonCode (99),
         maxAssociatedClientsReached(101),
+        maxAssociatedClientsReachedOnAP(102),
         maxAssociatedClientsReachedOnRadio(105),
         maxAssociatedClientsReachedOnWlan(106),
         unSpecifiedQosFailure(200),
@@ -13489,6 +13609,9 @@ bsnStationReasonCode OBJECT-TYPE
         missingReasonCode      - Reason code is missing.
         maxAssociatedClientsReached - Maximum allowed 
                    associated client number has reached.
+        maxAssociatedClientsReachedOnAP - Maximum 
+        allowed associated client number has reached on
+        AP.
         maxAssociatedClientsReachedOnRadio - Maximum 
         allowed associated client number has reached on
         radio.
@@ -16834,7 +16957,8 @@ bsnGlobalDot11GroupRev1 OBJECT-GROUP
                         bsnGlobalDot11aChannelAgilityEnabled,
                         bsnGlobalDot11hPowerConstraint,
                         bsnGlobalDot11hChannelSwitchEnable,
-                        bsnGlobalDot11hChannelSwitchMode
+                        bsnGlobalDot11hChannelSwitchMode,
+                        bsnGlobalDot11hSmartDfs
                     }
     STATUS          current
     DESCRIPTION

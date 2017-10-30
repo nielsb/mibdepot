@@ -3,7 +3,7 @@
 -- This MIB helps to manage the WLANs on the controller
 -- January 2006, Devesh Pujari, Prasanna Viswakumar
 --   
--- Copyright (c) 2006, 2007, 2009-2010 by Cisco Systems Inc.
+-- Copyright (c) 2006-2007, 2009-2010, 2016-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -373,6 +373,9 @@ ciscoLwappPolicyConfig OBJECT IDENTIFIER
 ciscoLwappAPGroupsHyperlocationConfig OBJECT IDENTIFIER
      ::= { ciscoLwappWlanMIBObjects 8 }
 
+ciscoLwappAPGroupsPortConfig OBJECT IDENTIFIER
+     ::= { ciscoLwappWlanMIBObjects 9 }
+
 -- ********************************************************************
 -- WLAN configuration
 -- ********************************************************************
@@ -484,6 +487,7 @@ CLWlanConfigEntry ::= SEQUENCE {
         cLWlanEapRequestMaxRetries      Unsigned32,
         cLWlanNaiRealm                  TruthValue,
         cLWlanL2AclName                 SnmpAdminString,
+        cLWlanMuMimo                    TruthValue ,
 	cLWlanUniversalAdmin            TruthValue,
 	cLWlan11vBssTransEnable         TruthValue,
 	cLWlan11vDisassocImmiEnable     TruthValue,
@@ -496,7 +500,22 @@ CLWlanConfigEntry ::= SEQUENCE {
         cLWlan11vOpRoamDisassocTimer    Unsigned32,
         cLWlanTunnelProfileName         SnmpAdminString,
 	cLWlanAVCFlexProfileName	SnmpAdminString,
-	cLWlanAirTimeFairnessPolicyName	SnmpAdminString
+	cLWlanAirTimeFairnessPolicyName	SnmpAdminString,
+        cLWlanHotSpot2DomainIdValue         Unsigned32,
+        cLWlanHotSpot2OsuLegacySsidValue    SnmpAdminString,
+        cLWlanSecurityOsenEnable            TruthValue,
+        cLWlanUrlAclName                 SnmpAdminString,
+        cLWlanQosFastlane                   TruthValue,
+	cLWlan11kAssistedRoamingEnable  TruthValue,
+    cLWlan11kNeighborListEnable     TruthValue,
+    cLWlan11kDualbandNeigListEnable TruthValue,
+    cLWlan11vDMSEnable              TruthValue,
+    cLWlan11vBssMaxIdleEnable       TruthValue,
+    cLWlanLocalSwitchMode           TruthValue,
+    cLWlanLocalSwitchVlanId         Unsigned32,
+    cLWlanSecuritySgtTag            Unsigned32,
+    cLWlanLobbyAdminAccess          TruthValue,
+    cLWlanSelectiveReanchor         TruthValue
 }
 
 cLWlanIndex OBJECT-TYPE
@@ -1428,7 +1447,133 @@ cLWlanAirTimeFairnessPolicyName OBJECT-TYPE
         DEFVAL  { 0 }
          ::= { cLWlanConfigEntry 77 }
 
--- ********************************************************************
+cLWlanMuMimo OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+    "This object allows the user to enable or disable Mumimo.
+     A value of 'true' indicates MuMimo is enabled.
+     A value of 'false' indicates MuMimo is disabled." 
+    DEFVAL          { false } 
+    ::= { cLWlanConfigEntry 78 }
+
+cLWlanQosFastlane OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+    "This object allows the user to enable or disable fastlane feature.
+     A value of 'true' indicates fastlane is enabled.
+     A value of 'false' indicates fastlane is disabled."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 83 }
+
+cLWlan11kAssistedRoamingEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates whether 11k Assisted Roaming Prediction Optimization 
+        is enabled on the controller for this WLAN."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 84 }
+
+cLWlan11kNeighborListEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates whether 11k Neighbor List 
+        is enabled on the controller for this WLAN."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 85 }
+
+cLWlan11kDualbandNeigListEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates whether 11k Neighbor List Dual Band 
+        is enabled on the controller for this WLAN."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 86 }
+
+cLWlan11vDMSEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates whether 11v Directed Multicast Service  
+        is enabled on the controller for this WLAN."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 87 }
+
+cLWlan11vBssMaxIdleEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates whether 11v BSS Max Idle Service 
+        is enabled on the controller for this WLAN."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 88 }
+
+cLWlanLocalSwitchMode OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+    "This object allows the user to enable or disable local switching
+     for remote-lan.
+     A value of 'true' indicates Local switching is enabled.
+     A value of 'false' indicates Local switching is disabled."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 89 }
+
+cLWlanLocalSwitchVlanId OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+    "This object allows the user to configure Vlan for the Rlan Local switching."
+    ::= { cLWlanConfigEntry 90 }
+
+cLWlanSecuritySgtTag     OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates the SGT Tag value
+          for the given WLAN."
+    DEFVAL          { 0 }
+    ::= { cLWlanConfigEntry 91 }
+
+cLWlanLobbyAdminAccess OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+    "This object is used to configure this WLAN for lobby admin access
+    WLAN. A value of 'true' indicates that the WLAN can be used by
+    lobby admin with restricted previlages. A value of 'false' indicates that the WLAN
+    can not be used by user with lobby admin access."
+    DEFVAL          { false } 
+    ::= { cLWlanConfigEntry 92 }
+
+cLWlanSelectiveReanchor OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+    "This object represents the user to enable or disable selective reanchoring feature per wlan.
+    A value of 'true' indicates this feature is enabled. This will do Reanchor if no stats present for the 
+    predefined apps.
+    A value of 'false' indicates this feature is disabled. This is the default behaviour."
+    DEFVAL          { false } 
+    ::= { cLWlanConfigEntry 93 }
+
+    -- ********************************************************************
 -- *        WLAN 11u  Table
 -- ********************************************************************
 
@@ -2579,7 +2724,10 @@ CLWlanHotSpot2ConfigEntry ::= SEQUENCE {
         cLWlanHotSpot2WanLinkStatus     INTEGER,
         cLWlanHotSpot2WanSymLinkStatus  INTEGER,
         cLWlanHotSpot2WanDownLinkSpeed  Unsigned32,
-        cLWlanHotSpot2WanUpLinkSpeed    Unsigned32
+        cLWlanHotSpot2WanUpLinkSpeed    Unsigned32,
+        cLWlanHotSpot2WanDownLinkLoad   Unsigned32,
+        cLWlanHotSpot2WanUpLinkLoad     Unsigned32,
+        cLWlanHotSpot2WanLMD            Unsigned32
         }
 
 cLWlanHotSpot2WanLinkStatus OBJECT-TYPE
@@ -2594,6 +2742,7 @@ cLWlanHotSpot2WanLinkStatus OBJECT-TYPE
      DESCRIPTION
          "This object represents the status of the link with respect to
          WAN metrics configuration."
+     DEFVAL          { 4 }
      ::= { cLWlanHotSpot2ConfigEntry 1 }
 
 cLWlanHotSpot2WanSymLinkStatus OBJECT-TYPE
@@ -2602,13 +2751,14 @@ cLWlanHotSpot2WanSymLinkStatus OBJECT-TYPE
                          same (2)
                      }
      MAX-ACCESS      read-write
-     STATUS          current
+     STATUS          deprecated
      DESCRIPTION
          "This object represents the symmetry of the link with respect to
          WAN metrics configuration. A value of 'different(1)' 
          indicates that link speed is different in uplink and 
          downlink(ex:ADSL). A value of 'same(2)' indicates that
          link speed is same in uplink and downlink(ex:DSL)."
+     DEFVAL          { 1 }
      ::= { cLWlanHotSpot2ConfigEntry 2 }
 
 cLWlanHotSpot2WanDownLinkSpeed OBJECT-TYPE
@@ -2618,6 +2768,7 @@ cLWlanHotSpot2WanDownLinkSpeed OBJECT-TYPE
      DESCRIPTION
          "This object represents the down link speed of WAN Backhaul 
          in kbps."
+     DEFVAL          { 0 }
      ::= { cLWlanHotSpot2ConfigEntry 3 }
 
 cLWlanHotSpot2WanUpLinkSpeed OBJECT-TYPE
@@ -2627,7 +2778,289 @@ cLWlanHotSpot2WanUpLinkSpeed OBJECT-TYPE
      DESCRIPTION
          "This object represents the up link speed of WAN Backhaul 
          in kbps."
+     DEFVAL          { 0 }
      ::= { cLWlanHotSpot2ConfigEntry 4 }
+
+cLWlanHotSpot2WanDownLinkLoad OBJECT-TYPE
+     SYNTAX          Unsigned32 (0..255)
+     MAX-ACCESS      read-write
+     STATUS          current
+     DESCRIPTION
+         "This object represents the down link load of WAN Backhaul"
+     DEFVAL          { 0 }
+     ::= { cLWlanHotSpot2ConfigEntry 5 }
+
+cLWlanHotSpot2WanUpLinkLoad OBJECT-TYPE
+     SYNTAX          Unsigned32 (0..255)
+     MAX-ACCESS      read-write
+     STATUS          current
+     DESCRIPTION
+         "This object represents the up link load of WAN Backhaul"
+     DEFVAL          { 0 }
+     ::= { cLWlanHotSpot2ConfigEntry 6 }
+
+cLWlanHotSpot2WanLMD OBJECT-TYPE
+     SYNTAX          Unsigned32 (0..65535)
+     MAX-ACCESS      read-write
+     STATUS          current
+     DESCRIPTION
+         "This object represents the load measurement duration of
+          WAN Backhaul"
+     DEFVAL          { 0 }
+     ::= { cLWlanHotSpot2ConfigEntry 7 }
+
+cLWlanHotSpot2DomainIdValue OBJECT-TYPE
+     SYNTAX          Unsigned32 (0..65535)
+     MAX-ACCESS      read-write
+     STATUS          current
+     DESCRIPTION
+         "This object represents the domain id to be sent in hotspot 2.0 IE.
+          This is a mandatory parameter."
+     DEFVAL          { 0 }
+     ::= { cLWlanConfigEntry 79 }
+
+cLWlanHotSpot2OsuLegacySsidValue OBJECT-TYPE
+     SYNTAX          SnmpAdminString(SIZE(0..32))
+     MAX-ACCESS      read-write
+     STATUS          current
+     DESCRIPTION
+         "This object represents the unbroadcasted ssid from the AP. The ssid
+          is present in ANQP response message and this WLAN is used for
+          Online Signup of Hotspot2.0 devices. This is a mandatory parameter."
+     DEFVAL          { "" }
+     ::= { cLWlanConfigEntry 80 }
+
+cLWlanSecurityOsenEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        " This object indicates whether enable OSEN authentication
+          for the given WLAN. This is a mandatory parameter."
+    DEFVAL          { false }
+    ::= { cLWlanConfigEntry 81 }
+
+cLWlanUrlAclName OBJECT-TYPE
+    SYNTAX          SnmpAdminString (SIZE  (0..64))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        " This object represents the name of the
+        URLACL applied to this WLAN.
+        If it is required to remove the ACL
+        name for a WLAN, it should be set to 'none'. "
+    ::= { cLWlanConfigEntry 82 }
+
+cLWlanHotSpot2OsuSpTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF CLWlanHotSpot2OsuSpEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+        "This table represents the service provider configuration of the
+         Online-Signup (OSU) functionality of Hotspot2.0. It has three
+         arguments, viz. the wlan id (vapId), the osu id and the language
+         code. Language code (2 or 3 chars) is used as an index since one
+         language code can have multiple SP configurations."
+       ::= { ciscoLwappWlanHotSpot2Config 4 }
+
+cLWlanHotSpot2OsuSpEntry OBJECT-TYPE
+    SYNTAX          CLWlanHotSpot2OsuSpEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the OSU-service provider configuration
+         for Hotspot 2.0 feature. The following can be configured: service provider
+         name and description"
+    INDEX           {
+                        cLWlanIndex,
+                        cLWlanHotSpot2OsuIndex,
+                        cLWlanHotSpot2OsuSpLanguage
+                    }
+    ::= { cLWlanHotSpot2OsuSpTable 1 }
+
+CLWlanHotSpot2OsuSpEntry ::= SEQUENCE {
+        cLWlanHotSpot2OsuIndex                 Unsigned32,
+        cLWlanHotSpot2OsuSpLanguage            SnmpAdminString,
+        cLWlanHotSpot2OsuSpFriendlyName        SnmpAdminString,
+        cLWlanHotSpot2OsuSpDescription         SnmpAdminString,
+        cLWlanHotSpot2OsuSpRowStatus           RowStatus
+}
+
+cLWlanHotSpot2OsuIndex OBJECT-TYPE
+    SYNTAX          Unsigned32 (1..16)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object uniquely identifies one instance of an OSU
+         server configuration. Each OSU configuration can have
+         multiple icon and SP configurations."
+    ::= { cLWlanHotSpot2OsuSpEntry 1 }
+
+cLWlanHotSpot2OsuSpLanguage OBJECT-TYPE
+    SYNTAX          SnmpAdminString (SIZE(2..3))
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This is the Language defined for this OSU index"
+    ::= { cLWlanHotSpot2OsuSpEntry 2 }
+
+cLWlanHotSpot2OsuSpFriendlyName OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(1..255))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "This object represents the SP name for this particular OSU index.
+          It is a mandatory parameter"
+    DEFVAL          { "" } 
+    ::= { cLWlanHotSpot2OsuSpEntry 3 }
+
+cLWlanHotSpot2OsuSpDescription OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(0..255))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "This object represents the SP description for this particular
+          OSU Index. This is an optional parameter"
+    ::= { cLWlanHotSpot2OsuSpEntry 4 }
+
+
+cLWlanHotSpot2OsuSpRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "Row Status for creation/deletion of a particular
+         OSU entry in the table."
+    ::= { cLWlanHotSpot2OsuSpEntry 5 }
+
+cLWlanHotSpot2OsuIconTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF CLWlanHotSpot2OsuIconEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+        "This table represents the icon configuration of the Online-Signup
+         (OSU) functionality of Hotspot2.0. It has three arguments, viz.
+         the wlan id (vapId), the osu id and the icon filename; which is
+         needed as there can be multiple icon files per OSU index."
+       ::= { ciscoLwappWlanHotSpot2Config 5 }
+
+cLWlanHotSpot2OsuIconEntry OBJECT-TYPE
+    SYNTAX          CLWlanHotSpot2OsuIconEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the OSU-service provider configuration
+         for Hotspot 2.0 feature. The following can be configured: icon filename"
+    INDEX           {
+                        cLWlanIndex,
+                        cLWlanHotSpot2OsuIndex,
+                        cLWlanHotSpot2OsuIconFileName
+                    }
+    ::= { cLWlanHotSpot2OsuIconTable 1 }
+
+CLWlanHotSpot2OsuIconEntry ::= SEQUENCE {
+        cLWlanHotSpot2OsuIconFileName        SnmpAdminString,
+        cLWlanHotSpot2OsuIconRowStatus       RowStatus
+}
+
+cLWlanHotSpot2OsuIconFileName OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(1..255))
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+         "This object represents the icon filename for this
+         particular OSU index."
+         ::= { cLWlanHotSpot2OsuIconEntry 1 }
+
+cLWlanHotSpot2OsuIconRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "Row Status for creation/deletion of a particular
+         icon entry in the table."
+    ::= { cLWlanHotSpot2OsuIconEntry 2 }
+
+cLWlanHotSpot2OsuTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF CLWlanHotSpot2OsuEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+        "This table represents the configuration of the Online-Signup
+         (OSU) functionality of Hotspot2.0. It has two arguments, viz.
+         the wlan id (vapId) and the osu id. This table contains enteries
+         for configuring Server Method, NAI and URI"
+       ::= { ciscoLwappWlanHotSpot2Config 6 }
+
+cLWlanHotSpot2OsuEntry OBJECT-TYPE
+    SYNTAX          CLWlanHotSpot2OsuEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the OSU-service provider configuration
+         for Hotspot 2.0 feature. The following can be configured: server method,
+         Network Access Identifier (NAI) and Universal Resource Identifier (URI)"
+    INDEX           {
+                        cLWlanIndex,
+                        cLWlanHotSpot2OsuIndex
+                    }
+    ::= { cLWlanHotSpot2OsuTable 1 }
+
+CLWlanHotSpot2OsuEntry ::= SEQUENCE {
+        cLWlanHotSpot2OsuMethodPrimary       SnmpAdminString,
+        cLWlanHotSpot2OsuMethodSecondary     SnmpAdminString,
+        cLWlanHotSpot2OsuNaiValue            SnmpAdminString,
+        cLWlanHotSpot2OsuUriValue            SnmpAdminString,
+        cLWlanHotSpot2OsuRowStatus     RowStatus
+}
+
+cLWlanHotSpot2OsuMethodPrimary OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(0..255))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "This object represents the primary server method for this
+          particular OSU index. This is an optional parameter."
+    DEFVAL          { "" } 
+    ::= { cLWlanHotSpot2OsuEntry 1 }
+
+cLWlanHotSpot2OsuMethodSecondary OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(0..255))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "This object represents the secondary server method for this
+          particular OSU index. This is an optional parameter"
+    ::= { cLWlanHotSpot2OsuEntry 2 }
+
+cLWlanHotSpot2OsuNaiValue OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(0..255))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "This object represents the NAI for this particular OSU index.
+          This is an optional parameter."
+    DEFVAL          { "" } 
+    ::= { cLWlanHotSpot2OsuEntry 3 }
+
+cLWlanHotSpot2OsuUriValue OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(0..255))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "This object represents the URI for this particular OSU index.
+          This is an optional parameter."
+    DEFVAL          { "" } 
+    ::= { cLWlanHotSpot2OsuEntry 4 }
+
+cLWlanHotSpot2OsuRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "Row Status for creation/deletion of a particular
+         Operator entry in the table."
+    ::= { cLWlanHotSpot2OsuEntry 5 }
 
 cLAPGroupsVlanConfigTable OBJECT-TYPE
     SYNTAX          SEQUENCE OF CLAPGroupsVlanConfigEntry 
@@ -2665,7 +3098,10 @@ CLAPGroupsVlanConfigEntry ::= SEQUENCE {
         cLAPGroupNACSupport                TruthValue,
         cLAPGroupsVlanConfigRowStatus      RowStatus,
         cLAPGroupsVlanConfigStorageType    StorageType,
-    	cLAPGroupsWlanOrderIndex	   Unsigned32
+    	cLAPGroupsWlanOrderIndex	   Unsigned32,
+        cLAPGroupsVlanMappingInterfaceNameRev1 OCTET STRING,
+        cLAPGroupsOpendnsProfileName           SnmpAdminString,
+        cLAPGroupsOpendnsStatus                TruthValue
 
 }
 
@@ -2736,6 +3172,46 @@ cLAPGroupsWlanOrderIndex OBJECT-TYPE
 	This index will determine the order in which the WLAN is
 	applied on an AP in that group."
     ::= { cLAPGroupsVlanConfigEntry 6 }
+
+cLAPGroupsVlanMappingInterfaceNameRev1 OBJECT-TYPE
+        SYNTAX     OCTET STRING (SIZE  (1..128))
+        MAX-ACCESS read-create
+        STATUS     current
+        DESCRIPTION
+        "This object represents the interface to be used
+        when a client connects to the 'cLWlanProfileName'
+        WLAN on the AP.
+        When an AP is associated with a site, and the site
+        has an associated set of WLANs, then only those
+        WLANs are beamed by the AP."
+        ::= { cLAPGroupsVlanConfigEntry 7 }
+
+cLAPGroupsOpendnsProfileName OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object represents the Opendns Profile associated  
+        to Ap group of the WLAN on the AP.
+        When an AP is associated with a site, and the site
+        has an associated set of WLANs, then only those 
+        WLANs are beamed by the AP."
+    DEFVAL          { "" }     
+    ::= { cLAPGroupsVlanConfigEntry 8 }
+
+cLAPGroupsOpendnsStatus OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object represents the Status of Opendns
+        Profile associated to Ap group of the  WLAN on the AP.
+        A value of 'true'  indicates that the AP group
+        supports the Opendns feature. 
+        A value of 'false' indicates that the AP group
+        does not support the Opendns feature."
+    DEFVAL          { false }
+    ::= { cLAPGroupsVlanConfigEntry 9 }
 
 cLAPGroupsVenueConfigTable OBJECT-TYPE
     SYNTAX          SEQUENCE OF CLAPGroupsVenueConfigEntry
@@ -3974,7 +4450,9 @@ CLPolicyConfigEntry ::= SEQUENCE {
         cLPolicyFlexAclName           SnmpAdminString,
         cLPolicyAvcProfileName        SnmpAdminString,
         cLPolicyMdnsProfileName        SnmpAdminString,
-        cLPolicyFlexVlanId                Unsigned32
+        cLPolicyFlexVlanId                Unsigned32,
+        cLPolicyUrlAclName               SnmpAdminString,
+        cLPolicyOpendnsProfileName       SnmpAdminString
 }
 
 cLPolicyIndex       OBJECT-TYPE
@@ -4118,6 +4596,24 @@ cLPolicyFlexVlanId              OBJECT-TYPE
         "This object defines the flex VLAN  to be
          applied on client using a Policy."
     ::= { cLPolicyConfigEntry 14 }
+
+cLPolicyUrlAclName              OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object defines the URL ACL  to be
+         applied on client using a Policy."
+    ::= { cLPolicyConfigEntry 15 }
+
+cLPolicyOpendnsProfileName         OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object defines the opendns profile name  to be
+         applied on client using a Policy."
+    ::= { cLPolicyConfigEntry 16 } 
 
 cLPolicyDeviceTable OBJECT-TYPE
     SYNTAX          SEQUENCE OF CLPolicyDeviceEntry
@@ -4439,6 +4935,125 @@ cLApGroupPreferMode OBJECT-TYPE
        " This object indicates prefer-mode of AP-Group."
     ::= { cLAPGroupConfigEntry 1 }
 
+cLAPGroupsPortConfigTable OBJECT-TYPE
+      SYNTAX          SEQUENCE OF CLAPGroupsPortConfigEntry
+      MAX-ACCESS      not-accessible
+      STATUS          current
+      DESCRIPTION
+          "A table for configuring port
+          settings allowed for each AP Group."
+      ::= { ciscoLwappAPGroupsPortConfig 1 }
+
+  cLAPGroupsPortConfigEntry OBJECT-TYPE
+      SYNTAX          CLAPGroupsPortConfigEntry
+      MAX-ACCESS      not-accessible
+      STATUS          current
+      DESCRIPTION
+         "An entry in cLAPGroupsPortConfigEntry.
+           cLAPGroupName is mandatory for creating a entry in
+           CLAPGroupsPortConfigEntry ."
+      INDEX          {
+                         cLAPGroupName,
+                         cLAPGroupsLANPortNumber
+                     }
+      ::= { cLAPGroupsPortConfigTable 1 }
+
+  CLAPGroupsPortConfigEntry ::= SEQUENCE {
+         cLAPGroupsLANPortNumber      Unsigned32,
+         cLAPGroupsLANPortStatus      TruthValue,
+         cLAPGroupsLANPortPoeStatus   TruthValue,
+         cLAPGroupsLANPortRlanName    SnmpAdminString
+    }
+
+ cLAPGroupsLANPortNumber OBJECT-TYPE
+      SYNTAX          Unsigned32
+      MAX-ACCESS      not-accessible
+      STATUS          current
+      DESCRIPTION
+        "This object uniquely identifies the LAN Port number
+        of an apgroup. Each Apgroup can have up to 3 LAN ports."
+      ::= { cLAPGroupsPortConfigEntry 1 }
+
+ cLAPGroupsLANPortStatus   OBJECT-TYPE
+      SYNTAX          TruthValue
+      MAX-ACCESS      read-write
+      STATUS          current
+      DESCRIPTION
+        "This object represents the LAN port state.
+        A value of 'true' indicates that selected LAN Port is enabled. A value
+        of 'false' indicates that LAN Port is disabled."
+      DEFVAL    { false }
+
+      ::= { cLAPGroupsPortConfigEntry 2 }
+
+ cLAPGroupsLANPortPoeStatus   OBJECT-TYPE
+      SYNTAX          TruthValue
+      MAX-ACCESS      read-write
+      STATUS           current
+      DESCRIPTION
+        "This object represents the LAN port poe state.
+        A value of 'true' indicates that poe is enabled. A value
+        f 'false' indicates that poe is disabled."
+      DEFVAL    { false }
+
+      ::= { cLAPGroupsPortConfigEntry 3 }
+
+cLAPGroupsLANPortRlanName   OBJECT-TYPE
+      SYNTAX          SnmpAdminString (SIZE  (1..64))
+      MAX-ACCESS      read-write
+      STATUS          current
+      DESCRIPTION
+        "This object represents the Remote lan name of the corresponding port."
+
+      ::= { cLAPGroupsPortConfigEntry 4 }
+
+cLAPGroupsExtModuleConfigTable OBJECT-TYPE
+      SYNTAX          SEQUENCE OF CLAPGroupsExtModuleConfigEntry
+      MAX-ACCESS      not-accessible
+      STATUS          current
+      DESCRIPTION
+        "A table for configuring external module settings allowed for each AP Group."
+      ::= { ciscoLwappAPGroupsPortConfig 2 }
+
+  cLAPGroupsExtModuleConfigEntry OBJECT-TYPE
+      SYNTAX          CLAPGroupsExtModuleConfigEntry
+      MAX-ACCESS      not-accessible
+      STATUS          current
+      DESCRIPTION
+          "An entry in cLAPGroupsExtModuleConfigEntry.
+           cLAPGroupName is mandatory for creating a entry in
+           CLAPGroupsExtModuleConfigEntry ."
+      INDEX           {
+                          cLAPGroupName
+                      }
+      ::= { cLAPGroupsExtModuleConfigTable 1 }
+
+  CLAPGroupsExtModuleConfigEntry ::= SEQUENCE {
+         cLAPGroupsExtModuleStatus    TruthValue,
+         cLAPGroupsExtModuleRlanName  SnmpAdminString
+    }
+
+ cLAPGroupsExtModuleStatus   OBJECT-TYPE
+      SYNTAX          TruthValue
+      MAX-ACCESS      read-write
+      STATUS          current
+      DESCRIPTION
+        "This object represents the external module state.
+        A value of 'true' indicates that external module is enabled. A value
+        of 'false' indicates that external module is disabled."
+      DEFVAL { false }
+
+      ::= { cLAPGroupsExtModuleConfigEntry 1 }
+
+ cLAPGroupsExtModuleRlanName  OBJECT-TYPE
+      SYNTAX          SnmpAdminString (SIZE  (1..64))
+      MAX-ACCESS      read-write
+      STATUS          current
+      DESCRIPTION
+        "This object represents the Remote lan name of the external module."
+
+      ::= { cLAPGroupsExtModuleConfigEntry 2 }
+
 -- ********************************************************************
 -- *    Compliance statements
 -- ********************************************************************
@@ -4527,7 +5142,7 @@ ciscoLwappWlanMIBComplianceRev2 MODULE-COMPLIANCE
     ::= { ciscoLwappWlanMIBCompliances 3 }
 
 ciscoLwappWlanMIBComplianceRev3 MODULE-COMPLIANCE
-    STATUS          current
+    STATUS           deprecated
     DESCRIPTION
         "The compliance statement for the SNMP entities that
         implement the ciscoLwappWlanMIB module."
@@ -4542,6 +5157,25 @@ ciscoLwappWlanMIBComplianceRev3 MODULE-COMPLIANCE
                         ciscoLwappWlanConfigGroupSup3
                     }
     ::= { ciscoLwappWlanMIBCompliances 4 }
+
+ciscoLwappWlanMIBComplianceRev4 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappWlanMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        ciscoLwappWlanConfigGroupSup1,
+                        ciscoLwappWlanConfigClientGroup,
+                        ciscoLwappWlan11uConfigGroup,
+                        ciscoLwappAPGroupsVlanConfigGroup,
+                        ciscoLwappWlanConfigGroupSup2,
+                        ciscoLwappWlanConfigClientGroupSup1,
+                        ciscoLwappWlanConfigGroupSup3,
+                        ciscoLwappAPGroupsOpendnsConfigGroup
+                    }    
+    ::= { ciscoLwappWlanMIBCompliances 5 }
+
 
 -- ********************************************************************
 -- *    Units of conformance
@@ -4750,6 +5384,17 @@ ciscoLwappWlanIosConfigGroup OBJECT-GROUP
         related configuration of WLANs on the controller
         to be passed to an AP."
     ::= { ciscoLwappWlanMIBGroups 12 }
-    
+
+ciscoLwappAPGroupsOpendnsConfigGroup OBJECT-GROUP
+    OBJECTS         {    
+                        cLAPGroupsOpendnsProfileName,
+                        cLAPGroupsOpendnsStatus
+                    }    
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represent opendns
+        related configuration of AP Groups on the controller
+        to be passed to an AP." 
+    ::= { ciscoLwappWlanMIBGroups 13 }
 
 END

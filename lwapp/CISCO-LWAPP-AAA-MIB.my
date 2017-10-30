@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-AAA-MIB.my 
 -- November 2006, Devesh Pujari, Srinath Candadai
 --
--- Copyright (c) 2006 by Cisco Systems, Inc.
+-- Copyright (c) 2006, 2009-2010, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -49,7 +49,7 @@ IMPORTS
 --********************************************************************
 
 ciscoLwappAAAMIB   MODULE-IDENTITY
-        LAST-UPDATED   "201007250000Z"
+        LAST-UPDATED   "201703170000Z"
         ORGANIZATION   "Cisco Systems Inc."
         CONTACT-INFO  
                "        Cisco Systems,
@@ -179,6 +179,13 @@ ciscoLwappAAAMIB   MODULE-IDENTITY
   
                 [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
                 Weight Access Point Protocol "
+
+        REVISION        "201703170000Z"
+        DESCRIPTION
+                "Following  compliance groups are updated :
+                1. ciscoLwappAAAMIBConfigGroup
+                2. ciscoLwappAAAMIBRadiusConfigGroup
+                3. ciscoLwappAAAMIBAPPolicyConfigGroup"
         REVISION        "201007250000Z"
         DESCRIPTION
                 "A new variable, claWlanAuthServerEnabled
@@ -295,7 +302,7 @@ claPriorityOrder OBJECT-TYPE
        MAX-ACCESS  read-write 
        STATUS      current
        DESCRIPTION
-          "This is the priority order of an authentication method to 
+          "This object specifies the priority order of an authentication method to 
           be used in user authentication for a session. At start up, 
           the agent assigns the value of this object. Later this can 
           be changed  by the management station. This object reflects 
@@ -397,7 +404,7 @@ claTacacsServerAddressType OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-               "This object represents the type of the network
+               "This object specifies the type of the network
                 address made available through claTacacsServerAddress. 
                 This object must be set to a valid value before 
                 setting the row to 'active'." 
@@ -408,7 +415,7 @@ claTacacsServerAddress OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "This object represents the address of the AAA server.
+                "This object specifies the address of the AAA server.
                  The type of the address stored in this object is 
                  determined by the claTacacsServerAddressType object.         
                  This object must be set to a valid value before 
@@ -420,9 +427,9 @@ claTacacsServerPortNum OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "The port number for this server. This object must be 
-                 set to a valid value before setting the row to 
-                 'active'." 
+                "This object specifies the port number for this server. 
+			   	It must be set to a valid value before setting the row to 
+                'active'." 
         ::= { claTacacsServerEntry 5 }
 
 claTacacsServerEnabled OBJECT-TYPE
@@ -430,8 +437,9 @@ claTacacsServerEnabled OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "When set to true the server state is enabled, 
-                 otherwise the state is disabled."
+                "This object specifies the server state.
+				A value of 'true' indicates that the server state is enabled.
+				A value of 'false' indicates that the server state is disabled."
         DEFVAL  { true }
         ::= { claTacacsServerEntry 6 }
 
@@ -440,18 +448,20 @@ claTacacsServerSecretType OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-               "The claTacacsServerSecret value is set based on this 
+               "This object specifies the server secret type.
+			    The claTacacsServerSecret value is set based on this 
                 type. When reading this object, the value 'default' 
                 is always returned. This object must be set to a valid 
                 value before setting the row to 'active'."
         ::= { claTacacsServerEntry 7 }
 
 claTacacsServerSecret OBJECT-TYPE
-        SYNTAX DisplayString 
+        SYNTAX     DisplayString 
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "The key configured for this server. For get operation 
+                "This object specifies the key configured for this server. 
+				 For get operation 
                  this always returns a string with asterisks. This object 
                  must be set to a valid value before setting the row to
                  'active'. This object can be modified when a row is in 
@@ -464,9 +474,9 @@ claTacacsServerTimeout OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION  
-                "The number of seconds between retransmissions. This 
-                 object can be modified when a row is in the 'active' 
-                 state."
+                "This object specifies the number of seconds between retransmissions.
+				This object can be modified when a row is in the 'active' 
+                state."
         DEFVAL  { 5 }
         ::= { claTacacsServerEntry 9 }
 
@@ -475,7 +485,7 @@ claTacacsServerStorageType OBJECT-TYPE
         MAX-ACCESS   read-create
         STATUS       current
         DESCRIPTION
-                "The storage type for this conceptual row.  Conceptual 
+                "This object specifies the storage type for this conceptual row.  Conceptual 
                  rows having the value 'permanent' need not allow 
                  write-access to any columnar objects in the row."
         DEFVAL { nonVolatile }
@@ -486,7 +496,7 @@ claTacacsServerRowStatus OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "Used to add or delete an entry in this table.
+                "This object specifies to add or delete an entry in this table.
                  The required parameters for this entry are 
                  claTacacsServerAddress, claTacacsServerAddressType, 
                  claTacacsServerPortNum, claTacacsServerSecret and 
@@ -534,8 +544,10 @@ claWlanAcctServerEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS current
         DESCRIPTION
-                "Status to indicate whether the account server 
-                 is enabled(true) or disabled(false) for this WLAN."
+                "This object specifies the status to indicate whether the account server 
+                 is enabled(true) or disabled(false) for this WLAN.
+			  	A value of 'true' indicates that the server is enabled.
+			 	A value of 'false' indicates that the server is disabled."
         DEFVAL  { true }
     ::= { claWlanEntry 1 }
 
@@ -544,8 +556,10 @@ claWlanAuthServerEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS current
         DESCRIPTION
-                "This object represents the status whether the authentication 
-                server is enabled(true) or disabled(false) for this WLAN."
+                "This object specifies the status whether the authentication 
+                server is enabled(true) or disabled(false) for this WLAN.
+				A value of 'true' indicates that the server is enabled.
+				A value of 'false' indicates that the server is disabled."
         DEFVAL  { true }
     ::= { claWlanEntry 2 }
 
@@ -554,8 +568,10 @@ claWlanOverwriteInterface OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS current
         DESCRIPTION
-                "This object represents the status whether dynamic interface 
-                 is enabled(true) or disabled(false) for this WLAN."
+                "This object specifies the status whether dynamic interface 
+                 is enabled(true) or disabled(false) for this WLAN.
+				A value of 'true' indicates that the dynamic interface is enabled.
+				A value of 'false' indicates that the dynamic interface is disabled."
         DEFVAL  { false }
     ::= { claWlanEntry 3 }
 
@@ -564,8 +580,10 @@ claWlanInterimUpdate OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS current
         DESCRIPTION
-                "This object represents the status whether the interim update 
-                 is enabled(true) or disabled(false) for this WLAN."
+                "This object specifies the status whether the interim update 
+                 is enabled(true) or disabled(false) for this WLAN.
+			   	A value of 'true' indicates that the interim update is enabled.
+				A value of 'false' indicates that the interim update is disabled."
         DEFVAL  { false }
     ::= { claWlanEntry 4 }
 
@@ -575,7 +593,7 @@ claWlanInterimUpdateInterval OBJECT-TYPE
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
-            "This object is used to configure the interim update interval."
+            "This object specifies the interim update interval configuration."
          DEFVAL {600}
     ::= { claWlanEntry 5 }
 
@@ -588,10 +606,9 @@ claSaveUserData OBJECT-TYPE
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
-                     "This object is used to save the guest user config to NVRAM.
-                      Setting to the value of 'true' would save the data.
-                      Setting to the value of 'false' would have no implications
-                      here."
+                     "This object specifies to save the guest user config to NVRAM.
+                      A value of 'true' indicates that the data is saved.
+                      A value of 'false' indicates the data is not saved."
          DEFVAL          { true } 
     ::= { claConfigObjects 9 }
 
@@ -601,17 +618,17 @@ claSaveUserData OBJECT-TYPE
 
 claWebRadiusAuthentication OBJECT-TYPE
          SYNTAX      INTEGER {
-                     	pap (1),
+                    pap (1),
                 	chap (2),
                 	md5-chap (3)
          }
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
-            "This object is used to configure the Web RADIUS Authentication 
+            "This object specifies  to configure the Web RADIUS Authentication 
              parameters on the WLC.
-             PAP (1) . Configure Web RADIUS Authentication in PAP mode.
-             CHAP (2) . Configure Web RADIUS Authentication in CHAP mode.
+             PAP (1) - Configure Web RADIUS Authentication in PAP mode.
+             CHAP (2) - Configure Web RADIUS Authentication in CHAP mode.
              MD5-CHAP (3) - Configure Web RADIUS Authentication in MD5-CHAP mode."
          DEFVAL          { pap } 
     ::= { claConfigObjects 10 }
@@ -625,10 +642,10 @@ claRadiusFallbackMode OBJECT-TYPE
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
-            "This object is used to configure the RADIUS Fallback Test mode 
+            "This object specifies to configure the RADIUS Fallback Test mode 
              on the WLC. Following are the configurable options:-
-             off (1) . Disables RADIUS server fallback test.
-             passive (2) . Sets server status based on last transaction.
+             off (1) - Disables RADIUS server fallback test.
+             passive (2) - Sets server status based on last transaction.
              active (3) - Sends probes to dead servers to test status."
         DEFVAL {off}
     ::= { claConfigObjects 11 }	
@@ -638,7 +655,7 @@ claRadiusFallbackUsername OBJECT-TYPE
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
-            "This object is used to configure the RADIUS Fallback Test.
+            "This object specifies to configure the RADIUS Fallback Test.
              username to be sent in dead server probes"
     ::= { claConfigObjects 12 }
 
@@ -648,7 +665,7 @@ claRadiusFallbackInterval OBJECT-TYPE
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
-            "This object is used to configure the probe interval (when 
+            "This object specifies to configure the probe interval (when 
              claRadiusFallbackMode is in active mode) or inactive time 
              (when claRadiusFallbackMode is in passive mode)"
          DEFVAL {300}
@@ -656,31 +673,37 @@ claRadiusFallbackInterval OBJECT-TYPE
 
 claRadiusAuthMacDelimiter OBJECT-TYPE
          SYNTAX     INTEGER { noDelimiter (0),
-                    colon(1), hyphen (2), singleHyphen (3) }
+	                      colon(1),
+			      hyphen (2),
+			      singleHyphen (3)
+	            }
          MAX-ACCESS read-write
          STATUS     current
          DESCRIPTION
-            "The delimiter to be used for RADIUS authentication servers.
+            "This object specifies the delimiter to be used for RADIUS authentication servers.
             The possible values allowed are - 
-            no delimiter (1)  - as in xxxxxxxxxxxx.
-            colon (2)         - as in xx:xx:xx:xx:xx:xx.  
-            hyphen (3)        - as in xx-xx-xx-xx-xx-xx.  
-            single hyphen (4) - as in xxxxxx-xxxxxx."
+            no delimiter (0)  - as in xxxxxxxxxxxx.
+            colon (1)         - as in xx:xx:xx:xx:xx:xx.  
+            hyphen (2)        - as in xx-xx-xx-xx-xx-xx.  
+            single hyphen (3) - as in xxxxxx-xxxxxx."
          DEFVAL          { hyphen } 
     ::= { claConfigObjects 14 }
 
 claRadiusAcctMacDelimiter OBJECT-TYPE
          SYNTAX     INTEGER { noDelimiter (0),
-                    colon(1), hyphen (2), singleHyphen (3) }
+	                      colon(1),
+			      hyphen (2),
+			      singleHyphen (3)
+	           }
          MAX-ACCESS read-write
          STATUS     current
          DESCRIPTION
-            "The delimiter to be used for RADIUS accounting servers.
+            "This object specifies the delimiter to be used for RADIUS accounting servers.
             The possible values allowed are - 
-            no delimiter (1)  - as in xxxxxxxxxxxx. 
-            colon (2)         - as in xx:xx:xx:xx:xx:xx.  
-            hyphen (3)        - as in xx-xx-xx-xx-xx-xx.  
-            single hyphen (4) - as in xxxxxx-xxxxxx."
+            no delimiter (0)  - as in xxxxxxxxxxxx. 
+            colon (1)         - as in xx:xx:xx:xx:xx:xx.  
+            hyphen (2)        - as in xx-xx-xx-xx-xx-xx.  
+            single hyphen (3) - as in xxxxxx-xxxxxx."
          DEFVAL          { hyphen } 
     ::= { claConfigObjects 15 }
 
@@ -695,7 +718,9 @@ claAcceptMICertificate  OBJECT-TYPE
          DESCRIPTION
                      "This object specifies if controller will accept 
                       Manufactured Installed Certificate from the
-                      access points  as part of authorization." 
+                      access points  as part of authorization. 
+		        	  A value of 'true' indicates that the controller will accept the certificate.
+			          A value of 'false' indicates that the controller will not accept the certificate."
          DEFVAL  { false }
     ::= { claConfigObjects 16 }
 
@@ -706,7 +731,9 @@ claAcceptLSCertificate  OBJECT-TYPE
          DESCRIPTION
                      "This object specifies if controller will accept 
                       Local Significant Certificate from access points
-                      as part of authorization."
+                      as part of authorization.
+		        	  A value of 'true' indicates that the controller will accept the certificate.
+			          A value of 'false' indicates that the controller will not accept the certificate."
          DEFVAL  { false }
     ::= { claConfigObjects 17 }
 
@@ -717,7 +744,9 @@ claAllowAuthorizeLscApAgainstAAA  OBJECT-TYPE
          DESCRIPTION
                      "This object specifies if access points to be authorized 
                      using a AAA RADIUS server or local database.
-                     If this object is false, the access points would be
+		        	 A value of 'true' indicates that the access points would be 
+                     authorized using a AAA RADIUS.
+			         A value of 'false' indicates that the access points would be
                      authorized using a local database."
          DEFVAL  { false }
     ::= { claConfigObjects 18 }
@@ -739,7 +768,7 @@ claSscCertificateSubject    OBJECT-TYPE
          MAX-ACCESS  read-only
          STATUS      current
          DESCRIPTION
-                     "This object denotes the SSC Certificate
+                     "This object indicates the SSC Certificate
                      subject value of the controller."
     ::= { claConfigObjects 20 }
 
@@ -748,7 +777,7 @@ claSscCertificateValidity    OBJECT-TYPE
          MAX-ACCESS  read-only
          STATUS      current
          DESCRIPTION
-                     "This object denotes the SSC Certificate
+                     "This object indicates the SSC Certificate
                      validity value of the controller."
     ::= { claConfigObjects 21 }
 
@@ -757,7 +786,7 @@ claSscCertificateHashKey    OBJECT-TYPE
          MAX-ACCESS  read-only
          STATUS      current
          DESCRIPTION
-                     "This object denotes the SSC Certificate
+                     "This object indicates the SSC Certificate
                      hash key value of the controller."
     ::= { claConfigObjects 22 }
 
@@ -770,7 +799,7 @@ claRadiusAuthServerTable OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "The (conceptual) table listing the RADIUS authentication
+            "This table represents the conceptual listing the RADIUS authentication
              servers with which the client shares a secret."
       ::= { claConfigObjects 23 }
 
@@ -780,7 +809,7 @@ claRadiusAuthServerEntry OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "An entry (conceptual row) representing a RADIUS
+            "An entry is a conceptual row representing a RADIUS
              authentication server with which the client shares
              a secret."
       INDEX      { claRadiusAuthServerIndex }
@@ -791,7 +820,9 @@ ClaRadiusAuthServerEntry ::= SEQUENCE {
       claRadiusAuthServerIPSecAuthMethod          INTEGER,
       claRadiusAuthServerKey                      OCTET STRING,
       claRadiusAuthServerKeyFormat                INTEGER,
-      claRadiusAuthServerIsActive                 INTEGER
+      claRadiusAuthServerIsActive                 INTEGER,
+      claRadiusAuthServerTunnelProxy              TruthValue,	
+      claRadiusAuthServerPacState                 TruthValue	
 }
 
 claRadiusAuthServerIndex OBJECT-TYPE
@@ -799,8 +830,8 @@ claRadiusAuthServerIndex OBJECT-TYPE
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
-             "A number uniquely identifying each RADIUS
-             Authentication server with which this client
+             "This object specifies a number uniquely identifying each RADIUS
+             authentication server with which this client
              communicates."
       ::= { claRadiusAuthServerEntry 1 }
 
@@ -812,8 +843,10 @@ claRadiusAuthServerIPSecAuthMethod     OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS current
         DESCRIPTION
-            "IPSec over RADIUS"
-        DEFVAL { disable }
+            "This object specifies IPSec authentication method over RADIUS.
+            The value of 'psk' indicates that the authentication is through PSK method.
+            The value of 'cert' indicates that the authentication is through certificate method."
+        DEFVAL { psk }
         ::= { claRadiusAuthServerEntry 2 }
 
 
@@ -822,7 +855,7 @@ claRadiusAuthServerKey OBJECT-TYPE
         MAX-ACCESS  read-create
         STATUS  current
         DESCRIPTION
-                "The authentication and encryption key shared between
+                "This object specifies the authentication and encryption key shared between
                 the Radius client and this Radius Server.
                 When the claRadiusAuthServerKeyFormat is hex it
                 can have max length of 128 bytes. If the
@@ -839,8 +872,10 @@ claRadiusAuthServerKeyFormat  OBJECT-TYPE
       MAX-ACCESS read-create
       STATUS current
       DESCRIPTION
-            "Format of the server key. When hex, the number of
-             characters in the key should be even."
+            "This object specifies the format of the server key. When hex, the number of
+             characters in the key should be even.
+             The value of 'hex' indicates that the format is in hex format.
+             The value of 'cert' indicates that the format is in ascii format."
       ::= { claRadiusAuthServerEntry 4 }
 
 claRadiusAuthServerIsActive OBJECT-TYPE
@@ -851,16 +886,40 @@ claRadiusAuthServerIsActive OBJECT-TYPE
       MAX-ACCESS read-only
       STATUS     current
       DESCRIPTION
-            "Active RADIUS authentication server
-             referred to in this table entry."
+            "This object indicates the status of the  RADIUS authentication server.
+             The value of 'disable' indicates that the status is disabled.
+             The value of 'enable' indicates that the status is enabled."
       ::= { claRadiusAuthServerEntry 5 }
+
+claRadiusAuthServerTunnelProxy OBJECT-TYPE
+      SYNTAX                   TruthValue
+      MAX-ACCESS               read-create
+      STATUS                   current
+      DESCRIPTION
+            "This object specifies active RADIUS authentication server's
+             tunnel proxy.
+			 A value of 'true' indicates that the tunnel proxy is enabled.
+			 A value of 'false' indicates that the tunnel proxy is disabled."
+      ::= { claRadiusAuthServerEntry 6 }
+
+claRadiusAuthServerPacState    OBJECT-TYPE
+      SYNTAX                   TruthValue
+      MAX-ACCESS               read-create
+      STATUS                   current
+      DESCRIPTION
+            "This object specifies active RADIUS authentication server's
+             PAC (Protected Access Control) state.
+			 A value of 'true' indicates that the server PAC state is enabled.
+			 A value of 'false' indicates that the server PAC state is disabled."
+      DEFVAL { false }
+      ::= { claRadiusAuthServerEntry 7 }
 
 claRadiusAccServerTable OBJECT-TYPE
       SYNTAX     SEQUENCE OF ClaRadiusAccServerEntry
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "The (conceptual) table listing the RADIUS accounting
+            "This table represents the conceptual table listing the RADIUS accounting
              servers with which the client shares a secret."
       ::= { claConfigObjects 24 }
 
@@ -870,7 +929,7 @@ claRadiusAccServerEntry OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "An entry (conceptual row) representing a RADIUS
+            "An entry is a conceptual row representing a RADIUS
              accounting server with which the client shares
              a secret."
       INDEX      { claRadiusAccServerIndex }
@@ -881,7 +940,9 @@ ClaRadiusAccServerEntry ::= SEQUENCE {
       claRadiusAccServerIPSecAuthMethod          INTEGER,
       claRadiusAccServerKey                      OCTET STRING,
       claRadiusAccServerKeyFormat                INTEGER,
-      claRadiusAccServerIsActive                 INTEGER  
+      claRadiusAccServerIsActive                 INTEGER,  
+      claRadiusAccServerTunnelProxy              TruthValue,
+      claRadiusAccServerPacState                 TruthValue	
 }
 
 claRadiusAccServerIndex OBJECT-TYPE
@@ -889,8 +950,8 @@ claRadiusAccServerIndex OBJECT-TYPE
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
-             "A number uniquely identifying each RADIUS
-             Accounting server with which this client
+             "This object specifies a number uniquely identifying each RADIUS
+             accounting server with which this client
              communicates."
       ::= { claRadiusAccServerEntry 1 }
 
@@ -902,8 +963,10 @@ claRadiusAccServerIPSecAuthMethod     OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS current
         DESCRIPTION
-            "IPSec over RADIUS"
-        DEFVAL { disable }
+            "This object specifies IPSec Authentication method over RADIUS.
+            The value of 'psk' indicates that the authentication is  through PSK method.
+            The value of 'cert' indicates that the authentication is through certificate method."
+        DEFVAL { psk }
         ::= { claRadiusAccServerEntry 2 }
 
 
@@ -912,8 +975,8 @@ claRadiusAccServerKey OBJECT-TYPE
         MAX-ACCESS  read-create
         STATUS  current
         DESCRIPTION
-                "The accounting and encryption key shared between
-                the Radius client and this Radius Server.
+                "This object specifies the accounting and encryption key shared between
+                the RADIUS client and this RADIUS Server.
                 When the claRadiusAccServerKeyFormat is hex it
                 can have max length of 128 bytes. If the
                 claRadiusAccServerKeyFormat is Ascii it can have
@@ -929,8 +992,11 @@ claRadiusAccServerKeyFormat  OBJECT-TYPE
       MAX-ACCESS read-create
       STATUS current
       DESCRIPTION
-            "Format of the server key. When hex, the number of
-             characters in the key should be even."
+            "This object specifies the format of the server key.
+            When hex, the number of
+            characters in the key should be even.
+             The value of 'hex' indicates that the format is in hex format.
+             The value of 'cert' indicates that the format is in ascii format."
       ::= { claRadiusAccServerEntry 4 }
 
 claRadiusAccServerIsActive OBJECT-TYPE
@@ -941,10 +1007,33 @@ claRadiusAccServerIsActive OBJECT-TYPE
       MAX-ACCESS read-only
       STATUS     current
       DESCRIPTION
-            "Active RADIUS accounting server
-             referred to in this table entry."
+            "This object indicates the status of the RADIUS accounting server.
+             The value of 'disable' indicates that status is disabled.
+             The value of 'enable' indicates that status is enabled."
       ::= { claRadiusAccServerEntry 5 }
 
+claRadiusAccServerTunnelProxy OBJECT-TYPE
+      SYNTAX                  TruthValue
+      MAX-ACCESS              read-create
+      STATUS                  current
+      DESCRIPTION
+            "This object specifies active RADIUS accounting server's
+             tunnel proxy.
+			 A value of 'true' indicates that the tunnel proxy is enabled.
+			 A value of 'false' indicates that the tunnel proxy is disabled."
+      ::= { claRadiusAccServerEntry 6 }
+
+claRadiusAccServerPacState     OBJECT-TYPE
+      SYNTAX                   TruthValue
+      MAX-ACCESS               read-create
+      STATUS                   current
+      DESCRIPTION
+            "This object specifies active RADIUS accounting server's
+             PAC (Protected Access Control).
+			 A value of 'true' indicates that the server PAC state is enabled.
+			 A value of 'false' indicates that the server PAC state is disabled."
+      DEFVAL { false }
+      ::= { claRadiusAccServerEntry 7 }
 
 --********************************************************************
 --*    Auth and accounting Realm configuration
@@ -955,8 +1044,8 @@ claRadiusAuthServerRealmTable OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "The (conceptual) table listing the RADIUS authentication
-             servers with which the client shares a secret."
+            "This table represents the conceptual table listing the RADIUS authentication
+             servers with realm config."
       ::= { claConfigObjects 25 }
 
 
@@ -965,22 +1054,22 @@ claRadiusAuthServerRealmEntry OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "An entry (conceptual row) representing a RADIUS
+            "An entry is a conceptual row representing a RADIUS
              authentication server with a particular realm."
       INDEX      { claRadiusAuthServerIndex, claRadiusAuthServerRealm }
       ::= { claRadiusAuthServerRealmTable 1 }
 
 ClaRadiusAuthServerRealmEntry ::= SEQUENCE {
-      claRadiusAuthServerRealm                   OCTET STRING,
+      claRadiusAuthServerRealm                   SnmpAdminString,
       claRadiusAuthRealmRowStatus                RowStatus
 }
 
 claRadiusAuthServerRealm OBJECT-TYPE
-        SYNTAX  OCTET STRING
+        SYNTAX  SnmpAdminString
         MAX-ACCESS  not-accessible
         STATUS  current
         DESCRIPTION
-                "The authentication realm string on this
+                "This object represents authentication realm string on this
                 index. This is used to filter the realms that are
                 received from the client on the controller."
         ::= { claRadiusAuthServerRealmEntry 1 }
@@ -990,7 +1079,7 @@ claRadiusAuthRealmRowStatus OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "This row status is used to control the realm
+                "This object specifies the row status is used to control the realm
                  to add or delete an entry in this table."
         ::= { claRadiusAuthServerRealmEntry 2 }
 
@@ -999,7 +1088,7 @@ claRadiusAcctServerRealmTable OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "The (conceptual) table listing the RADIUS accounting
+            "This table represents the conceptual table listing the RADIUS accounting
              servers with which the client shares a realm."
       ::= { claConfigObjects 26 }
 
@@ -1009,24 +1098,24 @@ claRadiusAcctServerRealmEntry OBJECT-TYPE
       MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
-            "An entry (conceptual row) representing a RADIUS
+            "An entry  is a conceptual row representing a RADIUS
              accounting server with a particular realm."
       INDEX      { claRadiusAccServerIndex, claRadiusAcctServerRealm }
       ::= { claRadiusAcctServerRealmTable 1 }
 
 ClaRadiusAcctServerRealmEntry ::= SEQUENCE {
-      claRadiusAcctServerRealm                   OCTET STRING,
+      claRadiusAcctServerRealm                   SnmpAdminString,
       claRadiusAcctRealmRowStatus                RowStatus
 }
 
 claRadiusAcctServerRealm OBJECT-TYPE
-        SYNTAX  OCTET STRING
+        SYNTAX SnmpAdminString
         MAX-ACCESS  not-accessible
         STATUS  current
         DESCRIPTION
-                "The accounting realm string on this index.
+                "This object represents the  accounting realm string on this index.
                 This is used to filter the realms that are
-                recived from the client on the controller."
+                received from the client on the controller."
         ::= { claRadiusAcctServerRealmEntry 1 }
 
 claRadiusAcctRealmRowStatus OBJECT-TYPE
@@ -1034,10 +1123,19 @@ claRadiusAcctRealmRowStatus OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "This row status is used to control the realm
+                "This object specifies the row status, used to control the realm
                  to add or delete an entry in this table."
         ::= { claRadiusAcctServerRealmEntry 2 }
 
+claTacacsFallbackTestInterval OBJECT-TYPE
+        SYNTAX      Unsigned32
+        UNITS       "seconds"
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "This object specifies the TACACS Fallback Test Interval
+                 in seconds."
+   ::= { claConfigObjects 27 }
 
 --********************************************************************
 --*    Status objects
@@ -1161,7 +1259,7 @@ claRadiusAuthClientAccessRequestsTotal OBJECT-TYPE
       MAX-ACCESS read-only
       STATUS current
       DESCRIPTION
-            "This object specifies the number of RADIUS Access-Request
+            "This object indicates the number of RADIUS Access-Request
             packets sent by the controller. This also includes
             retransmissions."
       ::= { claStatusObjects 3 }
@@ -1171,7 +1269,7 @@ claRadiusAuthClientAccessResponseTotal OBJECT-TYPE
       MAX-ACCESS read-only
       STATUS current
       DESCRIPTION
-            "This object specifies the number of RADIUS Auth response
+            "This object indicates the number of RADIUS Auth response
             packets received by the controller. This includes
             'Access-Accept', 'Access-Reject' and 'Access-Challenge'."
       ::= { claStatusObjects 4 }
@@ -1181,7 +1279,7 @@ claRadiusAuthClientAccessAcceptsTotal OBJECT-TYPE
       MAX-ACCESS read-only
       STATUS current
       DESCRIPTION
-            "This object specifies the number of RADIUS Access-Accept
+            "This object indicates the number of RADIUS Access-Accept
             packets received by the controller."
       ::= { claStatusObjects 5 }
 
@@ -1300,10 +1398,10 @@ claTacacsDnsServerEnabled OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents whether TACACS DNS 
+            "This object specifies whether TACACS DNS 
              feature is enabled on the controller
-             A value of 'true' indicates TACACS DNS feature is enabled.
-             A value of 'false' indicates TACACS DNS feature is disabled." 
+             A value of 'true' indicates that TACACS DNS feature is enabled.
+             A value of 'false' indicates that TACACS DNS feature is disabled." 
       ::= { claGlobalObjects 1 }
 
 claTacacsDnsServerAddressType OBJECT-TYPE
@@ -1311,7 +1409,7 @@ claTacacsDnsServerAddressType OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the TACACS DNS 
+            "This object specifies the TACACS DNS 
              server address type." 
       ::= { claGlobalObjects 2 }
 
@@ -1320,7 +1418,7 @@ claTacacsDnsServerAddress OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the TACACS DNS 
+            "This object specifies the TACACS DNS 
              server address." 
       ::= { claGlobalObjects 3 }
 
@@ -1329,7 +1427,7 @@ claTacacsDnsServerPort OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the port number for 
+            "This object specifies the port number for 
              TACACS DNS server." 
       ::= { claGlobalObjects 4 }
 
@@ -1338,7 +1436,7 @@ claTacacsDnsServerSecretType OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the secret key type of
+            "This object specifies the secret key type of
              TACACS DNS server."
       ::= { claGlobalObjects 5 }
 
@@ -1347,7 +1445,7 @@ claTacacsDnsServerSecret OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the secret key configured 
+            "This object specifies the secret key configured 
              for TACACS DNS server.The secret key and type has to be
              set together.For get operation this object 
              always returns a string with asterisks."
@@ -1358,7 +1456,7 @@ claTacacsDnsServerURL OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current    
       DESCRIPTION
-            "This object represents the URL of the 
+            "This object specifies the URL of the 
              TACACS DNS server."
       ::= { claGlobalObjects 7 }
 
@@ -1368,7 +1466,7 @@ claTacacsDnsServerTimeout OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the TACACS DNS server
+            "This object specifies the TACACS DNS server
              timeout in days."
       ::= { claGlobalObjects 8 }
 
@@ -1377,10 +1475,10 @@ claRadiusDnsServerEnabled OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents whether Radius DNS 
+            "This object specifies whether Radius DNS 
              feature is enabled on the controller
-             A value of 'true' indicates Radius DNS feature is enabled.
-             A value of 'false' indicates Radius DNS feature is disabled." 
+             A value of 'true' indicates that Radius DNS feature is enabled.
+             A value of 'false' indicates that Radius DNS feature is disabled." 
       ::= { claGlobalObjects 9 }
 
 claRadiusDnsServerAddressType OBJECT-TYPE
@@ -1388,7 +1486,7 @@ claRadiusDnsServerAddressType OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the Radius DNS 
+            "This object specifies the Radius DNS 
              server address type." 
       ::= { claGlobalObjects 10 }
 
@@ -1397,7 +1495,7 @@ claRadiusDnsServerAddress OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the Radius DNS 
+            "This object specifies the Radius DNS 
              server address." 
       ::= { claGlobalObjects 11 }
 
@@ -1406,7 +1504,7 @@ claRadiusDnsServerPort OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the port number for
+            "This object specifies the port number for
              Radius DNS server." 
       ::= { claGlobalObjects 12 }
 
@@ -1415,7 +1513,7 @@ claRadiusDnsServerSecretType OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the secret key type of
+            "This object specifies the secret key type of
              Radius DNS server."
       ::= { claGlobalObjects 13 }
 
@@ -1424,7 +1522,7 @@ claRadiusDnsServerSecret OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents the secret key configured 
+            "This object specifies the secret key configured 
              for Radius DNS server.The secret key and type has to be
              set together.For get operation this object always 
              returns a string with asterisks."
@@ -1435,7 +1533,7 @@ claRadiusDnsServerURL OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current    
       DESCRIPTION
-            "This object represents the URL of the 
+            "This object specifies the URL of the 
              Radius DNS server. "
       ::= { claGlobalObjects 15 }
 
@@ -1445,7 +1543,7 @@ claRadiusDnsServerTimeout OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius DNS server
+            "This object specifies the Radius DNS server
              timeout in days."
       ::= { claGlobalObjects 16 }
 
@@ -1462,14 +1560,31 @@ claAAARadiusAuthCallStationIdType OBJECT-TYPE
                         apLocation(8),
                         apVlanId(9),
                         apMacEthAddress(10),
-                        apMacEthAddressSsid(11)
+                        apMacEthAddressSsid(11),
+                        apLabelMac(12),
+                        apLableMacSsid(13),
+                        apMacSsidApGroup(14)
                     }
       MAX-ACCESS read-write
       STATUS     current
       DESCRIPTION
-             "This attribute configures the call station ID information
-              sent in RADIUS auth messages. The value undefined cannot be 
-              set during the write operation."
+             "This object specifies the call station ID information
+              sent in RADIUS auth messages.
+              ipAddr(0) : Sets Call Station Id Type to the system's IP Address. 
+              macAddr(1) : Sets Call Station Id Type to the system's MAC Address.
+              apMacAddress(2) : Sets Call Station Id Type to the AP's Radio MAC Address.
+              apMacAddressSsid(3) : Sets Call Station Id Type to the format <AP Radio MAC address>:<SSID>. 
+              apNameSsid(4) : Sets Called Station Id to the format <AP Name>:<SSID>.
+              apName(5) : Sets Called Station Id to the AP Name.
+              apGroupName(6) : Sets Called Station Id to the AP Group Name.
+              flexGroupName(7) : Sets Called Station Id to the Flex Connect Group Name.
+              apLocation(8) : Sets Called Station Id to the AP Location.
+              apVlanId(9) : Sets Called Station Id to the VLAN id.
+              apMacEthAddress(10) : Sets Called Station Id Type to the AP's Ethernet MAC address.
+              apMacEthAddressSsid(11) : Sets Called Station Id Type to the format <AP Ethernet MAC address>:<SSID>.
+              apLabelMac(12) : Sets Call Station Id Type to the AP MAC address printed on APLabel.
+              apLableMacSsid(13) : Sets Call Station Id Type to the format <AP Label MAC address>:<SSID>.
+              apMacSsidApGroup(14) : Sets Called Station Id Type to the format <AP MAC address>:<SSID>:<AP Group>." 
       ::= { claGlobalObjects 17 }
 
 claRadiusDnsAuthnetworkState OBJECT-TYPE
@@ -1477,8 +1592,10 @@ claRadiusDnsAuthnetworkState OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius DNS server
-             auth network flag enabled (true) or disabled(false)."
+            "This object specifies whether the Radius DNS server
+             auth network flag is  enabled (true) or disabled (false).
+             A value of 'true' indicates that auth network flag is enabled.
+             A value of 'false' indicates that auth network flag is disabled." 
       ::= { claGlobalObjects 18 }
 
 
@@ -1487,8 +1604,10 @@ claRadiusDnsAuthmgmtState OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius DNS server
-             auth management flag enabled (true) or disabled(false)."
+            "This object specifies whether the Radius DNS server
+             auth management flag is enabled (true) or disabled(false).
+             A value of 'true' indicates that auth management flag is enabled.
+             A value of 'false' indicates that auth management flag is disabled." 
       ::= { claGlobalObjects 19 }
 
 
@@ -1497,8 +1616,10 @@ claRadiusDnsAcctnetworkState OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius DNS server
-             accounting network flag enabled (true) or disabled(false)."
+            "This object specifies whether the Radius DNS server
+             accounting network flag is  enabled (true) or disabled (false).
+             A value of 'true' indicates that accounting network flag is enabled.
+             A value of 'false' indicates that accounting network flag is disabled." 
       ::= { claGlobalObjects 20 }
 
 claRadiusDnsAuthRetransmitTimeout OBJECT-TYPE
@@ -1506,8 +1627,8 @@ claRadiusDnsAuthRetransmitTimeout OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius Authentication DNS server's
-             Re-transmit Timeout."
+            "This object specifies the Radius Authentication DNS server's
+             re-transmit Timeout."
       ::= { claGlobalObjects 21 }
 
 claRadiusDnsAcctRetransmitTimeout OBJECT-TYPE
@@ -1515,8 +1636,8 @@ claRadiusDnsAcctRetransmitTimeout OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius Accounting DNS server's
-             Re-transmit Timeout."
+            "This object specifies the Radius Accounting DNS server's
+             re-transmit Timeout."
       ::= { claGlobalObjects 22 }
 
 claRadiusDnsAuthRfc3576State OBJECT-TYPE
@@ -1524,8 +1645,10 @@ claRadiusDnsAuthRfc3576State OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius DNS server
-             authentication server RFC3576 flag enabled (true) or disabled(false)."
+            "This object specifies whether  the Radius DNS server
+             authentication server RFC3576 flag is enabled (true) or disabled(false).
+             A value of 'true' indicates that authentication server flag is enabled.
+             A value of 'false' indicates that authentication server flag is disabled." 
       ::= { claGlobalObjects 23 }
 
 claRadiusFramedMtu OBJECT-TYPE
@@ -1533,7 +1656,7 @@ claRadiusFramedMtu OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
-            "This object represents framed-mtu-size for Radius EAP"
+            "This object specifies framed-mtu-size for Radius EAP"
       ::= { claGlobalObjects 24 }
 
 claRadiusDnsAuthMgmtRetransmitTimeout OBJECT-TYPE
@@ -1541,9 +1664,17 @@ claRadiusDnsAuthMgmtRetransmitTimeout OBJECT-TYPE
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION  
-            "This object represents the Radius Authentication DNS server's
+            "This object specifies the Radius Authentication DNS server's
              Mgmt-Retransmit Timeout."
       ::= { claGlobalObjects 25 }
+
+claMgmtUserReauthInterval OBJECT-TYPE
+      SYNTAX      Unsigned32
+      MAX-ACCESS  read-write
+      STATUS      current
+      DESCRIPTION
+            "This object specifies termination-interval for management users."
+      ::= { claGlobalObjects 26 }
 
 --********************************************************************
 --*    NOTIFICATION Control objects
@@ -1553,7 +1684,7 @@ claRadiusServerGlobalActivatedEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The object to control the generation of
+                "The object specifies to control the generation of
                 ciscoLwappAAARadiusServerGlobalActivated 
                 notification.
 
@@ -1572,7 +1703,7 @@ claRadiusServerGlobalDeactivatedEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The object to control the generation of
+                "The object specifies to control the generation of
                 ciscoLwappAAARadiusServerGlobalDeactivated 
                 notification.
 
@@ -1591,7 +1722,7 @@ claRadiusServerWlanActivatedEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The object to control the generation of
+                "The object specifies to control the generation of
                 ciscoLwappAAARadiusServerWlanActivated 
                 notification.
 
@@ -1610,7 +1741,7 @@ claRadiusServerWlanDeactivatedEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The object to control the generation of
+                "The object specifies to control the generation of
                 ciscoLwappAAARadiusServerWlanDeactivated 
                 notification.
 
@@ -1629,7 +1760,7 @@ claRadiusReqTimedOutEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The object to control the generation of
+                "The object specifies to control the generation of
                 ciscoLwappAAARadiusReqTimedOut notification.
 
                 A value of 'true' indicates that the agent generates
@@ -1805,7 +1936,7 @@ ciscoLwappAAAMIBGroups OBJECT IDENTIFIER
 
 
 ciscoLwappAAAMIBCompliance MODULE-COMPLIANCE
-        STATUS     current 
+        STATUS     deprecated 
         DESCRIPTION
                 "The compliance statement for the SNMP entities that
                 implement the ciscoLwappAAAMIB module. "
@@ -1856,11 +1987,76 @@ ciscoLwappAAAMIBConfigGroup OBJECT-GROUP
                   claRadiusServerWlanDeactivatedEnabled,
                   claRadiusReqTimedOutEnabled
         }
+        STATUS     deprecated
+        DESCRIPTION
+                "This collection of objects specifies the required
+                parameters for AAA. "
+        ::= { ciscoLwappAAAMIBGroups 1 }
+
+ciscoLwappAAAMIBConfigGroup OBJECT-GROUP
+        OBJECTS {
+                  claPriorityOrder, 
+                  claTacacsServerAddressType,
+                  claTacacsServerAddress,
+                  claTacacsServerPortNum,
+                  claTacacsServerEnabled,
+                  claTacacsServerSecretType,
+                  claTacacsServerSecret,
+                  claTacacsServerTimeout,
+                  claTacacsServerStorageType,
+                  claTacacsServerRowStatus,
+                  claRadiusServerGlobalActivatedEnabled, 
+                  claRadiusServerGlobalDeactivatedEnabled,
+                  claRadiusServerWlanActivatedEnabled,
+                  claRadiusServerWlanDeactivatedEnabled,
+                  claRadiusReqTimedOutEnabled,
+                  claTacacsDnsServerEnabled,
+                  claTacacsDnsServerAddressType,
+                  claTacacsDnsServerAddress,
+                  claTacacsDnsServerPort,
+                  claTacacsDnsServerSecretType,
+                  claTacacsDnsServerSecret,
+                  claTacacsDnsServerURL,
+                  claTacacsDnsServerTimeout,
+                  claRadiusDnsServerEnabled,
+                  claRadiusDnsServerAddressType,
+                  claRadiusDnsServerAddress,
+                  claRadiusDnsServerPort,
+                  claRadiusDnsServerSecretType,
+                  claRadiusDnsServerSecret,
+                  claRadiusDnsServerURL,
+                  claRadiusDnsServerTimeout,
+                  claAAARadiusAuthCallStationIdType,
+                  claRadiusDnsAuthnetworkState,
+                  claRadiusDnsAuthmgmtState,
+                  claRadiusDnsAcctnetworkState,
+                  claRadiusDnsAuthRetransmitTimeout,
+                  claRadiusDnsAcctRetransmitTimeout,
+                  claRadiusDnsAuthRfc3576State,
+                  claRadiusFramedMtu,
+                  claRadiusDnsAuthMgmtRetransmitTimeout,
+                  claMgmtUserReauthInterval,
+                  claWlanOverwriteInterface,        
+                  claWlanInterimUpdate,             
+                  claWlanInterimUpdateInterval,
+                  claTacacsFallbackTestInterval,
+                  claRadiusAuthClientAccessRequestsTotal,
+                  claRadiusAuthClientAccessResponseTotal,
+                  claRadiusAuthClientAccessAcceptsTotal,
+                  claWlanId,
+                  claRadiusType,
+                  claAvpEntryId,
+                  claAvpVendorId,
+                  claAvpAttribute,
+                  claAvpType,
+                  claAvpValue
+        }
         STATUS     current
         DESCRIPTION
                 "This collection of objects specifies the required
                 parameters for AAA. "
         ::= { ciscoLwappAAAMIBGroups 1 }
+
 
 ciscoLwappAAAMIBSaveUserConfigGroup OBJECT-GROUP
         OBJECTS         { claSaveUserData }
@@ -1921,6 +2117,38 @@ ciscoLwappAAAMIBRadiusConfigGroup OBJECT-GROUP
                         claRadiusAuthMacDelimiter,
                         claRadiusAcctMacDelimiter
                     }
+        STATUS          deprecated
+        DESCRIPTION
+                "These are the RADIUS web authentication and
+                fallback related configuration parameters on the WLC."
+        ::= { ciscoLwappAAAMIBGroups 6 }
+
+ciscoLwappAAAMIBRadiusConfigGroup OBJECT-GROUP
+        OBJECTS     {
+                        claWebRadiusAuthentication,
+                        claRadiusFallbackMode,
+                        claRadiusFallbackUsername,
+                        claRadiusFallbackInterval,
+                        claRadiusAuthMacDelimiter,
+                        claRadiusAcctMacDelimiter,
+                        claRadiusAuthServerIndex,
+                        claRadiusAuthServerIPSecAuthMethod,
+                        claRadiusAuthServerKey,
+                        claRadiusAuthServerKeyFormat,
+                        claRadiusAuthServerIsActive,               
+                        claRadiusAuthServerPacState,
+                        claRadiusAccServerIndex,
+                        claRadiusAccServerIPSecAuthMethod,
+                        claRadiusAccServerKey,
+                        claRadiusAccServerKeyFormat,
+                        claRadiusAccServerIsActive,
+                        claRadiusAccServerTunnelProxy,
+                        claRadiusAccServerPacState,
+                        claRadiusAuthServerRealm,
+                        claRadiusAuthRealmRowStatus,
+                        claRadiusAcctServerRealm,
+                        claRadiusAcctRealmRowStatus
+                    }
         STATUS          current
         DESCRIPTION
                 "These are the RADIUS web authentication and
@@ -1932,6 +2160,22 @@ ciscoLwappAAAMIBAPPolicyConfigGroup OBJECT-GROUP
                         claAcceptMICertificate,
                         claAcceptLSCertificate,
                         claAllowAuthorizeLscApAgainstAAA
+                    }
+        STATUS          deprecated
+        DESCRIPTION
+                "These are the AP Policy related configuration
+                parameters on the WLC."
+        ::= { ciscoLwappAAAMIBGroups 7 }
+
+ciscoLwappAAAMIBAPPolicyConfigGroup OBJECT-GROUP
+        OBJECTS     {
+                        claAcceptMICertificate,
+                        claAcceptLSCertificate,
+                        claAllowAuthorizeLscApAgainstAAA,
+                        claSscHashValidationEnabled,
+                        claSscCertificateSubject,
+                        claSscCertificateValidity,
+                        claSscCertificateHashKey
                     }
         STATUS          current
         DESCRIPTION

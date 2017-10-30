@@ -3,7 +3,7 @@
 -- CISCO-LWAPP-ACL-MIB.my
 -- March 2011, Nallathambi Konar
 --   
--- Copyright (c) 2005-2006, 2011-12 by Cisco Systems, Inc.
+-- Copyright (c) 2005-2006, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -33,9 +33,9 @@ IMPORTS
     cldcClientMacAddress
         FROM CISCO-LWAPP-DOT11-CLIENT-MIB
     InetAddressType, InetAddress
-    	FROM INET-ADDRESS-MIB
+        FROM INET-ADDRESS-MIB
     SnmpAdminString
-	FROM SNMP-FRAMEWORK-MIB;
+    FROM SNMP-FRAMEWORK-MIB;
 
 -- ********************************************************************
 -- *  MODULE IDENTITY
@@ -1248,3 +1248,4 @@ cLIpv6GlobalEnabled  OBJECT-TYPE
 ::= {  ciscoLwappIpv6Config 7}
 
 END
+

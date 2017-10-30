@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-DOT11-LDAP-MIB.my 
 -- January 2007, Devesh Pujari, Srinath Candadai
 --
--- Copyright (c) 2007, 2009 by Cisco Systems, Inc.
+-- Copyright (c) 2007, 2009, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -30,8 +30,6 @@ IMPORTS
                 FROM SNMP-FRAMEWORK-MIB
         ciscoMgmt
                 FROM CISCO-SMI
---        cLWlanConfigEntry
---                FROM CISCO-LWAPP-WLAN-MIB;
         cLWlanIndex
                 FROM CISCO-LWAPP-WLAN-MIB;
 
@@ -180,9 +178,12 @@ ciscoLwappDot11LdapMIB   MODULE-IDENTITY
                 "Initial version of this MIB module. "
         ::= { ciscoMgmt 614 } 
         
-ciscoLwappDot11LdapMIBNotifs  OBJECT IDENTIFIER ::= { ciscoLwappDot11LdapMIB 0 }
-ciscoLwappDot11LdapMIBObjects OBJECT IDENTIFIER ::= { ciscoLwappDot11LdapMIB 1 }
-ciscoLwappDot11LdapMIBConform OBJECT IDENTIFIER ::= { ciscoLwappDot11LdapMIB 2 }
+ciscoLwappDot11LdapMIBNotifs  OBJECT IDENTIFIER 
+                ::= { ciscoLwappDot11LdapMIB 0 }
+ciscoLwappDot11LdapMIBObjects OBJECT IDENTIFIER 
+                ::= { ciscoLwappDot11LdapMIB 1 }
+ciscoLwappDot11LdapMIBConform OBJECT IDENTIFIER 
+                ::= { ciscoLwappDot11LdapMIB 2 }
 
 cldlConfig OBJECT IDENTIFIER ::= { ciscoLwappDot11LdapMIBObjects 1 }
 cldlStatus OBJECT IDENTIFIER ::= { ciscoLwappDot11LdapMIBObjects 2 }

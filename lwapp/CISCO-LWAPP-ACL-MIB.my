@@ -3,7 +3,7 @@
 -- CISCO-LWAPP-ACL-MIB.my
 -- August 2006, Sheeba Kamra
 --   
--- Copyright (c) 2005-2006, 2009-20 by Cisco Systems, Inc.
+-- Copyright (c) 2005-2006, 2016-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -171,6 +171,24 @@ claAclCounterEnable OBJECT-TYPE
         of the ACLs that are configured on the controller"
     DEFVAL          { false } 
     ::= { ciscoLwappControllerAclGeneral 1 }
+
+claUrlAclExternalServerIpType OBJECT-TYPE
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object represents the Ip address type of External server
+         to which the blocked URL will be redirected."
+    ::= { ciscoLwappControllerAclGeneral 2 }
+
+claUrlAclExternalServerIp OBJECT-TYPE
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object represents the Ip of External server 
+         to which the blocked URL will be redirected."
+    ::= { ciscoLwappControllerAclGeneral 3 }
 
 
 claCpuAclTable OBJECT-TYPE
@@ -382,8 +400,7 @@ claAclUrl OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The URL used for ACL. This can be used by ACL to
-                 permit or deny "
+                "The URL used for ACL. This can be used by ACL to permit or deny "
         ::= { claAclUrlEntry 2 }
 
 claAclUrlRowStatus OBJECT-TYPE
@@ -393,6 +410,170 @@ claAclUrlRowStatus OBJECT-TYPE
         DESCRIPTION
                  "Used to add or delete an  URL entry in this table."
         ::= { claAclUrlEntry 3 }
+
+-- *******************************************************************
+-- clUrlAclTable
+-- *******************************************************************
+
+claUrlAclTable OBJECT-TYPE
+        SYNTAX       SEQUENCE OF ClaUrlAclEntry
+        MAX-ACCESS   not-accessible
+        STATUS       current
+        DESCRIPTION
+            "The table listing Url ACLs (Access Control Lists)
+             on the Switch."
+        ::= { ciscoLwappControllerAcl 4 }
+
+claUrlAclEntry OBJECT-TYPE
+        SYNTAX       ClaUrlAclEntry
+        MAX-ACCESS   not-accessible
+        STATUS       current
+        DESCRIPTION
+            "Each entry represents the attributes for cLlaUrlAclTable.
+             An entry gets added to the table on creating a Url ACL.Only 64 Url-Acls can be configured"
+    INDEX      { claUrlAclName }
+        ::= { claUrlAclTable 1 }
+
+ClaUrlAclEntry ::= SEQUENCE {
+                claUrlAclName          OCTET STRING,
+                claUrlAclApplyMode     INTEGER,
+                claUrlAclCounterClear  TruthValue,
+                claUrlAclRowStatus     RowStatus, 
+                claUrlAclListType      INTEGER
+                }
+claUrlAclName OBJECT-TYPE
+        SYNTAX     OCTET STRING (SIZE(1..32))
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+             "This object specifies name of the Url Access Control List."
+        ::= { claUrlAclEntry 1 }
+
+claUrlAclApplyMode OBJECT-TYPE
+        SYNTAX          INTEGER  {
+                        notapplied(1),
+                        applied(2)
+                    }
+        MAX-ACCESS read-create
+        STATUS     current
+        DESCRIPTION
+             "This object specifies the apply mode of the Url ACL on the switch.
+            Mode value 'applied' means the Url ACL has been applied on the switch.
+            Default mode on creation on ACL will be notapplied.A user can set applyMode and pass value as applied only. "
+        ::= { claUrlAclEntry 2 }
+
+claUrlAclCounterClear OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object when set to 'true', will clear the
+                 counter of the URL ACL represented by the
+                 unique ACL name."
+        ::= { claUrlAclEntry 3 }
+
+claUrlAclRowStatus OBJECT-TYPE
+        SYNTAX     RowStatus
+        MAX-ACCESS read-create
+        STATUS     current
+        DESCRIPTION
+             "This object specifies the row Status of the UrlACL."
+        ::= { claUrlAclEntry 4 }
+
+claUrlAclListType OBJECT-TYPE
+        SYNTAX          INTEGER  {
+                        whitelist(1),
+                        blacklist(2)
+                    }
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+             "This object specifies the tpye of list. A list can be 
+              whitelist which means all the url configured in acl will 
+              only be permitted or it can be blacklist indicating only 
+              rules specified in the acl will be denied"
+        DEFVAL { whitelist }
+        ::= { claUrlAclEntry 5 }
+
+
+claUrlAclRuleTable OBJECT-TYPE
+        SYNTAX     SEQUENCE OF ClaUrlAclRuleEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "The table listing UrlAcl Rules(Access Control List Entries)
+             on the UrlACL with name cLReapUrlAclName."
+        ::= { ciscoLwappControllerAcl 5 }
+
+claUrlAclRuleEntry OBJECT-TYPE
+        SYNTAX     ClaUrlAclRuleEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "Each entry represents the attributes for claUrlAclRuleTable.
+             An entry gets added to the table on creating a rule on UrlACL.In a given ACL there can only be 100 rules"
+        INDEX           {
+                        claUrlAclName,
+                        claUrlAclRuleIndex
+                    }
+        ::= { claUrlAclRuleTable 1 }
+
+ClaUrlAclRuleEntry ::= SEQUENCE {
+                    claUrlAclRuleIndex                    Unsigned32,
+            claUrlAclRuleUrl                      OCTET STRING,
+                    claUrlAclRuleAction                   INTEGER,
+                    claUrlAclRuleHits                     Counter32,
+                    claUrlAclRuleRowStatus                RowStatus
+                }
+claUrlAclRuleIndex OBJECT-TYPE
+        SYNTAX     Unsigned32
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+             "This object represents the unique index of the UrlACL rule.
+              This can be updated to reset the sequence of the rules of an UrlACL."
+        ::= { claUrlAclRuleEntry 1 }
+
+claUrlAclRuleUrl OBJECT-TYPE
+        SYNTAX          OCTET STRING (SIZE(1..255))
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+             "This object specifies the URL of a rule."
+        ::= { claUrlAclRuleEntry 2 }
+      
+claUrlAclRuleAction OBJECT-TYPE
+        SYNTAX          INTEGER  {
+                        deny(1),
+                        permit(2)
+                    }
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+             "This object specifies the permission mode of a rule."
+        DEFVAL { permit }
+        ::= { claUrlAclRuleEntry 3 }
+
+claUrlAclRuleHits OBJECT-TYPE
+        SYNTAX Counter32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Number of hits in the particular rule under the URL ACL.This object
+             is cleared by setting the claAclCounterClear object."
+        ::= { claUrlAclRuleEntry 4 }
+
+      
+claUrlAclRuleRowStatus OBJECT-TYPE
+        SYNTAX     RowStatus
+        MAX-ACCESS read-create
+        STATUS     current
+        DESCRIPTION
+             "This object specifies the status of a conceptual
+              row in the ACL Rule Table. This is used to create
+              and delete entries in the table."
+        ::= { claUrlAclRuleEntry 5 }
+
 
 -- ********************************************************************
 -- *    Compliance statements
@@ -454,3 +635,4 @@ ciscoLwappAclGroup OBJECT-GROUP
     ::= { ciscoLwappAclMIBGroups 2 }
 
 END
+

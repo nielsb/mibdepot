@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-DOT11-MIB.my
 -- January 2007, Devesh Pujari, Srinath Candadai
 --   
--- Copyright (c) 2007, 2009-2010 by Cisco Systems Inc.
+-- Copyright (c) 2007, 2009-2010-2014, 2017 by Cisco Systems Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -35,7 +35,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappDot11MIB MODULE-IDENTITY
-    LAST-UPDATED    "201005060000Z"
+    LAST-UPDATED    "201705220000Z" 
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -247,6 +247,15 @@ ciscoLwappDot11MIB MODULE-IDENTITY
 
         [4] Enhanced Wireless Consortium PHY Specification,
             v1.27."
+    REVISION        "201705220000Z"
+    DESCRIPTION
+        "Added cldVhtDot11acEnable in cld11acConfig.
+        Added cldLoadBalancingTrafficThreshold  in
+        cldLoadBalancing.
+        Added following in cld11acMcs table:
+        cld11acMcsSpatialStreamIndex,
+        cld11acMcsDataRateIndex,
+        cld11acMcsSupportEnable"
     REVISION        "201005060000Z"
     DESCRIPTION
         "Added cldHtDot11nEnable in CldHtMacOperationsEntry
@@ -267,6 +276,7 @@ ciscoLwappDot11MIB MODULE-IDENTITY
         cldBandSelectAgeOutSuppression
         cldBandSelectAgeOutDualBand
         cldBandSelectClientRssi
+        cldBandSelectClientMidRssi
         Added following table:
         cld11nMcsTable
         cldCountryTable
@@ -419,7 +429,7 @@ cldHtDot11nEnable OBJECT-TYPE
 -- ********************************************************************
 
 cldMultipleCountryCode OBJECT-TYPE
-    SYNTAX          SnmpAdminString (SIZE  (1..255))
+    SYNTAX          SnmpAdminString (SIZE  (1..600))
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
@@ -435,9 +445,9 @@ cldRegulatoryDomain OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object represents the regulatory domains for
-        the controller.
-        Regulatory domain specifies allowed 802.11 chanels.
-        Multiple domains can be listed seperated with spaces." 
+        the controller.Regulatory domain specifies allowed 
+        802.11 chanels.Multiple domains can be listed seperated 
+        with spaces." 
     ::= { cldConfig 3 }
 -- ********************************************************************
 -- *    MCS table
@@ -458,7 +468,7 @@ cld11nMcsEntry OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "An entry in this table represents a MCS data rate for 802.11n
-        band which is uniquely identifies by cld11nMcsDataRateIndex 
+        band which is uniquely identified by cld11nMcsDataRateIndex 
         and cld11nMcsBand.
         All entries are added by the controller at startup.
         cld11nMcsDataRate are calculated by different permutation of
@@ -514,9 +524,9 @@ cld11nMcsSupportEnable OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object is used to enable or disable the data
-        rate.  When this object is set to 'true' the MCS 
-        support is enabled. When this object is set 
-        to 'false' the MCS support is disabled.."
+        rate.   
+        A value of 'true' indicates, MCS support is enabled. 
+        A value of 'false' indicates, MCS support is disabled."
     DEFVAL          { true } 
     ::= { cld11nMcsEntry 4 }
 
@@ -567,9 +577,9 @@ cld11acMcsEntry OBJECT-TYPE
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-        "An entry in this table represents the additional  MCS data rate for 802.11ac
-        band which is uniquely identifies by cld11acMcsSpatialStreamIndex
-        and cld11acMcsDataRateIndex.
+        "An entry in this table represents the additional  MCS data 
+        rate for 802.11ac band which is uniquely identifies by 
+        cld11acMcsSpatialStreamIndex and cld11acMcsDataRateIndex.
         All entries are added by the controller at startup."
     INDEX           {
                         cld11acMcsSpatialStreamIndex,
@@ -609,9 +619,9 @@ cld11acMcsSupportEnable OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object is used to enable or disable the data
-        rate.  When this object is set to 'true' the MCS 
-        support is enabled. When this object is set 
-        to 'false' the MCS support is disabled.."
+        rate.   
+        A value of 'true' indicates the MCS support is enabled. 
+        A value of 'false' indicates the MCS support is disabled."
     DEFVAL          { true } 
     ::= { cld11acMcsEntry 3 }
 
@@ -870,12 +880,26 @@ cldBandSelectClientRssi OBJECT-TYPE
     DESCRIPTION
         "This object specifies minimum mobile station RSSI threshold.
         Mobile stations having RSSI below this value will not be
-        recorded in suppressed table.
-        This configuration filter out far away mobile stations with
-        low signal strength. This will limit the number of
+        recorded in the suppressed table.
+        This configuration filters out far away mobile stations with
+        weaker signal strength. This will limit the number of
         mobile stations on the table to a reasonable amount."
     DEFVAL          { -80 } 
     ::= { cldBandSelect 6 }
+cldBandSelectClientMidRssi OBJECT-TYPE
+    SYNTAX          Integer32 (-90..-20)
+    UNITS           "dBm"
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies medium mobile station RSSI threshold. 
+        Mobile station between this value and cldBandSelectClientRssi
+        will be recorded in suppressed table but will not be denied.
+        The mobile station having RSSI stronger this value will be recorded
+        and denied."
+    DEFVAL          { -80 }
+    ::= { cldBandSelect 7 }
+
 -- ********************************************************************
 -- Channel table for all  Country codes
 -- ********************************************************************
@@ -1076,7 +1100,10 @@ ciscoLwappDot11MIBConfigGroup OBJECT-GROUP
                         cldBandSelectClientRssi,
                         cld11nMcsChannelWidth,
                         cld11nMcsGuardInterval,
-                        cld11nMcsModulation
+                        cld11nMcsModulation,
+                        cldVhtDot11acEnable,
+                        cld11acMcsSupportEnable,
+                        cldLoadBalancingTrafficThreshold
                     }
     STATUS          current
     DESCRIPTION

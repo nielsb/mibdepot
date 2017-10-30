@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-RRM-MIB.my 
 -- February 2007, Devesh Pujari, Srinath Candadai
 --
--- Copyright (c) 2007, 2014 by Cisco Systems, Inc.
+-- Copyright (c) 2007, 2014-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -348,12 +348,18 @@ ClrRrmParametersEntry ::=
 		clrRrmParametersMaxTxPower		 Integer32,
 		clrRrmParametersMinTxPower		 Integer32,
 		clrRrmParametersTpcVersion		 INTEGER,
+                clrRrmParametersChdNoise                 TruthValue,
+                clrRrmParametersChdInterference          TruthValue,
+                clrRrmParametersChdLoad                  TruthValue,
+                clrRrmParametersChdSignal                TruthValue,
+                clrRrmParametersChdDevice                TruthValue,
                 clrRrmParametersMaxClients               Unsigned32,
                 clrRrmParametersRssiCheckEnable          TruthValue, 
                 clrRrmParametersRssiThreshold            Integer32,
                 clrRrmParametersOptRoamEnable            TruthValue,
                 clrRrmParametersOptRoamDataRate          Integer32,
-                clrRrmParametersOptRoamInterval          Integer32
+                clrRrmParametersOptRoamInterval          Integer32,
+                clrRrmParametersClientNetworkPreference  INTEGER
         }
 
 clrRrmParametersType OBJECT-TYPE
@@ -472,20 +478,22 @@ clrRrmParametersDataRssiThreshold OBJECT-TYPE
 
 clrRrmParametersDcaChannelWidth OBJECT-TYPE
         SYNTAX     INTEGER {
-                             min(1),
-                             medium(2),
-                             max(3),
-                             best(4)
+                             twenty(1),
+                             forty(2),
+                             eighty(3),
+                             best(4),
+                             oneSixty(5)
                            }
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
                 "This object specifies how the system performs DCA
                 channel width selection
-                     min    - Min channel width(20Mhz) the radio supports
-                     medium - Medium channel width(40Mhz) supported by this radio.
-                     max    - Max channel width(80Mhz) supported by this radio.
-                     best   - Dynamic channel width(80Mhz, 40Mhz or 20Mhz) supported by this radio."
+                     twenty     - 20MHz channel width supported  the radio supports
+                     forty     - 40MHz channel width supported by this radio.
+                     eighty     - 80MHz channel width supported by this radio.
+                     oneSixty    - 160MHz channel width supported by this radio.
+                     best   - Dynamic channel width(160MHz, 80MHz, 40MHz or 20MHz) supported by this radio."
         ::= { clrRrmParametersEntry 10}
 
 clrRrmParametersMaxTxPower OBJECT-TYPE
@@ -540,6 +548,61 @@ clrRrmParametersTpcVersion OBJECT-TYPE
          If version 2 is selected, TPC would be in interference optimal mode."
     ::= { clrRrmParametersEntry 13 }
 
+clrRrmParametersChdNoise OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of noise
+        on the controller. A value of 'true' 
+        indicates that the detection is enabled. A value 
+        of 'false' indicates that the detection is disabled." 
+    ::= { clrRrmParametersEntry 14 }
+
+clrRrmParametersChdInterference OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of interference
+        on the controller. A value of 'true' 
+        indicates that the detection is enabled. A value 
+        of 'false' indicates that the detection is disabled." 
+    ::= { clrRrmParametersEntry 15 }
+
+clrRrmParametersChdLoad OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of load
+        on the controller. A value of 'true' 
+        indicates that the detection is enabled. A value 
+        of 'false' indicates that the detection is disabled." 
+    ::= { clrRrmParametersEntry 16 }
+
+clrRrmParametersChdSignal OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of signal
+        on the controller. A value of 'true' 
+        indicates that the detection is enabled. A value 
+        of 'false' indicates that the detection is disabled." 
+    ::= { clrRrmParametersEntry 17 }
+
+clrRrmParametersChdDevice OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of device detection
+        on the controller. A value of 'true' 
+        indicates that the detection is enabled. A value 
+        of 'false' indicates that the detection is disabled." 
+    ::= { clrRrmParametersEntry 18 }
+
 clrRrmParametersMaxClients OBJECT-TYPE
     SYNTAX          Unsigned32 (1..200)
     MAX-ACCESS      read-write
@@ -547,7 +610,7 @@ clrRrmParametersMaxClients OBJECT-TYPE
     DESCRIPTION
         "This object represents the maximum allowed clients per radio."
     DEFVAL          { 200 } 
-    ::= { clrRrmParametersEntry 14 }
+    ::= { clrRrmParametersEntry 19 }
     
 clrRrmParametersRssiCheckEnable OBJECT-TYPE
          SYNTAX      TruthValue
@@ -559,7 +622,7 @@ clrRrmParametersRssiCheckEnable OBJECT-TYPE
                  indicates that the check is enabled. A value 
                  of 'false' indicates that the check is disabled."
         DEFVAL { false }
-        ::= { clrRrmParametersEntry 15 }
+        ::= { clrRrmParametersEntry 20 }
 
 clrRrmParametersRssiThreshold OBJECT-TYPE
          SYNTAX Integer32 (-90..-60) 
@@ -570,7 +633,7 @@ clrRrmParametersRssiThreshold OBJECT-TYPE
                 "This object represents the RSSI threshold value for 
                  RSSI low check."
         DEFVAL { -80 }
-        ::= { clrRrmParametersEntry 16 }
+        ::= { clrRrmParametersEntry 21 }
                 
 clrRrmParametersOptRoamEnable OBJECT-TYPE
          SYNTAX      TruthValue
@@ -582,7 +645,7 @@ clrRrmParametersOptRoamEnable OBJECT-TYPE
                  indicates that the feature is enabled. A value 
                  of 'false' indicates that the feature is disabled"
         DEFVAL { false }
-        ::= { clrRrmParametersEntry 17 }
+        ::= { clrRrmParametersEntry 22 }
 
 clrRrmParametersOptRoamDataRate OBJECT-TYPE
          SYNTAX      Integer32 (0..54) 
@@ -592,7 +655,7 @@ clrRrmParametersOptRoamDataRate OBJECT-TYPE
                 "This object represents the data rate threshold value for 
                  Optimized Roaming. A valid data rate in mbps must be entered."
         DEFVAL { 0 }
-        ::= { clrRrmParametersEntry 18 }
+        ::= { clrRrmParametersEntry 23 }
 
 clrRrmParametersOptRoamInterval OBJECT-TYPE
          SYNTAX      Integer32 (5..90) 
@@ -602,7 +665,24 @@ clrRrmParametersOptRoamInterval OBJECT-TYPE
                 "This object represents the reporting interval value for 
                  Optimized Roaming."
         DEFVAL { 90 }
-        ::= { clrRrmParametersEntry 19 }
+        ::= { clrRrmParametersEntry 24 }
+
+clrRrmParametersClientNetworkPreference OBJECT-TYPE
+         SYNTAX          INTEGER  {
+                             connectivity(0),
+                             throughput(1),
+                             default(2)
+                            }
+         MAX-ACCESS  read-write 
+         STATUS      current
+         DESCRIPTION
+           "This object represents the client network preference.
+              connectivity  - RRM Algorithm has a prefereance on connectiviry of the clients
+              throughput    - RRM Algorithm has a preference on high thoughput of the clients
+              default       - RRM Algorithm has no preference on the clients"
+
+        DEFVAL { default }
+        ::= { clrRrmParametersEntry 25 }
 
 --********************************************************************
 --*    Configuration for tuple tuning parameters
@@ -1283,7 +1363,7 @@ clrRrmPakRssiNtpIpAddressType OBJECT-TYPE
          DESCRIPTION
                 "This object represents the NTP server
                  IP address type for Packet RSSI location feature."
-         DEFVAL { 0 }
+         DEFVAL { 1 }
          ::= { clrRrmPakRssiConfig 4 }     
 
 clrRrmPakRssiNtp OBJECT-TYPE
@@ -1296,6 +1376,141 @@ clrRrmPakRssiNtp OBJECT-TYPE
         DEFVAL { 0 }
         ::= { clrRrmPakRssiConfig 5 }
 
+clrRrmFraConfig OBJECT IDENTIFIER ::= { clrRrmConfig 11 }
+
+clrRrmFraEnable OBJECT-TYPE
+         SYNTAX	 TruthValue
+	 MAX-ACCESS	 read-write
+	 STATUS		 current
+	 DESCRIPTION
+		 "This object represents the state of Fra 
+		 feature. A value of 'true'
+		 indicates theat Fra is enabled. A value
+		 of 'false' indicates that Fra is disabled."
+         DEFVAL { false }
+		 ::= { clrRrmFraConfig 1 }
+
+clrRrmFraInterval OBJECT-TYPE
+	  SYNTAX  Integer32
+
+	  MAX-ACCESS 	read-write
+	  STATUS	current
+	  DESCRIPTION
+		  "This object represents the fra interval
+		  in hours for the fra feature."
+	  DEFVAL { 0 }
+		  ::= { clrRrmFraConfig 2 }
+		  
+clrRrmFraSensitivity OBJECT-TYPE
+             SYNTAX  INTEGER {
+                         low(1),
+                         medium(2),
+                         high(3)
+                     }
+	     MAX-ACCESS     read-write
+	     STATUS	    current
+	     DESCRIPTION
+		     "This object represents the sensitivity for
+		      the fra feature, low | medium | high."
+	     DEFVAL { low }
+    	     ::= { clrRrmFraConfig 3 }
+
+clrRrmFraSensorThreshold OBJECT-TYPE
+                        SYNTAX INTEGER {
+                                 clientPriority(0),
+                                 clientPreferred(1),
+                                 balanced(2),
+                                 sensorPreferred(3),
+                                 sensorPriority(4)
+                               }
+                MAX-ACCESS     read-write
+                STATUS     current
+                DESCRIPTION
+                        "This object represents threshold levels for Sensor 
+						 Selection algorithm. Values offered can influence FRA 
+                         algorithm's decision to provide less or more sensor radios 
+                         for WSA service. ClientPriority will ensure highest(default) 
+                         coverage for wireless clients and SensorPriority offers more 
+                         sensor radios offered for WSA service, such threshold with 
+                         weaker coverage for wireless clients."
+                DEFVAL { clientPriority }
+             ::= { clrRrmFraConfig 4 }
+
+clrRrmFraSensorCoverage OBJECT-TYPE
+			SYNTAX Unsigned32 (1..100)
+         	UNITS      "percent"
+         	MAX-ACCESS  read-only
+         	STATUS      current
+         	DESCRIPTION
+                    "This object represents overall sensor coverage 
+                     for entire RRM Group. It will represent % of 
+                     radios covered in the single RF domain."
+        	::= { clrRrmFraConfig 5}
+
+clrRrmFraServicePriority OBJECT-TYPE
+                        SYNTAX INTEGER {
+                                 coverage(0),
+                                 clientAware(1),
+                                 serviceAssurance(2)
+                               }
+                MAX-ACCESS     read-write
+                STATUS     current
+                DESCRIPTION
+                       "This object represents Service Priority of 
+                        Flexible Radio Assignment algorithm.Coverage 
+                        is the default state which will ensure good 
+                        coverage for wireless clients. Client-Aware 
+                        enables more 5GHz radios when network load is 
+                        higher,Service-Assurance enables more sensors 
+                        via excessive radios to ensure good sensor 
+                        coverage for Wireless Service Assurance."
+                DEFVAL { coverage }
+             ::= { clrRrmFraConfig 6 }
+
+clrRrmFraSensorDensityOptimisationTargetRssi OBJECT-TYPE
+			SYNTAX Integer32 
+         	UNITS      "dbm"
+         	MAX-ACCESS  read-only
+         	STATUS      current
+         	DESCRIPTION
+                    "This value represents receiver size cell for 
+                     wireless clients. RSSI value in dBm will 
+                     approximate downlink RSSI for wireless clients. 
+                     Target RSSI represents rough coverage given by 
+                     FRA enabled radio for clients."
+        	::= { clrRrmFraConfig 7 }
+	
+clrRrm11kConfig OBJECT IDENTIFIER ::= { clrRrmConfig 12 }
+
+clrRrm11kDenialMax OBJECT-TYPE
+         SYNTAX     Unsigned32 (1..10)
+         UNITS      "count"
+         MAX-ACCESS  read-write
+         STATUS      current
+         DESCRIPTION
+				"This object represents the maximum number of times a client can
+				 be denied association if the association request that is sent
+				 to an AP does not match any AP in the prediction list."
+                 ::= { clrRrm11kConfig 1 }
+
+clrRrm11kFloorBias OBJECT-TYPE
+         SYNTAX     Unsigned32 (5..25)
+         UNITS      "dBm"
+         MAX-ACCESS  read-write
+         STATUS      current
+         DESCRIPTION
+				"This object represents the neighbor floor label bias in dBm."
+                  ::= { clrRrm11kConfig 2 }
+
+clrRrm11kPredictionMin OBJECT-TYPE
+         SYNTAX     Unsigned32 (2..6)
+         UNITS      "count"
+         MAX-ACCESS  read-write
+         STATUS      current
+         DESCRIPTION
+				"This object represents the minimum number of predicted APs 
+				 required for the prediction list feature to be activated."
+             ::= { clrRrm11kConfig 3 }
 --********************************************************************
 --*    NOTIFICATION Variable
 --********************************************************************

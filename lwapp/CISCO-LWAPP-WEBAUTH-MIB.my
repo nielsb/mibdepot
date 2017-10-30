@@ -3,7 +3,7 @@
 -- Light Weight Access Point Web Authentication MIB 
 -- January 2006, Devesh Pujari, Prasanna Viswakumar
 --
--- Copyright (c) 2006 by Cisco Systems, Inc.
+-- Copyright (c) 2006, 2016-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -355,6 +355,32 @@ cLWAWebAuthSecureWeb OBJECT-TYPE
                  A value of 'false' disable webauth clent."
         ::= { ciscoLwappWebAuthConfig 12 }
 
+cLWAWebAuthLoginSuccessPageMode OBJECT-TYPE
+        SYNTAX     INTEGER  {
+                        default(1),
+                        none(2)
+                    }
+
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object specifies the page that would be dispalyed after webauth is successful.
+                 A value of 'default' means default page would be displayed after web-auth page success.
+                 A value of 'none' means a blank page will be displayed after web-auth page success."
+	DEFVAL { default }
+        ::= { ciscoLwappWebAuthConfig 13 }
+
+cLWACaptiveBypassMode OBJECT-TYPE
+        SYNTAX     TruthValue
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object specifies the mode of webauth captive bypass.
+                 A value of 'true' enables webauth captive bypass.
+                 A value of 'false' disables webauth captive bypass."
+        DEFVAL  { false }
+        ::= { ciscoLwappWebAuthConfig 14 }
+
 cLWebAuthWlanConfigTable OBJECT-TYPE
 	SYNTAX     SEQUENCE OF CLWebAuthWlanConfigEntry
 	MAX-ACCESS not-accessible 
@@ -387,7 +413,8 @@ CLWebAuthWlanConfigEntry ::=
 		cLWlanExternalWebAuthUrl  CiscoURLString, 
 	    	cLWlanWebAuthLoginFailurePage SnmpAdminString,
 	    	cLWlanWebAuthLogoutPage SnmpAdminString,
-                cLWlanExternalWebAuthAcl SnmpAdminString
+                cLWlanExternalWebAuthAcl SnmpAdminString,
+        cLWlanWebAuthCaptiveBypassMode INTEGER 
 	}
 
 cLWlanGlobalWebAuthConfig OBJECT-TYPE
@@ -475,6 +502,22 @@ cLWlanExternalWebAuthAcl OBJECT-TYPE
                  switched locally for reaching the External web server.
 		 This is applicable only when the web-auth type is external."
         ::= { cLWebAuthWlanConfigEntry  7 }
+
+cLWlanWebAuthCaptiveBypassMode OBJECT-TYPE
+        SYNTAX     INTEGER  {
+                           enabled(1),
+                           disabled(2),
+                           none(3)
+                    }
+
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object specifies the page that would be dispalyed after webauth is successful.
+                 A value of 'default' means default page would be displayed after web-auth page success.
+                 A value of 'none' means a blank page will be displayed after web-auth page success."
+        ::= { cLWebAuthWlanConfigEntry 8 }
+
 	
 --********************************************************************
 --*    External Webserver table  

@@ -3,7 +3,7 @@
 -- CISCO-LWAPP-HA-MIB.my : 
 -- Jan 2012, Gayathri
 --
--- Copyright (c) 2007, 2014-2015 by Cisco Systems, Inc.
+-- Copyright (c) 2007, 2014-2015, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -14,13 +14,13 @@ IMPORTS
         NOTIFICATION-TYPE,
         OBJECT-TYPE,
         Unsigned32,
-	IpAddress
+    IpAddress
                 FROM SNMPv2-SMI
         OBJECT-GROUP,
         NOTIFICATION-GROUP
                 FROM SNMPv2-CONF
         TruthValue,
-	TimeStamp, MacAddress, RowStatus
+    TimeStamp, MacAddress, RowStatus
                 FROM SNMPv2-TC 
         InetAddressType,
         InetAddress
@@ -63,7 +63,7 @@ ciscoLwappHaMIB    MODULE-IDENTITY
                 tunnel from Cisco Light-weight LWAPP Access Points.
 
                 This MIB is used to show and configure High availability 
-		(HA) related statistics.
+        (HA) related statistics.
 
 
                 The relationship between CC and the LWAPP APs
@@ -156,26 +156,26 @@ ciscoLwappHaMIBObjects OBJECT IDENTIFIER
         ::= { ciscoLwappHaMIB 0 }
 
 ciscoLwappHaGlobalConfig OBJECT IDENTIFIER
-	::= { ciscoLwappHaMIBObjects 1 }
+    ::= { ciscoLwappHaMIBObjects 1 }
 
 ciscoLwappHaNetworkConfig OBJECT IDENTIFIER
-	::= { ciscoLwappHaMIBObjects 2 }
+    ::= { ciscoLwappHaMIBObjects 2 }
 
 ciscoLwappHaMIBNotifs OBJECT IDENTIFIER 
         ::= { ciscoLwappHaMIBObjects 3 }
 
-	
+    
 --*************************************************
 --HA Global Config
 --*************************************************
 
 cLHaApSsoConfig OBJECT-TYPE
-	SYNTAX	    TruthValue
-	MAX-ACCESS  read-write
-	STATUS	    current
-	DESCRIPTION
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
         ""
-	::= { ciscoLwappHaGlobalConfig  1 }
+    ::= { ciscoLwappHaGlobalConfig  1 }
 
 cLHaPeerIpAddressType  OBJECT-TYPE
         SYNTAX          InetAddressType
@@ -191,7 +191,7 @@ cLHaPeerIpAddress  OBJECT-TYPE
         STATUS          current
         DESCRIPTION
         ""
-	::= { ciscoLwappHaGlobalConfig  3 }
+    ::= { ciscoLwappHaGlobalConfig  3 }
 
 
 cLHaServicePortPeerIpAddressType  OBJECT-TYPE
@@ -300,8 +300,8 @@ cLHaKATimeout OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Keep-Alive timeout value in milli seconds between 100 and 1000.
- 		To alter the config value should be specified in multiples of 50"
-    DEFVAL   { 100 }		
+        To alter the config value should be specified in multiples of 50"
+    DEFVAL   { 100 }        
         ::= { ciscoLwappHaGlobalConfig  16 }
 
 cLHaKARetryCount OBJECT-TYPE
@@ -310,8 +310,8 @@ cLHaKARetryCount OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object is used to configure Keep-Alive retry count and 
-		the configurable values are between 3 and 10"
-    DEFVAL   { 3 }		
+        the configurable values are between 3 and 10"
+    DEFVAL   { 3 }      
         ::= { ciscoLwappHaGlobalConfig  17 }
 
 cLHaGwRetryCount OBJECT-TYPE
@@ -320,19 +320,19 @@ cLHaGwRetryCount OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object is used to configure Default Gateway reachability 
-		retry count and the configurable values are between 6 and 12"
-    DEFVAL   { 12 }		
+        retry count and the configurable values are between 6 and 12"
+    DEFVAL   { 12 }     
         ::= { ciscoLwappHaGlobalConfig  18 }
-		
+        
 cLHaPeerSearchTimeout OBJECT-TYPE
     SYNTAX          Unsigned32
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
         "This object is used to configure peer search timeout and the 
-		configurable values range from 60 and 300 seconds."
-    DEFVAL   { 200 }		
-        ::= { ciscoLwappHaGlobalConfig  19 }		
+        configurable values range from 60 and 300 seconds."
+    DEFVAL   { 200 }        
+        ::= { ciscoLwappHaGlobalConfig  19 }        
 
 --********************************************************************
 -- cLHaNeworkRoutePeerTable
@@ -560,11 +560,11 @@ cLHaAllCpuUsage OBJECT-TYPE
      STATUS      current
      DESCRIPTION
         "This object specifies the HA peer all CPUs usage 
-		consuructed as a string."
+        consuructed as a string."
      DEFVAL { "" }
      ::= {cLHaCpuStatistics 1 }
 
-cLHaPowerSupplyStatistics OBJECT IDENTIFIER ::= { cLHaSystemStatistics 2 }	 
+cLHaPowerSupplyStatistics OBJECT IDENTIFIER ::= { cLHaSystemStatistics 2 }   
 cLHaPowerSupply1Present OBJECT-TYPE
      SYNTAX      INTEGER {
                  false(0),
@@ -644,7 +644,7 @@ cLHaFreeSystemMemory  OBJECT-TYPE
        "This object represents the free system memory in Kbytes "
     DEFVAL { 0 }
     ::= {  cLHaMemoryStatistics 2 }
-	
+    
 cLHaUsedSystemMemory  OBJECT-TYPE
     SYNTAX      Integer32 
     MAX-ACCESS  read-only 
@@ -716,7 +716,7 @@ cLHaTopMostReleasableSpace  OBJECT-TYPE
     STATUS current
     DESCRIPTION
        "This object represents the top most releasable space in Kbytes"
-    DEFVAL { 0 }	   
+    DEFVAL { 0 }       
     ::= {  cLHaMemoryStatistics 10 }
 
 cLHaTotalAllocatedInclMmap   OBJECT-TYPE
@@ -736,7 +736,7 @@ cLHaTotalUsedInclMmap   OBJECT-TYPE
     DESCRIPTION
        "This object represents the total memory in-use including 
         memory map in Kbytes"
-    DEFVAL { 0 }		
+    DEFVAL { 0 }        
     ::= {  cLHaMemoryStatistics 12 }
 
 cLHaTotalFreeInclMmap   OBJECT-TYPE
@@ -746,7 +746,7 @@ cLHaTotalFreeInclMmap   OBJECT-TYPE
     DESCRIPTION
        "This object represents the total free memory including 
         memory map in Kbytes"
-    DEFVAL { 0 }		
+    DEFVAL { 0 }        
     ::= {  cLHaMemoryStatistics 13 }
 
 --********************************************************************
@@ -760,7 +760,7 @@ cLHaAvgPeerReachLatency OBJECT-TYPE
      STATUS      current
      DESCRIPTION
         "This object specifies average value of peer controller 
-		reachable Latency in micro seconds"
+        reachable Latency in micro seconds"
      DEFVAL { 0 }
      ::= {ciscoLwappHaStatisticsVariable 1 }
 
@@ -770,7 +770,7 @@ cLHaAvgGwReachLatency OBJECT-TYPE
      STATUS      current
      DESCRIPTION
         "This object specifies average value of default GW  
-		reachable Latency in micro seconds"
+        reachable Latency in micro seconds"
      DEFVAL { 0 }
      ::= {ciscoLwappHaStatisticsVariable 2 }
 
@@ -782,7 +782,8 @@ cLHaBulkSyncStatus OBJECT-TYPE
         "This object specifies current status of Bulk Sync"
      DEFVAL { "" }
      ::= {ciscoLwappHaStatisticsVariable 3 }
-	 
+     
 
 END
+
 

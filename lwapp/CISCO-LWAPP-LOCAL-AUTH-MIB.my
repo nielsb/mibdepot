@@ -1,8 +1,8 @@
 -- *******************************************************************
 -- CISCO-LWAPP-LOCAL-AUTH-MIB.my 
 -- March 2007, Devesh Pujari, Srinath Candadai
---
--- Copyright (c) 2007 by Cisco Systems, Inc.
+--   
+-- Copyright (c) 2007-2010, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -32,7 +32,7 @@ IMPORTS
 --********************************************************************
 
 ciscoLwappLocalAuthMIB   MODULE-IDENTITY
-        LAST-UPDATED   "200703150000Z"
+        LAST-UPDATED   "201703010000Z"
         ORGANIZATION   "Cisco Systems Inc."
         CONTACT-INFO  
                "        Cisco Systems,
@@ -145,34 +145,69 @@ ciscoLwappLocalAuthMIB   MODULE-IDENTITY
                 This is a cryptographic protocol which provides secure 
                 communication over the network.
 
-                Lightweight Directory Access Protocol ( LDAP )
+        Protected Extensible Authentication Protocol ( PEAP )
+
+        PEAP is a method to securely transmit authentication 
+        information, including passwords, over wired or wireless 
+        networks.
+
+        Lightweight Directory Access Protocol ( LDAP )
 
                 LDAP is a protocol used for obtaining directory services 
                 and runs over TCP/IP.
 
-                REFERENCE
- 
-                [1] Wireless LAN Medium Access Control ( MAC ) and
-                Physical Layer ( PHY ) Specifications
-  
-                [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
-                Weight Access Point Protocol "
-        
-        REVISION      "200703150000Z"
-        DESCRIPTION
-                "Initial version of this MIB module. "
-        ::= { ciscoMgmt 619 } 
-        
-ciscoLwappLocalAuthMIBNotifs  OBJECT IDENTIFIER ::= { ciscoLwappLocalAuthMIB 0 }
-ciscoLwappLocalAuthMIBObjects OBJECT IDENTIFIER ::= { ciscoLwappLocalAuthMIB 1 }
-ciscoLwappLocalAuthMIBConform OBJECT IDENTIFIER ::= { ciscoLwappLocalAuthMIB 2 }
+        REFERENCE
 
-cllaConfig OBJECT IDENTIFIER ::= { ciscoLwappLocalAuthMIBObjects 1 }
+        [1] Wireless LAN Medium Access Control ( MAC ) and
+        Physical Layer ( PHY ) Specifications
+
+        [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
+        Weight Access Point Protocol"
+    REVISION        "201703010000Z"
+    DESCRIPTION
+        "-Added the following objects:
+        cllaEapBroadcastKeyInterval"
+    REVISION        "201002090000Z"
+    DESCRIPTION
+        "-Added the following objects:
+        *cllaEapMaxLoginIgnIdResp,
+        *cllaEapKeyTimeout, 
+        *cllaEapKeyMaxRetries."
+    REVISION        "200911240000Z"
+    DESCRIPTION
+        "-Added the following objects:
+        *cllaEapIdentityReqTimeout,
+        *cllaEapIdentityReqMaxRetries, 
+        *cllaEapDynamicWepKeyIndex,
+        *cllaEapReqTimeout 
+        *cllaEapReqMaxRetries. 
+        -Added 'peap' bit for cllaEapProfileMethods object.
+        -Added ciscoLwappLocalAuthMIBConfigGroupSup1 OBJECT-GROUP,
+        -Added ciscoLwappLocalAuthMIBComplianceRev1 MODULE-COMPLIANCE."
+    REVISION        "200703150000Z"
+    DESCRIPTION
+        "Initial version of this MIB module."
+    ::= { ciscoMgmt 619 }
+
+
+ciscoLwappLocalAuthMIBNotifs  OBJECT IDENTIFIER
+    ::= { ciscoLwappLocalAuthMIB 0 }
+
+ciscoLwappLocalAuthMIBObjects  OBJECT IDENTIFIER
+    ::= { ciscoLwappLocalAuthMIB 1 }
+
+ciscoLwappLocalAuthMIBConform  OBJECT IDENTIFIER
+    ::= { ciscoLwappLocalAuthMIB 2 }
+
+cllaConfig  OBJECT IDENTIFIER
+    ::= { ciscoLwappLocalAuthMIBObjects 1 }
 
 -- ********************************************************************
 -- Global Local Auth configs 
 -- ********************************************************************
-cllaLocalAuth OBJECT IDENTIFIER ::= { cllaConfig 1}
+
+cllaLocalAuth  OBJECT IDENTIFIER
+    ::= { cllaConfig 1 }
 
 cllaActiveTimeout OBJECT-TYPE
         SYNTAX Unsigned32 (1..3600)
@@ -180,8 +215,8 @@ cllaActiveTimeout OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object represents timeout period for the Local EAP 
-                to remain active, in seconds."
+                "This object specifies timeout period for the Local EAP 
+                to remain active."
         DEFVAL { 300 }
         ::= { cllaLocalAuth 1 }
 
@@ -191,9 +226,8 @@ cllaEapIdentityReqTimeout OBJECT-TYPE
         MAX-ACCESS read-write
 	STATUS     current
 	DESCRIPTION
-		"This object represents timeout period for the EAP 
-		identity request, within which response should be sent,
-		in seconds."
+		"This object specifies timeout period for the EAP 
+		identity request, within which response should be sent."
 	DEFVAL { 1 }
 	::= { cllaLocalAuth 2 }	
 
@@ -202,20 +236,31 @@ cllaEapIdentityReqMaxRetries OBJECT-TYPE
         MAX-ACCESS read-write
 	STATUS     current
 	DESCRIPTION
-		"This object represents maximum number of retransmissions 
+		"This object specifies maximum number of retransmissions 
 		for EAP Identity request."
 	DEFVAL { 20 }
 	::= { cllaLocalAuth 3 }
 
 cllaEapDynamicWepKeyIndex OBJECT-TYPE
-	SYNTAX Unsigned32
-	MAX-ACCESS read-write
-	STATUS     current
-	DESCRIPTION
-		"This object represents key index for the EAP dynamic 
-		Wired Equivalent Privacy policy."
-	DEFVAL { 0 }
-	::= { cllaLocalAuth 4 }
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies key index for the EAP dynamic
+        Wired Equivalent Privacy security policy. 
+
+        It applies to Static WEP key index of WLAN which has layer 2
+         security of type Static WEP. According to 802.11 standard 4
+        keys 
+        are supported for informing Mobile Station (clients) which key
+        it 
+        should use for Static WEP Authentication
+
+        The default value of 0 works for all devices, but for some old
+        devices/clients which uses the unicast key as 3, the key index 
+        has to be configured to 3 to match the client side setting."
+    DEFVAL          { 0 } 
+    ::= { cllaLocalAuth 4 }
 
 cllaEapReqTimeout OBJECT-TYPE
 	SYNTAX Unsigned32 (1..120)
@@ -223,9 +268,8 @@ cllaEapReqTimeout OBJECT-TYPE
         MAX-ACCESS read-write
 	STATUS     current
 	DESCRIPTION
-		"This object represents timeout period for the EAP request
-		, within which response should be sent,
-		in seconds."
+		"This object specifies timeout period for the EAP request
+		, within which response should be sent."
 	DEFVAL { 1 }
 	::= { cllaLocalAuth 5 }	
 
@@ -234,7 +278,7 @@ cllaEapReqMaxRetries OBJECT-TYPE
         MAX-ACCESS read-write
 	STATUS     current
 	DESCRIPTION
-		"This object represents maximum number of retransmissions 
+		"This object specifies maximum number of retransmissions 
 		 for EAP request."
 	DEFVAL { 2 }
 	::= { cllaLocalAuth 6 }
@@ -244,10 +288,12 @@ cllaEapMaxLoginIgnIdResp OBJECT-TYPE
        MAX-ACCESS  read-write
        STATUS      current
        DESCRIPTION
-          "This objects represents for Enable to limit the number of devices that can
-          be connected to the controller with the same username. You can login up to eight
+          "This objects specifies whether the check to limit the number of devices that can
+          be connected to the controller with the same username is enabled or not. You can login up to eight
           times from different devices (PDA, laptop, IP phone, and so on) on the same
-          controller. The default value is enabled."
+          controller.
+          A value of 'true' indicates it's enabled.
+          A value of 'false' indicates it's disabled."
        DEFVAL {true}
         ::= { cllaLocalAuth 7 }
 
@@ -257,10 +303,9 @@ cllaEapKeyTimeout OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object represents the amount of time (in seconds) in which the
+                "This object specifies the amount of time in which the
                  controller attempts to send an EAP key over the LAN to wireless clients
-                 using local EAP. The valid range is 1 to 5 seconds, and the default
-                 setting is 1 second. ."
+                 using local EAP."
         DEFVAL { 1000 }
         ::= { cllaLocalAuth 8 }
 
@@ -269,20 +314,19 @@ cllaEapKeyMaxRetries OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object represents the maximum number of times that the controller
-                 attempts to send an EAP key over the LAN to wireless clients using local EAP.
-                 The valid range is 0 to 4 retries, and the default setting is 2 retries."
+                "This object specifies the maximum number of times that the controller
+                 attempts to send an EAP key over the LAN to wireless clients using local EAP."
         DEFVAL { 2 }
         ::= { cllaLocalAuth 9 }
 
 cllaEapBroadcastKeyInterval OBJECT-TYPE
         SYNTAX Unsigned32 (120..86400)
+	    UNITS  "seconds"
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object represents the amount of time (in seconds)in which the controller
-                 attempts to send an EAP key over the LAN to wireless clients using local EAP.
-                 The valid range is 120 to 86400 seconds, and the default setting is 120 seconds."
+                "This object specifies the amount of time in which the controller
+                 attempts to send an EAP key over the LAN to wireless clients using local EAP."
         DEFVAL { 120 }
         ::= { cllaLocalAuth 10 }
 
@@ -338,23 +382,24 @@ cllaEapProfileName OBJECT-TYPE
         ::= { cllaEapProfileEntry 1 }
 
 cllaEapProfileMethods OBJECT-TYPE
-        SYNTAX BITS {
-                          none(0),
-                          leap(1),
-                          eapFast(2),
-                          tls(3),
-                          peap(4)
-                       }
-        MAX-ACCESS read-create
-        STATUS     current
-        DESCRIPTION
-               "This object represents the method type for this 
-                entry.
-                   none     - No method is in use
-                   leap     - LEAP is used as one of the methods
-                   eap-fast - EAP-FAST is used as one of the methods
-                   tls      - TLS is being used as one of the methods. "
-        ::= { cllaEapProfileEntry 2 }
+    SYNTAX          BITS {
+                        none(0),
+                        leap(1),
+                        eapFast(2),
+                        tls(3),
+                        peap(4)
+                    }
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the method type for this
+        entry.
+           none     - No method is in use
+           leap     - LEAP is used as one of the methods
+           eapFast - EAP-FAST is used as one of the methods
+           tls      - TLS is being used as one of the methods
+           peap     - PEAP is being used as one of the methods." 
+    ::= { cllaEapProfileEntry 2 }
 
 cllaEapProfileCertIssuer OBJECT-TYPE
         SYNTAX INTEGER {
@@ -364,7 +409,7 @@ cllaEapProfileCertIssuer OBJECT-TYPE
         MAX-ACCESS  read-create
         STATUS      current
         DESCRIPTION
-           "This object represents the name of the certificate issuer
+           "This object specifies the name of the certificate issuer
                 cisco  - Cisco is the certificate issuer.
                 vendor - The issuer is an outside vendor."
         DEFVAL { cisco }
@@ -375,8 +420,10 @@ cllaEapProfileCaCertificationCheck  OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-           "This parameter indicates whether to check peer certificate 
-            against installed CA certificates."
+           "This parameter specifies whether to check peer certificate 
+            against installed CA certificates.
+            A value of 'true' indicates it's installed.
+            A value of 'false' indicates it's not installed."
         DEFVAL { true }
         ::= { cllaEapProfileEntry 4 }
 
@@ -385,7 +432,7 @@ cllaEapProfileCnCertificationIdVerify  OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-           "This parameter indicates whether to verify certificate 
+           "This parameter specifies whether to verify certificate 
             CN against peer identity and user database."
         DEFVAL { false }
         ::= { cllaEapProfileEntry 5 }
@@ -395,8 +442,10 @@ cllaEapProfileDateValidityEnabled  OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-           "This parameter indicates whether to verify certificate 
-            date is valid and is within validity period."
+           "This parameter specifies whether to verify certificate 
+            date is valid and is within validity period.
+            A value of 'true' indicates it's valid.
+            A value of 'false' indicates it's not valid."
         DEFVAL { true }
         ::= { cllaEapProfileEntry 6 }
 
@@ -405,7 +454,7 @@ cllaEapProfileLocalCertificateRequired  OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-           "This is applicable when cllaEapProfileMethods is 
+           "This object specifies cllaEapProfileMethods is 
             EAP-FAST parameter. This parameter indicates 
             whether local certificate is required." 
         DEFVAL { false }
@@ -416,7 +465,7 @@ cllaEapProfileClientCertificateRequired  OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-            "This is applicable when cllaEapProfileMethods is 
+            "This object specifies cllaEapProfileMethods is 
              EAP-FAST parameter. This parameter indicates 
              whether client certificate is required." 
         DEFVAL { false }
@@ -427,7 +476,7 @@ cllaEapProfileRowStatus OBJECT-TYPE
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
-                "Used to add or delete an entry in this table."
+                "This object specifies to add or delete an entry in this table."
         ::= { cllaEapProfileEntry 9 }
 
 
@@ -472,7 +521,7 @@ cllaWlanProfileName OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The profile name configured for this WLAN." 
+                "This object specifies the profile name configured for this WLAN." 
         ::= { cllaWlanProfileEntry 1 }
 
 cllaWlanProfileState OBJECT-TYPE
@@ -480,8 +529,8 @@ cllaWlanProfileState OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object indicates whether Local Authentication
-                is enabled or disables for this WLAN."
+                "This object specifies whether Local Authentication
+                is enabled or disabled for this WLAN."
         ::= { cllaWlanProfileEntry 2 }
 
 -- ********************************************************************
@@ -540,7 +589,7 @@ cllaUserPriorityNumber OBJECT-TYPE
        MAX-ACCESS  read-write
        STATUS      current
        DESCRIPTION
-           "This object represents the order in which the user credentials
+           "This object specifies the order in which the user credentials
            are validated by the controller.  At start up,
            the agent assigns the value of this object. Later this can
            be changed  by the management station.  
@@ -557,7 +606,9 @@ cllaUserPriorityNumber OBJECT-TYPE
 -- Local-auth  eap-fast method parameters 
 -- ********************************************************************
 
-cllaEapParams OBJECT IDENTIFIER ::= { cllaConfig 5 }
+cllaEapParams  OBJECT IDENTIFIER
+    ::= { cllaConfig 5 }
+
 
 cllaEapMethodPacTtl  OBJECT-TYPE      
         SYNTAX Unsigned32(1..1000)
@@ -565,7 +616,7 @@ cllaEapMethodPacTtl  OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-            "This is EAP Fast parameter. This parameter represents 
+            "This object specifies EAP Fast parameter. This parameter represents 
              time to live for the protected access credentials."
         DEFVAL { 10 }
         ::= { cllaEapParams 1 }
@@ -575,7 +626,7 @@ cllaEapAnonymousProvEnabled  OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-            "This is EAP Fast parameter. This parameter represents 
+            "This object specifies EAP Fast parameter. This parameter represents 
              whether anonymous provisioning is enabled. A value of 
              'true' indicates the controller will accept anonymous 
              requests. A value of 'false' indicates that the controller
@@ -588,7 +639,7 @@ cllaEapAuthorityId  OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-            "This is EAP Fast parameter. This parameter configures 
+            "This object specifies EAP Fast parameter. This parameter configures 
              the authority ID. The maximum length per platform is 
              specified by the cllaEapAuthorityIdLength object." 
         ::= { cllaEapParams 3 }
@@ -598,7 +649,7 @@ cllaEapAuthorityInfo  OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-            "This is EAP Fast parameter. This parameter configures 
+            "This object specifies EAP Fast parameter. This parameter configures 
              the authority information." 
         ::= { cllaEapParams 4 }
 
@@ -607,7 +658,7 @@ cllaEapServerKey  OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-            "This is EAP Fast parameter. This parameter configures 
+            "This object specifies EAP Fast parameter. This parameter configures 
              the server key ID." 
         ::= { cllaEapParams 5 }
 
@@ -616,7 +667,7 @@ cllaEapAuthorityIdLength  OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS     current
         DESCRIPTION
-            "This object represents the length of the cllaEapAuthorityId 
+            "This object indicates the length of the cllaEapAuthorityId 
              object, supported by this agent implementation." 
         DEFVAL { 32 }
         ::= { cllaEapParams 6 }
@@ -632,43 +683,85 @@ ciscoLwappLocalAuthMIBGroups OBJECT IDENTIFIER
 
 
 ciscoLwappLocalAuthMIBCompliance MODULE-COMPLIANCE
-        STATUS     current 
-        DESCRIPTION
-                "The compliance statement for the SNMP entities that
-                implement the ciscoLwappLocalAuthMIB module. "
-        MODULE MANDATORY-GROUPS {                
-                ciscoLwappLocalAuthMIBConfigGroup
-        }
-        ::= { ciscoLwappLocalAuthMIBCompliances 1 }
+    STATUS          deprecated
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappLocalAuthMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS { ciscoLwappLocalAuthMIBConfigGroup }
+    ::= { ciscoLwappLocalAuthMIBCompliances 1 }
+
+ciscoLwappLocalAuthMIBComplianceRev1 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappLocalAuthMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS { ciscoLwappLocalAuthMIBConfigGroupSup1 }
+    ::= { ciscoLwappLocalAuthMIBCompliances 2 }
 
 ciscoLwappLocalAuthMIBConfigGroup OBJECT-GROUP
-        OBJECTS {
-                    cllaActiveTimeout, 
-                    cllaEapProfileMethods,
-                    cllaEapProfileCertIssuer,
-                    cllaEapProfileCaCertificationCheck,
-                    cllaEapProfileCnCertificationIdVerify,
-                    cllaEapProfileDateValidityEnabled,
-                    cllaEapProfileLocalCertificateRequired,
-                    cllaEapProfileClientCertificateRequired,
-                    cllaEapProfileRowStatus,
-                    cllaWlanProfileName,
-                    cllaWlanProfileState,
-                    cllaUserPriorityNumber,
-                    cllaEapMethodPacTtl,
-                    cllaEapAnonymousProvEnabled,
-                    cllaEapAuthorityId,
-                    cllaEapAuthorityInfo,
-                    cllaEapServerKey,
-                    cllaEapAuthorityIdLength
-        }
-        STATUS     current
-        DESCRIPTION
-                "This collection of objects specifies the required
-                configuration parameters for local authentication."
-        ::= { ciscoLwappLocalAuthMIBGroups 1 }
+    OBJECTS         {
+                        cllaActiveTimeout,
+                        cllaEapProfileMethods,
+                        cllaEapProfileCertIssuer,
+                        cllaEapProfileCaCertificationCheck,
+                        cllaEapProfileCnCertificationIdVerify,
+                        cllaEapProfileDateValidityEnabled,
+                        cllaEapProfileLocalCertificateRequired,
+                        cllaEapProfileClientCertificateRequired,
+                        cllaEapProfileRowStatus,
+                        cllaWlanProfileName,
+                        cllaWlanProfileState,
+                        cllaUserPriorityNumber,
+                        cllaEapMethodPacTtl,
+                        cllaEapAnonymousProvEnabled,
+                        cllaEapAuthorityId,
+                        cllaEapAuthorityInfo,
+                        cllaEapServerKey,
+                        cllaEapAuthorityIdLength
+                    }
+    STATUS          deprecated
+    DESCRIPTION
+        "This collection of objects specifies the required
+        configuration parameters for local authentication."
+    ::= { ciscoLwappLocalAuthMIBGroups 1 }
 
-
+ciscoLwappLocalAuthMIBConfigGroupSup1 OBJECT-GROUP
+    OBJECTS         {
+                        cllaActiveTimeout,
+                        cllaEapIdentityReqTimeout,
+                        cllaEapIdentityReqMaxRetries,
+                        cllaEapDynamicWepKeyIndex,
+                        cllaEapReqTimeout,
+                        cllaEapReqMaxRetries,
+                        cllaEapProfileMethods,
+                        cllaEapProfileCertIssuer,
+                        cllaEapProfileCaCertificationCheck,
+                        cllaEapProfileCnCertificationIdVerify,
+                        cllaEapProfileDateValidityEnabled,
+                        cllaEapProfileLocalCertificateRequired,
+                        cllaEapProfileClientCertificateRequired,
+                        cllaEapProfileRowStatus,
+                        cllaWlanProfileName,
+                        cllaWlanProfileState,
+                        cllaUserPriorityNumber,
+                        cllaEapMethodPacTtl,
+                        cllaEapAnonymousProvEnabled,
+                        cllaEapAuthorityId,
+                        cllaEapAuthorityInfo,
+                        cllaEapServerKey,
+                        cllaEapAuthorityIdLength,
+                        cllaEapMaxLoginIgnIdResp,
+                        cllaEapKeyTimeout,
+                        cllaEapKeyMaxRetries,
+                        cllaEapBroadcastKeyInterval
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects specifies the required
+        configuration parameters for local authentication."
+    ::= { ciscoLwappLocalAuthMIBGroups 2 }
 
 END
 

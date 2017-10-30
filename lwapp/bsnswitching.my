@@ -1519,7 +1519,8 @@ IMPORTS
            agentInterfaceAclName                 DisplayString,
            agentInterfaceAPManagementFeature     INTEGER,
            agentInterfaceRowStatus               RowStatus,
-           agentInterfaceVlanQuarantine          TruthValue
+           agentInterfaceVlanQuarantine          TruthValue,
+           agentInterfaceUrlAclName              DisplayString
        }
 
     agentInterfaceName OBJECT-TYPE
@@ -1718,6 +1719,19 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
         DEFVAL  { false }
         ::= { agentInterfaceConfigEntry 17 }
 
+    agentInterfaceUrlAclName OBJECT-TYPE
+         SYNTAX      DisplayString (SIZE(0..32))
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                     "Name of the URL Access Control List applied to the
+                      interface. This attribute is applicable only to
+                      the management interface and other dynamic
+                      interfaces. If it is required to remove the ACL
+                      name for an interface, it should be set to an
+                      empty string."
+         ::= { agentInterfaceConfigEntry 18 }
+
     agentInterfaceRowStatus OBJECT-TYPE
          SYNTAX    RowStatus
          MAX-ACCESS  read-create
@@ -1733,7 +1747,7 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
    agentNtpConfigGroup   OBJECT IDENTIFIER ::= { agentConfigGroup 14 }
 
     agentNtpPollingInterval OBJECT-TYPE
-         SYNTAX      Integer32(3600..604800)
+         SYNTAX      Integer32(60..604800)
          MAX-ACCESS  read-write
          STATUS      current
          DESCRIPTION
@@ -1794,6 +1808,59 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
                      "NTP server entry row status."
          ::= { agentNtpServerEntry 20 }
 
+--********************************************************************
+-- agentNtpDnsServerTable - Configuration of Network Time Protocol Server
+--                          that supports DNS strings.
+--********************************************************************
+
+    agentNtpDnsServerTable OBJECT-TYPE
+         SYNTAX      SEQUENCE OF AgentNtpDnsServerEntry
+         MAX-ACCESS  not-accessible
+         STATUS      current
+         DESCRIPTION
+                     "A summary table for switch's lag config entries"
+         ::= { agentNtpConfigGroup 3 }
+
+    agentNtpDnsServerEntry OBJECT-TYPE
+         SYNTAX      AgentNtpDnsServerEntry
+         MAX-ACCESS  not-accessible
+         STATUS      current
+         DESCRIPTION
+                     "Switch's NTP Server entry. Upto 4 entries may be
+                      added."
+         INDEX       { agentNtpDnsServerIndex }
+         ::= { agentNtpDnsServerTable 1 }
+
+    AgentNtpDnsServerEntry ::= SEQUENCE {
+             agentNtpDnsServerIndex      Integer32,
+             agentNtpDnsServerAddress    DisplayString,
+             agentNtpDnsServerRowStatus  RowStatus
+             }
+
+    agentNtpDnsServerIndex OBJECT-TYPE
+         SYNTAX      Integer32(1..3)
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                     "NTP Server priority index."
+         ::= { agentNtpDnsServerEntry 1 }
+
+
+    agentNtpDnsServerAddress OBJECT-TYPE
+         SYNTAX      DisplayString(SIZE(1..129))
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                     "IP Address or DNS name of the NTP Server"
+         ::= { agentNtpDnsServerEntry 2 }
+
+    agentNtpDnsServerRowStatus OBJECT-TYPE
+         SYNTAX      RowStatus
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                     "NTP server entry row status."
+         ::= { agentNtpDnsServerEntry 20 }
 
 --********************************************************************
 -- agentDhcpConfigGroup - Configuration of Switch DHCP Server and
@@ -1838,6 +1905,9 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
              agentDhcpScopeNetbiosNameServerAddress2    IpAddress,
              agentDhcpScopeNetbiosNameServerAddress3    IpAddress,
              agentDhcpScopeState                        INTEGER,
+             agentDhcpScopeVlan                         Integer32,
+             agentDhcpScopeVlanNative                   INTEGER,
+             agentDhcpScopeCentralNatEnable             INTEGER,
              agentDhcpScopeRowStatus                    RowStatus
              }
 
@@ -1997,6 +2067,36 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
                       "DHCP Scope's State."
          ::= { agentDhcpScopeEntry 18 }
 
+    agentDhcpScopeVlan OBJECT-TYPE
+         SYNTAX      Integer32(0..4096)
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                     "DHCP Scope Vlan Id."
+         ::= { agentDhcpScopeEntry 19 }
+
+    agentDhcpScopeVlanNative OBJECT-TYPE
+         SYNTAX  INTEGER {
+                     disable(0),
+                     enable(1)
+                 }
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                      "DHCP Scope's Native Vlan enable/disable."
+         ::= { agentDhcpScopeEntry 20 }
+
+    agentDhcpScopeCentralNatEnable OBJECT-TYPE
+         SYNTAX  INTEGER {
+                     disable(0),
+                     enable(1)
+                 }
+         MAX-ACCESS  read-create
+         STATUS      current
+         DESCRIPTION
+                      "DHCP Scope's Central NAT Status enable/disable."
+         ::= { agentDhcpScopeEntry 21 }
+    
     agentDhcpScopeRowStatus OBJECT-TYPE
          SYNTAX      RowStatus
          MAX-ACCESS  read-create
@@ -2005,6 +2105,80 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
                      "Dhcp Scope entry row status."
          ::= { agentDhcpScopeEntry 30 }
 
+--********************************************************************
+-- agentDhcpLeaseGroup - Switch DHCP Server Lease info 
+--********************************************************************
+    agentDhcpLeaseGroup   OBJECT IDENTIFIER ::= { agentConfigGroup 16 }
+
+    agentDhcpLeaseTable OBJECT-TYPE
+         SYNTAX      SEQUENCE OF AgentDhcpLeaseEntry
+         MAX-ACCESS  not-accessible
+         STATUS      current
+         DESCRIPTION
+                     "A table listing the Lease entry of the
+                      switch's DHCP Server."
+         ::= { agentDhcpLeaseGroup 1 }
+
+    agentDhcpLeaseEntry OBJECT-TYPE
+         SYNTAX      AgentDhcpLeaseEntry
+         MAX-ACCESS  not-accessible
+         STATUS      current
+         DESCRIPTION
+                     "Switch's DHCP Server Lease entry."
+         INDEX       { agentDhcpLeaseMacAddress }
+         ::= { agentDhcpLeaseTable 1 }
+
+    AgentDhcpLeaseEntry ::= SEQUENCE {
+             agentDhcpLeaseMacAddress                   MacAddress,
+             agentDhcpLeaseIPAddress                    IpAddress,
+             agentDhcpLeaseExpiry                       Integer32,
+             agentDhcpLeaseHostname                     DisplayString
+             }
+
+    agentDhcpLeaseMacAddress OBJECT-TYPE
+         SYNTAX      MacAddress
+         MAX-ACCESS  read-only
+         STATUS      current
+         DESCRIPTION
+                     "DHCP Client's mac address"
+         ::= { agentDhcpLeaseEntry 1 }
+
+    agentDhcpLeaseIPAddress OBJECT-TYPE
+         SYNTAX      IpAddress
+         MAX-ACCESS  read-only
+         STATUS      current
+         DESCRIPTION
+                     "DHCP Client's IP Address ."
+         ::= { agentDhcpLeaseEntry 2 }
+
+    agentDhcpLeaseExpiry OBJECT-TYPE
+         SYNTAX      Integer32(0..8640000)
+         MAX-ACCESS  read-only
+         STATUS      current
+         DESCRIPTION
+                     "DHCP Client's Pending Lease time in seconds."
+         ::= { agentDhcpLeaseEntry 3 }
+
+
+    agentDhcpLeaseHostname OBJECT-TYPE
+         SYNTAX      DisplayString (SIZE (1..255))
+         MAX-ACCESS  read-only
+         STATUS      current
+         DESCRIPTION
+                     "DHCP Client's Hostname."
+         ::= { agentDhcpLeaseEntry 4 }
+
+--********************************************************************
+ -- agentDhcpClearLeaseGroup - Switch DHCP Server Lease info
+ --********************************************************************
+ agentDhcpClearLeaseGroup   OBJECT IDENTIFIER ::= { agentConfigGroup 17 }
+     agentDhcpClearLeaseIPAddress OBJECT-TYPE
+          SYNTAX      IpAddress
+          MAX-ACCESS  read-create
+          STATUS      current
+          DESCRIPTION
+                      "DHCP Client IP Address that will be cleared"
+          ::= { agentDhcpClearLeaseGroup 1 }
 
 --********************************************************************
 -- agentServicePortConfigGroup
@@ -2993,6 +3167,7 @@ agentInterfaceVlanQuarantine OBJECT-TYPE
                         -   Certificates
                         -   Signatures
                         -   customWebauth- custom webauth tar ball
+                        -   Icons
 
 
                       Deprecated by clsDownloadFileType"
@@ -3984,11 +4159,15 @@ bsnSwitchingAgentConfigGroup OBJECT-GROUP
         agentInterfaceActivePortNo,
         agentInterfaceBackupPortNo,
         agentInterfaceVlanQuarantine,
+        agentInterfaceUrlAclName,
         agentInterfaceRowStatus,
         agentNtpPollingInterval,
         agentNtpServerIndex,
         agentNtpServerAddress,
         agentNtpServerRowStatus,
+	agentNtpDnsServerIndex,
+        agentNtpDnsServerAddress,
+        agentNtpDnsServerRowStatus,
         agentDhcpScopeIndex,
         agentDhcpScopeName,
         agentDhcpScopeLeaseTime,
@@ -4007,6 +4186,8 @@ bsnSwitchingAgentConfigGroup OBJECT-GROUP
         agentDhcpScopeNetbiosNameServerAddress2,
         agentDhcpScopeNetbiosNameServerAddress3,
         agentDhcpScopeState,
+        agentDhcpScopeVlan,
+        agentDhcpScopeVlanNative,
         agentDhcpScopeRowStatus,
         agentSnmpTrapPortNumber,
         agentSnmpVersion1Status,

@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-SYS-MIB.my 
 -- March 2007, Devesh Pujari, Srinath Candadai 
 --
--- Copyright (c) 2007, 2014-2015 by Cisco Systems, Inc.
+-- Copyright (c) 2007, 2014-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -225,7 +225,9 @@ clsDownloadFileType OBJECT-TYPE
                          vendorCaCert(9),
                          ipsecDeviceCert(10),
                          ipsecCaCert(11),
-                         radius-avplist(12)
+                         radius-avplist(12),
+                         icon(13),
+                         ap-image(14)
                      }
          MAX-ACCESS  read-write
          STATUS      current
@@ -249,6 +251,9 @@ clsDownloadFileType OBJECT-TYPE
                                              certificates
                         radius-avplist   -   Avp's to be sent in radius
                                              packets
+                        icon             -   icon files to be used in
+                                             Hotspot 2.0
+                        ap-image         -   Download ap image for flexexpress
                      "
          ::= { clsConfigDownload 1 }
 
@@ -535,7 +540,8 @@ clsTransferMode OBJECT-TYPE
      SYNTAX      INTEGER {
      		 tftp(1),
      		 ftp(2),
-    		 sftp(3)
+    		 sftp(3),
+             usb(4)
      	}
      MAX-ACCESS  not-accessible
      STATUS      current
@@ -684,6 +690,214 @@ clsTransferStatusString	OBJECT-TYPE
                  "Indicates in string format about the current status of a transfer."
      ::= { clsTransferConfigEntry 14 }
 
+--EUR ADD
+
+clsStreamingTransferConfig OBJECT IDENTIFIER ::=
+                                   { clsTransferConfig 2 }
+
+clsApTransferTable OBJECT-TYPE
+        SYNTAX     SEQUENCE OF ClsApTransferEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+                "This table represents the information about the
+                802.11 LWAPP Access Points that have joined the
+                controller.
+
+                LWAPP APs exchange configuration messages with the
+                controller and get the required configuration for
+                their 802.11 related operations, after they join the
+                controller. "
+        ::= { clsStreamingTransferConfig 1 }
+
+
+clsApTransferEntry OBJECT-TYPE
+        SYNTAX     ClsApTransferEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+                "Each entry in this table provides information about
+                one 802.11 LWAPP Access Point that has joined the
+                controller.
+
+                Entries are removed when the APs lose their
+                association with the controller due to loss
+                of communication. "
+        INDEX   { clsApTransferSysMacAddress }
+        ::= { clsApTransferTable 1 }
+
+ClsApTransferEntry ::= SEQUENCE {
+                clsApTransferSysMacAddress        MacAddress,
+                clsApPrimaryVers                  SnmpAdminString,
+                clsApBackupVers                   SnmpAdminString,
+                clsApPredStatus                   SnmpAdminString,
+                clsApPredFailReason               SnmpAdminString,
+                clsApPredRetryCount               Unsigned32,
+                clsApPredNextRetryTime            SnmpAdminString
+}
+
+clsApTransferSysMacAddress OBJECT-TYPE
+        SYNTAX     MacAddress
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This object represents the radio MAC address
+            of the AP and uniquely identifies an entry in this table. "
+        ::= { clsApTransferEntry 1 }
+
+clsApPrimaryVers OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Specifies the primary image version of AP"
+     ::= { clsApTransferEntry 2 }
+
+clsApBackupVers OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Specifies the backup image version of AP"
+     ::= { clsApTransferEntry 3 }
+clsApPredStatus OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Specifies the status of predownload, Initiated/failed/predownloading/backedoff"
+     ::= { clsApTransferEntry 4 }
+
+clsApPredFailReason OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Specifies Failure reason for image download."
+      ::= { clsApTransferEntry 5 }
+
+clsApPredRetryCount OBJECT-TYPE
+     SYNTAX      Unsigned32(1..254)
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Number of retries by AP to download the image"
+     ::= { clsApTransferEntry 6 }
+
+clsApPredNextRetryTime OBJECT-TYPE
+        SYNTAX  SnmpAdminString (SIZE(0..64))
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+        "This object represents the next retry time of image download by AP."
+        ::= {  clsApTransferEntry 7 }
+
+clsTransferStreamingMode OBJECT-TYPE
+     SYNTAX      INTEGER {
+                 tftp(1),
+                 http(2),
+                 cco(3),
+                 https(4)
+        }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+                 "Transfer mode configures the mode of transfer used
+                   by the controller with the server. The mode is
+                   TFTP. "
+     DEFVAL {tftp}
+     ::= { clsStreamingTransferConfig 2 }
+
+clsStreamingTransferServerAddressType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+                 "This object represents the address type of
+              the Server from which the controller will transfer the
+              image file."
+     DEFVAL {ipv4}
+     ::= { clsStreamingTransferConfig 3 }
+
+clsTransferStreamingServerAddress OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..254))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+                 "This object represents the address of the Server to
+                 which the controller will transfer the file."
+     ::= { clsStreamingTransferConfig 4 }
+
+clsTransferStreamingPath OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+                 "Transfer path configures the directory path for file transfer.
+                 The controller remembers the last file path used."
+     ::= { clsStreamingTransferConfig 5 }
+
+
+clsStreamingTransferStart OBJECT-TYPE
+     SYNTAX      INTEGER {
+                 initiate(1),
+                 none(2)
+              }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+               "Transfer start will start the file transfer operation on APs
+                when it is set to initiate(1)"
+     ::= { clsStreamingTransferConfig 6 }
+
+clsTransferHttpStreamingUsername OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+                 "Username of CCO server.Specific to http/cco mode"
+     ::= { clsStreamingTransferConfig 7 }
+
+clsTransferHttpStreamingPassword OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+                 "Secret of CCO server.Specific to http/cco mode"
+     ::= { clsStreamingTransferConfig 8 }
+
+clsTransferHttpStreamingSuggestedVersion OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Suggested image version to be downloaded from CCO.Specific to http/cco mode"
+     ::= { clsStreamingTransferConfig 9 }
+
+clsTransferHttpStreamingLatestVersion OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Latest image version to be downloaded from CCO.Specific to http/cco mode"
+     ::= { clsStreamingTransferConfig 10 }
+
+clsTransferHttpStreamingCcoPoll OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(0..64))
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+                 "Recent CCO Polled time"
+     ::= { clsStreamingTransferConfig 11 }
+
+clsTransferStreamingServerPort OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object represents streaming server port for https/sftp"
+     ::= { clsStreamingTransferConfig 12 }
+
 clsConfigGeneral   OBJECT IDENTIFIER ::= { clsConfig 5 }
 
 clsTimeZone OBJECT-TYPE
@@ -769,7 +983,7 @@ clsSensorTemperature OBJECT-TYPE
     STATUS current
     DESCRIPTION
     "Current Internal Temperature of the unit in Centigrade"
-    ::= { clsConfigGeneral 5 }
+    ::= { clsConfigGeneral 6 }
 
 
 clsSyslogIpConfig  OBJECT IDENTIFIER ::= { clsConfig 6 }
@@ -961,40 +1175,6 @@ cLSysMulticastLLBridgingStatus OBJECT-TYPE
 -- stats-timer config.
 --
 
-clsConfigStats   OBJECT IDENTIFIER ::= { clsConfig 18 }
-
---********************************************************************
---*     System Realtime Stats Timer Interval
---********************************************************************
-
-clsSysRealtimeStatsTimer OBJECT-TYPE
-    SYNTAX      Unsigned32 (2..5)
-    UNITS       "Seconds"
-    MAX-ACCESS  read-write
-    STATUS      current
-    DESCRIPTION
-        "This object specifies the realtime stats interval of the system.                                      There are 2 stats modes: realtime and normal. realtime interval
-         is much less than normal mode."
-    DEFVAL {5}
-    ::= {clsConfigStats 1 }
-
---********************************************************************
---*     System Normal Stats Timer Interval
---********************************************************************
-
-clsSysNormalStatsTimer OBJECT-TYPE
-    SYNTAX      Unsigned32 (10..180)
-    UNITS       "Seconds"
-    MAX-ACCESS  read-write
-    STATUS      current
-    DESCRIPTION
-        "This object specifies the normal stats interval of the system.
-         There are 2 stats modes: realtime and normal. realtime interval
-         is much less than normal mode."
-    DEFVAL {180}
-    ::= {clsConfigStats 2 }
-
-
 --********************************************************************
     -- clsPortModeConfigTable
     --
@@ -1024,7 +1204,8 @@ cLSPortModeConfig OBJECT IDENTIFIER ::= { clsConfig 14 }
           clsPortModePhysicalMode          INTEGER,
           clsPortModePhysicalStatus        INTEGER,
           clsPortModeSfpType           SnmpAdminString,
-          clsPortUpDownCount           Counter32
+          clsPortUpDownCount           Counter32,
+          clsPortModeMaxSpeed          INTEGER
           }
 
     clsPortDot1dBasePort OBJECT-TYPE
@@ -1067,7 +1248,11 @@ cLSPortModeConfig OBJECT IDENTIFIER ::= { clsConfig 14 }
                      half1000(8),
                      full1000(9),
                      half10000(10),
-                     full10000(11)
+                     full10000(11),
+                     half2500(12),
+                     full2500(13),
+                     half5000(14),
+                     full5000(15)      
                   }
          MAX-ACCESS  read-only
          STATUS      current
@@ -1075,7 +1260,6 @@ cLSPortModeConfig OBJECT IDENTIFIER ::= { clsConfig 14 }
                      "The switch's Port Physical Speed Status.This
                       is the current actual speed."
          ::= { clsPortModeConfigEntry 3 }
-
 
     clsPortModeSfpType  OBJECT-TYPE
          SYNTAX      SnmpAdminString
@@ -1095,6 +1279,26 @@ cLSPortModeConfig OBJECT IDENTIFIER ::= { clsConfig 14 }
                      Every time the value of ifOperStatus is changed,
                      this MIB should be incremented."
         ::= { clsPortModeConfigEntry 5 }
+
+    clsPortModeMaxSpeed OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        autonegotiate(1),
+                        full1000(2),
+                        full2500(3),
+                        full5000(4)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+         "The object specifies the maxspeed mode of MGIG port.
+         A value of full1000 indicates that, port will operate at maximum
+         autonegotiated speed of 1000mbps or less.
+         A value of full2500  indicates that, port will operate at maximum
+         autonegotiated speed of 2500mbps or less.
+         A value of full5000 indicates that, port will operate at maximum
+         autonegotiated speed of 5000mbps or less."
+    DEFVAL {autoNegotiate}
+    ::= { clsPortModeConfigEntry 6 }
 
        
 clsCoreDump OBJECT IDENTIFIER ::= {clsConfig 15}
@@ -1177,12 +1381,26 @@ clsConfigMulticastEnabled   OBJECT-TYPE
         DESCRIPTION
                "This object represents whether global multicast  is
                 enabled or disabled.
-              A value of 'true' specifies that the multicast option is enabled
+              A value of 'true' indicates that the multicast option is enabled
                on the controller.
-              A value of 'false' specifies that the multicast option is disabled
+              A value of 'false' indicates that the multicast option is disabled
                on the controller."
         DEFVAL{ false }
         ::= { clsConfig 16 }
+
+clsConfigArpUnicastEnabled   OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION
+               "This object represents whether arp is forwarded in unicast format
+                or the default mode of Multicast.
+              A value of 'true' indicates that the arp packets for passive client will
+              be unicasted.
+              A value of 'false' indicates that the arp-packets will be sent based on the
+              config of multicast mode multicast/unicast."
+        DEFVAL{ false }
+        ::= { clsConfig 37 }
 
 cLSysMulticastMLD OBJECT IDENTIFIER ::= { clsConfig 17 }
 
@@ -1474,6 +1692,18 @@ clsConfigApMaxCount OBJECT-TYPE
          DEFVAL                  {0}
          ::= {clsConfig 24}
 
+clsUSBMode            OBJECT-TYPE
+     SYNTAX           TruthValue
+     MAX-ACCESS       read-write
+     STATUS           current
+     DESCRIPTION
+        "This object specifies whether USB is enabled or disabled.
+         A value of 'true' indicates that, USB is enabled.
+         A value of 'false' indicates that, USB is disabled."
+     DEFVAL    {true}
+     ::= {clsConfig 40}
+
+
 cLSTrapSwitchConfig OBJECT IDENTIFIER ::= {clsConfig 25}
 
 clsTrapBlacklistTable OBJECT-TYPE
@@ -1543,6 +1773,30 @@ clsLinkLocalBridgingEnabled OBJECT-TYPE
                 packets is disabled on the controller."
         ::= { clsConfig 26 }
 
+clsNetworkHttpProfCustomPort OBJECT-TYPE
+        SYNTAX          Unsigned32(1..65535)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION
+               "This object represents the http profiling
+                custom port."
+        DEFVAL { 80 }
+        ::= { clsConfig 27 }
+
+clsWGBForcedL2RoamEnabled   OBJECT-TYPE
+        SYNTAX          TruthValue
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION
+              "This object represents whether forced L2 Roaming
+              is enabled or disable for WGB clients.
+              A value of 'true' indicates forced L2 Roaming is
+                enabled for WGB clients.
+              A value of 'false' indicates forced L2 Roaming is
+                disabled for WGB clients."
+        DEFVAL{ false }
+        ::= { clsConfig 38 }
+
 clsCrashSystem OBJECT-TYPE
          SYNTAX TruthValue 
          MAX-ACCESS  read-write
@@ -1552,6 +1806,213 @@ clsCrashSystem OBJECT-TYPE
                      If a value of of 'true' is set, the swicth would crash. 
                      GET on this object would return 'false'."
          ::= { clsConfig 99 }
+
+-- ********************************************************************
+-- clsIconCfg
+-- ********************************************************************
+clsIconCfgTable OBJECT-TYPE
+        SYNTAX          SEQUENCE OF ClsIconCfgEntry
+        MAX-ACCESS      not-accessible
+        STATUS          current
+        DESCRIPTION
+        "This table represents the generic icon file configuration in
+         the controller. It has only one argument; the icon file name
+         which shall be used to index the rows in this table."
+       ::= { clsConfig 28 }
+
+clsIconCfgEntry OBJECT-TYPE
+    SYNTAX          ClsIconCfgEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the icon config entry"
+    INDEX           {
+                        clsIconCfgFileName
+                    }
+    ::= { clsIconCfgTable 1 }
+
+ClsIconCfgEntry ::= SEQUENCE {
+        clsIconCfgFileName        SnmpAdminString,
+        clsIconCfgFileType        SnmpAdminString,
+        clsIconCfgLangCode        SnmpAdminString,
+        clsIconCfgWidth           Unsigned32,
+        clsIconCfgHeight          Unsigned32,
+        clsIconCfgRowStatus       RowStatus
+}
+
+clsIconCfgFileName OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(1..32))
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+         "This object represents the icon filename"
+         ::= { clsIconCfgEntry 1 }
+
+clsIconCfgFileType OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(1..32))
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+         "This object represents the filetype for the icon file"
+    DEFVAL          { "" }
+    ::= { clsIconCfgEntry 2 }
+
+clsIconCfgLangCode OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE(2..3))
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+         "This object represents the language code associated
+          with the icon file"
+    DEFVAL          { "" }
+    ::= { clsIconCfgEntry 3 }
+
+clsIconCfgWidth OBJECT-TYPE
+    SYNTAX          Unsigned32 (0..65535)
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+         "This object represents the width of the icon file"
+    DEFVAL          { 0 }
+    ::= { clsIconCfgEntry 4 }
+
+clsIconCfgHeight OBJECT-TYPE
+    SYNTAX          Unsigned32 (0..65535)
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+         "This object represents the height of the icon file"
+    DEFVAL          { 0 }
+    ::= { clsIconCfgEntry 5 }
+
+clsIconCfgRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "Row Status for creation/deletion of a particular
+         icon config in the table."
+    ::= { clsIconCfgEntry 6 }
+
+-- ***************************************************************
+-- ** Http Proxy and Dns Server Ip********************************
+-- ***************************************************************
+
+clsNetworkHttpProxyPort OBJECT-TYPE
+        SYNTAX          Unsigned32(1..65535)
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION
+               "This object represents the http proxy
+                custom port."
+        DEFVAL { 0 }        
+        ::= { clsConfig 29}
+
+clsNetworkHttpProxyIpType OBJECT-TYPE
+        SYNTAX            InetAddressType
+        MAX-ACCESS        read-write
+        STATUS            current
+        DESCRIPTION
+               "This object specifies the Http Proxy IP Address Type"
+        DEFVAL { 0 }       
+        ::= { clsConfig 30 }
+
+clsNetworkHttpProxyIp OBJECT-TYPE
+        SYNTAX        InetAddress
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION
+               "This Object specifies the IP Address of the Http Proxy"
+        DEFVAL { 0 }       
+        ::= { clsConfig 31 }
+
+clsNetworkDnsServerIpType OBJECT-TYPE
+        SYNTAX            InetAddressType
+        MAX-ACCESS        read-write
+        STATUS            current
+        DESCRIPTION
+               "This object specifies the DNS Server IP Address Type"
+        DEFVAL { 0 }       
+        ::= { clsConfig 32 }
+
+clsNetworkDnsServerIp OBJECT-TYPE
+        SYNTAX        InetAddress
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION
+               "This Object specifies the IP Address of the DNS Server"
+        DEFVAL { 0 }       
+        ::= { clsConfig 33 }
+
+
+clsConfigCalea OBJECT IDENTIFIER ::= {clsConfig 34}
+
+
+clsConfigCaleaEnabled  OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+           "This object is used to enable/disable the CALEA 
+            Lawful Intercept feature configured in controller."
+
+    ::= { clsConfigCalea 1 }
+
+clsConfigCaleaServerIp OBJECT-TYPE
+        SYNTAX        IpAddress
+        MAX-ACCESS    read-write
+        STATUS        current
+        DESCRIPTION
+               "This Object specifies the IPv4 Address of the CALEA
+                Lawful Intercept Server"
+        DEFVAL { 0 }       
+        ::= { clsConfigCalea 2 }
+
+clsConfigCaleaPort OBJECT-TYPE
+    SYNTAX          InetPortNumber 
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies about port number of Calea Lawful
+         Intercept Server"
+    DEFVAL { 0 }       
+    ::= { clsConfigCalea 3 }
+
+clsConfigCaleaAccountingInterval OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..1440)
+     UNITS       "Minutes"
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+       "This object specifies the CALEA Lawful Intercept 
+       Accounting interval, in minutes"
+    DEFVAL { 8 }       
+     ::= { clsConfigCalea 4 }
+
+clsConfigCaleaVenue           OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(1..64))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the CALEA Venue description" 
+    ::= { clsConfigCalea 5 }
+
+clSysLogIPSecStatus OBJECT-TYPE
+         SYNTAX TruthValue 
+         MAX-ACCESS  read-write
+         STATUS      current
+         DESCRIPTION
+         "Syslog over IPSEC Status"
+         ::=  { clsConfig 35 }
+
+clSysLogIPSecProfName OBJECT-TYPE
+       SYNTAX SnmpAdminString (SIZE  (1..31))
+       MAX-ACCESS read-write
+       STATUS current
+       DESCRIPTION
+             "The IPsec profile to be used for syslog over IPSec."
+        ::=  { clsConfig 36 }
+
 
 --********************************************************************
 --*    Status Objects
@@ -1591,6 +2052,7 @@ ClsRAIDStatusEntry ::= SEQUENCE {
     clsRAIDStatus             INTEGER,
     clsRAIDRebuildPercentage  Unsigned32 
 }
+
 
 clsRAIDDriveNumber OBJECT-TYPE
     SYNTAX      Unsigned32
@@ -2139,6 +2601,15 @@ clsSysClientTrapRssiThreshold OBJECT-TYPE
         considered for the trap of client." 
     ::= { clsSysInfo 27 }
 
+clsSysCmxActiveConnections OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object gives the count of active connections
+         present on the controller."
+    ::= { clsSysInfo 28 }
+
 --********************************************************************
 -- *  Lync Control Object
 --********************************************************************
@@ -2370,6 +2841,30 @@ clsWlcUpgradeFailReason         OBJECT-TYPE
                  4 for flash backup fail, please check whether the flash space is enough."
         ::= { ciscoLwappSysMIBNotifObjects 9 }
 
+clsPortNumber OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object represents port number of MGIG port."
+    ::= { ciscoLwappSysMIBNotifObjects 10 }
+
+clsPortSpeed OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object represents port speed (Mbps) of MGIG Port."
+    ::= { ciscoLwappSysMIBNotifObjects 11 }
+
+clsPortSlot OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This object represents slot number where MGIG port is present."
+    ::= { ciscoLwappSysMIBNotifObjects 12 }
+
 --********************************************************************
 -- *  Notifications
 --********************************************************************
@@ -2499,6 +2994,17 @@ ciscoLwappRAIDStatus NOTIFICATION-TYPE
         "This notification is generated when the wlc hard disc status changes."
     ::= { ciscoLwappSysMIBNotifs 11 }
 
+ciscoLwappPortLinkSpeedTrap NOTIFICATION-TYPE
+    OBJECTS         {
+                        clsPortNumber,
+                        clsPortSpeed,
+                        clsPortSlot
+                    }
+    STATUS current
+    DESCRIPTION
+        "This notification is generated when link speed changes in MGIG port."
+    ::= { ciscoLwappSysMIBNotifs 12 }
+
 --********************************************************************
 --*    Individual CPU Usage
 --********************************************************************
@@ -2542,39 +3048,6 @@ ciscoLwappSysMIBComplianceRev1 MODULE-COMPLIANCE
                 ciscoLwappSysConfigGroupSup1
              }
         ::= { ciscoLwappSysMIBCompliances 2 }
-
-clsAlarmObjects OBJECT IDENTIFIER ::= { clsConfig 19 }
---********************************************************************
---*     Alarm Hold Time
---********************************************************************
-
-clsAlarmHoldTime OBJECT-TYPE
-     SYNTAX          Unsigned32 (0..3600)
-     UNITS           "second"
-     MAX-ACCESS      read-write
-     STATUS          current
-     DESCRIPTION
-        "This object specifies the time in seconds for which
-         an alarm object should be soaked when its on/off 
-         state is changed."
-     DEFVAL {6}
-     ::= {clsAlarmObjects 1 }
-
---********************************************************************
---*     Alarm Retransmit Interval 
---********************************************************************
-
-clsAlarmTrapRetransmitInterval OBJECT-TYPE
-     SYNTAX          Unsigned32 (0..65535)
-     UNITS           "second"
-     MAX-ACCESS      read-write
-     STATUS          current
-     DESCRIPTION
-        "This object specifies the interval in seconds in 
-         which alarm traps, if any, are retransmitted. 
-         Setting this value to 0 means no retransmission."
-     DEFVAL {0}
-     ::= {clsAlarmObjects 2 }
 
 ciscoLwappSysConfigGroup OBJECT-GROUP
         OBJECTS {
@@ -2623,40 +3096,6 @@ ciscoLwappSysStatsConfigGroup OBJECT-GROUP
 --
 -- stats-timer config.
 --
-
-clsConfigStats   OBJECT IDENTIFIER ::= { clsConfig 18 }
-
---********************************************************************
---*     System Realtime Stats Timer Interval
---********************************************************************
-
-clsSysRealtimeStatsTimer OBJECT-TYPE
-    SYNTAX      Unsigned32 (2..5)
-    UNITS       "Seconds"
-    MAX-ACCESS  read-write
-    STATUS      current
-    DESCRIPTION
-      "This object specifies the realtime stats interval of the system.
-       There are 2 stats modes: realtime and normal. realtime interval
-       is much less than normal mode."
-    DEFVAL {5}
-    ::= {clsConfigStats 1 }
-
---********************************************************************
---*     System Normal Stats Timer Interval
---********************************************************************
-
-clsSysNormalStatsTimer OBJECT-TYPE
-    SYNTAX      Unsigned32 (10..180)
-    UNITS       "Seconds"
-    MAX-ACCESS  read-write
-    STATUS      current
-    DESCRIPTION
-      "This object specifies the normal stats interval of the system.
-       There are 2 stats modes: realtime and normal. realtime interval
-       is much less than normal mode."
-    DEFVAL {180}
-    ::= {clsConfigStats 2 }
 
 -- ********************************************************************
 -- clsSysPing
@@ -2780,5 +3219,4 @@ clsSysPingTestRowStatus OBJECT-TYPE
         to create, modify and delete specific instances of rows
         in this table."
     ::= { clsSysPingTestEntry 10 }
-
 END

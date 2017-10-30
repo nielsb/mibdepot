@@ -1,7 +1,7 @@
 -- *******************************************************************
 -- CISCO-LWAPP-PMIP-MIB.my 
--- December 2011, Suja Thangaveluchamy
--- Copyright (c) 2011 by Cisco Systems Inc.
+-- February 2015, Suja Thangaveluchamy
+-- Copyright (c) 2015-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -47,7 +47,7 @@ IMPORTS
 --********************************************************************
 
 ciscoLwappPmipMIB       MODULE-IDENTITY
-        LAST-UPDATED    "201112220000Z"
+        LAST-UPDATED    "201502230000Z"
         ORGANIZATION    "Cisco Systems Inc."
         CONTACT-INFO  
                "        Cisco Systems,

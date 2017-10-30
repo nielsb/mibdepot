@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-MOBILITY-MIB.my 
 -- June 2006, Bharat Biswal,Arun Kumar A
 -- April 2014, Prashanth Baragur, Added IPV6 support
--- Copyright (c) 2005-2006 by Cisco Systems, Inc.
+-- Copyright (c) 2005-2006, 2016-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -227,7 +227,8 @@ ciscoLwappMobilityMIB        MODULE-IDENTITY
     DESCRIPTION
         "Added ciscoLwappMobilityMIBComplianceRev01 that deprecates
         ciscoLwappMobilityMIBCompliance.
-        Added cLMobilityGroupRev01ConfigGroup object group."
+        Added cLMobilityGroupRev01ConfigGroup object group.
+        cLMobilityGroupRev01ConfigGroup object group has  been deprecated."
 
         REVISION      "200607190000Z"
         DESCRIPTION
@@ -588,7 +589,9 @@ cLMobilityMulticastGroupIPAddress    OBJECT-TYPE
         DESCRIPTION
                 "This object represnts the multicast 
                  group IP address per group. The Ip address is 
-                 limited to ipv4 and ipv6."
+                 limited to ipv4 and ipv6. 
+                 The IP address should be reset only after disabling 
+                 the mobility multicast mode(cLMobilityMulticastMessagingEnable)"
         ::= { cLMobilityMulticastGroupEntry 2 }  
 
 cLMobilityMulticastGroupIPAddressType    OBJECT-TYPE
@@ -1002,7 +1005,6 @@ ciscoLwappMobilityMIBComplianceRev01 MODULE-COMPLIANCE
                         cLNplus1RedundancyRev01NotifsGroup,
                         cLSymmetricTunnelingRev01ConfigGroup,
                         cLSymmetricTunnelingRev01StatusGroup
-
                     }
     ::= { ciscoLwappMobilityMIBCompliances 2 }
 

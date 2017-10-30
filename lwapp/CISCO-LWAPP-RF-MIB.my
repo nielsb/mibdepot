@@ -3,7 +3,7 @@
 -- This MIB helps to manage the RF parameters on the controller
 -- June 2011, Srinath Candadai
 --   
--- Copyright (c) 2011 by Cisco Systems Inc.
+-- Copyright (c) 2011, 2016-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -192,9 +192,12 @@ ciscoLwappRFMIB MODULE-IDENTITY
            cLRFProfileCHDClientExceptionLevel
            cLRFProfileCHDCoverageExceptionLevel
            cLRFProfileMulticastDataRate
+           cLRFProfileBandSelectClientMidRSSI
+           cLRFProfileClientNetworkPreference
 
            One new scalar object has been added
-           cLRFProfileOutOfBoxAPConfig"
+           cLRFProfileOutOfBoxAPConfig
+           cLRFProfileOutOfBoxAPPersistenceConfig"
 
     REVISION        "201111010000Z"
     DESCRIPTION
@@ -365,7 +368,9 @@ CLRFProfileEntry ::= SEQUENCE {
         cLRFProfileDCAChannelList                SnmpAdminString,
         cLRFProfileRxSopThreshold                INTEGER,
         cLRFProfileHSRMode                       TruthValue,
-        cLRFProfileHSRNeighborTimeoutFactor      Unsigned32 
+        cLRFProfileHSRNeighborTimeoutFactor      Unsigned32,
+        cLRFProfileBandSelectClientMidRSSI       Integer32, 
+        cLRFProfileClientNetworkPreference       INTEGER 
 }
 
 cLRFProfileName OBJECT-TYPE
@@ -651,8 +656,12 @@ cLRFProfileBandSelectClientRSSI OBJECT-TYPE
     MAX-ACCESS      read-create
     STATUS          current
     DESCRIPTION
-        "This object specifies the minimum dBM 
-         of a client RSSI to respond to probe."
+        "This object specifies minimum mobile station RSSI threshold.
+        Mobile stations having RSSI below this value will not be
+        recorded in the suppressed table.
+        This configuration filters out far away mobile stations with
+        weaker signal strength. This will limit the number of
+        mobile stations on the table to a reasonable amount."
     DEFVAL { -80 }  
     ::= { cLRFProfileEntry 28 }
 
@@ -792,20 +801,22 @@ cLRFProfileDCAForeignContribution OBJECT-TYPE
 
 cLRFProfileDCAChannelWidth OBJECT-TYPE
     SYNTAX     INTEGER {
-                             min(1),
-                             medium(2),
-                             max(3),
-                             best(4)
+                             twenty(1),
+                             forty(2),
+                             eighty(3),
+                             onesixty(4),
+                             best(5)
                            }
     MAX-ACCESS read-write
     STATUS current
     DESCRIPTION
     "This object specifies how the system performs DCA
                 channel width selection for the RFProfile
-                     min    - Min channel width(20Mhz) the radio supports
-                     medium - Medium channel width(40Mhz) supported by this radio.
-                     max    - Max channel width(80Mhz) supported by this radio.
-                     best   - Dynamic channel width(80Mhz, 40Mhz or 20Mhz) supported by this radio."
+                     twenty     - 20MHz channel width supported  the radio supports
+                     forty     - 40MHz channel width supported by this radio.
+                     eighty     - 80MHz channel width supported by this radio.
+                     onesixty    - 160MHz channel width supported by this radio.
+                     best   - Dynamic channel width(160MHz, 80MHz, 40MHz or 20MHz) supported by this radio."
    ::= {cLRFProfileEntry 42 }
    
 cLRFProfileDCAChannelList OBJECT-TYPE
@@ -850,6 +861,38 @@ cLRFProfileHSRNeighborTimeoutFactor OBJECT-TYPE
      Neighbor timeout factor will be five times the neighbor interval"
    ::= {cLRFProfileEntry 46 }
 
+cLRFProfileBandSelectClientMidRSSI OBJECT-TYPE
+    SYNTAX          Integer32
+    UNITS           "dbm"
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies medium mobile station RSSI threshold. 
+        Mobile station between this value and cldBandSelectClientRssi
+        will be recorded in suppressed table but will not be denied.
+        The mobile station having RSSI stronger this value will be recorded
+        and denied."
+    DEFVAL { -80 }
+    ::= { cLRFProfileEntry 47 }
+
+cLRFProfileClientNetworkPreference OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        connectivity(0),
+                        throughput(1),
+                        default(2)
+                       }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+           "This object represents the client network preference.
+              connectivity  - RRM Algorithm has a prefereance on connectiviry of the clients
+              throughput    - RRM Algorithm has a preference on high thoughput of the clients
+              default       - RRM Algorithm has no preference on the clients"
+   DEFVAL { default }
+
+   ::= {cLRFProfileEntry 48 }
+
+
 --*******************************************************************
 --*     Out of Box AP config
 --*******************************************************************
@@ -863,6 +906,14 @@ cLRFProfileOutOfBoxAPConfig OBJECT-TYPE
          out of box AP group."
     ::= { ciscoLwappRFGlobalObjects 1}
 
+cLRFProfileOutOfBoxAPPersistenceConfig OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the
+         out of box AP group to be persistent or not."
+    ::= { ciscoLwappRFGlobalObjects 2}
 
 cLRFProfileMcsDataRateTable OBJECT-TYPE
     SYNTAX          SEQUENCE OF CLRFProfileMcsDataRateEntry
@@ -871,7 +922,7 @@ cLRFProfileMcsDataRateTable OBJECT-TYPE
     DESCRIPTION
         "This object specifies the 11n MCS rates supported by
         the RF profile, indexed by the MCS rate, ranging from 1
-        to 24, corresponding to rate MCS-0, MCS-1, ... MCS-23."
+        to 32, corresponding to rate MCS-0, MCS-1, ... MCS-31."
     ::= { ciscoLwappRFConfig 3 }
 
 cLRFProfileMcsDataRateEntry OBJECT-TYPE
@@ -1096,7 +1147,9 @@ ciscoLwappRFConfigGroup1 OBJECT-GROUP
                         cLRFProfileCHDVoiceRSSIThreshold,
                         cLRFProfileCHDClientExceptionLevel, 
                         cLRFProfileCHDCoverageExceptionLevel, 
-                        cLRFProfileMulticastDataRate
+                        cLRFProfileMulticastDataRate,
+                        cLRFProfileBandSelectClientMidRSSI,
+                        cLRFProfileClientNetworkPreference
                     }
     STATUS          current
     DESCRIPTION

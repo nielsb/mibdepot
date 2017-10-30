@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-CLIENT-ROAMING-MIB.my: Wireless client roaming MIB
 -- December 2005, Devesh Pujari , Prasanna Viswakumar
 --
--- Copyright (c) 2005, 2006, 2009-2010 by Cisco Systems Inc.
+-- Copyright (c) 2005-2006, 2009-2017 by Cisco Systems, Inc.
 -- *******************************************************************
 
 CISCO-LWAPP-CLIENT-ROAMING-MIB DEFINITIONS ::= BEGIN
@@ -31,7 +31,7 @@ IMPORTS
 
 
 ciscoLwappClRoamMIB MODULE-IDENTITY
-    LAST-UPDATED    "201001290000Z"
+    LAST-UPDATED    "201702220000Z"
         ORGANIZATION   "Cisco Systems, Inc."
         CONTACT-INFO  
             "Cisco Systems,
@@ -163,6 +163,10 @@ ciscoLwappClRoamMIB MODULE-IDENTITY
   
                 [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol"
+    REVISION      "201702220000Z"
+    DESCRIPTION
+        "Added following attribute:-
+        clcrRoamIntraCount"
     REVISION        "201001290000Z"
     DESCRIPTION
         "Deprecated following attributes:-
@@ -219,7 +223,7 @@ clcrDot11aMode OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object represents how the controller chooses
+                "This object specifies how the controller chooses
                 the values of the RF parameters needed to manage
         roaming in 802.11a networks."
         DEFVAL { default } 
@@ -231,7 +235,7 @@ clcrDot11aMinRssi OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-                "This object indicates the Minimum Received Signal
+                "This object specifies the Minimum Received Signal
                 Strength Indication (RSSI) in dBm required to
                 associate with the AP. It also defines the edge of
                 coverage for the BSS. If the client's average
@@ -249,7 +253,7 @@ clcrDot11aHysteresis OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-               "This object indicates how much stronger the signal
+               "This object specifies how much stronger the signal
                strength (dB) of a neighbor AP must be, in order
                for the client to roam to it.  The use of roaming
                hysteresis is intended to reduce the amount of
@@ -267,7 +271,7 @@ clcrDot11aAdaptiveScanThreshold OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-                "This object configures the threshold for the
+                "This object specifies the threshold for the
                 strength of the signals received(RSSI) from an AP,
                 as seen by an associated client, below which the
                 client must be able to roam to a neighbor AP within
@@ -283,13 +287,13 @@ clcrDot11aTransitionTime OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-                "This object configures the maximum time duration
+                "This object specifies the maximum time duration
                 permitted for the client to detect a suitable
                 neighbor AP to roam to and to complete the roam,
-        whenever the RSSI from the client?s associated AP
+                whenever the RSSI from the clients associated AP
                 is below the adaptive scan threshold configured
                 through clcrDot11aAdaptiveScanThreshold.  The time
-        is expressed in 100th of a second.
+                is expressed in 100th of a second.
 
         This object is superceded by clcrDot11aTransitionTimeV2"
         DEFVAL { 500 }   
@@ -301,7 +305,7 @@ clcrDot11aMinRssiV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object indicates the Minimum Received Signal
+        "This object specifies the Minimum Received Signal
         Strength Indication (RSSI) in dBm required to
         associate with the AP. It also defines the edge of
         coverage for the BSS. If the client's average
@@ -316,7 +320,7 @@ clcrDot11aHysteresisV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object indicates how much stronger the signal
+        "This object specifies how much stronger the signal
         strength (dB) of a neighbor AP must be, in order
         for the client to roam to it.  The use of roaming
         hysteresis is intended to reduce the amount of
@@ -331,7 +335,7 @@ clcrDot11aAdaptiveScanThresholdV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object configures the threshold for the
+        "This object specifies the threshold for the
         strength of the signals received(RSSI) from an AP,
         as seen by an associated client, below which the
         client must be able to roam to a neighbor AP within
@@ -344,7 +348,7 @@ clcrDot11aTransitionTimeV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object configures the maximum time duration
+        "This object specifies the maximum time duration
         permitted for the client to detect a suitable
         neighbor AP to roam to and to complete the roam,
         whenever the RSSI from the clients associated AP
@@ -362,7 +366,7 @@ clcrDot11bMode OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "This object represents how the controller chooses
+                "This object specifies how the controller chooses
                 the values of the RF parameters needed to manage
         roaming in 802.11b/g networks."
         DEFVAL { default } 
@@ -374,7 +378,7 @@ clcrDot11bMinRssi OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-                "This object indicates the minimum Received Signal
+                "This object specifies the minimum Received Signal
                 Strength Indication (RSSI) in dBm required to
                 associate with the AP. It also defines the edge of
                 coverage for the BSS. If the client's average
@@ -392,7 +396,7 @@ clcrDot11bHysteresis OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-               "This object indicates how much stronger the signal
+               "This object specifies how much stronger the signal
                strength (dB) of a neighbor AP must be, in order
                for the client to roam to it.  The use of roaming
                hysteresis is intended to reduce the amount of
@@ -410,7 +414,7 @@ clcrDot11bAdaptiveScanThreshold OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-                "This object configures the threshold for the
+                "This object specifies the threshold for the
                 strength of the signals received(RSSI) from an AP,
                 as seen by an associated client, below which the
                 client must be able to roam to a neighbor AP within
@@ -426,7 +430,7 @@ clcrDot11bTransitionTime OBJECT-TYPE
         MAX-ACCESS read-write
     STATUS          deprecated
         DESCRIPTION
-                "This object configures the maximum time duration
+                "This object specifies the maximum time duration
                 permitted for the client to detect a suitable
                 neighbor AP to roam to and to complete the roam,
                 whenever the RSSI from the client is associated AP
@@ -444,7 +448,7 @@ clcrDot11bMinRssiV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object indicates the minimum Received Signal
+        "This object specifies the minimum Received Signal
         Strength Indication (RSSI) in dBm required to
         associate with the AP. It also defines the edge of
         coverage for the BSS. If the client's average
@@ -459,7 +463,7 @@ clcrDot11bHysteresisV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object indicates how much stronger the signal
+        "This object specifies how much stronger the signal
         strength (dB) of a neighbor AP must be, in order
         for the client to roam to it.  The use of roaming
         hysteresis is intended to reduce the amount of
@@ -474,7 +478,7 @@ clcrDot11bAdaptiveScanThresholdV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object configures the threshold for the
+        "This object specifies the threshold for the
         strength of the signals received(RSSI) from an AP,
         as seen by an associated client, below which the
         client must be able to roam to a neighbor AP within
@@ -487,7 +491,7 @@ clcrDot11bTransitionTimeV2 OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object configures the maximum time duration
+        "This object specifies the maximum time duration
         permitted for the client to detect a suitable
         neighbor AP to roam to and to complete the roam,
         whenever the RSSI from the client is associated AP
@@ -846,7 +850,8 @@ ciscoLwappClRoamroamingStatsGroup OBJECT-GROUP
                 clcrDot11NeighborRequestRx,
                 clcrDot11NeighborReplySent, 
                 clcrDot11RoamReasonReportRx,
-                clcrDot11BcastUpdatesSent                 
+                clcrDot11BcastUpdatesSent,
+                clcrRoamIntraCount
         }
         STATUS     current
         DESCRIPTION

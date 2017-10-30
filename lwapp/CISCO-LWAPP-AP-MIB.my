@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-AP-MIB.my 
 -- January 2006, Devesh Pujari, Prasanna Viswakumar, Srinath Candadai
 -- August 2010, Suja Thangaveluchamy
--- Copyright (c) 2006, 2007, 2010-2012 by Cisco Systems Inc.
+-- Copyright (c) 2006-2007, 2010-2012, 2016-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -309,6 +309,7 @@ ciscoLwappAplanStats    OBJECT IDENTIFIER ::= { ciscoLwappApMIBObjects 12 }
 
 ciscoLwappApGlobalBleBeacon  OBJECT IDENTIFIER ::= { ciscoLwappApMIBObjects 13 }
 
+ciscoLwappApHyperlocation  OBJECT IDENTIFIER ::= { ciscoLwappApMIBObjects 14}
 -- ********************************************************************
 -- APs that have joined the controller
 -- ********************************************************************
@@ -411,7 +412,6 @@ CLApEntry ::= SEQUENCE {
                 cLApConnectCount                   Unsigned32,	
                 cLApReassocSuccCount               Counter32,
                 cLApReassocFailCount               Counter32,
-                cLAdjChannelRogueEnabled           TruthValue,				
                 cLApAssocFailCountByRate           Unsigned32,
                 cLApAbnormalOfflineCount           Unsigned32,
                 cLApActiveClientCount              Unsigned32, 
@@ -425,7 +425,22 @@ CLApEntry ::= SEQUENCE {
 		cLApModuleInserted                 DisplayString, 
 		cLApEnableModule                   TruthValue,
 		cLApIsUniversal                    TruthValue,
-		cLApUniversalPrimeStatus           DisplayString
+        cLApUniversalPrimeStatus           DisplayString,
+        cLApIsMaster                       TruthValue,
+        cLApBleFWDownloadStatus            TruthValue,
+        cLApDot11XorDartConnectorStatus    DisplayString,
+        cLApCtsSxpDefaultPassword          SnmpAdminString,
+        cLApCtsSxpState                    TruthValue,
+        cLApCtsSxpMode                     TruthValue,
+        cLApCtsSxpListenerMinHoldtime      Unsigned32,
+        cLApCtsSxpListenerMaxHoldtime      Unsigned32,
+        cLApCtsSxpReconcilePeriod          Unsigned32,
+        cLApCtsSxpRetryPeriod              Unsigned32,
+        cLApCtsSxpSpeakerHoldTime          Unsigned32,
+        cLApCtsSxpSpeakerKeepAlive         Unsigned32,
+        cLApCtsInlineTagStatus             TruthValue,
+        cLApCtsSgaclStatus                 TruthValue,
+        cLApCtsOverrideStatus              TruthValue
 		}
 
 	cLApSysMacAddress OBJECT-TYPE
@@ -1542,30 +1557,17 @@ cLApReassocFailCount OBJECT-TYPE
         MAX-ACCESS  read-only
         STATUS      current
         DESCRIPTION
-                "This object specifies the failed re-association
+                "This object represents the failed re-association
                  count for the Access Point."
         ::= { cLApEntry 68 }
-
-cLAdjChannelRogueEnabled OBJECT-TYPE
-       SYNTAX     TruthValue
-       MAX-ACCESS read-write
-       STATUS     current
-       DESCRIPTION
-           "This object specifies If Rogue AP
-            Detection and Removed Traps need to be sent.
-            A value of true enables Adj Rogue Detection.
-            A value of false disables Adj Rogue Detection.
-            To Enable this trap it is requested to disable the
-            bsnRogueAPTrapEnable in order to avoid the duplicates."
-       ::= { cLApEntry 69 }			
 
 cLApAssocFailCountByRate OBJECT-TYPE
         SYNTAX      Unsigned32
         MAX-ACCESS  read-only
         STATUS      current
         DESCRIPTION
-                "This object specifies the failed association
-                 count for the Access Point caused by rate mismatch."
+                "This object represents the failed association
+                 count for the access point caused by rate mismatch."
         ::= { cLApEntry 70 }
 
 cLApAbnormalOfflineCount OBJECT-TYPE
@@ -1573,7 +1575,7 @@ cLApAbnormalOfflineCount OBJECT-TYPE
        MAX-ACCESS  read-only
        STATUS      current
        DESCRIPTION
-          "This object specifies the abnormal offline count for the Access Point."
+          "This object represents the abnormal offline count for the Access Point."
         ::= { cLApEntry 71 }
 
 cLApActiveClientCount OBJECT-TYPE
@@ -1694,7 +1696,160 @@ cLApUniversalPrimeStatus OBJECT-TYPE
               "This object represents the method of Priming
               of the Universal AP."
         ::= { cLApEntry 83 }
- 
+
+cLApIsMaster OBJECT-TYPE
+       SYNTAX      TruthValue
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+              "This object represents if the Flex AP is a 
+               Master AP. This applies only to FlexExpress controllers. A value true 
+               will be returned if the AP is a Master AP. A value false will be returned 
+               if its not."
+        ::= { cLApEntry 84 }
+
+cLApBleFWDownloadStatus OBJECT-TYPE
+       SYNTAX      TruthValue
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+                 "This object lists out all the APs in which BLE
+                Firmware download is in progress."
+        ::= {  cLApEntry 85 }
+
+cLApDot11XorDartConnectorStatus OBJECT-TYPE
+       SYNTAX      DisplayString
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+              "This object represents the Xor Dart connector status."
+        ::= { cLApEntry 86 }
+        
+cLApCtsSxpDefaultPassword OBJECT-TYPE
+        SYNTAX      SnmpAdminString
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+               "This object configures the sxp default
+               password."
+        DEFVAL { "" }
+        ::= {  cLApEntry 87 }
+
+cLApCtsSxpState OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+               "This object represents sxp state."
+        DEFVAL { false }
+        ::= {  cLApEntry 88 }
+
+cLApCtsSxpMode OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object represents sxp mode."
+        DEFVAL { disable }
+        ::= {  cLApEntry 89 }
+        
+cLApCtsSxpListenerMinHoldtime OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object represents sxp listener hold time.
+        It specifies the global maximum hold-time for
+        SXP connections in 'listener' mode.
+
+        Value of this object must be lesser than
+        cLApCtsSxpListenerMinHoldTime."
+        DEFVAL { 90 }
+        ::= {  cLApEntry 90 }
+
+cLApCtsSxpListenerMaxHoldtime OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object represents sxp listener hold time.
+        It specifies the global maximum hold-time for
+        SXP connections in 'listener' mode.
+
+        Value of this object must be greater than
+        cLApCtsSxpListenerMinHoldTime."
+        DEFVAL { 180 }
+        ::= {  cLApEntry 91 }
+
+cLApCtsSxpReconcilePeriod OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object represents sxp reconcile period."
+        DEFVAL { 120 }
+        ::= {  cLApEntry 92 }
+
+cLApCtsSxpRetryPeriod OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object represents sxp retry peiod."
+        DEFVAL { 120 }
+        ::= {  cLApEntry 93 }
+        
+cLApCtsSxpSpeakerHoldTime OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object represents sxp speaker hold time."
+        DEFVAL { 120 }
+        ::= {  cLApEntry 94 }
+
+cLApCtsSxpSpeakerKeepAlive OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object reperesents sxp speaker keep alive time."
+        DEFVAL { 0 }
+        ::= {  cLApEntry 95 }
+
+cLApCtsInlineTagStatus OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object reperesents Cts Inline Tag Status.
+         A value True will be returned if Inline Tag is enabled
+         A value False will be returned if Inline Tag is disabled"
+        DEFVAL { false }
+        ::= {  cLApEntry 96 }
+
+cLApCtsSgaclStatus OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object reperesents Cts SgACL enforcement status
+         A value True will be returned if SgACL enforcement is enabled
+         A value False will be returned if SgACL enforcement is disabled"
+        DEFVAL { false }
+        ::= {  cLApEntry 97 }
+
+cLApCtsOverrideStatus OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+        "This object reperesents Cts AP Override status
+         A value of 'true' enables CTS AP Override
+         A value of 'false' disables CTS AP Override"
+        DEFVAL { false }
+        ::= {  cLApEntry 98 }
+
 --********************************************************************
 -- *  AP Dot11 Interface Information
 --********************************************************************
@@ -1752,7 +1907,12 @@ CLApDot11IfEntry ::= SEQUENCE {
                 cLApDot11acSupport        TruthValue,
                 cLAp11ChannelBandwidth   INTEGER,
                 cLApExtensionChannels      DisplayString,
-                cLAPDot11IfMinTxPowerStep   Unsigned32 
+                cLAPDot11IfMinTxPowerStep   Unsigned32,
+                cLApDot11XorRadioMode       INTEGER,
+                cLApDot11XorRadioBand       INTEGER,
+                cLApDot11XorRadioRoleAssignment INTEGER,
+                cLApDot11IfMaxDataRate    Unsigned32,
+                cLApDot11IfSensorReachability Unsigned32
         }
 
 cLApDot11IfSlotId OBJECT-TYPE
@@ -1996,7 +2156,8 @@ cLAp11ChannelBandwidth OBJECT-TYPE
                    ten(2),
                    twenty(3),
                    fourty(4),
-                   eighty(5)
+                   eighty(5),
+                   onesixty(6)
                }
         UNITS  "mhz"
         MAX-ACCESS read-write
@@ -2024,8 +2185,64 @@ cLAPDot11IfMinTxPowerStep OBJECT-TYPE
       DESCRIPTION
               "This object represents minimum adjust step of the AP radio TX power.
                The power step is coded as an unsigned integer in units of dbm."
-      ::= { cLApDot11IfEntry 25 }    
+      ::= { cLApDot11IfEntry 25 }
 
+cLApDot11XorRadioMode OBJECT-TYPE
+        SYNTAX     INTEGER {
+                   servingClients(1),
+               	   monitor(2),
+                   sensor(3)
+               }
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object helps to set the radio mode for
+                the AP which has XOR radio."
+        ::= { cLApDot11IfEntry 26 }
+
+cLApDot11XorRadioBand OBJECT-TYPE
+        SYNTAX     INTEGER {
+                   radioband24G(1),
+                   radioband5G(2)
+               }
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object helps to set the radio bandwidth for
+                the AP which has XOR radio."
+        ::= { cLApDot11IfEntry 27 }    
+
+cLApDot11XorRadioRoleAssignment OBJECT-TYPE
+        SYNTAX     INTEGER {
+                   auto(1),
+                   manual(2)
+               }
+        MAX-ACCESS read-write
+        STATUS     current
+        DESCRIPTION
+                "This object helps to set the radio role assignment of
+                the AP which has XOR radio."
+        ::= { cLApDot11IfEntry 28 }
+
+cLApDot11IfMaxDataRate OBJECT-TYPE
+        SYNTAX     Unsigned32
+        MAX-ACCESS read-only
+        STATUS     current
+        DESCRIPTION
+                "This object represents the maximum data rate of a dot11
+                interface on an AP in Mbps."
+        ::= { cLApDot11IfEntry 29 }
+
+cLApDot11IfSensorReachability OBJECT-TYPE
+		SYNTAX		Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION 
+                "This object represents sensor radio's ability to cover 
+                 localized RF neighbors.It represents value in percentage 
+                 which shows percentage of neighbors covered by this sensor." 
+    	::= { cLApDot11IfEntry 30 }
+                 
 --********************************************************************
 -- *  AP Ethernet Interface Information
 --********************************************************************
@@ -2520,7 +2737,9 @@ CLApDot11RadioEntry ::= SEQUENCE {
         cLApDot11RadioSubBand           CLApDot11RadioSubband,
         cLApDot11RadioVersion           DisplayString,
         cLApDot11IsBackhaul             TruthValue,
-        cLApDot11RadioRole              CLApDot11RadioRole
+        cLApDot11RadioRole              CLApDot11RadioRole,
+        cLApDot11RadioMode       INTEGER,
+        cLApDot11RadioSubType    INTEGER
 -- place holders for future variables
 --> cLApDot11RadioChannelBandwidth
 --> cLApDot11RadioChannelNumber
@@ -2573,6 +2792,62 @@ cLApDot11RadioRole OBJECT-TYPE
         DESCRIPTION
                 "This attribute identifies role of the radio."
         ::= { cLApDot11RadioEntry 5 }
+
+cLApDot11RadioMode OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        local(1),
+                        monitor(2),
+                        remote(3),
+                        rogueDetector(4),
+                        sniffer(5),
+                        bridge(6),
+                        seConnect(7),
+                        hybridRemote(8)
+                    }
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object indicates mode of the radio.
+        local(1)         : The default option. Serving WLAN  
+                           clients and scanning channels for threats. 
+        monitor(2)       : A monitor mode.  AP spends all of its 
+                           cycles scanning channels and looking 
+                           for rogues. 
+        remote(3)        : This mode indicates that AP is a remote 
+                           edge lightweight access point. 
+        rogueDetector(4) : This mode monitors the rogue APs on wire. 
+                           It does not transmit or receive frames 
+                           over the air or contain rogue APs. 
+        sniffer(5)       : The access point starts sniffing 
+                           the air on a given channel. 
+        bridge(6)        : This mode indicates that a root AP 
+                           is connected.
+        seConnect(7)     : AP is connected to spectrum expert. 
+                           The AP is able to perform spectrum 
+                           intelligence.  
+        hybridRemote(8)  : A mode for branch office and 
+                           remote office deployment." 
+    ::= { cLApDot11RadioEntry 6 }
+
+cLApDot11RadioSubType OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        main(1),
+                        rxOnly(2),
+                        slaveAc(3),
+                        remoteLan(4),
+                        xorTxRx(5)
+                    }
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object indicates subtype of the radio.
+        main(1)   :radio operates normally. 
+        rxOnly(2) :NOS radio type,which is explicitely used 
+                   for monitor mode operation.
+        slaveAc(3):x-ale radio type is only for local mode." 
+    ::= { cLApDot11RadioEntry 7 }
+ 
+
 
 
 --********************************************************************
@@ -2899,7 +3174,8 @@ CLAplanStatsEntry ::= SEQUENCE {
 		cLApLanPortId                   INTEGER,
 		cLApLanPortState                TruthValue,
 		cLApLanPortVlanId		Unsigned32,
-		cLApLanPortVlanIdValid          TruthValue
+		cLApLanPortVlanIdValid          TruthValue,
+		cLApLanPoeState			TruthValue
         }
 
 cLApLanPortId OBJECT-TYPE
@@ -2941,6 +3217,49 @@ cLApLanPortVlanIdValid  OBJECT-TYPE
 		Port interface on Sardinia AP."
        DEFVAL  { false }
         ::= {  cLAplanStatsEntry  4 }
+
+cLApLanPoeState OBJECT-TYPE
+       SYNTAX     TruthValue
+       MAX-ACCESS read-write
+       STATUS     current
+       DESCRIPTION
+               "This object represents the LAN Poe Status  of an
+                Ethernet interface on AP"
+       DEFVAL  { false }
+        ::= {  cLAplanStatsEntry  5 }
+
+cLAplanOverrideTable OBJECT-TYPE
+       SYNTAX     SEQUENCE OF CLAplanOverrideEntry
+       MAX-ACCESS not-accessible
+       STATUS     current
+       DESCRIPTION
+               "This table represents the lan override status of AP"
+        ::= { ciscoLwappAplanStats 2 }
+
+cLAplanOverrideEntry OBJECT-TYPE
+       SYNTAX     CLAplanOverrideEntry
+       MAX-ACCESS not-accessible
+       STATUS     current
+       DESCRIPTION
+               "This entry contains stats information of LAN override status"
+       INDEX   {
+                cLApSysMacAddress
+               }
+        ::= { cLAplanOverrideTable 1 }
+
+CLAplanOverrideEntry ::= SEQUENCE {
+		cLApLanOverride    TruthValue
+        }
+
+cLApLanOverride OBJECT-TYPE
+       SYNTAX     TruthValue
+       MAX-ACCESS read-write
+       STATUS     current
+       DESCRIPTION
+               "This object represents the LAN port override status of AP"
+       DEFVAL  { false }
+        ::= {  cLAplanOverrideEntry  1 }
+
 
 --********************************************************************
 -- *  AP WLAN Stats.
@@ -3165,15 +3484,16 @@ cLApCountryAllowed OBJECT-TYPE
 --* Halo BLE Configuration to set Beacon parameters of Halo enabled APs 
 --*****************************************************************************
 cLHaloGlobalBleBeaconInterval OBJECT-TYPE
-       SYNTAX      TimeInterval
-       UNITS       "milliseconds"
+       SYNTAX      Unsigned32 (1..10)
+       UNITS       "Hz"
        MAX-ACCESS  read-write
        STATUS      current
        DESCRIPTION
-                "This object represent the global time interval
-                between ibeacon transmissions from BLE module.
-		This value is common to HALO enabled APs that
-		have joined the controller."
+                "This object represent the beacon interval
+                between each transmissions from BLE module.
+                This value is common to HALO enabled APs that
+                have joined the controller."
+       DEFVAL  { 1 }
         ::= { ciscoLwappApGlobalBleBeacon 1}
 
 cLHaloBleBeaconTable OBJECT-TYPE
@@ -3277,7 +3597,10 @@ CLApBleBeaconEntry ::= SEQUENCE {
                 cLApBleBeaconMajorField           Unsigned32,
                 cLApBleBeaconMinorField           Unsigned32,
                 cLApBleBeaconTxPower              Unsigned32,
-                cLApBleBeaconStatus               TruthValue
+                cLApBleBeaconStatus               TruthValue,
+                cLApBleBeaconUuid                 DisplayString,
+                cLApBleBeaconInterval             Unsigned32,
+                cLApBleBeaconApplyGlobal          TruthValue
                 }
 
 cLApBleBeaconMajorField OBJECT-TYPE
@@ -3313,18 +3636,109 @@ cLApBleBeaconTxPower  OBJECT-TYPE
 
 cLApBleBeaconStatus OBJECT-TYPE
        SYNTAX      TruthValue
-       MAX-ACCESS  read-only
+       MAX-ACCESS  read-write
        STATUS      current
        DESCRIPTION 
-	         "This object  would be set via message from the 
-		AP in case of an error."
-       DEFVAL  { false }
+              "This object specifies the status of the BLE beacons.
+               enable(1) - enable the BLE beacon,
+               disable(2) - disable the BLE beacon."
         ::= {  cLApBleBeaconEntry 4 }
 	
+cLApBleBeaconUuid OBJECT-TYPE
+       SYNTAX     DisplayString (SIZE(0..128))
+       MAX-ACCESS read-write
+       STATUS     current
+       DESCRIPTION
+               "This object represents the UUID (universally unique identifier)
+                which is a 128-bit value."
+        ::= { cLApBleBeaconEntry 5 }
+
+cLApBleBeaconInterval OBJECT-TYPE
+       SYNTAX      Unsigned32 (1..10)
+       UNITS       "Hz"
+       MAX-ACCESS  read-write
+       STATUS      current
+       DESCRIPTION
+                "This object represent the beacon interval
+                between each transmissions from BLE module.
+                This value is common to HALO enabled APs that
+                have joined the controller."
+       DEFVAL  { 1 }
+        ::= { cLApBleBeaconEntry 6 }
+
+cLApBleBeaconApplyGlobal OBJECT-TYPE
+       SYNTAX      TruthValue
+       MAX-ACCESS  read-write
+       STATUS      current
+       DESCRIPTION
+              "Setting this to true will clear all BLE configuration at AP and 
+               sets with Global BLE configuration when applied.
+               Set 1(True), above action takes place.
+               Set 2(False), no action takes place."
+       DEFVAL { false }
+       ::= { cLApBleBeaconEntry 7 }
+
 --*****************************************************************************
 --* Halo BLE Module Mibs
 --*****************************************************************************
+--*****************************************************************************
+--* Halo Hyperlocation Config Mibs
+--*****************************************************************************
 
+ cLApHyperlocationTable OBJECT-TYPE
+         SYNTAX     SEQUENCE OF CLApHyperlocationEntry
+         MAX-ACCESS not-accessible
+         STATUS     current
+         DESCRIPTION
+                 "This table represents the information about the
+                  APs hyperlocation state and its config nature 
+                 controller."
+         ::= { ciscoLwappApHyperlocation 1 }
+
+
+ cLApHyperlocationEntry OBJECT-TYPE
+         SYNTAX     CLApHyperlocationEntry
+         MAX-ACCESS not-accessible
+         STATUS     current
+         DESCRIPTION
+                 "Each entry in this table provides information about
+                  Hyperlocation state and config nature of APs 
+                  controller."
+         INDEX   { cLApSysMacAddress }
+         ::= { cLApHyperlocationTable 1 }
+
+  CLApHyperlocationEntry ::= SEQUENCE {
+
+                               cLApHyperlocationAdminState        TruthValue,
+                              cLApHyperlocationUnsetFlag         TruthValue
+                    }
+  cLApHyperlocationAdminState OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "This object specifies the Hyperlocation Admin State
+           for an AP to be enabled or disabled.
+            A TRUE indicated Hyperlocation set while FALSE
+           signifies disable"
+        ::= { cLApHyperlocationEntry 1 }
+
+  cLApHyperlocationUnsetFlag OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "This object specifies Explicit per Ap flag status
+           for AP this to be disabled or not.
+
+           A TRUE value indicates AP has an explicit Per AP config
+           while FALSE states not explicit Per AP config"
+        ::= { cLApHyperlocationEntry 2 }
+
+
+--**************************************************************************
+--* Halo Hyperlocation Config Mibs
+--***************************************************************************
 --********************************************************************
 -- *  Notification Control Object 
 --********************************************************************
@@ -3865,6 +4279,43 @@ cLApGlobalPreferMode OBJECT-TYPE
       DESCRIPTION
           "This object represents the global capwap prefer-mode"
       ::= { ciscoLwappApGlobal 24 }
+
+cLApGlobalAPLagCapability OBJECT-TYPE
+       SYNTAX      TruthValue 
+       MAX-ACCESS  read-write
+       STATUS      current
+       DESCRIPTION
+          "This object specifies whether the ap-lag capability state of all the access points 
+          should be enabled or disabled."
+       ::= { ciscoLwappApGlobal 25 }
+
+cLApGlobalAPDtlsVersion OBJECT-TYPE
+      SYNTAX INTEGER {
+          dtls10(1),
+          dtls12(2),
+          dtlsall(3)
+      }
+      MAX-ACCESS  read-write
+      STATUS      current
+      DESCRIPTION
+          "This object specifies the dtls version of ap"
+       ::= { ciscoLwappApGlobal 26 }
+
+cLApGlobalAPDtlsCipherSuite OBJECT-TYPE
+      SYNTAX INTEGER {
+          rsaaes128sha1(47),
+          rsaaes256sha1(53),
+          rsaaes256sha256(61),
+          rsagcm128sha256(156),
+          rsagcm256sha384(157),
+          ecdsaaes128gcmsha256(49195),
+          ecdsaaes256gcmsha384(49196)
+      }
+      MAX-ACCESS  read-write
+      STATUS      current
+      DESCRIPTION
+          "This object specifies the dtls cipher suite of ap"
+       ::= { ciscoLwappApGlobal 27 }
 
 --********************************************************************
 -- *  AP Dot11 Interface Antenna Information
@@ -4707,7 +5158,11 @@ CLApExtEntry::=
                 cLApStaticIpv6InetAddress       InetAddress,
                 cLApStaticIpv6PrefixLength      Unsigned32,
                 cLApStaticIpv6GatewayInetAddressType InetAddressType,
-                cLApStaticIpv6GatewayInetAddress    InetAddress
+                cLApStaticIpv6GatewayInetAddress    InetAddress,
+                cLApStaticIpNetmaskType    InetAddressType,
+                cLApStaticIpNetmask        InetAddress,
+                cLApPreferMode             INTEGER,
+                cLApPreferModeApplied      INTEGER
         }
 
 cLApLEDFlashStatus    OBJECT-TYPE
@@ -4787,7 +5242,7 @@ cLApStaticIpv6PrefixLength    OBJECT-TYPE
                configured on the AP."
         ::= {  cLApExtEntry 8 }        
 
-cLApStaticIpv6GatewayInetAddressType OBJECT-TYPE
+cLApStaticIpv6GatewayInetAddressType  OBJECT-TYPE
        SYNTAX InetAddressType
        MAX-ACCESS read-write
        STATUS current
@@ -4797,7 +5252,7 @@ cLApStaticIpv6GatewayInetAddressType OBJECT-TYPE
                cLApStaticIpv6GatewayInetAddress." 
         ::= {  cLApExtEntry 9 }        
        
-cLApStaticIpv6GatewayInetAddress OBJECT-TYPE
+cLApStaticIpv6GatewayInetAddress  OBJECT-TYPE
        SYNTAX InetAddress
        MAX-ACCESS read-write
        STATUS current
@@ -4806,7 +5261,45 @@ cLApStaticIpv6GatewayInetAddress OBJECT-TYPE
                 This attribute can be configured only if the static IP
                 option is turned on in the AP."
         ::= {  cLApExtEntry 10 } 
-        
+
+cLApStaticIpNetmaskType OBJECT-TYPE
+       SYNTAX InetAddressType
+       MAX-ACCESS read-write
+       STATUS current
+       DESCRIPTION
+               "This represents netmask type."
+        ::= {  cLApExtEntry 11 }
+
+cLApStaticIpNetmask OBJECT-TYPE
+       SYNTAX InetAddress
+       MAX-ACCESS read-write
+       STATUS current
+       DESCRIPTION
+               "This represents netmask for ipv4 address."
+        ::= {  cLApExtEntry 12 }
+
+
+cLApPreferMode  OBJECT-TYPE
+       SYNTAX INTEGER {
+            ipv4(1),
+            ipv6(2)
+       }
+       MAX-ACCESS      read-only
+       STATUS          current
+       DESCRIPTION
+        " This object indicates capwap prefer-mode (ipv4 or ipv6) of AP."
+        ::= { cLApExtEntry 13 }
+
+cLApPreferModeApplied  OBJECT-TYPE
+       SYNTAX INTEGER {
+            apgroup(1),
+            global(2)
+       }
+       MAX-ACCESS      read-only
+       STATUS          current
+       DESCRIPTION
+        " This object indicates prefer-mode of AP applied by apgroup config or global config."
+        ::= { cLApExtEntry 14 }
 --********************************************************************
 -- *  AP Sys Info
 --********************************************************************
@@ -5645,15 +6138,19 @@ cLApAdhocRogue OBJECT-TYPE
          ::= {  ciscoLwappApMIBNotifObjects 17} 
 
 cLApRogueAPOnWiredNetwork OBJECT-TYPE
-        SYNTAX      TruthValue
+        SYNTAX INTEGER  {
+                        no(0),
+                        yes(1)
+                        }
+
         MAX-ACCESS accessible-for-notify
         STATUS     current
         DESCRIPTION
              "This object represents the flag used to state if 
               the rogue is found on the wired network.
-              A value of 'true' indicates Rogue AP is found on wired
+              A value of '1' indicates Rogue AP is found on wired
               network.
-              A value of 'false' indicates Rogue AP is not found
+              A value of '0' indicates Rogue AP is not found
               on wired network."
          ::= {  ciscoLwappApMIBNotifObjects 18} 
 
@@ -5855,7 +6352,34 @@ cLApSeverityScore OBJECT-TYPE
          as 'custom'."
     ::= { ciscoLwappApMIBNotifObjects 35  }
 
+cLApDot11XorRadioRoleChangeReason OBJECT-TYPE
+    SYNTAX          INTEGER {
+                        none(1),
+                        auto(2),
+                        manual(3) 
+                     }   
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION
+        "This object is used to identify the reason code for 
+         radio role change of XOR radio."
+     ::= { ciscoLwappApMIBNotifObjects 36 }
 
+cLApDot11XorRadioBandChangeReason OBJECT-TYPE
+     SYNTAX          INTEGER {
+                         none(1),
+                         coverageHole(2),
+                         hyperlocation(3),
+                         revert(4),
+                         fra(5),
+                         manual(6)
+                     }
+     MAX-ACCESS      accessible-for-notify
+     STATUS          current
+     DESCRIPTION
+         "This object is used to identify the reason code for
+          radio band change of XOR radio."
+      ::= { ciscoLwappApMIBNotifObjects 37 }
 
 --********************************************************************
 -- *  Notifications 
@@ -6265,6 +6789,51 @@ ciscoLwappApSystemBootupEvent  NOTIFICATION-TYPE
               Boots Up."
      ::= { ciscoLwappApMIBNotifs 27 }
 
+ciscoLwappXmFilterCheckWarning  NOTIFICATION-TYPE
+     OBJECTS {
+                 cLApName
+             }
+     STATUS     current
+     DESCRIPTION
+             "This notification will be sent whenever 
+              Co-existence filter is Not present "
+     ::= { ciscoLwappApMIBNotifs 28 }
+
+
+ciscoLwappApModeUnsupportedOnFlexExpressEvent NOTIFICATION-TYPE
+     OBJECTS {
+                 cLApSysMacAddress
+             }
+     STATUS     current
+     DESCRIPTION
+             "This notification will be sent whenever ap with unsupported mode joins flexexpress wlc or virtual wlc" 
+     ::= { ciscoLwappApMIBNotifs 29 }
+
+ciscoLwappRadioRoleChangeNotify  NOTIFICATION-TYPE
+     OBJECTS {
+               cLApSysMacAddress,
+               cLApName,
+               cLApDot11IfSlotId, 
+               cLApDot11XorRadioBand,
+               cLApDot11XorRadioRoleChangeReason
+             }
+     STATUS  current
+     DESCRIPTION
+           "This notification will be sent whenever XOR radio of AP is changed its Radio role"
+     ::= { ciscoLwappApMIBNotifs 30 }     
+
+ciscoLwappRadioBandChangeNotify  NOTIFICATION-TYPE
+     OBJECTS {
+               cLApSysMacAddress,
+               cLApName,
+               cLApDot11IfSlotId,
+               cLApDot11XorRadioBand,
+               cLApDot11XorRadioBandChangeReason
+             }
+     STATUS  current
+     DESCRIPTION
+           "This notification will be sent whenever XOR radio of AP has changed its Band"
+     ::= { ciscoLwappApMIBNotifs 31 }
 
 --********************************************************************
 --*    Compliance statements  
@@ -6823,12 +7392,7 @@ ciscoLwappApMIBComplianceRev7 MODULE-COMPLIANCE
     MIN-ACCESS      read-only
     DESCRIPTION
         "Write access is not required."
-
-    OBJECT          cLAdjChannelRogueEnabled
-    MIN-ACCESS      read-only
-    DESCRIPTION
-        "Write access is not required."	
-    ::= { ciscoLwappApMIBCompliances 8 }
+        ::= { ciscoLwappApMIBCompliances 8 }
 
 --********************************************************************
 --*    Units of conformance  
@@ -6989,7 +7553,9 @@ ciscoLwappApRadioGroup OBJECT-GROUP
                 cLApDot11RadioSubBand,
                 cLApDot11RadioVersion,
 		cLApDot11IsBackhaul,
-		cLApDot11RadioRole
+		cLApDot11RadioRole,
+                cLApDot11RadioMode,
+                cLApDot11RadioSubType
         }
         STATUS  current
         DESCRIPTION
@@ -7151,8 +7717,7 @@ ciscoLwappApGroupSup7 OBJECT-GROUP
                         cLAp802dot1xSupplicantOverridePassword,
                         cLApNwLegacyBeamForming,
                         cLApNwTxPowerThreshold,
-                        cLApVlanListRowStatus,
-                        cLAdjChannelRogueEnabled						
+                        cLApVlanListRowStatus
                     }
     STATUS          current
     DESCRIPTION

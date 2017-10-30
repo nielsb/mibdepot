@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-MOBILITY-EXT-MIB.my
 -- January 2011, Srinath Candadai
 --   
--- Copyright (c) 2011-2014 by Cisco Systems Inc.
+-- Copyright (c) 2011-2014, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -629,7 +629,16 @@ cLMobilityExtNewArchitectureAdminEnableStatus OBJECT-TYPE
         A value of 'false' indicates new Mobility is disabled." 
     ::= { ciscoLwappMobilityExtMCMAGlobalObjects 10 }
 
-
+cLMobilityExtEncryptionStatus OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies how to enable and disable the
+         encryption in the mobility tunnel.
+         A value of 'true' indicates encryption will be enabled.
+         A value of 'false' indicates encryption will be disabled." 
+    ::= { ciscoLwappMobilityExtMCMAGlobalObjects 12 }
 -- *******************************************************************
 -- Switch Peer Group Table (applicable to MC only)
 -- *******************************************************************
@@ -2655,7 +2664,8 @@ cLMobilityExtConfigGroup OBJECT-GROUP
                         cLMobilityExtMCHandoffCmplTransmitted,
                         cLMobilityExtMCHandoffClientDeleteTransmitted,
                         cLMobilityExtMCTotalClientCount,
-                        cLMobilityExtMCWgbCount                        
+                        cLMobilityExtMCWgbCount,
+                        cLMobilityExtEncryptionStatus
                     }
     STATUS          deprecated 
     DESCRIPTION
@@ -2811,7 +2821,8 @@ cLMobilityExtConfigGroupRev1 OBJECT-GROUP
                         cLMobilityExtMCTotalClientCount,
                         cLMobilityExtMCWgbCount,
                         cLMobilityExtMOClientUpTime,
-                        cLMobilityExtMCClientUpTime
+                        cLMobilityExtMCClientUpTime,
+                        cLMobilityExtEncryptionStatus
                     }
     STATUS          current
     DESCRIPTION

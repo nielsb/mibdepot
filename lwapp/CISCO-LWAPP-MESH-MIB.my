@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-MESH-MIB.my
 -- February,2007 Devesh Pujari
 --   
--- Copyright (c) 2006, 2007, 2010 by Cisco Systems, Inc.
+-- Copyright (c) 2006-2007, 2010, 2015-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -23,7 +23,8 @@ IMPORTS
     TruthValue,
     TimeStamp,
     MacAddress,
-    TimeInterval
+    TimeInterval,
+    RowStatus
         FROM SNMPv2-TC
     SnmpAdminString
         FROM SNMP-FRAMEWORK-MIB
@@ -32,6 +33,8 @@ IMPORTS
         FROM CISCO-LWAPP-AP-MIB
     CLDot11Channel
         FROM CISCO-LWAPP-TC-MIB
+    Unsigned64
+        FROM CISCO-TC
     ciscoMgmt
         FROM CISCO-SMI;
 
@@ -401,7 +404,9 @@ ClMeshNodeEntry ::= SEQUENCE {
         clMeshPrefParentMacAddress     MacAddress,
         clMeshNodeBGNStrictMatch       TruthValue,
         clMeshNodeVlanEnabled          TruthValue,
-        clMeshNodeNativeVlanId         Unsigned32
+        clMeshNodeNativeVlanId         Unsigned32,
+        clMeshNodePskKeyClear          TruthValue,
+        clMeshNodeRAPDownlinkBackhaul  INTEGER
 }
 
 clMeshNodeRole OBJECT-TYPE
@@ -613,6 +618,44 @@ clMeshNodeBHDataRate OBJECT-TYPE
                        htMcs13(27),
                        htMcs14(28),
                        htMcs15(29),
+                       htMcs16(30),
+                       htMcs17(31),
+                       htMcs18(32),
+                       htMcs19(33),
+                       htMcs20(34),
+                       htMcs21(35),
+                       htMcs22(36),
+                       htMcs23(37),
+                       vhtMcs0Ss1(38),
+                       vhtMcs1Ss1(39),
+                       vhtMcs2Ss1(40),
+                       vhtMcs3Ss1(41),
+                       vhtMcs4Ss1(42),
+                       vhtMcs5Ss1(43),
+                       vhtMcs6Ss1(44),
+                       vhtMcs7Ss1(45),
+                       vhtMcs8Ss1(46),
+                       vhtMcs9Ss1(47),
+                       vhtMcs0Ss2(48),
+                       vhtMcs1Ss2(49),
+                       vhtMcs2Ss2(50),
+                       vhtMcs3Ss2(51),
+                       vhtMcs4Ss2(52),
+                       vhtMcs5Ss2(53),
+                       vhtMcs6Ss2(54),
+                       vhtMcs7Ss2(55),
+                       vhtMcs8Ss2(56),
+                       vhtMcs9Ss2(57),
+                       vhtMcs0Ss3(58),
+                       vhtMcs1Ss3(59),
+                       vhtMcs2Ss3(60),
+                       vhtMcs3Ss3(61),
+                       vhtMcs4Ss3(62),
+                       vhtMcs5Ss3(63),
+                       vhtMcs6Ss3(64),
+                       vhtMcs7Ss3(65),
+                       vhtMcs8Ss3(66),
+                       vhtMcs9Ss3(67),
                        default(65535)
                     }
     MAX-ACCESS      read-write
@@ -733,6 +776,105 @@ clMeshNodeNativeVlanId    OBJECT-TYPE
             configured on the AP. If flexconnect local switching is
             enabled, it will return the same value as cLReapApNativeVlanId."
     ::= { clMeshNodeEntry 20 }
+
+clMeshNodePskKeyClear OBJECT-TYPE
+       SYNTAX     TruthValue
+       MAX-ACCESS read-write
+       STATUS     current
+       DESCRIPTION
+            "This object when set to 'true' will clear the PSK key from AP.
+             A value of 'true' will be used for clearing PSK key from the AP.
+             A value of 'false' will be set after action is performed."
+       DEFVAL  { false }
+        ::= { clMeshNodeEntry 21 }
+
+clMeshNodeRAPDownlinkBackhaul OBJECT-TYPE
+     SYNTAX   INTEGER  {
+                        slot0(0),
+                        slot1(1),
+                        unknown(2)
+                       }
+     MAX-ACCESS  read-write
+     STATUS  current
+     DESCRIPTION
+         "This objects represent the current backhaul slot of the RAP.
+          And also used to configure/change the backhaul slot of the RAP"
+     ::= { clMeshNodeEntry 22 }
+
+clMeshPskTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF ClMeshPskEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents information about the PSK Keys
+         configured on the WLC for the MESH AP authentication."
+    ::= { ciscoLwappMeshConfig 2 }
+
+clMeshPskEntry OBJECT-TYPE
+    SYNTAX          ClMeshPskEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the 
+         information about PSK Key."
+    INDEX  { clMeshPskIndex }
+    ::= { clMeshPskTable 1 }
+
+ClMeshPskEntry ::= SEQUENCE {
+    clMeshPskIndex        Unsigned32,
+    clMeshPskKey          OCTET STRING,
+    clMeshPskTimeStamp    DisplayString, 
+    clMeshPskKeyDesc      DisplayString,
+    clMeshPskRowStatus    RowStatus
+}
+
+clMeshPskIndex OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object uniquely identifies the one instance of the PSK.
+         Maximum five entries are maintained. For each key configuration 
+         old key will be pushed down and new key will be placed at top. 
+         After fifth key configuration, old key will be deleted based on timestamp 
+         and new key will be placed at top of the list."
+    ::= { clMeshPskEntry 1 }
+
+clMeshPskKey OBJECT-TYPE
+    SYNTAX        OCTET STRING(SIZE(3..32))
+    MAX-ACCESS    read-create
+    STATUS        current
+    DESCRIPTION
+        "This object specifies the pre-shared
+         key used for authenticating mesh AP during joining process."
+    ::= { clMeshPskEntry 2 }
+
+clMeshPskTimeStamp OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the time when the
+         PSK key was configured on WLC." 
+    ::= { clMeshPskEntry 3 }
+
+clMeshPskKeyDesc OBJECT-TYPE
+    SYNTAX          DisplayString(SIZE(0..32))
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the Description for the pre-shared key."
+    ::= { clMeshPskEntry 4 }
+
+clMeshPskRowStatus  OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the status column for this row and used
+         to create and delete specific instances of rows 
+         in this table." 
+    ::= { clMeshPskEntry 5 }
 
 -- ********************************************************************
 -- * Mesh Network global configuration
@@ -1059,6 +1201,56 @@ clMeshIsBDomainChannelsEnable OBJECT-TYPE
      ::= { ciscoLwappMeshGlobalConfig 24 }
 
 
+clMeshPskKeyProvisionEnable OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This object is used to enable/disable PSK key provisioning on WLC.
+          A value of 'true' indicates that PSK Key provisioning is enabled.
+          A value of 'false' indicates that PSK Key provisioning is disabled."         
+     DEFVAL  { false }
+        ::= { ciscoLwappMeshGlobalConfig 25 }
+
+clMeshPskKeyWindowEnable OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This object is used to enable/disable PSK key provisioning window on WLC.
+          A value of 'true' indicates that PSK Key provisioning window is enabled.
+          A value of 'false' indicates that PSK Key provisioning window is disabled."
+     DEFVAL  { false }
+        ::= { ciscoLwappMeshGlobalConfig 26 }
+
+clMeshEthenetBridgingVlanTransparent OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "Vlan Transparent will allow all vlans on the secondary ethernet interface.
+          This object is used to enable/disable Vlan Transparent mode on WLC.
+          A value of 'true' indicates that Vlan Transparent mode is enabled.
+          A value of 'false' indicates that Vlan Transparent mode is disabled."
+     DEFVAL  { false }
+        ::= { ciscoLwappMeshGlobalConfig 27 }
+
+clMeshRAPDownlinkBackhaul OBJECT-TYPE
+     SYNTAX   INTEGER  {
+                        slot0(0),
+                        slot1(1),
+                        unknown(2)
+                    }
+     MAX-ACCESS  read-write
+     STATUS  current
+     DESCRIPTION
+         "This objects represent the global config of Mesh backhaul slot configured
+          on the WLC.
+          And also used to configure/change the backhaul slot of RAPs joined to the 
+          WLC"
+        ::= { ciscoLwappMeshGlobalConfig 28 }
+
+
 -- ********************************************************************
 -- *    NEIGHBOR STATUS
 -- ********************************************************************
@@ -1161,6 +1353,111 @@ clMeshNeighborUpdate OBJECT-TYPE
         updated. This value is represented as a instance of 
         sysUp time." 
     ::= { clMeshNeighborEntry 5 }
+
+-- ********************************************************************
+-- *    MESH ATF STATS
+-- ********************************************************************
+
+clMeshAtfStatsTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF ClMeshAtfStatsEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents ATF mesh stats for all the RAPs/PMAPs having
+		 one or more child mesh nodes."
+    ::= { ciscoLwappMeshNeighborsStatus 2 }
+
+clMeshAtfStatsEntry OBJECT-TYPE
+    SYNTAX          ClMeshAtfStatsEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "An (conceptual) entry in this table is created when
+        mesh node detects neighbor mesh nodes having the ATF enabled. 
+        Entries are removed when the mesh node does not detect
+        AP as neighbor."
+    INDEX           {
+                        cLApSysMacAddress,
+                        clMeshNeighborMacAddress
+                    } 
+    ::= { clMeshAtfStatsTable 1 }
+
+ClMeshAtfStatsEntry ::= SEQUENCE {
+        clMeshAtfAirtimeUsedInstantaneous      Unsigned32,
+        clMeshAtfAirtimeUsedCumulative         Unsigned64,
+        clMeshAtfFramesSentInstantaneous       Unsigned32,
+        clMeshAtfFramesSentCumulative          Unsigned64,
+        clMeshAtfFramesDroppedInstantaneous    Unsigned32,
+        clMeshAtfFramesDroppedCumulative       Unsigned64
+}
+
+
+clMeshAtfAirtimeUsedInstantaneous OBJECT-TYPE
+       SYNTAX      Unsigned32
+       UNITS       "Microseconds"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the air time used instantaneous in micro seconds
+          for its neighbor mesh nodes(parent/child)."
+       DEFVAL  { 0 }
+       ::= { clMeshAtfStatsEntry 1 }
+	   
+clMeshAtfAirtimeUsedCumulative OBJECT-TYPE
+       SYNTAX      Unsigned64
+       UNITS       "Microseconds"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the air time used cumulative in micro seconds
+          of its neighbor mesh nodes(parent/child)."
+       DEFVAL  { 0 }
+       ::= { clMeshAtfStatsEntry 2 }
+	   
+clMeshAtfFramesSentInstantaneous OBJECT-TYPE
+       SYNTAX      Unsigned32
+       UNITS       "bytes"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies number of bytes sent instantaneous of  
+		   its neighbor mesh nodes(parent/child)."
+       DEFVAL  { 0 }
+       ::= { clMeshAtfStatsEntry 3 }
+	   
+clMeshAtfFramesSentCumulative OBJECT-TYPE
+       SYNTAX      Unsigned64
+       UNITS       "bytes"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies number of bytes sent cumulative of  
+		   its neighbor mesh nodes(parent/child)."
+       DEFVAL  { 0 }
+       ::= { clMeshAtfStatsEntry 4 }
+
+clMeshAtfFramesDroppedInstantaneous OBJECT-TYPE
+       SYNTAX      Unsigned32
+       UNITS       "bytes"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies number of frames dropped instantaneous of  
+		   its neighbor mesh nodes(parent/child)."
+       DEFVAL  { 0 }
+       ::= { clMeshAtfStatsEntry 5 }
+
+clMeshAtfFramesDroppedCumulative OBJECT-TYPE
+       SYNTAX      Unsigned64
+       UNITS       "bytes"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies number of frames dropped cumulative of  
+		   its neighbor mesh nodes(parent/child)."
+       DEFVAL  { 0 }
+       ::= { clMeshAtfStatsEntry 6 }	   
+
 
 -- ********************************************************************
 -- *    GPS related information
@@ -1731,6 +2028,19 @@ ciscoLwappMeshTemperatureStateChange NOTIFICATION-TYPE
          there is a change occurred in the temperature state
          of the Mesh AP."		 
    ::= { ciscoLwappMeshMIBNotifs 14 }
+
+
+ciscoLwappMeshPskKeyAuthFailure NOTIFICATION-TYPE
+    OBJECTS         {
+                        clMeshNodeParentMacAddress,
+                        clMeshNodeMacAddress
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent by the agent when
+         mesh node fail to join to controller with PSK Key
+         present on the Mesh AP."		 
+   ::= { ciscoLwappMeshMIBNotifs 15 }
 
 -- ********************************************************************
 -- *    Compliance statements

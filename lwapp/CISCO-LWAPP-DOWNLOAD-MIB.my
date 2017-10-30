@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-DOWNLOAD-MIB.my 
 -- May 2008, Koteswara Rao Vemulapati
 --
--- Copyright (c) 2008, 2014 by Cisco Systems, Inc.
+-- Copyright (c) 2008, 2014, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -12,7 +12,7 @@ IMPORTS
         MODULE-IDENTITY, 
         OBJECT-TYPE,
         Unsigned32
-		FROM SNMPv2-SMI
+        FROM SNMPv2-SMI
         MODULE-COMPLIANCE, 
         OBJECT-GROUP
                 FROM SNMPv2-CONF
@@ -21,11 +21,11 @@ IMPORTS
         DateAndTime,
         TimeInterval
                 FROM SNMPv2-TC  
-	SnmpAdminString
-		FROM SNMP-FRAMEWORK-MIB
-	cLApSysMacAddress,
-	ciscoLwappApMIB
-            	FROM CISCO-LWAPP-AP-MIB;
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    cLApSysMacAddress,
+    ciscoLwappApMIB
+                FROM CISCO-LWAPP-AP-MIB;
 
 
 --********************************************************************
@@ -84,12 +84,12 @@ ciscoLwappDLApBoot OBJECT IDENTIFIER
         ::= { ciscoLwappDownloadMIBObjects 1 }
 
 ciscoLwappDLReset OBJECT IDENTIFIER
-    	::= { ciscoLwappDownloadMIBObjects 2 }
+        ::= { ciscoLwappDownloadMIBObjects 2 }
 
 ciscoLwappDLRestart OBJECT IDENTIFIER
-    	::= { ciscoLwappDownloadMIBObjects 3 }
+        ::= { ciscoLwappDownloadMIBObjects 3 }
 
-    	
+        
 --********************************************************************
 --*    AP Boot Information. 
 --********************************************************************
@@ -112,23 +112,23 @@ cldlApBootEntry OBJECT-TYPE
         STATUS     current
         DESCRIPTION
              "An (conceptual) entry in this table represents version
-	      information for a AP."
+          information for a AP."
         INDEX { cLApSysMacAddress }
         ::= { clDLApBootTable 1 }
       
 CLDLApBootEntry ::= 
         SEQUENCE {
-                cldlAPName		SnmpAdminString,
-                cldlAPPrimaryVersion	SnmpAdminString,
-                cldlAPBackupVersion	SnmpAdminString,
-                cldlAPSwapImage		TruthValue,
-                cldlApDownloadImage	INTEGER,
-                cldlPreDownloadVersion 	SnmpAdminString,
-                cldlPreDownloadStatus 	INTEGER,
+                cldlAPName      SnmpAdminString,
+                cldlAPPrimaryVersion    SnmpAdminString,
+                cldlAPBackupVersion SnmpAdminString,
+                cldlAPSwapImage     TruthValue,
+                cldlApDownloadImage INTEGER,
+                cldlPreDownloadVersion  SnmpAdminString,
+                cldlPreDownloadStatus   INTEGER,
                 cldlPreDownloadNextRetryTime TimeInterval,
                 cldlPreDownloadRetryCount Unsigned32,
                 cldlPredownloadImageUpgradeRole INTEGER,
-				cldlAPSoftwareName   SnmpAdminString 
+                cldlAPSoftwareName   SnmpAdminString 
         }
 
 cldlAPName OBJECT-TYPE
@@ -163,7 +163,7 @@ cldlAPSwapImage OBJECT-TYPE
                 "This object is used to  swap the AP image.
                  true : swaps the image of AP.
                  false: do not swaps the image of AP." 
-	DEFVAL {false}
+    DEFVAL {false}
         ::= { cldlApBootEntry 4 }         
 
 cldlApDownloadImage OBJECT-TYPE
@@ -208,20 +208,20 @@ cldlPreDownloadStatus OBJECT-TYPE
 cldlPreDownloadNextRetryTime  OBJECT-TYPE
            SYNTAX     TimeInterval
            MAX-ACCESS read-only
-	   STATUS     current
-	   DESCRIPTION
-		"This object represents the next retry time for 
-		downloading the AP image from the WLC."
-	      ::= { cldlApBootEntry 8 } 
+       STATUS     current
+       DESCRIPTION
+        "This object represents the next retry time for 
+        downloading the AP image from the WLC."
+          ::= { cldlApBootEntry 8 } 
 
 cldlPreDownloadRetryCount OBJECT-TYPE
-	   SYNTAX      Unsigned32
-	   MAX-ACCESS read-only
-	   STATUS      current
-	   DESCRIPTION
-		"This object represents the number of retry count
-		before the AP image downloaded from the WLC."
-	     ::= { cldlApBootEntry 9 }
+       SYNTAX      Unsigned32
+       MAX-ACCESS read-only
+       STATUS      current
+       DESCRIPTION
+        "This object represents the number of retry count
+        before the AP image downloaded from the WLC."
+         ::= { cldlApBootEntry 9 }
 
 cldlPredownloadImageUpgradeRole OBJECT-TYPE
     SYNTAX    INTEGER {
@@ -243,11 +243,11 @@ cldlPredownloadImageUpgradeRole OBJECT-TYPE
 
 cldlAPSoftwareName  OBJECT-TYPE
     SYNTAX           SnmpAdminString
-	MAX-ACCESS       read-only
-	STATUS           current
-	DESCRIPTION
-	    "This object represents the software name of the AP."
-    ::= { cldlApBootEntry 11 }		
+    MAX-ACCESS       read-only
+    STATUS           current
+    DESCRIPTION
+        "This object represents the software name of the AP."
+    ::= { cldlApBootEntry 11 }      
                                     
 
 --********************************************************************
@@ -258,12 +258,12 @@ clDLRestartTable OBJECT-TYPE
          MAX-ACCESS not-accessible
          STATUS     current
          DESCRIPTION
-		"This table used to restart the WLC.
-		User resets WLC by adding a row to this 
-		table through explicit management action 
-		from the network manager.  A row is created
-		by setting the RowStatus object to 
-        	'createAndGo'."
+        "This table used to restart the WLC.
+        User resets WLC by adding a row to this 
+        table through explicit management action 
+        from the network manager.  A row is created
+        by setting the RowStatus object to 
+            'createAndGo'."
          ::= { ciscoLwappDLRestart 1 }
          
 cldlRestartEntry OBJECT-TYPE
@@ -272,18 +272,18 @@ cldlRestartEntry OBJECT-TYPE
         STATUS     current
         DESCRIPTION
             "An (conceptual) entry in this table used to
-			 restart the WLC."
-		INDEX { cldlRestartIndex }			 
+             restart the WLC."
+        INDEX { cldlRestartIndex }           
         ::= { clDLRestartTable 1 }
 
 CLDLRestartEntry ::= 
         SEQUENCE {     
-                cldlRestartIndex		Unsigned32,
-                cldlRestartDateAndTime  	DateAndTime,
-                cldlRestartAP		TruthValue,
-                cldlRestartRowStatus	RowStatus,
-                cldlRestartSaveConfig	TruthValue,
-                cldlRestartAlertTime	Unsigned32
+                cldlRestartIndex        Unsigned32,
+                cldlRestartDateAndTime      DateAndTime,
+                cldlRestartAP       TruthValue,
+                cldlRestartRowStatus    RowStatus,
+                cldlRestartSaveConfig   TruthValue,
+                cldlRestartAlertTime    Unsigned32
         }
 
 cldlRestartIndex OBJECT-TYPE
@@ -313,7 +313,7 @@ cldlRestartAP OBJECT-TYPE
             "This object is used to reset all the APs
              associate to the controller.
              true  : resets all the APs.
-	     false : do not resets the APs."
+         false : do not resets the APs."
         DEFVAL {false}
         ::= { cldlRestartEntry 3 }  
         
@@ -328,7 +328,7 @@ cldlRestartRowStatus OBJECT-TYPE
         destroy : will clear the restart.
         The following object is mandatory for successful
         creation of an entry:
-        		clRestartDateAndTime."
+                clRestartDateAndTime."
     ::= { cldlRestartEntry 4 }
 
 cldlRestartSaveConfig OBJECT-TYPE
@@ -363,13 +363,13 @@ clDLResetTable OBJECT-TYPE
          MAX-ACCESS not-accessible
          STATUS     current
          DESCRIPTION
-		"This table used to reset the WLC and AP.  
-		User resets WLC by adding a row to this 
-		table through explicit management action 
-		from the network manager.  A row is created
-		by specifying clResetTime, or clResetDate and
-		clResetTime setting the RowStatus object to 
-        	'createAndGo'."
+        "This table used to reset the WLC and AP.  
+        User resets WLC by adding a row to this 
+        table through explicit management action 
+        from the network manager.  A row is created
+        by specifying clResetTime, or clResetDate and
+        clResetTime setting the RowStatus object to 
+            'createAndGo'."
          ::= { ciscoLwappDLReset 1 }
          
 cldlResetEntry OBJECT-TYPE
@@ -378,19 +378,19 @@ cldlResetEntry OBJECT-TYPE
         STATUS     current
         DESCRIPTION
             "An (conceptual) entry in this table used to
-			 reset the WLC and AP."
-		INDEX { cldlResetIndex }			 
+             reset the WLC and AP."
+        INDEX { cldlResetIndex }             
         ::= { clDLResetTable 1 }
       
 CLDLResetEntry ::= 
         SEQUENCE {     
-        	cldlResetIndex		Unsigned32,
-                cldlResetDateAndTime  	DateAndTime,
-                cldlResetSwapImage	TruthValue,
-                cldlResetAP		TruthValue,
-                cldlResetRowStatus	RowStatus,
-                cldlResetSaveConfig	TruthValue,
-                cldlResetAlertTime	Unsigned32
+            cldlResetIndex      Unsigned32,
+                cldlResetDateAndTime    DateAndTime,
+                cldlResetSwapImage  TruthValue,
+                cldlResetAP     TruthValue,
+                cldlResetRowStatus  RowStatus,
+                cldlResetSaveConfig TruthValue,
+                cldlResetAlertTime  Unsigned32
         }
 
 cldlResetIndex OBJECT-TYPE
@@ -430,7 +430,7 @@ cldlResetAP OBJECT-TYPE
             "This object is used to reset all the APs
              associate to the controller.
              true  : resets all the APs.
-	     false : do not resets the APs."
+         false : do not resets the APs."
         DEFVAL {false}
         ::= { cldlResetEntry 4 }  
         
@@ -445,7 +445,7 @@ cldlResetRowStatus OBJECT-TYPE
         destory : will clear the reset.
         The following object is mandatory for successful
         creation of an entry:
-        		clResetDateAndTime."
+                clResetDateAndTime."
     ::= { cldlResetEntry 5 }
 
 cldlResetSaveConfig OBJECT-TYPE
@@ -542,7 +542,7 @@ ciscoLwappDLApGroup OBJECT-GROUP
                         cldlAPBackupVersion,
                         cldlAPSwapImage,
                         cldlApDownloadImage,
-						cldlAPSoftwareName
+                        cldlAPSoftwareName
                     }
     STATUS          current
     DESCRIPTION
@@ -583,4 +583,5 @@ ciscoLwappDLNotifsGroup NOTIFICATION-GROUP
 
 
 END
+
 

@@ -3,7 +3,7 @@
 -- November 2005, Devesh Pujari, Bharat Biswal, 
 -- Prasanna Viswakumar, Srinath Candadai
 --
--- Copyright (c) 2005-2006, 2015 by Cisco Systems, Inc.
+-- Copyright (c) 2005-2006, 2015-2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 --
@@ -26,6 +26,7 @@ IMPORTS
                 FROM SNMPv2-TC 
         ciscoMgmt
                 FROM CISCO-SMI
+        Unsigned64,
         TimeIntervalSec
                 FROM CISCO-TC
 --        cLApDot11IfEntry 
@@ -231,6 +232,12 @@ cLQConfigObjects  OBJECT IDENTIFIER
 cLQoSProfileConfig OBJECT IDENTIFIER ::= { ciscoLwappQosMIBObjects 14 }
 cLQoSSipSnoopingConfig OBJECT IDENTIFIER ::= { ciscoLwappQosMIBObjects 15 }
 cLQoSAirTimeFairness OBJECT IDENTIFIER ::= { ciscoLwappQosMIBObjects 16 }
+cLQoSMapConfig OBJECT IDENTIFIER ::= { ciscoLwappQosMIBObjects 17 }
+cLQoSFastlaneConfig OBJECT IDENTIFIER ::= { ciscoLwappQosMIBObjects 18 }
+ciscoLwappQosMIBTableObjects OBJECT IDENTIFIER 
+    ::= { ciscoLwappQosMIBObjects 19 }
+ciscoLwappQosMIBGlobalObjects OBJECT IDENTIFIER 
+    ::= { ciscoLwappQosMIBObjects 20 }
 
 CiscoLwappDot11aPhyRates ::= TEXTUAL-CONVENTION
     STATUS          current
@@ -1031,7 +1038,7 @@ cLQd11bMinPhyRate OBJECT-TYPE
         ::= { cLQd11bCACConfig 20}
 
 cLQd11bClientMaxStreams OBJECT-TYPE
-        SYNTAX     INTEGER (0..20)
+        SYNTAX     INTEGER (1..16)
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
@@ -3520,7 +3527,7 @@ cLQoSAirTimeFairnessWlanStatisticsEntry OBJECT-TYPE
 
 CLQoSAirTimeFairnessWlanStatisticsEntry ::= SEQUENCE {
                cLApAirTimeFairnessWlanAirtimeUsedInstantaneous     TimeInterval,
-               cLApAirTimeFairnessWlanAirtimeUsedCumulative        TimeInterval,
+               cLApAirTimeFairnessWlanAirtimeUsedCumulative        Unsigned64,
                cLApAirTimeFairnessWlanBytesSentInstantaneous       Unsigned32,
                cLApAirTimeFairnessWlanBytesSentCumulative          Unsigned64,
                cLApAirTimeFairnessWlanBytesDroppedInstantaneous    Unsigned32,
@@ -3543,7 +3550,7 @@ cLApAirTimeFairnessWlanAirtimeUsedInstantaneous OBJECT-TYPE
        ::= { cLQoSAirTimeFairnessWlanStatisticsEntry 1 }
 
 cLApAirTimeFairnessWlanAirtimeUsedCumulative OBJECT-TYPE
-       SYNTAX      TimeInterval
+       SYNTAX      Unsigned64
        UNITS       "Microseconds"
        MAX-ACCESS  read-only
        STATUS      current
@@ -3664,7 +3671,7 @@ cLQoSAirTimeFairnessStatisticsEntry OBJECT-TYPE
 
 CLQoSAirTimeFairnessStatisticsEntry ::= SEQUENCE {
                cLApAirTimeFairnessTotalAirtimeUsedInstantaneous     TimeInterval,
-               cLApAirTimeFairnessTotalAirtimeUsedCumulative        TimeInterval,
+               cLApAirTimeFairnessTotalAirtimeUsedCumulative        Unsigned64,
                cLApAirTimeFairnessRadioUptime                       TimeInterval,
                cLApAirTimeFairnessRadioUptimeCumulative             TimeInterval
                }
@@ -3681,7 +3688,7 @@ cLApAirTimeFairnessTotalAirtimeUsedInstantaneous OBJECT-TYPE
        ::= { cLQoSAirTimeFairnessStatisticsEntry 1 }
 
 cLApAirTimeFairnessTotalAirtimeUsedCumulative OBJECT-TYPE
-       SYNTAX      TimeInterval
+       SYNTAX      Unsigned64 
        UNITS       "Microseconds"
        MAX-ACCESS  read-only
        STATUS      current
@@ -3728,6 +3735,7 @@ cLAPGroupAirTimeFairnessEntry OBJECT-TYPE
                "An entry in cLAPGroupAirTimeFairnessTable for the configuring
                 ATF(Air Time Fairness) for an AP group."
        INDEX   {
+		cLApDot11IfType,
                 cLAPGroupName
                }
         ::= { cLAPGroupAirTimeFairnessTable 1 }
@@ -3745,7 +3753,7 @@ cLAPGroupAirTimeFairnessMode OBJECT-TYPE
        MAX-ACCESS  read-write
        STATUS      current
        DESCRIPTION
-          "This object represents the ATF(Air Time Fairness) mode for this AP group
+          "This object represents the ATF(Air Time Fairness) mode for this AP group per radiotype
             1 - Disabled  2 - SSID Mode 3 - Monitor Mode."
        DEFVAL  { 0 }
        ::= { cLAPGroupAirTimeFairnessEntry  1 }
@@ -3755,7 +3763,7 @@ cLAPGroupAirTimeFairnessOptimizationPolicy OBJECT-TYPE
        MAX-ACCESS  read-write
        STATUS      current
        DESCRIPTION
-          "This object represents the ATF(Air Time Fairness) StealingPolicy for this AP group."
+          "This object represents the ATF(Air Time Fairness) StealingPolicy for this AP group per radio type."
        ::= { cLAPGroupAirTimeFairnessEntry  2 }
 
 -- ********************************************************************
@@ -3795,7 +3803,8 @@ CLQosAirTimeFairnessPolicyConfigEntry ::= SEQUENCE {
           cLAirTimeFairnessPolicyId               INTEGER,
           cLAirTimeFairnessPolicyRowStatus        RowStatus,
           cLAirTimeFairnessPolicyName             SnmpAdminString,
-          cLAirTimeFairnessPolicyWeight           Unsigned32
+          cLAirTimeFairnessPolicyWeight           Unsigned32,
+          cLAirTimeFairnessPolicyclientfairsharing INTEGER
         }
 
 cLAirTimeFairnessPolicyId  OBJECT-TYPE
@@ -3848,6 +3857,19 @@ cLAirTimeFairnessPolicyWeight OBJECT-TYPE
         This object cannot be modified when cLWlanRowStatus is 'active'."
       ::= { cLQosAirTimeFairnessPolicyConfigEntry 4 }
 
+cLAirTimeFairnessPolicyclientfairsharing OBJECT-TYPE
+       SYNTAX      INTEGER {disabled(1),
+                            enabled(2)
+                           }
+       MAX-ACCESS  read-create
+       STATUS      current
+       DESCRIPTION
+          "This object specifies whether the client fair sharing is enabled or disabled
+           for a policy present.
+         1 - Disabled  2 - Enabled"
+       DEFVAL  { 0 }
+      ::= { cLQosAirTimeFairnessPolicyConfigEntry 5 }
+
 cLApAirTimeFairnessPolicyOverrideTable OBJECT-TYPE
          SYNTAX     SEQUENCE OF CLApAirTimeFairnessPolicyOverrideTableEntry
          MAX-ACCESS not-accessible
@@ -3872,7 +3894,8 @@ cLApAirTimeFairnessPolicyOverrideEntry OBJECT-TYPE
          ::= { cLApAirTimeFairnessPolicyOverrideTable 1 }
  
 CLApAirTimeFairnessPolicyOverrideTableEntry ::= SEQUENCE {
-                 cLApAirTimeFairnessPolicyOverride       TruthValue
+                 cLApAirTimeFairnessPolicyOverride       TruthValue,
+		 cLApAirTimeFairnessOverridePolicyName   SnmpAdminString
          }
  
 cLApAirTimeFairnessPolicyOverride OBJECT-TYPE
@@ -3883,6 +3906,165 @@ cLApAirTimeFairnessPolicyOverride OBJECT-TYPE
            "This object specifies Air time fairness policy override per AP(ATF supported APs)
             per Radio per WlanProfileName for policy Id assigned to WLAN"
         ::= { cLApAirTimeFairnessPolicyOverrideEntry  1 }
+
+cLApAirTimeFairnessOverridePolicyName OBJECT-TYPE
+        SYNTAX      SnmpAdminString(SIZE(1..64))
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+           "This object represents  the PolicyName changed for the given WLAN, if
+            cLApAirTimeFairnessPolicyOverride is enabled per AP per slot per wlan profilename
+            Please note that this will not change the global PolicyName on the WLAN on the WLC  in the VAP."
+        ::= { cLApAirTimeFairnessPolicyOverrideEntry  2 }
+
+ cLAPGroupsAirTimeFairnessPolicyOverrideTable OBJECT-TYPE
+     SYNTAX          SEQUENCE OF CLAPGroupsAirTimeFairnessPolicyOverrideEntry
+     MAX-ACCESS      not-accessible
+     STATUS          current
+     DESCRIPTION
+         "This table represents Per-APGroup, Per-WlanId
+           Override of ATF Policy ID on WLAN."
+     ::= { cLQoSAirTimeFairness 8 }
+
+ cLAPGroupsAirTimeFairnessPolicyOverrideEntry OBJECT-TYPE
+     SYNTAX          CLAPGroupsAirTimeFairnessPolicyOverrideEntry
+     MAX-ACCESS      not-accessible
+     STATUS          current
+     DESCRIPTION
+         "This entry contains AirTime fairness Policy Name Override
+          on APGroup per cLWlanProfileName."
+     INDEX           {
+                         cLApDot11IfType,
+                         cLAPGroupName,
+                         cLWlanProfileName
+                     }
+     ::= { cLAPGroupsAirTimeFairnessPolicyOverrideTable 1 }
+
+ CLAPGroupsAirTimeFairnessPolicyOverrideEntry ::= SEQUENCE {
+                  cLAPGroupAirTimeFairnessPolicyNameOverrideEnabled TruthValue,
+                  cLAPGroupAirTimeFairnessOverridePolicyName        SnmpAdminString
+          }
+
+ cLAPGroupAirTimeFairnessPolicyNameOverrideEnabled OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+         "This object represents the per APGroup per Wlan ProfileName level
+          Policy override parameters.
+          If configured as True, user can override the global PolicyName
+          by providing individual new cLApAirTimeFairnessOverridePolicyName
+          per APGroup per Wlan ProfileName level.
+          If configured as False, the cLAPGroupAirTimeFairnessOverridePolicyName will be configured with
+          global policyName assigned at WlanId level"
+        DEFVAL {false}
+         ::= { cLAPGroupsAirTimeFairnessPolicyOverrideEntry 1 }
+
+
+ cLAPGroupAirTimeFairnessOverridePolicyName OBJECT-TYPE
+         SYNTAX      SnmpAdminString(SIZE(1..64))
+         MAX-ACCESS  read-write
+         STATUS      current
+         DESCRIPTION
+            "This object represents  the PolicyName changed for the given WLAN, if
+             cLAPGroupAirTimeFairnessPolicyNameOverrideEnabled is enabled per AP Group.
+             Please note that this will not change the global PolicyName on the WLAN on the WLC  in the VAP."
+         ::= { cLAPGroupsAirTimeFairnessPolicyOverrideEntry  2 }
+
+-- ********************************************************************
+-- *AirTime Fairness Client Metrics
+-- ********************************************************************
+
+cLQoSAirTimeFairnessClientStatisticsTable OBJECT-TYPE
+       SYNTAX     SEQUENCE OF CLQoSAirTimeFairnessClientStatisticsEntry
+       MAX-ACCESS not-accessible
+       STATUS     current
+       DESCRIPTION
+               "This table represents the ATF(Air Time Fairness) client statistics for each airtime timeslice
+                Per-AP Per-SlotId Per-WlanId of ATF supported APs joined to controller."
+        ::= { cLQoSAirTimeFairness 9 }
+
+cLQoSAirTimeFairnessClientStatisticsEntry OBJECT-TYPE
+       SYNTAX     CLQoSAirTimeFairnessClientStatisticsEntry
+       MAX-ACCESS not-accessible
+       STATUS     current
+       DESCRIPTION
+               "This entry contains AirTimeFairness TimeSlice Client Statistics"
+       INDEX   {
+                cLApSysMacAddress,
+                cLApDot11IfSlotId,
+                cLWlanProfileName,
+		cldcClientMacAddress
+               }
+        ::= { cLQoSAirTimeFairnessClientStatisticsTable 1 }
+
+CLQoSAirTimeFairnessClientStatisticsEntry ::= SEQUENCE {
+               cLApAirTimeFairnessClientAirtimeUsedInstantaneous     TimeInterval,
+               cLApAirTimeFairnessClientAirtimeUsedCumulative        Unsigned32,
+               cLApAirTimeFairnessClientFramesSent                   Unsigned32,
+               cLApAirTimeFairnessClientFramesDropped                Unsigned32,
+	       cLApAirTimeFairnessClientUsage                        INTEGER
+               }
+
+cLApAirTimeFairnessClientAirtimeUsedInstantaneous OBJECT-TYPE
+       SYNTAX      TimeInterval
+       UNITS       "Microseconds"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the air time used instantaneous in micro seconds
+         for particular AP per Slot per Wlan clients."
+       DEFVAL  { 0 }
+       ::= { cLQoSAirTimeFairnessClientStatisticsEntry 1 }
+
+cLApAirTimeFairnessClientAirtimeUsedCumulative OBJECT-TYPE
+       SYNTAX      Unsigned32
+       UNITS       "Microseconds"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the total AirTime used cumulative for particular AP
+          per Slot per Wlan clients."
+       DEFVAL  { 0 }
+       ::= { cLQoSAirTimeFairnessClientStatisticsEntry 2 }
+
+cLApAirTimeFairnessClientFramesSent OBJECT-TYPE
+       SYNTAX      Unsigned32
+       UNITS       "bytes"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the number of bytes sent instantaneous for particular AP
+          per Slot per Wlan clients."
+       DEFVAL  { 0 }
+       ::= { cLQoSAirTimeFairnessClientStatisticsEntry 3 }
+
+cLApAirTimeFairnessClientFramesDropped OBJECT-TYPE
+       SYNTAX      Unsigned32
+       UNITS        "bytes"
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the total number of bytes sent cumulative for particular AP
+           per Slot per Wlan clients."
+       DEFVAL  { 0 }
+       ::= { cLQoSAirTimeFairnessClientStatisticsEntry 4 }
+
+cLApAirTimeFairnessClientUsage OBJECT-TYPE
+       SYNTAX      INTEGER { 
+                             none(1),
+                             lowusage(2),
+                             regusage(3),
+	               	     overusage(4) 
+                           }
+       MAX-ACCESS  read-only
+       STATUS      current
+       DESCRIPTION
+          "This object specifies the client usage for particular AP
+           per Slot per Wlan clients.
+		   1 - NONE  2 - LOW USAGE 3 - REG USAGE 4 - OVER USAGE"
+       DEFVAL  { 0 }
+       ::= { cLQoSAirTimeFairnessClientStatisticsEntry 5 }
 
 -- ********************************************************************
 -- *    NOTIFICATION Control objects
@@ -3922,6 +4104,443 @@ ciscoLwappKtsVoipCallFailureNotifEnabled OBJECT-TYPE
         notification." 
     ::= { cLQConfigObjects 2 }
 
+
+cLQosMapStatus OBJECT-TYPE
+    SYNTAX         TruthValue
+    MAX-ACCESS     read-write
+    STATUS         current
+    DESCRIPTION
+         "This object specifies the status of
+          QoS Map(Enabled/Disabled)"
+     ::= { cLQoSMapConfig 1 }
+
+cLQoSMapUpRangesTable OBJECT-TYPE
+    SYNTAX         SEQUENCE OF CLQoSUpTableEntry
+    MAX-ACCESS     not-accessible
+    STATUS         deprecated
+    DESCRIPTION    "This table represents the UP Ranges
+                    There can be 8 rows, 1 for each UP
+                    Each row contains a DSCP low to high
+                    for that UP"
+
+    ::= { cLQoSMapConfig 2 }
+
+cLQoSUpTableEntry OBJECT-TYPE
+    SYNTAX         CLQoSUpTableEntry
+    MAX-ACCESS     not-accessible
+    STATUS         deprecated
+    DESCRIPTION    "Rows from 0-7 containing DSCP
+                    low to high"
+
+    INDEX {cLQoSUpTableIndex}
+    ::= { cLQoSMapUpRangesTable 1 }
+
+CLQoSUpTableEntry ::=
+    SEQUENCE {
+             cLQoSUpTableIndex    Unsigned32,
+             cLQoSMapUp           Unsigned32,
+             cLQoSMapDscpDefault  Unsigned32,
+             cLQoSMapDscpLow      Unsigned32,
+             cLQoSMapDscpHigh     Unsigned32
+	   }
+
+cLQoSUpTableIndex OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      not-accessible
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the index for UP To DSCP Table.
+         Range is from 1 to 8. " 
+    ::= { cLQoSUpTableEntry 1 }
+
+cLQoSMapUp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write 
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the UP value of the entry"
+    ::= { cLQoSUpTableEntry 2 }
+
+cLQoSMapDscpDefault OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the Default DSCP value for the UP"
+    ::= { cLQoSUpTableEntry 3 }
+
+cLQoSMapDscpLow OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the DSCP low value for the UP"
+    ::= { cLQoSUpTableEntry 4 }
+
+cLQoSMapDscpHigh OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the DSCP low value for the UP"
+    ::= { cLQoSUpTableEntry 5 }
+
+
+cLQoSMapUpExceptionsTable OBJECT-TYPE
+    SYNTAX         SEQUENCE OF CLQoSUpExceptionsTableEntry
+    MAX-ACCESS     not-accessible
+    STATUS         deprecated
+    DESCRIPTION    "This table represents the QoS Map                    Exceptions configured"
+
+    ::= { cLQoSMapConfig 3 }
+
+cLQoSUpExceptionsTableEntry OBJECT-TYPE
+    SYNTAX         CLQoSUpExceptionsTableEntry
+    MAX-ACCESS     not-accessible
+    STATUS         deprecated
+    DESCRIPTION    "21 Rows can be put in each representing
+                    an exception rule"
+
+    INDEX {cLQoSMapExceptionNumber}
+    ::= { cLQoSMapUpExceptionsTable 1 }
+
+CLQoSUpExceptionsTableEntry ::=
+    SEQUENCE {
+             cLQoSMapExceptionNumber           Unsigned32,
+             cLQoSMapExceptionUp               Unsigned32,
+             cLQoSMapExceptionDscp             Unsigned32,
+             cLQosMapExceptionsRowStatus       RowStatus
+             }
+
+
+cLQoSMapExceptionNumber OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      not-accessible
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the UP value of the entry"
+    ::= { cLQoSUpExceptionsTableEntry 1 }
+
+cLQoSMapExceptionUp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the DSCP low value for the UP"
+    ::= { cLQoSUpExceptionsTableEntry 2 }
+
+cLQoSMapExceptionDscp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          deprecated
+    DESCRIPTION
+        "This object specifies the DSCP low value for the UP"
+    ::= { cLQoSUpExceptionsTableEntry 3 }
+
+cLQosMapExceptionsRowStatus OBJECT-TYPE
+        SYNTAX     RowStatus
+        MAX-ACCESS read-create
+        STATUS     deprecated
+        DESCRIPTION
+                "This is the status column for this row and used
+                to create and delete specific instances of rows
+                in this table.
+                owing objects are mandatory for successful
+                creation of an entry:
+                cLQoSMapExceptionUp,cLQoSMapExceptionDscp"
+
+        ::= { cLQoSUpExceptionsTableEntry 4 }
+
+cLQosCopyClientDscpStatus OBJECT-TYPE
+    SYNTAX         TruthValue
+    MAX-ACCESS     read-write
+    STATUS         current
+    DESCRIPTION
+         "This object specifies the status of
+          Copy Client DSCP(Enabled/Disabled)"
+     ::= { cLQoSMapConfig 4 }
+
+cLQosMapExceptionsClearAll OBJECT-TYPE
+    SYNTAX          INTEGER{ clear-all(1),
+			     no-operation(2)
+			   } 
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object clears all exceptions"
+    ::= { cLQoSMapConfig 5 }
+
+cLQosMapDefault OBJECT-TYPE
+    SYNTAX          INTEGER{ default(1),
+			     no-operation(2)
+			   } 
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object set the Default values for both the tables   
+cLQoSMapUpExceptionsTable and cLQoSMapUpRangesTable"
+    ::= { cLQoSMapConfig 6 }
+
+-- *******************************************************************
+-- QoS Map Tables
+-- *******************************************************************
+
+cLQoSMapDownstreamDscpTable OBJECT-TYPE
+    SYNTAX         SEQUENCE OF CLQoSMapDownstreamDscpEntry 
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION    "This table represents the Downstream DSCP Ranges.
+                    This table has 8 UP entries.
+                    Each entry contains a DSCP lower range to higher range values for that UP.
+                    
+                    The default values of QoS Map Downstream DSCP table is 
+                    Start DSCP   End DSCP    Up
+                    0            7           0
+                    8            15          1
+                    16           23          2
+                    24           31          3
+                    32           39          4
+                    40           47          5
+                    48           55          6
+                    56           63          7
+                    
+                    UP is the abbreviation for User Priority."
+
+    ::= { ciscoLwappQosMIBTableObjects 1 }
+
+cLQoSMapDownstreamDscpEntry OBJECT-TYPE
+    SYNTAX         CLQoSMapDownstreamDscpEntry 
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION    "Each entry contains a DSCP lower range to higher range values for each UP(User Priority)."
+
+    INDEX {cLQoSMapDownstreamDscpIndex}
+    ::= { cLQoSMapDownstreamDscpTable 1 }
+
+CLQoSMapDownstreamDscpEntry ::=
+    SEQUENCE {
+             cLQoSMapDownstreamDscpIndex      Unsigned32,
+             cLQoSMapDownstreamDscpLow        Unsigned32,
+             cLQoSMapDownstreamDscpHigh       Unsigned32,
+             cLQoSMapDownstreamUp             Unsigned32
+	   }
+
+cLQoSMapDownstreamDscpIndex OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the index for UP To DSCP Table.
+         Range is from 1 to 8.
+         The index value should be one number higher than UP value." 
+    ::= { cLQoSMapDownstreamDscpEntry 1 }
+
+cLQoSMapDownstreamDscpLow OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the DSCP lower range value for the UP."
+    ::= { cLQoSMapDownstreamDscpEntry 2 }
+
+cLQoSMapDownstreamDscpHigh OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the DSCP higher range value for the UP."
+    ::= { cLQoSMapDownstreamDscpEntry 3 }
+
+
+cLQoSMapDownstreamUp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write 
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the UP(User Priority) value of the QoS Map"
+    ::= { cLQoSMapDownstreamDscpEntry 4 }
+
+
+cLQoSMapDownstreamUpExceptionsTable OBJECT-TYPE
+    SYNTAX         SEQUENCE OF CLQoSDownstreamUpExceptionsTableEntry
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION    "This table represents the QoS Map Exceptions configured.
+                    
+                    The default values for QoS Map Downstream Exceptions Table are
+                    DSCP 	UP
+                    0 	    0
+                    2 	    1
+                    4 	    1
+                    6 	    1
+                    10 	    2
+                    12 	    2
+                    14 	    2
+                    18 	    3
+                    20 	    3
+                    22 	    3
+                    26 	    4
+                    34 	    5
+                    46 	    6
+                    48 	    7
+                    56 	    7                 
+                    UP is the abbreviation for User Priority."
+
+    ::= { ciscoLwappQosMIBTableObjects 2 }
+
+cLQoSDownstreamUpExceptionsTableEntry OBJECT-TYPE
+    SYNTAX         CLQoSDownstreamUpExceptionsTableEntry
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION    "We allow max of 21 Rows to be put in each representing
+                    an exception rule"
+
+    INDEX {cLQoSMapDownstreamExceptionNumber}
+    ::= { cLQoSMapDownstreamUpExceptionsTable 1 }
+
+CLQoSDownstreamUpExceptionsTableEntry ::=
+    SEQUENCE {
+             cLQoSMapDownstreamExceptionNumber           Unsigned32,
+             cLQoSMapDownstreamExceptionDscp             Unsigned32,
+             cLQoSMapDownstreamExceptionUp               Unsigned32,
+             cLQosMapDownstreamExceptionsRowStatus       RowStatus
+             }
+
+cLQoSMapDownstreamExceptionNumber OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the index for the exception table,
+         that can have max of 21 entries."
+    ::= { cLQoSDownstreamUpExceptionsTableEntry 1 }
+
+cLQoSMapDownstreamExceptionDscp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the DSCP value that need to be exception value for that UP."
+    ::= { cLQoSDownstreamUpExceptionsTableEntry 2 }
+
+cLQoSMapDownstreamExceptionUp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the UP value of the QoS Map."
+    ::= { cLQoSDownstreamUpExceptionsTableEntry 3 }
+
+cLQosMapDownstreamExceptionsRowStatus OBJECT-TYPE
+        SYNTAX     RowStatus
+        MAX-ACCESS read-create
+        STATUS     current
+        DESCRIPTION
+                "This is the status column for this row and used
+                to create and delete specific instances of rows
+                in this table.
+                owing objects are mandatory for successful
+                creation of an entry:
+                Downstream Exception UP, Downstream Exception Dscp."
+
+        ::= { cLQoSDownstreamUpExceptionsTableEntry 4 }
+
+
+cLQoSMapUpstreamUpDscpTable OBJECT-TYPE
+    SYNTAX         SEQUENCE OF CLQoSMapUpstreamUpDscpEntry 
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION    "This table represents the Upstream UP to DSCP.
+                    There can be 8 rows, 1 for each UP.
+                    
+                    The default values of QoS Map Upstream DSCP table are:
+                    DSCP 	 Up
+                    0 	     0 
+                    2 	     1 
+                    10 	     2 
+                    18 	     3 
+                    26 	     4 
+                    34 	     5 
+                    46 	     6 
+                    48 	     7 
+                    
+                    UP is the abbreviation for User Priority."
+
+    ::= { ciscoLwappQosMIBTableObjects 3 }
+
+
+cLQoSMapUpstreamUpDscpEntry OBJECT-TYPE
+    SYNTAX         CLQoSMapUpstreamUpDscpEntry 
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION    "Rows from DSCP for each of the UP 0 to 7" 
+
+    INDEX {cLQoSMapUpstreamDscpIndex}
+    ::= { cLQoSMapUpstreamUpDscpTable 1 }
+
+CLQoSMapUpstreamUpDscpEntry ::=
+    SEQUENCE {
+             cLQoSMapUpstreamDscpIndex      Unsigned32,
+             cLQoSMapUpstreamUp             Unsigned32,
+             cLQoSMapUpstreamDscp           Unsigned32
+	   }
+
+cLQoSMapUpstreamDscpIndex OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the index for UP To DSCP Upstream Table.
+         Range is from 1 to 8. 
+         The index value should be one number higher than UP value." 
+    ::= { cLQoSMapUpstreamUpDscpEntry 1 }
+
+cLQoSMapUpstreamUp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write 
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the UP value of the QoS Map"
+    ::= { cLQoSMapUpstreamUpDscpEntry 2 }
+
+cLQoSMapUpstreamDscp OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the DSCP value for the UP.
+        It holds the default value of 255."
+    ::= { cLQoSMapUpstreamUpDscpEntry 3 }
+
+
+-- *******************************************************************
+-- QoS Global Object
+-- *******************************************************************
+
+cLQosUpstreamCopyClientDscpStatus OBJECT-TYPE
+    SYNTAX         TruthValue
+    MAX-ACCESS     read-write
+    STATUS         current
+    DESCRIPTION
+         "This object specifies the status of
+          Copy Client DSCP(Enabled/Disabled).
+          Enable means Trust of Client DSCP Upstream,
+          Disable means Trust of Client UP."
+    DEFVAL { false }				
+                  
+    ::= { ciscoLwappQosMIBGlobalObjects 1 }
+    
+
+cLQosFastlaneDisable OBJECT-TYPE
+    SYNTAX          INTEGER{ disable(1),
+                             no-operation(2)
+                           }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object set the default values for all global qos fastlane
+config and disable fastlane feature for all wlan."
+    ::= { cLQoSFastlaneConfig 1}
 
 --********************************************************************
 --*    Notifications 
