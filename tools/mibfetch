@@ -48,4 +48,4 @@ fi
 # ncftpget -FV ftp://$host/$dir/$file
 wget -O - -q -nv $host/$dir/$file | \
 	tr -d \\r | \
-	smistrip $verbose -x .txt $mdir $mibs -
+	./smistrip $verbose -x .txt $mdir $mibs -
