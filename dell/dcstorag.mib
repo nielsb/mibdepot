@@ -1307,7 +1307,9 @@
 				nonRAIDdiskCachePolicy
 					DisplayString,
 				arraydiskCachePolicy
-					DisplayString	
+					DisplayString,
+				arraydiskISECapable
+					INTEGER
 			 }
 
 		-- 1.3.6.1.4.1.674.10893.1.20.130.4.1.1
@@ -2022,6 +2024,15 @@
 			 "Displays the current disk write cache policy of the array disk.
 			 Possible values are: Enabled - Disabled - Default."
 		::= { arrayDiskEntry 55 }
+		
+		-- 1.3.6.1.4.1.674.10893.1.20.130.4.1.56
+		arraydiskISECapable OBJECT-TYPE
+			SYNTAX  INTEGER
+			ACCESS  read-only
+			STATUS  mandatory
+			DESCRIPTION
+			 "A boolean value depicitng if the disk is Instant Secure Erase Capable or not."
+		::= { arrayDiskEntry 56 }
 		
 		-- 1.3.6.1.4.1.674.10893.1.20.130.5
 		arrayDiskEnclosureConnectionTable OBJECT-TYPE
@@ -5281,7 +5292,9 @@
 				nvmeAdapterNegotiatedLinkWidth
 					INTEGER,
 				nvmeAdapterSubVendor
-					DisplayString					
+					DisplayString,
+				nvmeAdapterAvailableSpare
+					INTEGER
 			}
 
 
@@ -5556,7 +5569,15 @@
 				"Sub vendor of the NVMe Adapter device."
 			::= { nvmeAdapterEntry 28}
 
-		
+	-- 1.3.6.1.4.1.674.10893.1.20.130.18.1.29
+		nvmeAdapterAvailableSpare OBJECT-TYPE
+			SYNTAX INTEGER 
+			ACCESS read-only
+			STATUS mandatory
+			DESCRIPTION
+				"The remaining available spare space on the NVME device"
+			::= { nvmeAdapterEntry 29 }
+			
 		-- 1.3.6.1.4.1.674.10893.1.20.140
 		logicalDevices OBJECT IDENTIFIER ::= { storageManagement 140 }
 
@@ -5911,7 +5932,8 @@
 				writeBack(3),
 				writeThrough(4),
 				enabledAlways(5),
-				enabledAlwaysSAS(6),
+				forceWriteback(6),
+				enabledAlwaysSAS(7),
 				notApplicable(9)
 				}
 			ACCESS read-only
@@ -5925,7 +5947,8 @@
 				3: LSI Write Back
 				4: LSI Write Through
 				5: Enabled Always - Adaptec only
-				6: Enabled Always - SAS only
+				6: Force write back
+				7: Enabled Always - SAS only
 				9: Not Applicable"
 			::= { virtualDiskEntry 10 }
 
@@ -6187,6 +6210,13 @@
 		-- 1.3.6.1.4.1.674.10893.1.20.140.1.1.26
 		virtualDiskDiskCachePolicy OBJECT-TYPE
 			SYNTAX INTEGER
+			{
+			unchanged(1),
+			enabled(2),
+			disabled(4),
+			default(8),
+			undetermined(10)
+			}
 			ACCESS read-only
 			STATUS mandatory
 			DESCRIPTION
