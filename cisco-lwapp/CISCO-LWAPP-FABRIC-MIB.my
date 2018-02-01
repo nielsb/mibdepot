@@ -1,0 +1,1264 @@
+-- *******************************************************************
+-- CISCO-LWAPP-FABRIC-MIB.my 
+-- August 2016, Sarath Gorthi and Hari Krishna Mitta
+--
+-- Copyright (c) 2016-2017 by Cisco Systems, Inc.
+-- All rights reserved.
+-- *******************************************************************
+--
+CISCO-LWAPP-FABRIC-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS 
+    MODULE-IDENTITY, 
+    OBJECT-TYPE,
+    NOTIFICATION-TYPE,
+    Unsigned32,
+    Counter32,
+    TimeTicks,
+    Counter64
+        FROM SNMPv2-SMI
+    MODULE-COMPLIANCE, 
+    OBJECT-GROUP,
+    NOTIFICATION-GROUP
+        FROM SNMPv2-CONF
+    MacAddress,
+    DateAndTime,
+    TruthValue,      
+    RowStatus
+        FROM SNMPv2-TC
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    cLWlanIndex
+        FROM CISCO-LWAPP-WLAN-MIB
+    cldcClientMacAddress
+        FROM CISCO-LWAPP-DOT11-CLIENT-MIB
+    cLApSysMacAddress,
+    cLApIfMacAddress,
+    cLApInetAddress
+        FROM CISCO-LWAPP-AP-MIB    
+    InetAddressType,
+    InetAddress
+        FROM INET-ADDRESS-MIB
+    ciscoMgmt
+        FROM CISCO-SMI;
+--********************************************************************
+--*  MODULE IDENTITY
+--********************************************************************
+
+ciscoLwappFabricMIB        MODULE-IDENTITY
+        LAST-UPDATED   "201609280000Z"
+        ORGANIZATION   "Cisco Systems Inc."
+        CONTACT-INFO  
+               "        Cisco Systems,
+                        Customer Service
+
+                Postal: 170 West Tasman Drive
+                        San Jose, CA  95134
+                        USA
+
+                   Tel: +1 800 553-NETS
+
+                 Email: cs-snmp@cisco.com"
+
+        DESCRIPTION             
+            "Fabric is Cisco Overlay for Enterpise networks
+             Wireless Overlay consists of CC , AP and Switch 
+			 
+                       GLOSSARY
+
+             Access Point ( AP )
+
+             An entity that contains an 802.11 medium access
+             control ( MAC ) and physical layer ( PHY ) interface
+             and provides access to the distribution services via
+             the wireless medium for associated clients.  
+
+             LWAPP APs encapsulate all the 802.11 frames in
+             LWAPP frames and sends it to the controller to which
+             it is logically connected to.
+
+             Central Controller ( CC )
+
+             The central entity that terminates the LWAPP protocol
+             tunnel from the LWAPP APs.  Throughout this MIB,
+             this entity also referred to as 'controller'.
+
+             Light Weight Access Point Protocol ( LWAPP ) 
+
+             This is a generic protocol that defines the
+             communication between the Access Points and the
+             controllers.
+
+             Mobile Node ( MN )
+
+             A roaming 802.11 wireless device in a wireless
+             network associated with an access point."
+
+        REVISION      "201206120000Z"
+        DESCRIPTION
+                "Initial version of this MIB module."
+        ::= { ciscoMgmt 99991 }
+
+
+		
+ciscoLwappFabricMIBNotifs  OBJECT IDENTIFIER 
+        ::= { ciscoLwappFabricMIB 0 }
+ciscoLwappFabricMIBObjects OBJECT IDENTIFIER 
+        ::= { ciscoLwappFabricMIB 1 }
+ciscoLwappFabricMIBConform OBJECT IDENTIFIER 
+        ::= { ciscoLwappFabricMIB 2 }
+ciscoLwappFabricMIBTableObjects OBJECT IDENTIFIER 
+        ::= { ciscoLwappFabricMIBObjects 1 }
+ciscoLwappFabricMIBGlobalObjects OBJECT IDENTIFIER 
+        ::= { ciscoLwappFabricMIBObjects 2 }
+ciscoLwappFabricNotifObjects  OBJECT IDENTIFIER 
+        ::= { ciscoLwappFabricMIBNotifs 1 }
+
+-- *******************************************************************
+-- Fabric Global Object
+-- *******************************************************************
+
+cLFabricGlobalStatus OBJECT-TYPE
+        SYNTAX      TruthValue 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Global
+	       fabric status on this device"
+		DEFVAL { false }				
+        ::= { ciscoLwappFabricMIBGlobalObjects 1 }
+
+cLFabricApVnid OBJECT-TYPE
+        SYNTAX      Unsigned32 
+        MAX-ACCESS  read-write
+        STATUS      current
+        DESCRIPTION
+                "This object represents the global AP Vnid value of the device "
+		DEFVAL { 0 }				
+        ::= { ciscoLwappFabricMIBGlobalObjects 2 }
+		
+-- *******************************************************************
+-- Fabric Configuration Table
+-- *******************************************************************
+
+cLFabricControlplanePSKTable  OBJECT-TYPE
+        SYNTAX     SEQUENCE OF CLFabricControlplanePSKEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table represents the information about 
+              fabric controlplane entries"
+        ::= { ciscoLwappFabricMIBTableObjects 1 }
+
+cLFabricControlplanePSKEntry OBJECT-TYPE
+        SYNTAX     CLFabricControlplanePSKEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry containing the configuration attributes
+             of Fabric controlplane ."
+        INDEX   { cLFabricControlplaneDomainType,cLFabricControlplaneUnitType,cLFabricControlplaneIPType,cLFabricControlplaneIP }
+        ::= { cLFabricControlplanePSKTable 1 }
+
+CLFabricControlplanePSKEntry ::= 
+        SEQUENCE {
+            cLFabricControlplaneDomainType       INTEGER,  				
+			cLFabricControlplaneUnitType	 INTEGER,			
+            cLFabricControlplaneIPType  InetAddressType,
+            cLFabricControlplaneIP      InetAddress,
+	        cLFabricControlplanePSKKey  OCTET STRING,
+	        cLFabricControlplaneRowStatus RowStatus
+        }
+
+cLFabricControlplaneDomainType OBJECT-TYPE
+        SYNTAX      INTEGER  {
+                        enterpriseFabric(1),
+                        guestFabric(2)                        
+                    }
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric controlplane type."
+        ::= { cLFabricControlplanePSKEntry 1 }
+
+cLFabricControlplaneUnitType OBJECT-TYPE
+        SYNTAX      INTEGER  {
+                        primary(1),
+                        secondary(2)                        
+                    }
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric controlplane unit type,
+				which indices to configure the primary or secondary controlplane."
+        ::= { cLFabricControlplanePSKEntry 2 }
+		
+cLFabricControlplaneIPType OBJECT-TYPE
+        SYNTAX      InetAddressType 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+                "This object represents the IpAddress type of the Fabric control plane"
+        ::= { cLFabricControlplanePSKEntry 3 }
+
+cLFabricControlplaneIP OBJECT-TYPE
+        SYNTAX      InetAddress 
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+                "This object represents the IpAddress Fabric control plane"
+        ::= { cLFabricControlplanePSKEntry 4 }
+
+cLFabricControlplanePSKKey OBJECT-TYPE
+        SYNTAX      OCTET STRING(SIZE(0..64)) 
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the PSK of Fabric control plane"
+        ::= { cLFabricControlplanePSKEntry 5 }
+
+		
+cLFabricControlplaneRowStatus OBJECT-TYPE
+        SYNTAX      RowStatus
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object creates or deletes an entry in this table."
+        ::= { cLFabricControlplanePSKEntry 6 }
+
+
+
+cLFabricVnidTable  OBJECT-TYPE
+        SYNTAX     SEQUENCE OF CLFabricVnidEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table represents the information about 
+              fabric vnid and subbnet entries"
+        ::= { ciscoLwappFabricMIBTableObjects 2 }
+
+cLFabricVnidEntry OBJECT-TYPE
+        SYNTAX     CLFabricVnidEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry containing the configuration attributes
+             of vnid and network subnet entries."
+        INDEX   { cLFabricVnidName }
+        ::= { cLFabricVnidTable 1 }
+
+CLFabricVnidEntry ::= 
+        SEQUENCE {                
+				cLFabricVnidName   OCTET STRING,
+                cLFabricVnidNetworkIPType  InetAddressType,
+                cLFabricVnidNetworkIP      InetAddress,
+				cLFabricVnidSubnetIPType      InetAddressType,
+				cLFabricVnidSubnetIP      InetAddress,
+				cLFabricLayer2Vnid       Unsigned32,
+				cLFabricLayer3Vnid       Unsigned32,
+				cLFabricVnidRowStatus RowStatus
+        }
+
+
+cLFabricVnidName OBJECT-TYPE
+        SYNTAX      OCTET STRING(SIZE(1..32))
+        MAX-ACCESS  not-accessible
+        STATUS      current
+        DESCRIPTION
+                "This object represents the VNID Subnet name"
+        ::= { cLFabricVnidEntry 1 }
+
+cLFabricVnidNetworkIPType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the VNID Network IP type"
+        ::= { cLFabricVnidEntry 2 }
+
+cLFabricVnidNetworkIP OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the VNID Network IP "
+        ::= { cLFabricVnidEntry 3 }		
+		
+cLFabricVnidSubnetIPType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the VNID Subnet IP type"
+        ::= { cLFabricVnidEntry 4 }
+
+cLFabricVnidSubnetIP OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the VNID Subnet IP "
+        ::= { cLFabricVnidEntry 5 }
+
+cLFabricLayer2Vnid OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Layer2 VNID of the Subnet"
+        ::= { cLFabricVnidEntry 6 }
+
+cLFabricLayer3Vnid OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Layer3 VNID of the Subnet"
+        ::= { cLFabricVnidEntry 7 }		
+
+cLFabricVnidRowStatus OBJECT-TYPE
+        SYNTAX      RowStatus
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object creates or deletes an entry in this table.
+				cLFabricLayer2Vnid is the manidatory for setting the cLFabricVnidRowStatus"
+        ::= { cLFabricVnidEntry 8 }
+
+cLFabricWlanTable  OBJECT-TYPE
+        SYNTAX     SEQUENCE OF CLFabricWlanEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table represents the information about 
+              fabric vnid to name entries"
+        ::= { ciscoLwappFabricMIBTableObjects 3 }
+
+cLFabricWlanEntry OBJECT-TYPE
+        SYNTAX     CLFabricWlanEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry containing the configuration attributes
+             of fabric on wlan."
+        INDEX   { cLWlanIndex }
+        ::= { cLFabricWlanTable 1 }
+		
+
+		
+CLFabricWlanEntry ::= 
+        SEQUENCE {
+			cLFabricWlanFabricStatus TruthValue,
+			cLFabricWlanAclName      SnmpAdminString,
+			cLFabricWlanAvcName      SnmpAdminString,
+			cLFabricWlanVnidName     SnmpAdminString,
+			cLFabricWlanVnid         Unsigned32,
+			cLFabricWlanSgt          Unsigned32,
+			cLFabricWlanSwitchIpType InetAddressType,
+			cLFabricWlanSwitchIp	 InetAddress			
+        }
+
+cLFabricWlanFabricStatus OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric wlan status"
+		DEFVAL{false}
+        ::= { cLFabricWlanEntry 1 }
+		
+		
+cLFabricWlanAclName OBJECT-TYPE
+        SYNTAX      SnmpAdminString
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric ACL anme"
+        ::= { cLFabricWlanEntry 2 }
+		
+cLFabricWlanAvcName OBJECT-TYPE
+        SYNTAX      SnmpAdminString
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric AVC anme"
+        ::= { cLFabricWlanEntry 3 }
+
+cLFabricWlanVnidName OBJECT-TYPE
+        SYNTAX      SnmpAdminString
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric AVC name"
+        ::= { cLFabricWlanEntry 4 }
+
+cLFabricWlanVnid OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric default vnid"
+        ::= { cLFabricWlanEntry 5 }
+
+cLFabricWlanSgt OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric default sgt"
+        ::= { cLFabricWlanEntry 6 }
+
+
+		
+cLFabricWlanSwitchIpType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Switch IP type"
+        ::= { cLFabricWlanEntry 7 }
+
+cLFabricWlanSwitchIp OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  read-create
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Switch IP "
+        ::= { cLFabricWlanEntry 8 }
+
+
+--*******************************************************************
+--*    Statistics
+--*******************************************************************
+cLFabricControlplaneStatsTable  OBJECT-TYPE
+        SYNTAX     SEQUENCE OF CLFabricControlplaneStatsEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table represents the information about 
+              fabric control plane statistics.
+              CP represents the control Plane"
+        ::= { ciscoLwappFabricMIBTableObjects 4 }
+
+cLFabricControlplaneStatsEntry OBJECT-TYPE
+        SYNTAX     CLFabricControlplaneStatsEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry containing the configuration attributes
+             of fabric controlplane statistics."
+        INDEX   { cLFabricControlplaneDomainType,cLFabricControlplaneUnitType,cLFabricControlplaneIPType,cLFabricControlplaneIP }
+        ::= { cLFabricControlplaneStatsTable 1 }
+		
+		
+CLFabricControlplaneStatsEntry ::= 
+        SEQUENCE {
+            cLFabricCPStatus                  INTEGER,
+            cLFabricCPUptime                  TimeTicks,
+            cLFabricCPRegnSent                Unsigned64,
+            cLFabricCPDeRegnSent              Unsigned64,
+            cLFabricCPRegnConnUpSent          Unsigned64,
+            cLFabricCPDeRegnConnUpSent        Unsigned64,
+            cLFabricCPRegnSuccess             Unsigned64,
+            cLFabricCPDeRegnSuccess           Unsigned64,
+            cLFabricCPRegnConnUpSuccess       Unsigned64,
+            cLFabricCPDeRegnConnUpSuccess     Unsigned64,
+            cLFabricCPRegnRej                 Unsigned64,
+            cLFabricCPDeRegnRej               Unsigned64,
+            cLFabricCPRegnConnUpRej           Unsigned64,
+            cLFabricCPDeRegnConnUpRej         Unsigned64,
+            cLFabricCPRegnErr                 Unsigned64,
+            cLFabricCPDeRegnErr               Unsigned64,
+            cLFabricCPRegnConnUpErr           Unsigned64,
+            cLFabricCPDeRegnConnUpErr         Unsigned64,
+            cLFabricCPRefreshMsgRcv           Unsigned64,
+            cLFabricCPRejRegnReTrans          Unsigned64,
+            cLFabricCPDeRejRegnReTrans        Unsigned64,
+            cLFabricCPRejRegnConnUpReTrans    Unsigned64,
+            cLFabricCPDeRejRegnConnUpReTrans  Unsigned64,
+            cLFabricCPConnLossCnt             Unsigned64,
+            cLFabricCPConnRestoreCnt          Unsigned64,
+            cLFabricCPBulkRegnSent            Unsigned64,
+            cLFabricCPBulkDeRegnSent          Unsigned64,
+            cLFabricCPBulkRegnConnUpSent      Unsigned64,
+            cLFabricCPBulkDeRegnConnUpSent    Unsigned64,
+            cLFabricCPMapReqSent              Unsigned64,
+            cLFabricCPMapReqRetry             Unsigned64,
+            cLFabricCPMapReplyRcv             Unsigned64,
+            cLFabricCPMapReplyAckRcv          Unsigned64,
+            cLFabricCPMapReplyNackRcv         Unsigned64,
+            cLFabricCPBulkSyncInProg          TruthValue,
+            cLFabricCPApBulkSyncInProg        TruthValue,
+            cLFabricCPRegnRejRefrshInProg     TruthValue
+        }
+
+cLFabricCPStatus OBJECT-TYPE
+        SYNTAX      INTEGER  {
+                        disconnected(1),
+                        inprogress(2),
+                        connected(3)                        
+                    }
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric wlan status"
+        DEFVAL { disconnected }
+        ::= { cLFabricControlplaneStatsEntry 1 }
+
+cLFabricCPUptime OBJECT-TYPE
+        SYNTAX      TimeTicks
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the connection up time with the map server"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 2 }
+
+cLFabricCPRegnSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the total number of maps registration messages 
+                sent to mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 3 }
+
+cLFabricCPDeRegnSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the total number of maps de-registration messages 
+                sent to mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 4 }
+
+cLFabricCPRegnConnUpSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the total number of maps registration messages 
+                sent to mapserver during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 5 }
+
+cLFabricCPDeRegnConnUpSent  OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the total number of maps de-registration messages 
+                sent to mapserver during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 6 }
+
+cLFabricCPRegnSuccess OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map registrations success with map server"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 7 }
+
+cLFabricCPDeRegnSuccess OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map de-registrations success with map server"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 8 }
+
+cLFabricCPRegnConnUpSuccess OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map registrations success with map server during the last connection"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 9 }
+
+cLFabricCPDeRegnConnUpSuccess OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map de-registrations success with map server during the last connection"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 10 }
+
+cLFabricCPRegnRej OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map registration rejects
+                from mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 11 }
+
+cLFabricCPDeRegnRej OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map de-registration rejects
+                from mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 12 }
+
+cLFabricCPRegnConnUpRej OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map registration rejects
+                from mapserver during the last connection"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 13 }
+
+cLFabricCPDeRegnConnUpRej OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map de-registration rejects
+                from mapserver during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 14 }
+
+cLFabricCPRegnErr OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of error occured while 
+                registrating with map server."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 15 }
+
+cLFabricCPDeRegnErr OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of error occured while 
+                de-registrating with map server."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 16 }
+
+cLFabricCPRegnConnUpErr OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of error occured while 
+                registrating with map server during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 17 }
+
+cLFabricCPDeRegnConnUpErr OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of error occured while 
+                de-registrating with map server during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 18 }
+
+cLFabricCPRefreshMsgRcv OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of refresh messages received 
+                from the map server."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 19 }
+
+cLFabricCPRejRegnReTrans OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map registration rejects 
+                retries with map server."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 20 }
+
+cLFabricCPDeRejRegnReTrans OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map de-registration rejects 
+                retries with map server."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 21 }
+
+cLFabricCPRejRegnConnUpReTrans OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map registration rejects 
+                retries with map server during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 22 }
+
+cLFabricCPDeRejRegnConnUpReTrans OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map de-registration rejects 
+                retries with map server during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 23 }
+
+cLFabricCPConnLossCnt OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of Mapserver connection loss count"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 24 }
+
+cLFabricCPConnRestoreCnt OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of Mapserver connection restores"
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 25 }
+
+cLFabricCPBulkRegnSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of bulk registration messages
+                sent to Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 26 }
+
+cLFabricCPBulkDeRegnSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of bulk de-registration messages
+                sent to Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 27 }
+
+cLFabricCPBulkRegnConnUpSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of bulk registration messages
+                sent to Mapserver during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 28 }
+
+cLFabricCPBulkDeRegnConnUpSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of bulk de-registration messages
+                sent to Mapserver during the last connection."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 29 }
+
+cLFabricCPMapReqSent OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of  map requests
+                sent to Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 30 }
+
+cLFabricCPMapReqRetry OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map request retries
+                sent to Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 31 }
+
+cLFabricCPMapReplyRcv OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map reply messages
+                received from Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 32 }
+
+cLFabricCPMapReplyAckRcv OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map reply acks 
+                received from Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 33 }
+
+cLFabricCPMapReplyNackRcv OBJECT-TYPE
+        SYNTAX      Unsigned64
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of map reply Nacks
+                received from Mapserver."
+        DEFVAL { 0 }        
+        ::= { cLFabricControlplaneStatsEntry 34 }		
+
+cLFabricCPBulkSyncInProg OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the enable/disable of bulk sync of messages with map server.
+                Value enable represent that bulk sync of messages is enable with map server.
+                Value disable represent that bulk sync of messages is disable with map server."
+		DEFVAL{false}
+        ::= { cLFabricControlplaneStatsEntry 35 }
+
+cLFabricCPApBulkSyncInProg OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the enable/disable of bulk sync
+                of AP messages with map server.
+                Value enable represent that AP bulk sync of messages is enable with map server.
+                Value disable represent that AP bulk sync of messages is disable with map server."
+		DEFVAL{false}
+        ::= { cLFabricControlplaneStatsEntry 36 }
+
+cLFabricCPRegnRejRefrshInProg OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents enable/disable of refreshing the registartion rejects.
+                Value enable represent that Registration Reject Refresh messages is enable with map server.
+                Value disable represent that Registration Reject Refresh messages is disable with map server."
+		DEFVAL{false}
+        ::= { cLFabricControlplaneStatsEntry 37 }
+
+cLFabricApTable OBJECT-TYPE
+        SYNTAX     SEQUENCE OF CLFabricApEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table represents fabric details on AP."
+        ::= { ciscoLwappFabricMIBTableObjects 5 }
+
+cLFabricApEntry OBJECT-TYPE
+        SYNTAX     CLFabricApEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry containing the configuration attributes
+             of fabric on wlan for the AP."
+        INDEX   { cLApSysMacAddress }
+        ::= { cLFabricApTable 1 }
+		
+		
+CLFabricApEntry ::= 
+        SEQUENCE {
+            cLFabricApFabricStatus        TruthValue,
+            cLFabricApPeerSwitchIpType    InetAddressType,
+            cLFabricApPeerSwitchIp        InetAddress,	
+            cLFabricApLayer2Vnid          Unsigned32,
+            cLFabricApLayer3Vnid          Unsigned32,
+            cLFabricAPMapReqSent          Unsigned32,
+            cLFabricAPMapReqRetry         Unsigned32,
+            cLFabricAPMapReplyRcvd        Unsigned32,
+            cLFabricAPMapReplyAckRcvd     Unsigned32,
+            cLFabricAPMapReplyNackRcvd    Unsigned32,	      
+            cLFabricAPRegnSuccess         Unsigned32,
+            cLFabricAPRegnRej             Unsigned32
+        }
+
+cLFabricApFabricStatus OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric status of that wlan on AP.
+                Status enable represents that wlan on that AP is a fabric enabled wlan.
+                Status disable represents that wlan on that AP is not a fabric enabled wlan."
+		DEFVAL { false }
+        ::= { cLFabricApEntry 1 }
+
+cLFabricApPeerSwitchIpType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the AP Peer Switch IP type"
+        ::= { cLFabricApEntry 2 }
+
+cLFabricApPeerSwitchIp OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the AP Peer Switch IP "
+        ::= { cLFabricApEntry 3 }
+		
+cLFabricApLayer2Vnid OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Layer2 VNID of the AP"
+        ::= { cLFabricApEntry 4 }
+
+cLFabricApLayer3Vnid OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Layer3 VNID of the AP"
+        ::= { cLFabricApEntry 5 }		
+		
+cLFabricAPMapReqSent OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the map request sent for this AP"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 6 }
+		
+cLFabricAPMapReqRetry OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the map request replies for this AP"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 7 }
+
+cLFabricAPMapReplyRcvd OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the map reply received for this AP"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 8 }
+
+cLFabricAPMapReplyAckRcvd OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the map reply acks received for this ap"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 9 }		
+		
+cLFabricAPMapReplyNackRcvd OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the map reply Nacks received for this AP"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 10 }			
+  
+cLFabricAPRegnSuccess OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of client registartion success count"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 11 }
+		
+cLFabricAPRegnRej OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of client registartion failure count"
+        DEFVAL { 0 }        
+        ::= { cLFabricApEntry 12 }
+
+cLFabricClientTable  OBJECT-TYPE
+        SYNTAX     SEQUENCE OF CLFabricClientEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "This table represents the information about 
+              fabric clients"
+        ::= { ciscoLwappFabricMIBTableObjects 6 }
+
+cLFabricClientEntry OBJECT-TYPE
+        SYNTAX     CLFabricClientEntry
+        MAX-ACCESS not-accessible
+        STATUS     current
+        DESCRIPTION
+            "An entry containing the  attributes
+             of fabric client."
+        INDEX   { cldcClientMacAddress }
+        ::= { cLFabricClientTable 1 }
+		
+CLFabricClientEntry ::= 
+        SEQUENCE {
+            cLFabricClientFabricStatus   TruthValue,
+            cLFabricClientVnid           Unsigned32,	      
+            cLFabricClientSwitchIpType   InetAddressType,
+            cLFabricCleintSwitchIp       InetAddress,
+            cLFabricClientRegnSuccess    Unsigned32,
+            cLFabricClientRegnRej        Unsigned32
+        }
+
+
+cLFabricClientFabricStatus OBJECT-TYPE
+        SYNTAX      TruthValue
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the Fabric client status.
+                Status enable represents that connected client is a fabric client.
+                Status disable represents that connected client is not a fabric client."
+		DEFVAL{false}
+        ::= { cLFabricClientEntry 1 }
+
+cLFabricClientVnid OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the VNID of the Fabric client"
+        ::= { cLFabricClientEntry 2 }
+		
+cLFabricClientSwitchIpType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the AP Peer Switch IP type for the client"
+        ::= { cLFabricClientEntry 3 }
+
+cLFabricCleintSwitchIp OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the AP Peer Switch IP for the client "
+        ::= { cLFabricClientEntry 4 }
+		
+		
+cLFabricClientRegnSuccess OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of client registartion success count"
+        DEFVAL { 0 }        
+        ::= { cLFabricClientEntry 5 }
+		
+cLFabricClientRegnRej OBJECT-TYPE
+        SYNTAX      Unsigned32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+                "This object represents the number of client registartion failure count"
+        DEFVAL { 0 }        
+        ::= { cLFabricClientEntry 6 }
+
+        
+--*******************************************************************
+--*   END OF -  Statistics
+--*******************************************************************
+
+--*******************************************************************
+--*   Notification Objects
+--*******************************************************************
+cLFabricCPPrimaryMapServerIPType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  accessible-for-notify
+        STATUS      current
+        DESCRIPTION
+                "This object represents the IpAddress type of the Fabric primary map server"
+        ::= { ciscoLwappFabricNotifObjects 1 }
+
+cLFabricCPPrimaryMapServerIP OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  accessible-for-notify
+        STATUS      current
+        DESCRIPTION
+                "This object represents the IpAddress of fabric primary map server"
+        ::= { ciscoLwappFabricNotifObjects 2 }
+
+
+cLFabricCPSecondaryMapServerIPType OBJECT-TYPE
+        SYNTAX      InetAddressType
+        MAX-ACCESS  accessible-for-notify
+        STATUS      current
+        DESCRIPTION
+                "This object represents the IpAddress type of the Fabric secondary map server"
+        ::= { ciscoLwappFabricNotifObjects 3 }
+
+cLFabricCPSecondaryMapServerIP OBJECT-TYPE
+        SYNTAX      InetAddress
+        MAX-ACCESS  accessible-for-notify
+        STATUS      current
+        DESCRIPTION
+                "This object represents the IpAddress of fabric secondary map server"
+        ::= { ciscoLwappFabricNotifObjects 4 }
+
+
+--*******************************************************************
+--*   END of - Notification Objects
+--*******************************************************************
+
+-- ******************************************************************
+-- Fabric Notification object
+-- ******************************************************************
+cLFabricMapRequestNotify        NOTIFICATION-TYPE
+        OBJECTS {
+               cLApIfMacAddress,
+               cLApInetAddress,
+               cLFabricApLayer2Vnid,
+               cLFabricCPPrimaryMapServerIPType,
+               cLFabricCPPrimaryMapServerIP,
+               cLFabricCPSecondaryMapServerIPType,
+               cLFabricCPSecondaryMapServerIP
+        } 
+        STATUS  current
+        DESCRIPTION
+            "This trap will be generated when WLC  sends map request
+             for AP to map server in fabric network"
+
+        ::= { ciscoLwappFabricMIBNotifs 2 }
+
+
+cLFabricMapResponseNotify        NOTIFICATION-TYPE
+        OBJECTS {
+               cLApIfMacAddress,
+               cLApInetAddress,
+               cLFabricApLayer2Vnid,
+               cLFabricApPeerSwitchIpType,
+               cLFabricApPeerSwitchIp
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap will be generated when WLC  sends map response
+             for AP to map server in fabric network"
+
+        ::= { ciscoLwappFabricMIBNotifs 3 }
+
+
+
+cLFabricRegistrationReqNotify        NOTIFICATION-TYPE
+        OBJECTS {
+               cldcClientMacAddress,
+               cLFabricClientVnid,
+               cLFabricCPPrimaryMapServerIPType,
+               cLFabricCPPrimaryMapServerIP,
+               cLFabricCPSecondaryMapServerIPType,
+               cLFabricCPSecondaryMapServerIP
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap will be generated when WLC sends registration
+             request for fabric client to map server"
+	::= { ciscoLwappFabricMIBNotifs 4 }
+
+cLFabricDeRegistrationReqNotify        NOTIFICATION-TYPE
+        OBJECTS {
+               cldcClientMacAddress,
+               cLFabricClientVnid,
+               cLFabricCPPrimaryMapServerIPType,
+               cLFabricCPPrimaryMapServerIP,
+               cLFabricCPSecondaryMapServerIPType,
+               cLFabricCPSecondaryMapServerIP
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap will be generated when WLC sends deregistration
+             request for fabric client to map server"
+        ::= { ciscoLwappFabricMIBNotifs 5 }
+
+
+--*******************************************************************
+--*    Compliance statements
+--*******************************************************************
+
+ciscoLwappFabricMIBCompliances OBJECT IDENTIFIER
+        ::= { ciscoLwappFabricMIBConform 1 }
+
+ciscoLwappFabricMIBGroups OBJECT IDENTIFIER
+        ::= { ciscoLwappFabricMIBConform 2 }
+
+ciscoLwappFabricMIBCompliance MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappFabricMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS { cLFabricConfigGroup }
+    ::= { ciscoLwappFabricMIBCompliances 1 }
+
+
+
+-- *******************************************************************
+-- *    Units of conformance
+-- *******************************************************************
+cLFabricConfigGroup OBJECT-GROUP
+    OBJECTS{
+		cLFabricGlobalStatus,	
+		cLFabricApVnid,		
+		cLFabricControlplaneDomainType,     
+		cLFabricControlplaneUnitType,  
+		cLFabricControlplaneIPType,   
+		cLFabricControlplaneIP,
+		cLFabricControlplanePSKKey,  
+		cLFabricControlplaneRowStatus,
+		cLFabricVnidName,   
+		cLFabricVnidNetworkIPType,
+		cLFabricVnidNetworkIP,    
+		cLFabricVnidSubnetIPType, 
+		cLFabricVnidSubnetIP,
+		cLFabricLayer2Vnid,
+		cLFabricLayer3Vnid,
+		cLFabricVnidRowStatus, 
+		cLFabricWlanFabricStatus,
+		cLFabricWlanAclName,      
+		cLFabricWlanAvcName,      
+		cLFabricWlanVnidName,     
+		cLFabricWlanVnid,         
+		cLFabricWlanSgt,          
+		cLFabricWlanSwitchIpType, 
+		cLFabricWlanSwitchIp
+    }
+    STATUS          current
+    DESCRIPTION
+        "This is a collection of objects which can
+        be configured to control fabric parameters."
+    ::= { ciscoLwappFabricMIBGroups 1 }
+
+
+
+END
