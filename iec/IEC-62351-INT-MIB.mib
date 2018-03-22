@@ -1,0 +1,1010 @@
+IEC-62351-INT-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    interfaces-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 25, the Interfaces Agent
+                             package contains the object descriptions to be
+                             provided in order to monitor the IED Interfaces state and
+                             behaviour."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { part7 5 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	application  OBJECT IDENTIFIER ::= { part7 3 } 
+
+	
+		
+
+          
+		
+    interfaces OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The Interfaces class is a set of objects that
+                             includes the hardware interfaces of the device."
+        ::= { interfaces-agent 1 }
+
+    intserAvail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.serAvail"
+        ::= { interfaces 1 }
+
+    intserActiveTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.serActive -
+                             timestamp"
+        ::= { interfaces 2 }
+
+    intserActive OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.serActive"
+        ::= { interfaces 3 }
+
+    intserFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.serFail -
+                             timestamp"
+        ::= { interfaces 4 }
+
+    intserFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.serFail"
+        ::= { interfaces 5 }
+
+    intethAvail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.ethAvail"
+        ::= { interfaces 6 }
+
+    intethActiveTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.ethActive -
+                             timestamp"
+        ::= { interfaces 7 }
+
+    intethActive OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.ethActive"
+        ::= { interfaces 8 }
+
+    intethFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.ethFail -
+                             timestamp"
+        ::= { interfaces 9 }
+
+    intethFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.ethFail"
+        ::= { interfaces 10 }
+
+    intalgAvail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.algAvail"
+        ::= { interfaces 11 }
+
+    intalgActiveTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.algActive -
+                             timestamp"
+        ::= { interfaces 12 }
+
+    intalgActive OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.algActive"
+        ::= { interfaces 13 }
+
+    intalgFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.algFail -
+                             timestamp"
+        ::= { interfaces 14 }
+
+    intalgFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.algFail"
+        ::= { interfaces 15 }
+
+    intkeyAvail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.keyAvail"
+        ::= { interfaces 16 }
+
+    intkeyActiveTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.keyActive -
+                             timestamp"
+        ::= { interfaces 17 }
+
+    intkeyActive OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.keyActive"
+        ::= { interfaces 18 }
+
+    intkeyFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.keyFail -
+                             timestamp"
+        ::= { interfaces 19 }
+
+    intkeyFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.keyFail"
+        ::= { interfaces 20 }
+
+    intusbAvail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.usbAvail"
+        ::= { interfaces 21 }
+
+    intusbActiveTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.usbActive -
+                             timestamp"
+        ::= { interfaces 22 }
+
+    intusbActive OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.usbActive"
+        ::= { interfaces 23 }
+
+    intusbFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.usbFail -
+                             timestamp"
+        ::= { interfaces 24 }
+
+    intusbFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interfaces.usbFail"
+        ::= { interfaces 25 }
+
+    intSERTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF SEREntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.SER"
+        ::= { interfaces 26 }
+
+    intSEREntry OBJECT-TYPE
+        SYNTAX  SEREntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.SER"
+        INDEX   { 
+               sERID
+                
+	}
+        ::= { intSERTable 1 }
+
+    SEREntry ::=
+        SEQUENCE {
+               sERByteInTs DateAndTime,
+               sERByteIn Counter32 ,
+               sERByteOutTs DateAndTime,
+               sERByteOut Counter32 ,
+               sERID Unsigned32,
+               sERDescr DisplayString,
+               sERIntType IntKind,
+               sEROperableTs DateAndTime,
+               sEROperable TruthValue,
+               sEROnlineTs DateAndTime,
+               sEROnline TruthValue,
+               sERFaultyTs DateAndTime,
+               sERFaulty TruthValue,
+               sERCntRsTs DateAndTime,
+               sERCntRs TruthValue
+        }
+
+    intETHTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF ETHEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.ETH"
+        ::= { interfaces 27 }
+
+    intETHEntry OBJECT-TYPE
+        SYNTAX  ETHEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.ETH"
+        INDEX   { 
+               eTHID
+                
+	}
+        ::= { intETHTable 1 }
+
+    ETHEntry ::=
+        SEQUENCE {
+               eTHID Unsigned32,
+               eTHDescr DisplayString,
+               eTHIntType IntKind,
+               eTHOperableTs DateAndTime,
+               eTHOperable TruthValue,
+               eTHOnlineTs DateAndTime,
+               eTHOnline TruthValue,
+               eTHFaultyTs DateAndTime,
+               eTHFaulty TruthValue,
+               eTHCntRsTs DateAndTime,
+               eTHCntRs TruthValue
+        }
+
+    intUSBTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF USBEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.USB"
+        ::= { interfaces 28 }
+
+    intUSBEntry OBJECT-TYPE
+        SYNTAX  USBEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.USB"
+        INDEX   { 
+               uSBID
+                
+	}
+        ::= { intUSBTable 1 }
+
+    USBEntry ::=
+        SEQUENCE {
+               uSBID Unsigned32,
+               uSBDescr DisplayString,
+               uSBIntType IntKind,
+               uSBOperableTs DateAndTime,
+               uSBOperable TruthValue,
+               uSBOnlineTs DateAndTime,
+               uSBOnline TruthValue,
+               uSBFaultyTs DateAndTime,
+               uSBFaulty TruthValue,
+               uSBCntRsTs DateAndTime,
+               uSBCntRs TruthValue
+        }
+
+    intKEYTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF KEYEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.KEY"
+        ::= { interfaces 29 }
+
+    intKEYEntry OBJECT-TYPE
+        SYNTAX  KEYEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.KEY"
+        INDEX   { 
+               kEYID
+                
+	}
+        ::= { intKEYTable 1 }
+
+    KEYEntry ::=
+        SEQUENCE {
+               kEYLockedTs DateAndTime,
+               kEYLocked TruthValue,
+               kEYID Unsigned32,
+               kEYDescr DisplayString,
+               kEYIntType IntKind,
+               kEYOperableTs DateAndTime,
+               kEYOperable TruthValue,
+               kEYOnlineTs DateAndTime,
+               kEYOnline TruthValue,
+               kEYFaultyTs DateAndTime,
+               kEYFaulty TruthValue,
+               kEYCntRsTs DateAndTime,
+               kEYCntRs TruthValue
+        }
+
+    intALGTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF ALGEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.ALG"
+        ::= { interfaces 30 }
+
+    intALGEntry OBJECT-TYPE
+        SYNTAX  ALGEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Interfaces Agent::Interfaces.ALG"
+        INDEX   { 
+               aLGID
+                
+	}
+        ::= { intALGTable 1 }
+
+    ALGEntry ::=
+        SEQUENCE {
+               aLGID Unsigned32,
+               aLGDescr DisplayString,
+               aLGIntType IntKind,
+               aLGOperableTs DateAndTime,
+               aLGOperable TruthValue,
+               aLGOnlineTs DateAndTime,
+               aLGOnline TruthValue,
+               aLGFaultyTs DateAndTime,
+               aLGFaulty TruthValue,
+               aLGCntRsTs DateAndTime,
+               aLGCntRs TruthValue
+        }
+
+
+    intNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               intserActiveTs,
+               intserActive,
+               intserFailTs,
+               intserFail,
+               intethActiveTs,
+               intethActive,
+               intethFailTs,
+               intethFail,
+               intalgActiveTs,
+               intalgActive,
+               intalgFailTs,
+               intalgFail,
+               intkeyActiveTs,
+               intkeyActive,
+               intkeyFailTs,
+               intkeyFail,
+               intusbActiveTs,
+               intusbActive,
+               intusbFailTs,
+               intusbFail
+                }
+        STATUS              current
+        DESCRIPTION         "The Notification class defines the content of
+                             the notification message to be sent on event
+                             related with the specified objects."
+        ::= { interfaces 31 }
+
+    intNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                intNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The Notification class defines the content of
+                             the notification message to be sent on event
+                             related with the specified objects."
+        ::= { interfaces 32 }
+
+    eTHID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.ID"
+        ::= { intETHEntry 1 }
+
+    eTHDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Descr"
+        ::= { intETHEntry 2 }
+
+    eTHIntType OBJECT-TYPE
+        SYNTAX              IntKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.IntType"
+        ::= { intETHEntry 3 }
+
+    eTHOperableTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable -
+                             timestamp"
+        ::= { intETHEntry 4 }
+
+    eTHOperable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable"
+        ::= { intETHEntry 5 }
+
+    eTHOnlineTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online -
+                             timestamp"
+        ::= { intETHEntry 6 }
+
+    eTHOnline OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online"
+        ::= { intETHEntry 7 }
+
+    eTHFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty -
+                             timestamp"
+        ::= { intETHEntry 8 }
+
+    eTHFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty"
+        ::= { intETHEntry 9 }
+
+    eTHCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs -
+                             timestamp"
+        ::= { intETHEntry 10 }
+
+    eTHCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs"
+        ::= { intETHEntry 11 }
+
+    kEYLockedTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::KEYEntry.Locked -
+                             timestamp"
+        ::= { intKEYEntry 1 }
+
+    kEYLocked OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::KEYEntry.Locked"
+        ::= { intKEYEntry 2 }
+
+    kEYID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.ID"
+        ::= { intKEYEntry 3 }
+
+    kEYDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Descr"
+        ::= { intKEYEntry 4 }
+
+    kEYIntType OBJECT-TYPE
+        SYNTAX              IntKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.IntType"
+        ::= { intKEYEntry 5 }
+
+    kEYOperableTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable -
+                             timestamp"
+        ::= { intKEYEntry 6 }
+
+    kEYOperable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable"
+        ::= { intKEYEntry 7 }
+
+    kEYOnlineTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online -
+                             timestamp"
+        ::= { intKEYEntry 8 }
+
+    kEYOnline OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online"
+        ::= { intKEYEntry 9 }
+
+    kEYFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty -
+                             timestamp"
+        ::= { intKEYEntry 10 }
+
+    kEYFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty"
+        ::= { intKEYEntry 11 }
+
+    kEYCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs -
+                             timestamp"
+        ::= { intKEYEntry 12 }
+
+    kEYCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs"
+        ::= { intKEYEntry 13 }
+
+    sERByteInTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::SEREntry.ByteIn -
+                             timestamp"
+        ::= { intSEREntry 1 }
+
+    sERByteIn OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::SEREntry.ByteIn"
+        ::= { intSEREntry 2 }
+
+    sERByteOutTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::SEREntry.ByteOut -
+                             timestamp"
+        ::= { intSEREntry 3 }
+
+    sERByteOut OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::SEREntry.ByteOut"
+        ::= { intSEREntry 4 }
+
+    sERID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.ID"
+        ::= { intSEREntry 5 }
+
+    sERDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Descr"
+        ::= { intSEREntry 6 }
+
+    sERIntType OBJECT-TYPE
+        SYNTAX              IntKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.IntType"
+        ::= { intSEREntry 7 }
+
+    sEROperableTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable -
+                             timestamp"
+        ::= { intSEREntry 8 }
+
+    sEROperable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable"
+        ::= { intSEREntry 9 }
+
+    sEROnlineTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online -
+                             timestamp"
+        ::= { intSEREntry 10 }
+
+    sEROnline OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online"
+        ::= { intSEREntry 11 }
+
+    sERFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty -
+                             timestamp"
+        ::= { intSEREntry 12 }
+
+    sERFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty"
+        ::= { intSEREntry 13 }
+
+    sERCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs -
+                             timestamp"
+        ::= { intSEREntry 14 }
+
+    sERCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs"
+        ::= { intSEREntry 15 }
+
+    aLGID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.ID"
+        ::= { intALGEntry 1 }
+
+    aLGDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Descr"
+        ::= { intALGEntry 2 }
+
+    aLGIntType OBJECT-TYPE
+        SYNTAX              IntKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.IntType"
+        ::= { intALGEntry 3 }
+
+    aLGOperableTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable -
+                             timestamp"
+        ::= { intALGEntry 4 }
+
+    aLGOperable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable"
+        ::= { intALGEntry 5 }
+
+    aLGOnlineTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online -
+                             timestamp"
+        ::= { intALGEntry 6 }
+
+    aLGOnline OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online"
+        ::= { intALGEntry 7 }
+
+    aLGFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty -
+                             timestamp"
+        ::= { intALGEntry 8 }
+
+    aLGFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty"
+        ::= { intALGEntry 9 }
+
+    aLGCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs -
+                             timestamp"
+        ::= { intALGEntry 10 }
+
+    aLGCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs"
+        ::= { intALGEntry 11 }
+
+    uSBID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.ID"
+        ::= { intUSBEntry 1 }
+
+    uSBDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Descr"
+        ::= { intUSBEntry 2 }
+
+    uSBIntType OBJECT-TYPE
+        SYNTAX              IntKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.IntType"
+        ::= { intUSBEntry 3 }
+
+    uSBOperableTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable -
+                             timestamp"
+        ::= { intUSBEntry 4 }
+
+    uSBOperable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Operable"
+        ::= { intUSBEntry 5 }
+
+    uSBOnlineTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online -
+                             timestamp"
+        ::= { intUSBEntry 6 }
+
+    uSBOnline OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Online"
+        ::= { intUSBEntry 7 }
+
+    uSBFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty -
+                             timestamp"
+        ::= { intUSBEntry 8 }
+
+    uSBFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.Faulty"
+        ::= { intUSBEntry 9 }
+
+    uSBCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs -
+                             timestamp"
+        ::= { intUSBEntry 10 }
+
+    uSBCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Interfaces Agent::Interface.CntRs"
+        ::= { intUSBEntry 11 }
+
+    interfaces-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               intserAvail,
+               intserActiveTs,
+               intserActive,
+               intserFailTs,
+               intserFail,
+               intethAvail,
+               intethActiveTs,
+               intethActive,
+               intethFailTs,
+               intethFail,
+               intalgAvail,
+               intalgActiveTs,
+               intalgActive,
+               intalgFailTs,
+               intalgFail,
+               intkeyAvail,
+               intkeyActiveTs,
+               intkeyActive,
+               intkeyFailTs,
+               intkeyFail,
+               intusbAvail,
+               intusbActiveTs,
+               intusbActive,
+               intusbFailTs,
+               intusbFail,
+               eTHDescr,
+               eTHIntType,
+               eTHOperableTs,
+               eTHOperable,
+               eTHOnlineTs,
+               eTHOnline,
+               eTHFaultyTs,
+               eTHFaulty,
+               eTHCntRsTs,
+               eTHCntRs,
+               kEYLockedTs,
+               kEYLocked,
+               kEYDescr,
+               kEYIntType,
+               kEYOperableTs,
+               kEYOperable,
+               kEYOnlineTs,
+               kEYOnline,
+               kEYFaultyTs,
+               kEYFaulty,
+               kEYCntRsTs,
+               kEYCntRs,
+               sERByteInTs,
+               sERByteIn,
+               sERByteOutTs,
+               sERByteOut,
+               sERDescr,
+               sERIntType,
+               sEROperableTs,
+               sEROperable,
+               sEROnlineTs,
+               sEROnline,
+               sERFaultyTs,
+               sERFaulty,
+               sERCntRsTs,
+               sERCntRs,
+               aLGDescr,
+               aLGIntType,
+               aLGOperableTs,
+               aLGOperable,
+               aLGOnlineTs,
+               aLGOnline,
+               aLGFaultyTs,
+               aLGFaulty,
+               aLGCntRsTs,
+               aLGCntRs,
+               uSBDescr,
+               uSBIntType,
+               uSBOperableTs,
+               uSBOperable,
+               uSBOnlineTs,
+               uSBOnline,
+               uSBFaultyTs,
+               uSBFaulty,
+               uSBCntRsTs,
+               uSBCntRs
+	}
+        STATUS              current
+    	DESCRIPTION         "interfaces-agent optional objects group"
+        ::= { interfaces-agent 2 }
+
+    interfaces-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "interfaces-agent Compliance"
+	MODULE
+		
+        ::= { interfaces-agent 3 }
+
+
+END

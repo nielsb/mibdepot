@@ -1,0 +1,190 @@
+IEC-62351-ENUM-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    enumeration MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             The abstract objects defined as enumerated
+                             types refer to special enumerated data types. The
+                             type object naming actually reflects this
+                             classification, as explained explicitly within this section in
+                             the description of each abstract type. Please note
+                             that the attributes defined in this package classes
+                             have 1..1 multiplicity. The multiplicity is
+                             handled when these classes are used as attributes
+                             within the agents classes definition."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { part7 1 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	
+		
+
+          
+		
+    AppDatStKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "AppDatStKind is an enumeration of status for
+                             the environment where the device is operated (e.g.
+                             Power Supply, Physical Access)."
+        SYNTAX  INTEGER 
+		{   
+               unknown( 0 ),
+               good( 1 ),
+               bad( 2 )
+		}
+    PhyHealthKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "PhyHealthKind is an enumeration of general
+                             health status of IED."
+        SYNTAX  INTEGER 
+		{   
+               ok( 0 ),
+               warning( 1 ),
+               alarm( 2 )
+		}
+    ExtKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "ExtKind is an enumeration of possible IED
+                             extension types."
+        SYNTAX  INTEGER 
+		{   
+               unknown( 0 ),
+               ioModule( 1 ),
+               softwarePLC( 2 )
+		}
+    IntKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "IntKind is an enumeration of type of interface
+                             being utilized."
+        SYNTAX  INTEGER 
+		{   
+               wired( 0 ),
+               wireless( 1 )
+		}
+    LnkKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "LnkKind is an enumeration of LnkType."
+        SYNTAX  INTEGER 
+		{   
+               unknown( 0 ),
+               serial( 1 ),
+               tcp( 2 ),
+               udp( 3 ),
+               eth( 4 )
+		}
+    PSPAccKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "PSPAccKind indicates that panel access is
+                             occurring at the IED."
+        SYNTAX  INTEGER 
+		{   
+               notBeingAccessed( 0 ),
+               accessOccurring( 1 )
+		}
+    ProtIdKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "ProtIdKind is an enumeration used to identify
+                             the target protocol."
+        SYNTAX  INTEGER 
+		{   
+               unknown( 0 ),
+               iEC6185081( 1 ),
+               iEC6185081GOOSE( 2 ),
+               iEC6185092SV( 3 ),
+               ieee1815DNP( 4 ),
+               iec608705( 5 )
+		}
+    EventKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "EventKind is an enumeration of the last known
+                             attack vector that was encountered."
+        SYNTAX  INTEGER 
+		{   
+               none( 0 ),
+               unKnown( 1 ),
+               denialOfService( 2 ),
+               malware( 3 ),
+               bufferOverRun( 4 ),
+               bufferUnderRun( 5 ),
+               badCredential( 6 ),
+               badKey( 7 ),
+               malformedPDU( 8 ),
+               physicalDisruption( 9 ),
+               invalidNetworkAccess( 10 )
+		}
+    TimSyncIssueKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "TimSyncIssueKind is an enumeration of
+                             possible problems with time synchronization."
+        SYNTAX  INTEGER 
+		{   
+               synced( 0 ),
+               degradated( 1 ),
+               failed( 2 )
+		}
+    SecurityProfileKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "SecurityProfileKind is an enumeration of
+                             SecurityProfile alternatives. Note: These are the enumerated
+                             values expected to be normative in IEC 62351-4. If
+                             there is a discrepancy when that standard is finally
+                             released, the values in that standard will take
+                             precedence."
+        SYNTAX  INTEGER 
+		{   
+               noSecurity( 0 ),
+               aProfile( 1 ),
+               aPlusProfile( 2 ),
+               aePlusProfile( 3 )
+		}
+    TimSyncSrcKind ::= TEXTUAL-CONVENTION
+        STATUS              current
+        DESCRIPTION         "TimSyncSrcKind is an enumeration of source of
+                             time synchronization alternatives."
+        SYNTAX  INTEGER 
+		{   
+               unknown( 0 ),
+               ntp( 1 ),
+               sntp( 2 ),
+               irig( 3 ),
+               gps( 4 ),
+               ieee1588PTP( 5 ),
+               ieee1588PTPC37238Profile2011( 6 ),
+               ieee1588PTPIEC6185093( 7 )
+		}
+    enumerationCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "enumeration Compliance"
+	MODULE
+		
+        ::= { enumeration 2 }
+
+
+END

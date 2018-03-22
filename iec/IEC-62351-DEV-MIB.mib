@@ -1,0 +1,1018 @@
+IEC-62351-DEV-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    ied-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 17, the IED Agent package
+                             contains the object descriptions for the environmental
+                             information to be provided for the network and system
+                             monitoring of environmental conditions where the device
+                             is operating."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { part7 2 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	
+		
+
+          
+		
+    ied OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The IED class is a set of objects that includes
+                             the hardware (CPU, storage), software (e.g.
+                             buffer overflow) health information, and security
+                             information regarding possible attacks. Information on
+                             device security credentials (certificates and more
+                             in general encryption keys) is provided."
+        ::= { ied-agent 1 }
+
+    iEDAtkCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.AtkCnt - timestamp"
+        ::= { ied 1 }
+
+    iEDAtkCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.AtkCnt"
+        ::= { ied 2 }
+
+    iEDCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.CntRs - timestamp"
+        ::= { ied 3 }
+
+    iEDCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.CntRs"
+        ::= { ied 4 }
+
+    iEDConfigurationCRCTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.ConfigurationCRC - timestamp"
+        ::= { ied 5 }
+
+    iEDConfigurationCRC OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.ConfigurationCRC"
+        ::= { ied 6 }
+
+    iEDConfigurationVersionTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.ConfigurationVersion -
+                             timestamp"
+        ::= { ied 7 }
+
+    iEDConfigurationVersion OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.ConfigurationVersion"
+        ::= { ied 8 }
+
+    iEDCPUTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF CPUEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IED Agent::IED.CPU"
+        ::= { ied 9 }
+
+    iEDCPUEntry OBJECT-TYPE
+        SYNTAX  CPUEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IED Agent::IED.CPU"
+        INDEX   { 
+               cPUID
+ 
+	}
+        ::= { iEDCPUTable 1 }
+
+    CPUEntry ::=
+        SEQUENCE {
+               cPUCntRsTs DateAndTime,
+               cPUCntRs TruthValue,
+               cPUDescr DisplayString,
+               cPUFaultyTs DateAndTime,
+               cPUFaulty TruthValue,
+               cPUID Unsigned32,
+               cPUOnlineTs DateAndTime,
+               cPUOnline TruthValue,
+               cPUOperableTs DateAndTime,
+               cPUOperable TruthValue,
+               cPUTemperatureTs DateAndTime,
+               cPUTemperature Float32TC,
+               cPUWatchdogTs DateAndTime,
+               cPUWatchdog Counter32 
+        }
+
+    iEDCpuUsageTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.CpuUsage - timestamp"
+        ::= { ied 10 }
+
+    iEDCpuUsage OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.CpuUsage"
+        ::= { ied 11 }
+
+    iEDDataInvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.DataInv - timestamp"
+        ::= { ied 12 }
+
+    iEDDataInv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.DataInv"
+        ::= { ied 13 }
+
+    iEDDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.Descr"
+        ::= { ied 14 }
+
+    iEDExpCertsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.ExpCerts - timestamp"
+        ::= { ied 15 }
+
+    iEDExpCerts OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.ExpCerts"
+        ::= { ied 16 }
+
+    iEDEXTTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF EXTEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IED Agent::IED.EXT"
+        ::= { ied 17 }
+
+    iEDEXTEntry OBJECT-TYPE
+        SYNTAX  EXTEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IED Agent::IED.EXT"
+        INDEX   { 
+               eXTID
+ 
+	}
+        ::= { iEDEXTTable 1 }
+
+    EXTEntry ::=
+        SEQUENCE {
+               eXTID Unsigned32,
+               eXTDescr DisplayString,
+               eXTExtensionType ExtKind,
+               eXTCodeVersionTs DateAndTime,
+               eXTCodeVersion DisplayString,
+               eXTRunningTs DateAndTime,
+               eXTRunning TruthValue,
+               eXTTemperatureTs DateAndTime,
+               eXTTemperature Float32TC,
+               eXTWatchdogTs DateAndTime,
+               eXTWatchdog Counter32 ,
+               eXTErrorsTs DateAndTime,
+               eXTErrors Counter32 ,
+               eXTCntRsTs DateAndTime,
+               eXTCntRs TruthValue
+        }
+
+    iEDFirmwareVersionTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.FirmwareVersion - timestamp"
+        ::= { ied 18 }
+
+    iEDFirmwareVersion OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.FirmwareVersion"
+        ::= { ied 19 }
+
+    iEDInternalTempTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.InternalTemp - timestamp"
+        ::= { ied 20 }
+
+    iEDInternalTemp OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.InternalTemp"
+        ::= { ied 21 }
+
+    iEDLastCPUFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastCPUFail - timestamp"
+        ::= { ied 22 }
+
+    iEDLastCPUFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastCPUFail"
+        ::= { ied 23 }
+
+    iEDLastEventTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastEvent - timestamp"
+        ::= { ied 24 }
+
+    iEDLastEvent OBJECT-TYPE
+        SYNTAX              EventKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastEvent"
+        ::= { ied 25 }
+
+    iEDLastEXTFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastEXTFail - timestamp"
+        ::= { ied 26 }
+
+    iEDLastEXTFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastEXTFail"
+        ::= { ied 27 }
+
+    iEDLastSTOREFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastSTOREFail - timestamp"
+        ::= { ied 28 }
+
+    iEDLastSTOREFail OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.LastSTOREFail"
+        ::= { ied 29 }
+
+    iEDLocation OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.Location"
+        ::= { ied 30 }
+
+    iEDMaintainer OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.Maintainer"
+        ::= { ied 31 }
+
+    iEDMemTotal OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.MemTotal"
+        ::= { ied 32 }
+
+    iEDMemUsageTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.MemUsage - timestamp"
+        ::= { ied 33 }
+
+    iEDMemUsage OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.MemUsage"
+        ::= { ied 34 }
+
+    iEDMIBVersion OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.MIBVersion"
+        ::= { ied 35 }
+
+    iEDMisEvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.MisEvCnt - timestamp"
+        ::= { ied 36 }
+
+    iEDMisEvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.MisEvCnt"
+        ::= { ied 37 }
+
+    iEDName OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.Name"
+        ::= { ied 38 }
+
+    iEDNearToExpCertsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.NearToExpCerts - timestamp"
+        ::= { ied 39 }
+
+    iEDNearToExpCerts OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.NearToExpCerts"
+        ::= { ied 40 }
+
+    iEDNvStoreTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.NvStore - timestamp"
+        ::= { ied 41 }
+
+    iEDNvStore OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.NvStore"
+        ::= { ied 42 }
+
+    iEDNvStoreRemTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.NvStoreRem - timestamp"
+        ::= { ied 43 }
+
+    iEDNvStoreRem OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.NvStoreRem"
+        ::= { ied 44 }
+
+    iEDPhyHealthTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.PhyHealth - timestamp"
+        ::= { ied 45 }
+
+    iEDPhyHealth OBJECT-TYPE
+        SYNTAX              PhyHealthKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.PhyHealth"
+        ::= { ied 46 }
+
+    iEDPhyHealthChgCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.PhyHealthChgCnt - timestamp"
+        ::= { ied 47 }
+
+    iEDPhyHealthChgCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.PhyHealthChgCnt"
+        ::= { ied 48 }
+
+    iEDRBACDbUpdateTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.RBACDbUpdate - timestamp"
+        ::= { ied 49 }
+
+    iEDRBACDbUpdate OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.RBACDbUpdate"
+        ::= { ied 50 }
+
+    iEDRevCertsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.RevCerts - timestamp"
+        ::= { ied 51 }
+
+    iEDRevCerts OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.RevCerts"
+        ::= { ied 52 }
+
+    iEDRevCheckFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.RevCheckFail - timestamp"
+        ::= { ied 53 }
+
+    iEDRevCheckFail OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.RevCheckFail"
+        ::= { ied 54 }
+
+
+    iEDSecurityNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               iEDAtkCntTs,
+               iEDAtkCnt,
+               iEDExpCertsTs,
+               iEDExpCerts,
+               iEDLastEventTs,
+               iEDLastEvent,
+               iEDNearToExpCertsTs,
+               iEDNearToExpCerts,
+               iEDRevCertsTs,
+               iEDRevCerts,
+               iEDRevCheckFailTs,
+               iEDRevCheckFail
+                }
+        STATUS              current
+        DESCRIPTION         "The SecurityNotification class defines the
+                             content of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { ied 55 }
+
+    iEDSecurityNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                iEDSecurityNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The SecurityNotification class defines the
+                             content of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { ied 56 }
+
+
+    iEDNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               iEDPhyHealthChgCntTs,
+               iEDPhyHealthChgCnt,
+               iEDInternalTempTs,
+               iEDInternalTemp,
+               iEDNvStoreTs,
+               iEDNvStore,
+               iEDNvStoreRemTs,
+               iEDNvStoreRem,
+               iEDPhyHealthTs,
+               iEDPhyHealth,
+               iEDWrmStrCntTs,
+               iEDWrmStrCnt
+                }
+        STATUS              current
+        DESCRIPTION         "The Notification class defines the content of
+                             the notification message to be sent on event
+                             related with the specified objects."
+        ::= { ied 57 }
+
+    iEDNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                iEDNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The Notification class defines the content of
+                             the notification message to be sent on event
+                             related with the specified objects."
+        ::= { ied 58 }
+
+    iEDSTORETable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF STOREEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IED Agent::IED.STORE"
+        ::= { ied 59 }
+
+    iEDSTOREEntry OBJECT-TYPE
+        SYNTAX  STOREEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IED Agent::IED.STORE"
+        INDEX   { 
+               sTOREID
+ 
+	}
+        ::= { iEDSTORETable 1 }
+
+    STOREEntry ::=
+        SEQUENCE {
+               sTOREID Unsigned32,
+               sTOREDescr DisplayString,
+               sTORENvStore Float32TC,
+               sTORENvStoreRemTs DateAndTime,
+               sTORENvStoreRem Float32TC,
+               sTOREFaultyTs DateAndTime,
+               sTOREFaulty TruthValue,
+               sTORECntRsTs DateAndTime,
+               sTORECntRs TruthValue
+        }
+
+    iEDSvcViolTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.SvcViol - timestamp"
+        ::= { ied 60 }
+
+    iEDSvcViol OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.SvcViol"
+        ::= { ied 61 }
+
+    iEDWatchdogTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.Watchdog - timestamp"
+        ::= { ied 62 }
+
+    iEDWatchdog OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.Watchdog"
+        ::= { ied 63 }
+
+    iEDWrmStrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.WrmStrCnt - timestamp"
+        ::= { ied 64 }
+
+    iEDWrmStrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::IED.WrmStrCnt"
+        ::= { ied 65 }
+
+    cPUCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.CntRs - timestamp"
+        ::= { iEDCPUEntry 1 }
+
+    cPUCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.CntRs"
+        ::= { iEDCPUEntry 2 }
+
+    cPUDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Descr"
+        ::= { iEDCPUEntry 3 }
+
+    cPUFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Faulty - timestamp"
+        ::= { iEDCPUEntry 4 }
+
+    cPUFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Faulty"
+        ::= { iEDCPUEntry 5 }
+
+    cPUID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.ID"
+        ::= { iEDCPUEntry 6 }
+
+    cPUOnlineTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Online - timestamp"
+        ::= { iEDCPUEntry 7 }
+
+    cPUOnline OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Online"
+        ::= { iEDCPUEntry 8 }
+
+    cPUOperableTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Operable - timestamp"
+        ::= { iEDCPUEntry 9 }
+
+    cPUOperable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Operable"
+        ::= { iEDCPUEntry 10 }
+
+    cPUTemperatureTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Temperature - timestamp"
+        ::= { iEDCPUEntry 11 }
+
+    cPUTemperature OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Temperature"
+        ::= { iEDCPUEntry 12 }
+
+    cPUWatchdogTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Watchdog - timestamp"
+        ::= { iEDCPUEntry 13 }
+
+    cPUWatchdog OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::CPUEntry.Watchdog"
+        ::= { iEDCPUEntry 14 }
+
+    eXTID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.ID"
+        ::= { iEDEXTEntry 1 }
+
+    eXTDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Descr"
+        ::= { iEDEXTEntry 2 }
+
+    eXTExtensionType OBJECT-TYPE
+        SYNTAX              ExtKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.ExtensionType"
+        ::= { iEDEXTEntry 3 }
+
+    eXTCodeVersionTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.CodeVersion - timestamp"
+        ::= { iEDEXTEntry 4 }
+
+    eXTCodeVersion OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.CodeVersion"
+        ::= { iEDEXTEntry 5 }
+
+    eXTRunningTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Running - timestamp"
+        ::= { iEDEXTEntry 6 }
+
+    eXTRunning OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Running"
+        ::= { iEDEXTEntry 7 }
+
+    eXTTemperatureTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Temperature - timestamp"
+        ::= { iEDEXTEntry 8 }
+
+    eXTTemperature OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Temperature"
+        ::= { iEDEXTEntry 9 }
+
+    eXTWatchdogTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Watchdog - timestamp"
+        ::= { iEDEXTEntry 10 }
+
+    eXTWatchdog OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Watchdog"
+        ::= { iEDEXTEntry 11 }
+
+    eXTErrorsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Errors - timestamp"
+        ::= { iEDEXTEntry 12 }
+
+    eXTErrors OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.Errors"
+        ::= { iEDEXTEntry 13 }
+
+    eXTCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.CntRs - timestamp"
+        ::= { iEDEXTEntry 14 }
+
+    eXTCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IED Agent::EXTEntry.CntRs"
+        ::= { iEDEXTEntry 15 }
+
+    sTOREID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.ID"
+        ::= { iEDSTOREEntry 1 }
+
+    sTOREDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.Descr"
+        ::= { iEDSTOREEntry 2 }
+
+    sTORENvStore OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.NvStore"
+        ::= { iEDSTOREEntry 3 }
+
+    sTORENvStoreRemTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.NvStoreRem -
+                             timestamp"
+        ::= { iEDSTOREEntry 4 }
+
+    sTORENvStoreRem OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.NvStoreRem"
+        ::= { iEDSTOREEntry 5 }
+
+    sTOREFaultyTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.Faulty - timestamp"
+        ::= { iEDSTOREEntry 6 }
+
+    sTOREFaulty OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.Faulty"
+        ::= { iEDSTOREEntry 7 }
+
+    sTORECntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.CntRs - timestamp"
+        ::= { iEDSTOREEntry 8 }
+
+    sTORECntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IED Agent::STOREEntry.CntRs"
+        ::= { iEDSTOREEntry 9 }
+
+    ied-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               iEDAtkCntTs,
+               iEDAtkCnt,
+               iEDCntRsTs,
+               iEDCntRs,
+               iEDConfigurationCRCTs,
+               iEDConfigurationCRC,
+               iEDConfigurationVersionTs,
+               iEDConfigurationVersion,
+               iEDCpuUsageTs,
+               iEDCpuUsage,
+               iEDDataInvTs,
+               iEDDataInv,
+               iEDDescr,
+               iEDExpCertsTs,
+               iEDExpCerts,
+               iEDFirmwareVersionTs,
+               iEDFirmwareVersion,
+               iEDInternalTempTs,
+               iEDInternalTemp,
+               iEDLastCPUFailTs,
+               iEDLastCPUFail,
+               iEDLastEventTs,
+               iEDLastEvent,
+               iEDLastEXTFailTs,
+               iEDLastEXTFail,
+               iEDLastSTOREFailTs,
+               iEDLastSTOREFail,
+               iEDLocation,
+               iEDMaintainer,
+               iEDMemTotal,
+               iEDMemUsageTs,
+               iEDMemUsage,
+               iEDMIBVersion,
+               iEDMisEvCntTs,
+               iEDMisEvCnt,
+               iEDName,
+               iEDNearToExpCertsTs,
+               iEDNearToExpCerts,
+               iEDNvStoreTs,
+               iEDNvStore,
+               iEDNvStoreRemTs,
+               iEDNvStoreRem,
+               iEDPhyHealthTs,
+               iEDPhyHealth,
+               iEDPhyHealthChgCntTs,
+               iEDPhyHealthChgCnt,
+               iEDRBACDbUpdateTs,
+               iEDRBACDbUpdate,
+               iEDRevCertsTs,
+               iEDRevCerts,
+               iEDRevCheckFailTs,
+               iEDRevCheckFail,
+               iEDSvcViolTs,
+               iEDSvcViol,
+               iEDWatchdogTs,
+               iEDWatchdog,
+               iEDWrmStrCntTs,
+               iEDWrmStrCnt,
+               cPUCntRsTs,
+               cPUCntRs,
+               cPUDescr,
+               cPUFaultyTs,
+               cPUFaulty,
+               cPUOnlineTs,
+               cPUOnline,
+               cPUOperableTs,
+               cPUOperable,
+               cPUTemperatureTs,
+               cPUTemperature,
+               cPUWatchdogTs,
+               cPUWatchdog,
+               eXTDescr,
+               eXTExtensionType,
+               eXTCodeVersionTs,
+               eXTCodeVersion,
+               eXTRunningTs,
+               eXTRunning,
+               eXTTemperatureTs,
+               eXTTemperature,
+               eXTWatchdogTs,
+               eXTWatchdog,
+               eXTErrorsTs,
+               eXTErrors,
+               eXTCntRsTs,
+               eXTCntRs,
+               sTOREDescr,
+               sTORENvStore,
+               sTORENvStoreRemTs,
+               sTORENvStoreRem,
+               sTOREFaultyTs,
+               sTOREFaulty,
+               sTORECntRsTs,
+               sTORECntRs
+	}
+        STATUS              current
+    	DESCRIPTION         "ied-agent optional objects group"
+        ::= { ied-agent 2 }
+
+    ied-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "ied-agent Compliance"
+	MODULE
+		
+        ::= { ied-agent 3 }
+
+
+END

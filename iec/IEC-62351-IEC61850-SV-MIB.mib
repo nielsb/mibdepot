@@ -1,0 +1,872 @@
+IEC-62351-IEC61850-SV-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    sv-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 23, the SV package includes
+                             the IEC 61850 Sampled Value (SV) classes.
+                             SVProvider and SVAssociation inherit both Security and
+                             Protocol Info attributes from the more general classes."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { iec61850 3 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	application  OBJECT IDENTIFIER ::= { part7 3 } 
+
+	iec61850  OBJECT IDENTIFIER ::= { application 2 } 
+
+	
+		
+
+          
+		
+    sv OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The SVProvider class includes the attributes
+                             which define the information about the overall IEC
+                             61850 stack SV provider running on the device."
+        ::= { sv-agent 1 }
+
+    sVCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVProvider.CntRs - timestamp"
+        ::= { sv 1 }
+
+    sVCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV::SVProvider.CntRs"
+        ::= { sv 2 }
+
+    sVDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVProvider.DecryptFailCnt - timestamp"
+        ::= { sv 3 }
+
+    sVDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVProvider.DecryptFailCnt"
+        ::= { sv 4 }
+
+    sVPDUSizeFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVProvider.PDUSizeFail - timestamp"
+        ::= { sv 5 }
+
+    sVPDUSizeFail OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVProvider.PDUSizeFail"
+        ::= { sv 6 }
+
+    sVGroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { sv 7 }
+
+    sVGroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { sv 8 }
+
+    sVKDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { sv 9 }
+
+    sVKDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { sv 10 }
+
+    sVKDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { sv 11 }
+
+    sVKDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { sv 12 }
+
+    sVPIPTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF SVPublisherAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.PIP"
+        ::= { sv 13 }
+
+    sVPIPEntry OBJECT-TYPE
+        SYNTAX  SVPublisherAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.PIP"
+        INDEX   { 
+               sVPIPCBRef
+                
+	}
+        ::= { sVPIPTable 1 }
+
+    SVPublisherAssociationIP ::=
+        SEQUENCE {
+               sVPIPDestIpAddr InetAddress,
+               sVPIPDestIpAddrType InetAddressType,
+               sVPIPCBRef DisplayString,
+               sVPIPCntRsTs DateAndTime,
+               sVPIPCntRs TruthValue,
+               sVPIPOutUvTs DateAndTime,
+               sVPIPOutUv Counter32 ,
+               sVPIPTxPduPerSecond Float32TC,
+               sVPIPGroupUpKeyFailCntTs DateAndTime,
+               sVPIPGroupUpKeyFailCnt Counter32 ,
+               sVPIPKDCAuthFailCntTs DateAndTime,
+               sVPIPKDCAuthFailCnt Counter32 ,
+               sVPIPKDCSessionKeyFailCntTs DateAndTime,
+               sVPIPKDCSessionKeyFailCnt Counter32 
+        }
+
+    sVPL2Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF SVPublisherAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.PL2"
+        ::= { sv 14 }
+
+    sVPL2Entry OBJECT-TYPE
+        SYNTAX  SVPublisherAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.PL2"
+        INDEX   { 
+               sVPL2CBRef
+                
+	}
+        ::= { sVPL2Table 1 }
+
+    SVPublisherAssociationL2 ::=
+        SEQUENCE {
+               sVPL2DestMacAddr MacAddress,
+               sVPL2CBRef DisplayString,
+               sVPL2CntRsTs DateAndTime,
+               sVPL2CntRs TruthValue,
+               sVPL2OutUvTs DateAndTime,
+               sVPL2OutUv Counter32 ,
+               sVPL2TxPduPerSecond Float32TC,
+               sVPL2GroupUpKeyFailCntTs DateAndTime,
+               sVPL2GroupUpKeyFailCnt Counter32 ,
+               sVPL2KDCAuthFailCntTs DateAndTime,
+               sVPL2KDCAuthFailCnt Counter32 ,
+               sVPL2KDCSessionKeyFailCntTs DateAndTime,
+               sVPL2KDCSessionKeyFailCnt Counter32 
+        }
+
+
+    sVSVNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               sVGroupUpKeyFailCntTs,
+               sVGroupUpKeyFailCnt,
+               sVKDCAuthFailCntTs,
+               sVKDCAuthFailCnt,
+               sVKDCSessionKeyFailCntTs,
+               sVKDCSessionKeyFailCnt
+                }
+        STATUS              current
+        DESCRIPTION         "The SVNotification class defines the content
+                             of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { sv 15 }
+
+    sVSVNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                sVSVNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The SVNotification class defines the content
+                             of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { sv 16 }
+
+    sVSIPTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF SVSubcriberAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.SIP"
+        ::= { sv 17 }
+
+    sVSIPEntry OBJECT-TYPE
+        SYNTAX  SVSubcriberAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.SIP"
+        INDEX   { 
+               sVSIPCBRef
+                
+	}
+        ::= { sVSIPTable 1 }
+
+    SVSubcriberAssociationIP ::=
+        SEQUENCE {
+               sVSIPSrcIpAddr InetAddress,
+               sVSIPSrcIpAddrType InetAddressType,
+               sVSIPCBRef DisplayString,
+               sVSIPCntRsTs DateAndTime,
+               sVSIPCntRs TruthValue,
+               sVSIPInOvCntTs DateAndTime,
+               sVSIPInOvCnt Counter32 ,
+               sVSIPMessageIntegrityFailCntTs DateAndTime,
+               sVSIPMessageIntegrityFailCnt Counter32 ,
+               sVSIPRxPduPerSecond Float32TC,
+               sVSIPGroupUpKeyFailCntTs DateAndTime,
+               sVSIPGroupUpKeyFailCnt Counter32 ,
+               sVSIPKDCAuthFailCntTs DateAndTime,
+               sVSIPKDCAuthFailCnt Counter32 ,
+               sVSIPKDCSessionKeyFailCntTs DateAndTime,
+               sVSIPKDCSessionKeyFailCnt Counter32 
+        }
+
+    sVSL2Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF SVSubcriberAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.SL2"
+        ::= { sv 18 }
+
+    sVSL2Entry OBJECT-TYPE
+        SYNTAX  SVSubcriberAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "SV::SVProvider.SL2"
+        INDEX   { 
+               sVSL2CBRef
+                
+	}
+        ::= { sVSL2Table 1 }
+
+    SVSubcriberAssociationL2 ::=
+        SEQUENCE {
+               sVSL2SrcMacAddr MacAddress,
+               sVSL2CBRef DisplayString,
+               sVSL2CntRsTs DateAndTime,
+               sVSL2CntRs TruthValue,
+               sVSL2InOvCntTs DateAndTime,
+               sVSL2InOvCnt Counter32 ,
+               sVSL2MessageIntegrityFailCntTs DateAndTime,
+               sVSL2MessageIntegrityFailCnt Counter32 ,
+               sVSL2RxPduPerSecond Float32TC,
+               sVSL2GroupUpKeyFailCntTs DateAndTime,
+               sVSL2GroupUpKeyFailCnt Counter32 ,
+               sVSL2KDCAuthFailCntTs DateAndTime,
+               sVSL2KDCAuthFailCnt Counter32 ,
+               sVSL2KDCSessionKeyFailCntTs DateAndTime,
+               sVSL2KDCSessionKeyFailCnt Counter32 
+        }
+
+    sVPIPDestIpAddr OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVPublisherAssociationIP.DestIpAddr"
+        ::= { sVPIPEntry 1 }
+
+    sVPIPDestIpAddrType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             SV::SVPublisherAssociationIP.DestIpAddrType"
+        ::= { sVPIPEntry 2 }
+
+    sVPIPCBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CBRef"
+        ::= { sVPIPEntry 3 }
+
+    sVPIPCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs - timestamp"
+        ::= { sVPIPEntry 4 }
+
+    sVPIPCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs"
+        ::= { sVPIPEntry 5 }
+
+    sVPIPOutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv - timestamp"
+        ::= { sVPIPEntry 6 }
+
+    sVPIPOutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv"
+        ::= { sVPIPEntry 7 }
+
+    sVPIPTxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.TxPduPerSecond"
+        ::= { sVPIPEntry 8 }
+
+    sVPIPGroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { sVPIPEntry 9 }
+
+    sVPIPGroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { sVPIPEntry 10 }
+
+    sVPIPKDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { sVPIPEntry 11 }
+
+    sVPIPKDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { sVPIPEntry 12 }
+
+    sVPIPKDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { sVPIPEntry 13 }
+
+    sVPIPKDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { sVPIPEntry 14 }
+
+    sVPL2DestMacAddr OBJECT-TYPE
+        SYNTAX              MacAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVPublisherAssociationL2.DestMacAddr"
+        ::= { sVPL2Entry 1 }
+
+    sVPL2CBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CBRef"
+        ::= { sVPL2Entry 2 }
+
+    sVPL2CntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs - timestamp"
+        ::= { sVPL2Entry 3 }
+
+    sVPL2CntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs"
+        ::= { sVPL2Entry 4 }
+
+    sVPL2OutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv - timestamp"
+        ::= { sVPL2Entry 5 }
+
+    sVPL2OutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv"
+        ::= { sVPL2Entry 6 }
+
+    sVPL2TxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.TxPduPerSecond"
+        ::= { sVPL2Entry 7 }
+
+    sVPL2GroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { sVPL2Entry 8 }
+
+    sVPL2GroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { sVPL2Entry 9 }
+
+    sVPL2KDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { sVPL2Entry 10 }
+
+    sVPL2KDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { sVPL2Entry 11 }
+
+    sVPL2KDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { sVPL2Entry 12 }
+
+    sVPL2KDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { sVPL2Entry 13 }
+
+    sVSIPSrcIpAddr OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVSubcriberAssociationIP.SrcIpAddr"
+        ::= { sVSIPEntry 1 }
+
+    sVSIPSrcIpAddrType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             SV::SVSubcriberAssociationIP.SrcIpAddrType"
+        ::= { sVSIPEntry 2 }
+
+    sVSIPCBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CBRef"
+        ::= { sVSIPEntry 3 }
+
+    sVSIPCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs - timestamp"
+        ::= { sVSIPEntry 4 }
+
+    sVSIPCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs"
+        ::= { sVSIPEntry 5 }
+
+    sVSIPInOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt - timestamp"
+        ::= { sVSIPEntry 6 }
+
+    sVSIPInOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt"
+        ::= { sVSIPEntry 7 }
+
+    sVSIPMessageIntegrityFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt - timestamp"
+        ::= { sVSIPEntry 8 }
+
+    sVSIPMessageIntegrityFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt"
+        ::= { sVSIPEntry 9 }
+
+    sVSIPRxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.RxPduPerSecond"
+        ::= { sVSIPEntry 10 }
+
+    sVSIPGroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { sVSIPEntry 11 }
+
+    sVSIPGroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { sVSIPEntry 12 }
+
+    sVSIPKDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { sVSIPEntry 13 }
+
+    sVSIPKDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { sVSIPEntry 14 }
+
+    sVSIPKDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { sVSIPEntry 15 }
+
+    sVSIPKDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { sVSIPEntry 16 }
+
+    sVSL2SrcMacAddr OBJECT-TYPE
+        SYNTAX              MacAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV::SVSubcriberAssociationL2.SrcMacAddr"
+        ::= { sVSL2Entry 1 }
+
+    sVSL2CBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CBRef"
+        ::= { sVSL2Entry 2 }
+
+    sVSL2CntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs - timestamp"
+        ::= { sVSL2Entry 3 }
+
+    sVSL2CntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs"
+        ::= { sVSL2Entry 4 }
+
+    sVSL2InOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt - timestamp"
+        ::= { sVSL2Entry 5 }
+
+    sVSL2InOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt"
+        ::= { sVSL2Entry 6 }
+
+    sVSL2MessageIntegrityFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt - timestamp"
+        ::= { sVSL2Entry 7 }
+
+    sVSL2MessageIntegrityFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt"
+        ::= { sVSL2Entry 8 }
+
+    sVSL2RxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.RxPduPerSecond"
+        ::= { sVSL2Entry 9 }
+
+    sVSL2GroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { sVSL2Entry 10 }
+
+    sVSL2GroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { sVSL2Entry 11 }
+
+    sVSL2KDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { sVSL2Entry 12 }
+
+    sVSL2KDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { sVSL2Entry 13 }
+
+    sVSL2KDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { sVSL2Entry 14 }
+
+    sVSL2KDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { sVSL2Entry 15 }
+
+    sv-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               sVCntRsTs,
+               sVCntRs,
+               sVDecryptFailCntTs,
+               sVDecryptFailCnt,
+               sVPDUSizeFailTs,
+               sVPDUSizeFail,
+               sVGroupUpKeyFailCntTs,
+               sVGroupUpKeyFailCnt,
+               sVKDCAuthFailCntTs,
+               sVKDCAuthFailCnt,
+               sVKDCSessionKeyFailCntTs,
+               sVKDCSessionKeyFailCnt,
+               sVPIPDestIpAddr,
+               sVPIPDestIpAddrType,
+               sVPIPCntRsTs,
+               sVPIPCntRs,
+               sVPIPOutUvTs,
+               sVPIPOutUv,
+               sVPIPTxPduPerSecond,
+               sVPIPGroupUpKeyFailCntTs,
+               sVPIPGroupUpKeyFailCnt,
+               sVPIPKDCAuthFailCntTs,
+               sVPIPKDCAuthFailCnt,
+               sVPIPKDCSessionKeyFailCntTs,
+               sVPIPKDCSessionKeyFailCnt,
+               sVPL2DestMacAddr,
+               sVPL2CntRsTs,
+               sVPL2CntRs,
+               sVPL2OutUvTs,
+               sVPL2OutUv,
+               sVPL2TxPduPerSecond,
+               sVPL2GroupUpKeyFailCntTs,
+               sVPL2GroupUpKeyFailCnt,
+               sVPL2KDCAuthFailCntTs,
+               sVPL2KDCAuthFailCnt,
+               sVPL2KDCSessionKeyFailCntTs,
+               sVPL2KDCSessionKeyFailCnt,
+               sVSIPSrcIpAddr,
+               sVSIPSrcIpAddrType,
+               sVSIPCntRsTs,
+               sVSIPCntRs,
+               sVSIPInOvCntTs,
+               sVSIPInOvCnt,
+               sVSIPMessageIntegrityFailCntTs,
+               sVSIPMessageIntegrityFailCnt,
+               sVSIPRxPduPerSecond,
+               sVSIPGroupUpKeyFailCntTs,
+               sVSIPGroupUpKeyFailCnt,
+               sVSIPKDCAuthFailCntTs,
+               sVSIPKDCAuthFailCnt,
+               sVSIPKDCSessionKeyFailCntTs,
+               sVSIPKDCSessionKeyFailCnt,
+               sVSL2SrcMacAddr,
+               sVSL2CntRsTs,
+               sVSL2CntRs,
+               sVSL2InOvCntTs,
+               sVSL2InOvCnt,
+               sVSL2MessageIntegrityFailCntTs,
+               sVSL2MessageIntegrityFailCnt,
+               sVSL2RxPduPerSecond,
+               sVSL2GroupUpKeyFailCntTs,
+               sVSL2GroupUpKeyFailCnt,
+               sVSL2KDCAuthFailCntTs,
+               sVSL2KDCAuthFailCnt,
+               sVSL2KDCSessionKeyFailCntTs,
+               sVSL2KDCSessionKeyFailCnt
+	}
+        STATUS              current
+    	DESCRIPTION         "sv-agent optional objects group"
+        ::= { sv-agent 2 }
+
+    sv-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "sv-agent Compliance"
+	MODULE
+		
+        ::= { sv-agent 3 }
+
+
+END

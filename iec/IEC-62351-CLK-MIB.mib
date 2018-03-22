@@ -1,0 +1,242 @@
+IEC-62351-CLK-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    clock-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 26, the Clocks Agent package
+                             includes the clock monitoring classes."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { part7 4 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	application  OBJECT IDENTIFIER ::= { part7 3 } 
+
+	
+		
+
+          
+		
+    clock OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The Clock class contains the information
+                             regarding clocks."
+        ::= { clock-agent 1 }
+
+    cLKclockTamperDetectedTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::Clock.clockTamperDetected -
+                             timestamp"
+        ::= { clock 1 }
+
+    cLKLastClockHoldoverTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::Clock.LastClockHoldover -
+                             timestamp"
+        ::= { clock 2 }
+
+    cLKCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::Clock.CntRs - timestamp"
+        ::= { clock 3 }
+
+    cLKCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::Clock.CntRs"
+        ::= { clock 4 }
+
+    cLKClocksTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF ClockEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Clocks Agent::Clock.Clocks"
+        ::= { clock 5 }
+
+    cLKClocksEntry OBJECT-TYPE
+        SYNTAX  ClockEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Clocks Agent::Clock.Clocks"
+        INDEX   { 
+               cLKEClockIndex
+ 
+	}
+        ::= { cLKClocksTable 1 }
+
+    ClockEntry ::=
+        SEQUENCE {
+               cLKEClockAccuracy Integer32,
+               cLKEClockIndex Unsigned32,
+               cLKEClockIssue TimSyncIssueKind,
+               cLKEClockTamperDetected TruthValue,
+               cLKETmSrc TimSyncSrcKind,
+               cLKEHoldOver TruthValue,
+               cLKELastSyncOffsetTs DateAndTime,
+               cLKELastSyncOffset Float32TC,
+               cLKETimeSourceAvailable TruthValue,
+               cLKETimeTraceable TruthValue
+        }
+
+
+    cLKSecurityNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               cLKclockTamperDetectedTs
+                }
+        STATUS              current
+        DESCRIPTION         "The SecurityNotification class defines the
+                             content of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { clock 6 }
+
+    cLKSecurityNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                cLKSecurityNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The SecurityNotification class defines the
+                             content of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { clock 7 }
+
+    cLKEClockAccuracy OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.ClockAccuracy"
+        ::= { cLKClocksEntry 1 }
+
+    cLKEClockIndex OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.ClockIndex"
+        ::= { cLKClocksEntry 2 }
+
+    cLKEClockIssue OBJECT-TYPE
+        SYNTAX              TimSyncIssueKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.ClockIssue"
+        ::= { cLKClocksEntry 3 }
+
+    cLKEClockTamperDetected OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks
+                             Agent::ClockEntry.ClockTamperDetected"
+        ::= { cLKClocksEntry 4 }
+
+    cLKETmSrc OBJECT-TYPE
+        SYNTAX              TimSyncSrcKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.TmSrc"
+        ::= { cLKClocksEntry 5 }
+
+    cLKEHoldOver OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.HoldOver"
+        ::= { cLKClocksEntry 6 }
+
+    cLKELastSyncOffsetTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.LastSyncOffset -
+                             timestamp"
+        ::= { cLKClocksEntry 7 }
+
+    cLKELastSyncOffset OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.LastSyncOffset"
+        ::= { cLKClocksEntry 8 }
+
+    cLKETimeSourceAvailable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks
+                             Agent::ClockEntry.TimeSourceAvailable"
+        ::= { cLKClocksEntry 9 }
+
+    cLKETimeTraceable OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Clocks Agent::ClockEntry.TimeTraceable"
+        ::= { cLKClocksEntry 10 }
+
+    clock-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               cLKclockTamperDetectedTs,
+               cLKLastClockHoldoverTs,
+               cLKCntRsTs,
+               cLKCntRs,
+               cLKEClockAccuracy,
+               cLKEClockIssue,
+               cLKEClockTamperDetected,
+               cLKETmSrc,
+               cLKEHoldOver,
+               cLKELastSyncOffsetTs,
+               cLKELastSyncOffset,
+               cLKETimeSourceAvailable,
+               cLKETimeTraceable
+	}
+        STATUS              current
+    	DESCRIPTION         "clock-agent optional objects group"
+        ::= { clock-agent 2 }
+
+    clock-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "clock-agent Compliance"
+	MODULE
+		
+        ::= { clock-agent 3 }
+
+
+END

@@ -1,0 +1,401 @@
+IEC-62351-ENV-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    environmental-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 16 this package contains the
+                             object descriptions for the environmental
+                             information to be provided for the Network and System
+                             Monitoring of environmental conditions where the device
+                             is operating."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { part7 1 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	
+		
+
+          
+		
+    environmental OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The Environmental class is a set of objects that
+                             includes the physical access to the device, the power
+                             supply conditions, and other environmental
+                             conditions. This information is collected by the device
+                             itself whenever possible and is used to report the
+                             physical device security and health."
+        ::= { environmental-agent 1 }
+
+    envAppDatStTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.AppDatSt - timestamp"
+        ::= { environmental 1 }
+
+    envAppDatSt OBJECT-TYPE
+        SYNTAX              AppDatStKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.AppDatSt"
+        ::= { environmental 2 }
+
+    envCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.CntRs -
+                             timestamp"
+        ::= { environmental 3 }
+
+    envCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.CntRs"
+        ::= { environmental 4 }
+
+    envLastEventTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.LastEvent - timestamp"
+        ::= { environmental 5 }
+
+    envLastEvent OBJECT-TYPE
+        SYNTAX              EventKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.LastEvent"
+        ::= { environmental 6 }
+
+    envPSPBldTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.PSPBld
+                             - timestamp"
+        ::= { environmental 7 }
+
+    envPSPBld OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.PSPBld"
+        ::= { environmental 8 }
+
+    envPSPIedTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.PSPIed
+                             - timestamp"
+        ::= { environmental 9 }
+
+    envPSPIed OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.PSPIed"
+        ::= { environmental 10 }
+
+    envPSPPanelTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.PSPPanel - timestamp"
+        ::= { environmental 11 }
+
+    envPSPPanel OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.PSPPanel"
+        ::= { environmental 12 }
+
+    envPSPPerimeterTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.PSPPerimeter - timestamp"
+        ::= { environmental 13 }
+
+    envPSPPerimeter OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.PSPPerimeter"
+        ::= { environmental 14 }
+
+    envPSUPTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF PSUPEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Environmental Agent::Environmental.PSUP"
+        ::= { environmental 15 }
+
+    envPSUPEntry OBJECT-TYPE
+        SYNTAX  PSUPEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "Environmental Agent::Environmental.PSUP"
+        INDEX   { 
+               pSUPID
+ 
+	}
+        ::= { envPSUPTable 1 }
+
+    PSUPEntry ::=
+        SEQUENCE {
+               pSUPCntRsTs DateAndTime,
+               pSUPCntRs TruthValue,
+               pSUPDescr DisplayString,
+               pSUPID Unsigned32,
+               pSUPName DisplayString,
+               pSUPPSUPLosTs DateAndTime,
+               pSUPPSUPLos TruthValue,
+               pSUPPwrLosCntTs DateAndTime,
+               pSUPPwrLosCnt Counter32 ,
+               pSUPPwrOnTs DateAndTime,
+               pSUPPwrOn TruthValue
+        }
+
+    envPSUPLos OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental
+                             Agent::Environmental.PSUPLos"
+        ::= { environmental 16 }
+
+    envPSUPOnTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.PSUPOn
+                             - timestamp"
+        ::= { environmental 17 }
+
+    envPSUPOn OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::Environmental.PSUPOn"
+        ::= { environmental 18 }
+
+
+    envSecurityNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               envLastEventTs,
+               envLastEvent,
+               envPSPBldTs,
+               envPSPIedTs,
+               envPSPPanelTs,
+               envPSPPerimeterTs
+                }
+        STATUS              current
+        DESCRIPTION         "The SecurityNotification class defines the
+                             content of the notification message to be sent on event
+                             related with the specified objects. ."
+        ::= { environmental 19 }
+
+    envSecurityNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                envSecurityNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The SecurityNotification class defines the
+                             content of the notification message to be sent on event
+                             related with the specified objects. ."
+        ::= { environmental 20 }
+
+
+    envNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               envPSUPLos,
+               envPSUPOnTs,
+               envPSUPOn
+                }
+        STATUS              current
+        DESCRIPTION         "The Notification class defines the content of
+                             the notification message to be sent on event
+                             related with the specified objects."
+        ::= { environmental 21 }
+
+    envNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                envNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The Notification class defines the content of
+                             the notification message to be sent on event
+                             related with the specified objects."
+        ::= { environmental 22 }
+
+    pSUPCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.CntRs -
+                             timestamp"
+        ::= { envPSUPEntry 1 }
+
+    pSUPCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.CntRs"
+        ::= { envPSUPEntry 2 }
+
+    pSUPDescr OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.Descr"
+        ::= { envPSUPEntry 3 }
+
+    pSUPID OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.ID"
+        ::= { envPSUPEntry 4 }
+
+    pSUPName OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.Name"
+        ::= { envPSUPEntry 5 }
+
+    pSUPPSUPLosTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.PSUPLos -
+                             timestamp"
+        ::= { envPSUPEntry 6 }
+
+    pSUPPSUPLos OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.PSUPLos"
+        ::= { envPSUPEntry 7 }
+
+    pSUPPwrLosCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.PwrLosCnt -
+                             timestamp"
+        ::= { envPSUPEntry 8 }
+
+    pSUPPwrLosCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.PwrLosCnt"
+        ::= { envPSUPEntry 9 }
+
+    pSUPPwrOnTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.PwrOn -
+                             timestamp"
+        ::= { envPSUPEntry 10 }
+
+    pSUPPwrOn OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Environmental Agent::PSUPEntry.PwrOn"
+        ::= { envPSUPEntry 11 }
+
+    environmental-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               envAppDatStTs,
+               envAppDatSt,
+               envCntRsTs,
+               envCntRs,
+               envLastEventTs,
+               envLastEvent,
+               envPSPBldTs,
+               envPSPBld,
+               envPSPIedTs,
+               envPSPIed,
+               envPSPPanelTs,
+               envPSPPanel,
+               envPSPPerimeterTs,
+               envPSPPerimeter,
+               envPSUPLos,
+               envPSUPOnTs,
+               envPSUPOn,
+               pSUPCntRsTs,
+               pSUPCntRs,
+               pSUPDescr,
+               pSUPName,
+               pSUPPSUPLosTs,
+               pSUPPSUPLos,
+               pSUPPwrLosCntTs,
+               pSUPPwrLosCnt,
+               pSUPPwrOnTs,
+               pSUPPwrOn
+	}
+        STATUS              current
+    	DESCRIPTION         "environmental-agent optional objects group"
+        ::= { environmental-agent 2 }
+
+    environmental-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "environmental-agent Compliance"
+	MODULE
+		
+        ::= { environmental-agent 3 }
+
+
+END

@@ -1,0 +1,968 @@
+IEC-62351-IEC61850-GSE-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    gse-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 24, the GSE package includes
+                             the IEC 61850 Generic Substation Events (GSE)
+                             classes. GSEprovider and GSEAssociation inherit both
+                             Security and Protocol Info attributes from the more
+                             general classes."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { iec61850 4 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	application  OBJECT IDENTIFIER ::= { part7 3 } 
+
+	iec61850  OBJECT IDENTIFIER ::= { application 2 } 
+
+	
+		
+
+          
+		
+    gse OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The GSEProvider class includes the attributes
+                             which define the information about the overall IEC
+                             61850 stack GSE provider running on the device."
+        ::= { gse-agent 1 }
+
+    gSECntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.CntRs - timestamp"
+        ::= { gse 1 }
+
+    gSECntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.CntRs"
+        ::= { gse 2 }
+
+    gSEDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.DecryptFailCnt -
+                             timestamp"
+        ::= { gse 3 }
+
+    gSEDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.DecryptFailCnt"
+        ::= { gse 4 }
+
+    gSEInErrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.InErrCnt - timestamp"
+        ::= { gse 5 }
+
+    gSEInErrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.InErrCnt"
+        ::= { gse 6 }
+
+    gSEInUnexpectedMulticastTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.InUnexpectedMulticast -
+                             timestamp"
+        ::= { gse 7 }
+
+    gSEInUnexpectedMulticast OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSEProvider.InUnexpectedMulticast"
+        ::= { gse 8 }
+
+    gSEGroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { gse 9 }
+
+    gSEGroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { gse 10 }
+
+    gSEKDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { gse 11 }
+
+    gSEKDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { gse 12 }
+
+    gSEKDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { gse 13 }
+
+    gSEKDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { gse 14 }
+
+    gSEPIPTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF GSEPublisherAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.PIP"
+        ::= { gse 15 }
+
+    gSEPIPEntry OBJECT-TYPE
+        SYNTAX  GSEPublisherAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.PIP"
+        INDEX   { 
+               gSEPIPCBRef
+                
+	}
+        ::= { gSEPIPTable 1 }
+
+    GSEPublisherAssociationIP ::=
+        SEQUENCE {
+               gSEPIPDestIpAddr InetAddress,
+               gSEPIPDestIpAddrType InetAddressType,
+               gSEPIPCBRef DisplayString,
+               gSEPIPCntRsTs DateAndTime,
+               gSEPIPCntRs TruthValue,
+               gSEPIPOutUvTs DateAndTime,
+               gSEPIPOutUv Counter32 ,
+               gSEPIPTxPduPerSecond Float32TC,
+               gSEPIPGroupUpKeyFailCntTs DateAndTime,
+               gSEPIPGroupUpKeyFailCnt Counter32 ,
+               gSEPIPKDCAuthFailCntTs DateAndTime,
+               gSEPIPKDCAuthFailCnt Counter32 ,
+               gSEPIPKDCSessionKeyFailCntTs DateAndTime,
+               gSEPIPKDCSessionKeyFailCnt Counter32 
+        }
+
+    gSEPL2Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF GSEPublisherAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.PL2"
+        ::= { gse 16 }
+
+    gSEPL2Entry OBJECT-TYPE
+        SYNTAX  GSEPublisherAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.PL2"
+        INDEX   { 
+               gSEPL2CBRef
+                
+	}
+        ::= { gSEPL2Table 1 }
+
+    GSEPublisherAssociationL2 ::=
+        SEQUENCE {
+               gSEPL2DestMacAddr MacAddress,
+               gSEPL2CBRef DisplayString,
+               gSEPL2CntRsTs DateAndTime,
+               gSEPL2CntRs TruthValue,
+               gSEPL2OutUvTs DateAndTime,
+               gSEPL2OutUv Counter32 ,
+               gSEPL2TxPduPerSecond Float32TC,
+               gSEPL2GroupUpKeyFailCntTs DateAndTime,
+               gSEPL2GroupUpKeyFailCnt Counter32 ,
+               gSEPL2KDCAuthFailCntTs DateAndTime,
+               gSEPL2KDCAuthFailCnt Counter32 ,
+               gSEPL2KDCSessionKeyFailCntTs DateAndTime,
+               gSEPL2KDCSessionKeyFailCnt Counter32 
+        }
+
+
+    gSEGSENotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               gSEGroupUpKeyFailCntTs,
+               gSEGroupUpKeyFailCnt,
+               gSEKDCAuthFailCntTs,
+               gSEKDCAuthFailCnt,
+               gSEKDCSessionKeyFailCntTs,
+               gSEKDCSessionKeyFailCnt
+                }
+        STATUS              current
+        DESCRIPTION         "The GSENotification class defines the content
+                             of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { gse 17 }
+
+    gSEGSENotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                gSEGSENotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The GSENotification class defines the content
+                             of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { gse 18 }
+
+    gSESIPTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF GSESubcriberAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.SIP"
+        ::= { gse 19 }
+
+    gSESIPEntry OBJECT-TYPE
+        SYNTAX  GSESubcriberAssociationIP
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.SIP"
+        INDEX   { 
+               gSESIPCBRef
+                
+	}
+        ::= { gSESIPTable 1 }
+
+    GSESubcriberAssociationIP ::=
+        SEQUENCE {
+               gSESIPSrcIpAddr InetAddress,
+               gSESIPSrcIpAddrType InetAddressType,
+               gSESIPConfRevMis TruthValue,
+               gSESIPNdsComm TruthValue,
+               gSESIPTalExpCntTs DateAndTime,
+               gSESIPTalExpCnt Counter32 ,
+               gSESIPCBRef DisplayString,
+               gSESIPCntRsTs DateAndTime,
+               gSESIPCntRs TruthValue,
+               gSESIPInOvCntTs DateAndTime,
+               gSESIPInOvCnt Counter32 ,
+               gSESIPMessageIntegrityFailCntTs DateAndTime,
+               gSESIPMessageIntegrityFailCnt Counter32 ,
+               gSESIPRxPduPerSecond Float32TC,
+               gSESIPGroupUpKeyFailCntTs DateAndTime,
+               gSESIPGroupUpKeyFailCnt Counter32 ,
+               gSESIPKDCAuthFailCntTs DateAndTime,
+               gSESIPKDCAuthFailCnt Counter32 ,
+               gSESIPKDCSessionKeyFailCntTs DateAndTime,
+               gSESIPKDCSessionKeyFailCnt Counter32 
+        }
+
+    gSESL2Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF GSESubcriberAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.SL2"
+        ::= { gse 20 }
+
+    gSESL2Entry OBJECT-TYPE
+        SYNTAX  GSESubcriberAssociationL2
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "GSE::GSEProvider.SL2"
+        INDEX   { 
+               gSESL2CBRef
+                
+	}
+        ::= { gSESL2Table 1 }
+
+    GSESubcriberAssociationL2 ::=
+        SEQUENCE {
+               gSESL2SrcMacAddr MacAddress,
+               gSESL2ConfRevMis TruthValue,
+               gSESL2NdsComm TruthValue,
+               gSESL2TalExpCntTs DateAndTime,
+               gSESL2TalExpCnt Counter32 ,
+               gSESL2CBRef DisplayString,
+               gSESL2CntRsTs DateAndTime,
+               gSESL2CntRs TruthValue,
+               gSESL2InOvCntTs DateAndTime,
+               gSESL2InOvCnt Counter32 ,
+               gSESL2MessageIntegrityFailCntTs DateAndTime,
+               gSESL2MessageIntegrityFailCnt Counter32 ,
+               gSESL2RxPduPerSecond Float32TC,
+               gSESL2GroupUpKeyFailCntTs DateAndTime,
+               gSESL2GroupUpKeyFailCnt Counter32 ,
+               gSESL2KDCAuthFailCntTs DateAndTime,
+               gSESL2KDCAuthFailCnt Counter32 ,
+               gSESL2KDCSessionKeyFailCntTs DateAndTime,
+               gSESL2KDCSessionKeyFailCnt Counter32 
+        }
+
+    gSEPIPDestIpAddr OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             GSE::GSEPublisherAssociationIP.DestIpAddr"
+        ::= { gSEPIPEntry 1 }
+
+    gSEPIPDestIpAddrType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             GSE::GSEPublisherAssociationIP.DestIpAddrType"
+        ::= { gSEPIPEntry 2 }
+
+    gSEPIPCBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CBRef"
+        ::= { gSEPIPEntry 3 }
+
+    gSEPIPCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs - timestamp"
+        ::= { gSEPIPEntry 4 }
+
+    gSEPIPCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs"
+        ::= { gSEPIPEntry 5 }
+
+    gSEPIPOutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv - timestamp"
+        ::= { gSEPIPEntry 6 }
+
+    gSEPIPOutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv"
+        ::= { gSEPIPEntry 7 }
+
+    gSEPIPTxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.TxPduPerSecond"
+        ::= { gSEPIPEntry 8 }
+
+    gSEPIPGroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { gSEPIPEntry 9 }
+
+    gSEPIPGroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { gSEPIPEntry 10 }
+
+    gSEPIPKDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { gSEPIPEntry 11 }
+
+    gSEPIPKDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { gSEPIPEntry 12 }
+
+    gSEPIPKDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { gSEPIPEntry 13 }
+
+    gSEPIPKDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { gSEPIPEntry 14 }
+
+    gSEPL2DestMacAddr OBJECT-TYPE
+        SYNTAX              MacAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             GSE::GSEPublisherAssociationL2.DestMacAddr"
+        ::= { gSEPL2Entry 1 }
+
+    gSEPL2CBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CBRef"
+        ::= { gSEPL2Entry 2 }
+
+    gSEPL2CntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs - timestamp"
+        ::= { gSEPL2Entry 3 }
+
+    gSEPL2CntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.CntRs"
+        ::= { gSEPL2Entry 4 }
+
+    gSEPL2OutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv - timestamp"
+        ::= { gSEPL2Entry 5 }
+
+    gSEPL2OutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.OutUv"
+        ::= { gSEPL2Entry 6 }
+
+    gSEPL2TxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVPublisherAssociation.TxPduPerSecond"
+        ::= { gSEPL2Entry 7 }
+
+    gSEPL2GroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { gSEPL2Entry 8 }
+
+    gSEPL2GroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { gSEPL2Entry 9 }
+
+    gSEPL2KDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { gSEPL2Entry 10 }
+
+    gSEPL2KDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { gSEPL2Entry 11 }
+
+    gSEPL2KDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { gSEPL2Entry 12 }
+
+    gSEPL2KDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { gSEPL2Entry 13 }
+
+    gSESIPSrcIpAddr OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubcriberAssociationIP.SrcIpAddr"
+        ::= { gSESIPEntry 1 }
+
+    gSESIPSrcIpAddrType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             GSE::GSESubcriberAssociationIP.SrcIpAddrType"
+        ::= { gSESIPEntry 2 }
+
+    gSESIPConfRevMis OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.ConfRevMis"
+        ::= { gSESIPEntry 3 }
+
+    gSESIPNdsComm OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.NdsComm"
+        ::= { gSESIPEntry 4 }
+
+    gSESIPTalExpCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.TalExpCnt -
+                             timestamp"
+        ::= { gSESIPEntry 5 }
+
+    gSESIPTalExpCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.TalExpCnt"
+        ::= { gSESIPEntry 6 }
+
+    gSESIPCBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CBRef"
+        ::= { gSESIPEntry 7 }
+
+    gSESIPCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs - timestamp"
+        ::= { gSESIPEntry 8 }
+
+    gSESIPCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs"
+        ::= { gSESIPEntry 9 }
+
+    gSESIPInOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt - timestamp"
+        ::= { gSESIPEntry 10 }
+
+    gSESIPInOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt"
+        ::= { gSESIPEntry 11 }
+
+    gSESIPMessageIntegrityFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt - timestamp"
+        ::= { gSESIPEntry 12 }
+
+    gSESIPMessageIntegrityFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt"
+        ::= { gSESIPEntry 13 }
+
+    gSESIPRxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.RxPduPerSecond"
+        ::= { gSESIPEntry 14 }
+
+    gSESIPGroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { gSESIPEntry 15 }
+
+    gSESIPGroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { gSESIPEntry 16 }
+
+    gSESIPKDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { gSESIPEntry 17 }
+
+    gSESIPKDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { gSESIPEntry 18 }
+
+    gSESIPKDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { gSESIPEntry 19 }
+
+    gSESIPKDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { gSESIPEntry 20 }
+
+    gSESL2SrcMacAddr OBJECT-TYPE
+        SYNTAX              MacAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             GSE::GSESubcriberAssociationL2.SrcMacAddr"
+        ::= { gSESL2Entry 1 }
+
+    gSESL2ConfRevMis OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.ConfRevMis"
+        ::= { gSESL2Entry 2 }
+
+    gSESL2NdsComm OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.NdsComm"
+        ::= { gSESL2Entry 3 }
+
+    gSESL2TalExpCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.TalExpCnt -
+                             timestamp"
+        ::= { gSESL2Entry 4 }
+
+    gSESL2TalExpCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "GSE::GSESubscriberAssociation.TalExpCnt"
+        ::= { gSESL2Entry 5 }
+
+    gSESL2CBRef OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CBRef"
+        ::= { gSESL2Entry 6 }
+
+    gSESL2CntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs - timestamp"
+        ::= { gSESL2Entry 7 }
+
+    gSESL2CntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.CntRs"
+        ::= { gSESL2Entry 8 }
+
+    gSESL2InOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt - timestamp"
+        ::= { gSESL2Entry 9 }
+
+    gSESL2InOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.InOvCnt"
+        ::= { gSESL2Entry 10 }
+
+    gSESL2MessageIntegrityFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt - timestamp"
+        ::= { gSESL2Entry 11 }
+
+    gSESL2MessageIntegrityFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.MessageIntegrityFailCnt"
+        ::= { gSESL2Entry 12 }
+
+    gSESL2RxPduPerSecond OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVSubscriberAssociation.RxPduPerSecond"
+        ::= { gSESL2Entry 13 }
+
+    gSESL2GroupUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt - timestamp"
+        ::= { gSESL2Entry 14 }
+
+    gSESL2GroupUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.GroupUpKeyFailCnt"
+        ::= { gSESL2Entry 15 }
+
+    gSESL2KDCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt - timestamp"
+        ::= { gSESL2Entry 16 }
+
+    gSESL2KDCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCAuthFailCnt"
+        ::= { gSESL2Entry 17 }
+
+    gSESL2KDCSessionKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt - timestamp"
+        ::= { gSESL2Entry 18 }
+
+    gSESL2KDCSessionKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "SV and GSE common
+                             objects::GSEandSVCommon.KDCSessionKeyFailCnt"
+        ::= { gSESL2Entry 19 }
+
+    gse-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               gSECntRsTs,
+               gSECntRs,
+               gSEDecryptFailCntTs,
+               gSEDecryptFailCnt,
+               gSEInErrCntTs,
+               gSEInErrCnt,
+               gSEInUnexpectedMulticastTs,
+               gSEInUnexpectedMulticast,
+               gSEGroupUpKeyFailCntTs,
+               gSEGroupUpKeyFailCnt,
+               gSEKDCAuthFailCntTs,
+               gSEKDCAuthFailCnt,
+               gSEKDCSessionKeyFailCntTs,
+               gSEKDCSessionKeyFailCnt,
+               gSEPIPDestIpAddr,
+               gSEPIPDestIpAddrType,
+               gSEPIPCntRsTs,
+               gSEPIPCntRs,
+               gSEPIPOutUvTs,
+               gSEPIPOutUv,
+               gSEPIPTxPduPerSecond,
+               gSEPIPGroupUpKeyFailCntTs,
+               gSEPIPGroupUpKeyFailCnt,
+               gSEPIPKDCAuthFailCntTs,
+               gSEPIPKDCAuthFailCnt,
+               gSEPIPKDCSessionKeyFailCntTs,
+               gSEPIPKDCSessionKeyFailCnt,
+               gSEPL2DestMacAddr,
+               gSEPL2CntRsTs,
+               gSEPL2CntRs,
+               gSEPL2OutUvTs,
+               gSEPL2OutUv,
+               gSEPL2TxPduPerSecond,
+               gSEPL2GroupUpKeyFailCntTs,
+               gSEPL2GroupUpKeyFailCnt,
+               gSEPL2KDCAuthFailCntTs,
+               gSEPL2KDCAuthFailCnt,
+               gSEPL2KDCSessionKeyFailCntTs,
+               gSEPL2KDCSessionKeyFailCnt,
+               gSESIPSrcIpAddr,
+               gSESIPSrcIpAddrType,
+               gSESIPConfRevMis,
+               gSESIPNdsComm,
+               gSESIPTalExpCntTs,
+               gSESIPTalExpCnt,
+               gSESIPCntRsTs,
+               gSESIPCntRs,
+               gSESIPInOvCntTs,
+               gSESIPInOvCnt,
+               gSESIPMessageIntegrityFailCntTs,
+               gSESIPMessageIntegrityFailCnt,
+               gSESIPRxPduPerSecond,
+               gSESIPGroupUpKeyFailCntTs,
+               gSESIPGroupUpKeyFailCnt,
+               gSESIPKDCAuthFailCntTs,
+               gSESIPKDCAuthFailCnt,
+               gSESIPKDCSessionKeyFailCntTs,
+               gSESIPKDCSessionKeyFailCnt,
+               gSESL2SrcMacAddr,
+               gSESL2ConfRevMis,
+               gSESL2NdsComm,
+               gSESL2TalExpCntTs,
+               gSESL2TalExpCnt,
+               gSESL2CntRsTs,
+               gSESL2CntRs,
+               gSESL2InOvCntTs,
+               gSESL2InOvCnt,
+               gSESL2MessageIntegrityFailCntTs,
+               gSESL2MessageIntegrityFailCnt,
+               gSESL2RxPduPerSecond,
+               gSESL2GroupUpKeyFailCntTs,
+               gSESL2GroupUpKeyFailCnt,
+               gSESL2KDCAuthFailCntTs,
+               gSESL2KDCAuthFailCnt,
+               gSESL2KDCSessionKeyFailCntTs,
+               gSESL2KDCSessionKeyFailCnt
+	}
+        STATUS              current
+    	DESCRIPTION         "gse-agent optional objects group"
+        ::= { gse-agent 2 }
+
+    gse-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "gse-agent Compliance"
+	MODULE
+		
+        ::= { gse-agent 3 }
+
+
+END

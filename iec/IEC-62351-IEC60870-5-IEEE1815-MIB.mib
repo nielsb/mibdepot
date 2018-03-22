@@ -1,0 +1,2346 @@
+IEC-62351-IEC60870-5-IEEE1815-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    ieee1815andiec60870-5-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 19, this package includes the
+                             IEEE 1815 DNP and IEC 60870-5-104 protocols
+                             classes. This high level class named summary includes
+                             two objects related to the application stack and
+                             association class that reports the object related to the
+                             possible communication sessions between masters and
+                             outstations. The two class Master Association and
+                             Outstation Association Inherits the Associations class
+                             attributes. For each IEEE 1815 DNP or IEC 60870-5-104
+                             application stack a single instance of summary class is
+                             provided. This instance of summary class can be related to
+                             several instances of OutstationAssociation and
+                             MasterAssociation classes which inherit the attributes from the
+                             Association class. Each instance Association is the
+                             container of the attributes of a specific application
+                             session between an Outstation and a Master. Summary and
+                             Association class inherits the specific IEEE 1815 DNP and
+                             IEC 60870-5-104 Protocol Infoand Security
+                             objects, and therefore the more general class as well."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { application 1 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	application  OBJECT IDENTIFIER ::= { part7 3 } 
+
+	
+		
+
+          
+		
+    ieee1815andiec870-5x OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The Summary class includes the attributes
+                             which define the information about the overall IEC
+                             60870-5-104 or IEEE 1815 DNP application stack running on
+                             the device."
+        ::= { ieee1815andiec60870-5-agent 1 }
+
+    tCCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.CntRs - timestamp"
+        ::= { ieee1815andiec870-5x 1 }
+
+    tCCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.CntRs"
+        ::= { ieee1815andiec870-5x 2 }
+
+    tCLastEventTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.LastEvent - timestamp"
+        ::= { ieee1815andiec870-5x 3 }
+
+    tCLastEvent OBJECT-TYPE
+        SYNTAX              EventKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.LastEvent"
+        ::= { ieee1815andiec870-5x 4 }
+
+    tCMasterTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF MasterAssociation
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.Master"
+        ::= { ieee1815andiec870-5x 5 }
+
+    tCMasterEntry OBJECT-TYPE
+        SYNTAX  MasterAssociation
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.Master"
+        INDEX   { 
+               tCMAssociationId
+                
+	}
+        ::= { tCMasterTable 1 }
+
+    MasterAssociation ::=
+        SEQUENCE {
+               tCMAssociationId Unsigned32,
+               tCMCntRsTs DateAndTime,
+               tCMCntRs TruthValue,
+               tCMLocAddress InetAddress,
+               tCMLocAddressType InetAddressType,
+               tCMProtID ProtIdKind,
+               tCMProviderDesc DisplayString,
+               tCMProviderName DisplayString,
+               tCMRemAddress InetAddress,
+               tCMRemAddressType InetAddressType,
+               tCMTLnkErrCntTs DateAndTime,
+               tCMTLnkErrCnt Counter32 ,
+               tCMTLnkTyp LnkKind,
+               tCMAuthFailCntTs DateAndTime,
+               tCMAuthFailCnt Counter32 ,
+               tCMCtrlPrivFailCntTs DateAndTime,
+               tCMCtrlPrivFailCnt Counter32 ,
+               tCMDecryptFailCntTs DateAndTime,
+               tCMDecryptFailCnt Counter32 ,
+               tCMExT0CntTs DateAndTime,
+               tCMExT0Cnt Counter32 ,
+               tCMExT1CntTs DateAndTime,
+               tCMExT1Cnt Counter32 ,
+               tCMExT2CntTs DateAndTime,
+               tCMExT2Cnt Counter32 ,
+               tCMExT3CntTs DateAndTime,
+               tCMExT3Cnt Counter32 ,
+               tCMInDiscTs DateAndTime,
+               tCMInDisc Counter32 ,
+               tCMInErrCntTs DateAndTime,
+               tCMInErrCnt Counter32 ,
+               tCMInOvCntTs DateAndTime,
+               tCMInOvCnt Counter32 ,
+               tCMInterPDUTime Float32TC,
+               tCMMisPDUCntTs DateAndTime,
+               tCMMisPDUCnt Counter32 ,
+               tCMOutErrTs DateAndTime,
+               tCMOutErr Counter32 ,
+               tCMOutUvTs DateAndTime,
+               tCMOutUv Counter32 ,
+               tCMPDURTT Float32TC,
+               tCMPDUSizeFailTs DateAndTime,
+               tCMPDUSizeFail Counter32 ,
+               tCMPduTampCntTs DateAndTime,
+               tCMPduTampCnt Counter32 ,
+               tCMPrimaryInterfaceTs DateAndTime,
+               tCMPrimaryInterface TruthValue,
+               tCMPrivFailCntTs DateAndTime,
+               tCMPrivFailCnt Counter32 ,
+               tCMRtxCntTs DateAndTime,
+               tCMRtxCnt Counter32 ,
+               tCMRxCriticalTs DateAndTime,
+               tCMRxCritical Counter32 ,
+               tCMRxPduTs DateAndTime,
+               tCMRxPdu Counter32 ,
+               tCMRxSolicitedReqTs DateAndTime,
+               tCMRxSolicitedReq Counter32 ,
+               tCMRxUnsolicitedReqTs DateAndTime,
+               tCMRxUnsolicitedReq Counter32 ,
+               tCMSessKeyFailCntTs DateAndTime,
+               tCMSessKeyFailCnt Counter32 ,
+               tCMTxCriticalTs DateAndTime,
+               tCMTxCritical Counter32 ,
+               tCMTxPduTs DateAndTime,
+               tCMTxPdu Counter32 ,
+               tCMTxSolicitedReqTs DateAndTime,
+               tCMTxSolicitedReq Counter32 ,
+               tCMTxUnsolicitedReqTs DateAndTime,
+               tCMTxUnsolicitedReq Counter32 ,
+               tCMUpKeyFailCntTs DateAndTime,
+               tCMUpKeyFailCnt Counter32 ,
+               tCMIEC62351part3 TruthValue,
+               tCMPart3ConnectionId Integer32,
+               tCMTCPHndShTime Float32TC,
+               tCMTLSHndTime Float32TC,
+               tCMTLSRenegotiationTime Float32TC,
+               tCMTLSResumptionTime Float32TC,
+               tCMTotalHndTime Float32TC,
+               tCMTransportHndTime Float32TC
+        }
+
+    tCOutstationTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF OutstationAssociation
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.Outstation"
+        ::= { ieee1815andiec870-5x 6 }
+
+    tCOutstationEntry OBJECT-TYPE
+        SYNTAX  OutstationAssociation
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "IEEE 1815 and IEC 60870-5
+                             Agent::Summary.Outstation"
+        INDEX   { 
+               tCOAssociationId
+                
+	}
+        ::= { tCOutstationTable 1 }
+
+    OutstationAssociation ::=
+        SEQUENCE {
+               tCOAssociationId Unsigned32,
+               tCOCntRsTs DateAndTime,
+               tCOCntRs TruthValue,
+               tCOLocAddress InetAddress,
+               tCOLocAddressType InetAddressType,
+               tCOProtID ProtIdKind,
+               tCOProviderDesc DisplayString,
+               tCOProviderName DisplayString,
+               tCORemAddress InetAddress,
+               tCORemAddressType InetAddressType,
+               tCOTLnkErrCntTs DateAndTime,
+               tCOTLnkErrCnt Counter32 ,
+               tCOTLnkTyp LnkKind,
+               tCOAuthFailCntTs DateAndTime,
+               tCOAuthFailCnt Counter32 ,
+               tCOCtrlPrivFailCntTs DateAndTime,
+               tCOCtrlPrivFailCnt Counter32 ,
+               tCODecryptFailCntTs DateAndTime,
+               tCODecryptFailCnt Counter32 ,
+               tCOExT0CntTs DateAndTime,
+               tCOExT0Cnt Counter32 ,
+               tCOExT1CntTs DateAndTime,
+               tCOExT1Cnt Counter32 ,
+               tCOExT2CntTs DateAndTime,
+               tCOExT2Cnt Counter32 ,
+               tCOExT3CntTs DateAndTime,
+               tCOExT3Cnt Counter32 ,
+               tCOInDiscTs DateAndTime,
+               tCOInDisc Counter32 ,
+               tCOInErrCntTs DateAndTime,
+               tCOInErrCnt Counter32 ,
+               tCOInOvCntTs DateAndTime,
+               tCOInOvCnt Counter32 ,
+               tCOInterPDUTime Float32TC,
+               tCOMisPDUCntTs DateAndTime,
+               tCOMisPDUCnt Counter32 ,
+               tCOOutErrTs DateAndTime,
+               tCOOutErr Counter32 ,
+               tCOOutUvTs DateAndTime,
+               tCOOutUv Counter32 ,
+               tCOPDURTT Float32TC,
+               tCOPDUSizeFailTs DateAndTime,
+               tCOPDUSizeFail Counter32 ,
+               tCOPduTampCntTs DateAndTime,
+               tCOPduTampCnt Counter32 ,
+               tCOPrimaryInterfaceTs DateAndTime,
+               tCOPrimaryInterface TruthValue,
+               tCOPrivFailCntTs DateAndTime,
+               tCOPrivFailCnt Counter32 ,
+               tCORtxCntTs DateAndTime,
+               tCORtxCnt Counter32 ,
+               tCORxCriticalTs DateAndTime,
+               tCORxCritical Counter32 ,
+               tCORxPduTs DateAndTime,
+               tCORxPdu Counter32 ,
+               tCORxSolicitedReqTs DateAndTime,
+               tCORxSolicitedReq Counter32 ,
+               tCORxUnsolicitedReqTs DateAndTime,
+               tCORxUnsolicitedReq Counter32 ,
+               tCOSessKeyFailCntTs DateAndTime,
+               tCOSessKeyFailCnt Counter32 ,
+               tCOTxCriticalTs DateAndTime,
+               tCOTxCritical Counter32 ,
+               tCOTxPduTs DateAndTime,
+               tCOTxPdu Counter32 ,
+               tCOTxSolicitedReqTs DateAndTime,
+               tCOTxSolicitedReq Counter32 ,
+               tCOTxUnsolicitedReqTs DateAndTime,
+               tCOTxUnsolicitedReq Counter32 ,
+               tCOUpKeyFailCntTs DateAndTime,
+               tCOUpKeyFailCnt Counter32 ,
+               tCOIEC62351part3 TruthValue,
+               tCOPart3ConnectionId Integer32,
+               tCOTCPHndShTime Float32TC,
+               tCOTLSHndTime Float32TC,
+               tCOTLSRenegotiationTime Float32TC,
+               tCOTLSResumptionTime Float32TC,
+               tCOTotalHndTime Float32TC,
+               tCOTransportHndTime Float32TC
+        }
+
+
+    tC60870andDNPSecurityNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               tCAuthFailCntTs,
+               tCAuthFailCnt,
+               tCCtrlPrivFailCntTs,
+               tCCtrlPrivFailCnt,
+               tCDecryptFailCntTs,
+               tCDecryptFailCnt,
+               tCLastEventTs,
+               tCLastEvent,
+               tCPduTampCntTs,
+               tCPduTampCnt,
+               tCPrivFailCntTs,
+               tCPrivFailCnt,
+               tCSessKeyFailCntTs,
+               tCSessKeyFailCnt,
+               tCUpKeyFailCntTs,
+               tCUpKeyFailCnt
+                }
+        STATUS              current
+        DESCRIPTION         "The 60870andDNPSecurityNotification class
+                             defines the content of the notification message to be
+                             sent on event related with the specified objects."
+        ::= { ieee1815andiec870-5x 7 }
+
+    tC60870andDNPSecurityNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                tC60870andDNPSecurityNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The 60870andDNPSecurityNotification class
+                             defines the content of the notification message to be
+                             sent on event related with the specified objects."
+        ::= { ieee1815andiec870-5x 8 }
+
+
+    tC60870andDNPNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               tCInErrCntTs,
+               tCInErrCnt,
+               tCInOvCntTs,
+               tCInOvCnt,
+               tCOutUvTs,
+               tCOutUv,
+               tCRxPduTs,
+               tCRxPdu,
+               tCTxPduTs,
+               tCTxPdu
+                }
+        STATUS              current
+        DESCRIPTION         "The 60870andDNPNotification class defines
+                             the content of the notification message to be sent
+                             on event related with the specified objects."
+        ::= { ieee1815andiec870-5x 9 }
+
+    tC60870andDNPNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                tC60870andDNPNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The 60870andDNPNotification class defines
+                             the content of the notification message to be sent
+                             on event related with the specified objects."
+        ::= { ieee1815andiec870-5x 10 }
+
+    tCAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.AuthFailCnt - timestamp"
+        ::= { ieee1815andiec870-5x 11 }
+
+    tCAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.AuthFailCnt"
+        ::= { ieee1815andiec870-5x 12 }
+
+    tCCtrlPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.CtrlPrivFailCnt - timestamp"
+        ::= { ieee1815andiec870-5x 13 }
+
+    tCCtrlPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.CtrlPrivFailCnt"
+        ::= { ieee1815andiec870-5x 14 }
+
+    tCDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.DecryptFailCnt - timestamp"
+        ::= { ieee1815andiec870-5x 15 }
+
+    tCDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.DecryptFailCnt"
+        ::= { ieee1815andiec870-5x 16 }
+
+    tCExT0CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT0Cnt - timestamp"
+        ::= { ieee1815andiec870-5x 17 }
+
+    tCExT0Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT0Cnt"
+        ::= { ieee1815andiec870-5x 18 }
+
+    tCExT1CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT1Cnt - timestamp"
+        ::= { ieee1815andiec870-5x 19 }
+
+    tCExT1Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT1Cnt"
+        ::= { ieee1815andiec870-5x 20 }
+
+    tCExT2CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT2Cnt - timestamp"
+        ::= { ieee1815andiec870-5x 21 }
+
+    tCExT2Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT2Cnt"
+        ::= { ieee1815andiec870-5x 22 }
+
+    tCExT3CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT3Cnt - timestamp"
+        ::= { ieee1815andiec870-5x 23 }
+
+    tCExT3Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT3Cnt"
+        ::= { ieee1815andiec870-5x 24 }
+
+    tCInDiscTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InDisc - timestamp"
+        ::= { ieee1815andiec870-5x 25 }
+
+    tCInDisc OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InDisc"
+        ::= { ieee1815andiec870-5x 26 }
+
+    tCInErrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InErrCnt - timestamp"
+        ::= { ieee1815andiec870-5x 27 }
+
+    tCInErrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InErrCnt"
+        ::= { ieee1815andiec870-5x 28 }
+
+    tCInOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InOvCnt - timestamp"
+        ::= { ieee1815andiec870-5x 29 }
+
+    tCInOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InOvCnt"
+        ::= { ieee1815andiec870-5x 30 }
+
+    tCInterPDUTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InterPDUTime"
+        ::= { ieee1815andiec870-5x 31 }
+
+    tCMisPDUCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.MisPDUCnt - timestamp"
+        ::= { ieee1815andiec870-5x 32 }
+
+    tCMisPDUCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.MisPDUCnt"
+        ::= { ieee1815andiec870-5x 33 }
+
+    tCOutErrTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutErr - timestamp"
+        ::= { ieee1815andiec870-5x 34 }
+
+    tCOutErr OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutErr"
+        ::= { ieee1815andiec870-5x 35 }
+
+    tCOutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutUv - timestamp"
+        ::= { ieee1815andiec870-5x 36 }
+
+    tCOutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutUv"
+        ::= { ieee1815andiec870-5x 37 }
+
+    tCPDURTT OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDURTT"
+        ::= { ieee1815andiec870-5x 38 }
+
+    tCPDUSizeFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDUSizeFail - timestamp"
+        ::= { ieee1815andiec870-5x 39 }
+
+    tCPDUSizeFail OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDUSizeFail"
+        ::= { ieee1815andiec870-5x 40 }
+
+    tCPduTampCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PduTampCnt - timestamp"
+        ::= { ieee1815andiec870-5x 41 }
+
+    tCPduTampCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PduTampCnt"
+        ::= { ieee1815andiec870-5x 42 }
+
+    tCPrimaryInterfaceTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrimaryInterface - timestamp"
+        ::= { ieee1815andiec870-5x 43 }
+
+    tCPrimaryInterface OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrimaryInterface"
+        ::= { ieee1815andiec870-5x 44 }
+
+    tCPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrivFailCnt - timestamp"
+        ::= { ieee1815andiec870-5x 45 }
+
+    tCPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrivFailCnt"
+        ::= { ieee1815andiec870-5x 46 }
+
+    tCRtxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RtxCnt - timestamp"
+        ::= { ieee1815andiec870-5x 47 }
+
+    tCRtxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RtxCnt"
+        ::= { ieee1815andiec870-5x 48 }
+
+    tCRxCriticalTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxCritical - timestamp"
+        ::= { ieee1815andiec870-5x 49 }
+
+    tCRxCritical OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxCritical"
+        ::= { ieee1815andiec870-5x 50 }
+
+    tCRxPduTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxPdu - timestamp"
+        ::= { ieee1815andiec870-5x 51 }
+
+    tCRxPdu OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxPdu"
+        ::= { ieee1815andiec870-5x 52 }
+
+    tCRxSolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxSolicitedReq - timestamp"
+        ::= { ieee1815andiec870-5x 53 }
+
+    tCRxSolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxSolicitedReq"
+        ::= { ieee1815andiec870-5x 54 }
+
+    tCRxUnsolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxUnsolicitedReq - timestamp"
+        ::= { ieee1815andiec870-5x 55 }
+
+    tCRxUnsolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxUnsolicitedReq"
+        ::= { ieee1815andiec870-5x 56 }
+
+    tCSessKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.SessKeyFailCnt - timestamp"
+        ::= { ieee1815andiec870-5x 57 }
+
+    tCSessKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.SessKeyFailCnt"
+        ::= { ieee1815andiec870-5x 58 }
+
+    tCTxCriticalTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxCritical - timestamp"
+        ::= { ieee1815andiec870-5x 59 }
+
+    tCTxCritical OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxCritical"
+        ::= { ieee1815andiec870-5x 60 }
+
+    tCTxPduTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxPdu - timestamp"
+        ::= { ieee1815andiec870-5x 61 }
+
+    tCTxPdu OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxPdu"
+        ::= { ieee1815andiec870-5x 62 }
+
+    tCTxSolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxSolicitedReq - timestamp"
+        ::= { ieee1815andiec870-5x 63 }
+
+    tCTxSolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxSolicitedReq"
+        ::= { ieee1815andiec870-5x 64 }
+
+    tCTxUnsolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxUnsolicitedReq - timestamp"
+        ::= { ieee1815andiec870-5x 65 }
+
+    tCTxUnsolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxUnsolicitedReq"
+        ::= { ieee1815andiec870-5x 66 }
+
+    tCUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.UpKeyFailCnt - timestamp"
+        ::= { ieee1815andiec870-5x 67 }
+
+    tCUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.UpKeyFailCnt"
+        ::= { ieee1815andiec870-5x 68 }
+
+    tCMAssociationId OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.AssociationId"
+        ::= { tCMasterEntry 1 }
+
+    tCMCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.CntRs - timestamp"
+        ::= { tCMasterEntry 2 }
+
+    tCMCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.CntRs"
+        ::= { tCMasterEntry 3 }
+
+    tCMLocAddress OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.LocAddress"
+        ::= { tCMasterEntry 4 }
+
+    tCMLocAddressType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.LocAddressType"
+        ::= { tCMasterEntry 5 }
+
+    tCMProtID OBJECT-TYPE
+        SYNTAX              ProtIdKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.ProtID"
+        ::= { tCMasterEntry 6 }
+
+    tCMProviderDesc OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.ProviderDesc"
+        ::= { tCMasterEntry 7 }
+
+    tCMProviderName OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.ProviderName"
+        ::= { tCMasterEntry 8 }
+
+    tCMRemAddress OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.RemAddress"
+        ::= { tCMasterEntry 9 }
+
+    tCMRemAddressType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.RemAddressType"
+        ::= { tCMasterEntry 10 }
+
+    tCMTLnkErrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.TLnkErrCnt - timestamp"
+        ::= { tCMasterEntry 11 }
+
+    tCMTLnkErrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.TLnkErrCnt"
+        ::= { tCMasterEntry 12 }
+
+    tCMTLnkTyp OBJECT-TYPE
+        SYNTAX              LnkKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.TLnkTyp"
+        ::= { tCMasterEntry 13 }
+
+    tCMAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.AuthFailCnt - timestamp"
+        ::= { tCMasterEntry 14 }
+
+    tCMAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.AuthFailCnt"
+        ::= { tCMasterEntry 15 }
+
+    tCMCtrlPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.CtrlPrivFailCnt - timestamp"
+        ::= { tCMasterEntry 16 }
+
+    tCMCtrlPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.CtrlPrivFailCnt"
+        ::= { tCMasterEntry 17 }
+
+    tCMDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.DecryptFailCnt - timestamp"
+        ::= { tCMasterEntry 18 }
+
+    tCMDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.DecryptFailCnt"
+        ::= { tCMasterEntry 19 }
+
+    tCMExT0CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT0Cnt - timestamp"
+        ::= { tCMasterEntry 20 }
+
+    tCMExT0Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT0Cnt"
+        ::= { tCMasterEntry 21 }
+
+    tCMExT1CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT1Cnt - timestamp"
+        ::= { tCMasterEntry 22 }
+
+    tCMExT1Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT1Cnt"
+        ::= { tCMasterEntry 23 }
+
+    tCMExT2CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT2Cnt - timestamp"
+        ::= { tCMasterEntry 24 }
+
+    tCMExT2Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT2Cnt"
+        ::= { tCMasterEntry 25 }
+
+    tCMExT3CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT3Cnt - timestamp"
+        ::= { tCMasterEntry 26 }
+
+    tCMExT3Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT3Cnt"
+        ::= { tCMasterEntry 27 }
+
+    tCMInDiscTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InDisc - timestamp"
+        ::= { tCMasterEntry 28 }
+
+    tCMInDisc OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InDisc"
+        ::= { tCMasterEntry 29 }
+
+    tCMInErrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InErrCnt - timestamp"
+        ::= { tCMasterEntry 30 }
+
+    tCMInErrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InErrCnt"
+        ::= { tCMasterEntry 31 }
+
+    tCMInOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InOvCnt - timestamp"
+        ::= { tCMasterEntry 32 }
+
+    tCMInOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InOvCnt"
+        ::= { tCMasterEntry 33 }
+
+    tCMInterPDUTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InterPDUTime"
+        ::= { tCMasterEntry 34 }
+
+    tCMMisPDUCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.MisPDUCnt - timestamp"
+        ::= { tCMasterEntry 35 }
+
+    tCMMisPDUCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.MisPDUCnt"
+        ::= { tCMasterEntry 36 }
+
+    tCMOutErrTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutErr - timestamp"
+        ::= { tCMasterEntry 37 }
+
+    tCMOutErr OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutErr"
+        ::= { tCMasterEntry 38 }
+
+    tCMOutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutUv - timestamp"
+        ::= { tCMasterEntry 39 }
+
+    tCMOutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutUv"
+        ::= { tCMasterEntry 40 }
+
+    tCMPDURTT OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDURTT"
+        ::= { tCMasterEntry 41 }
+
+    tCMPDUSizeFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDUSizeFail - timestamp"
+        ::= { tCMasterEntry 42 }
+
+    tCMPDUSizeFail OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDUSizeFail"
+        ::= { tCMasterEntry 43 }
+
+    tCMPduTampCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PduTampCnt - timestamp"
+        ::= { tCMasterEntry 44 }
+
+    tCMPduTampCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PduTampCnt"
+        ::= { tCMasterEntry 45 }
+
+    tCMPrimaryInterfaceTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrimaryInterface - timestamp"
+        ::= { tCMasterEntry 46 }
+
+    tCMPrimaryInterface OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrimaryInterface"
+        ::= { tCMasterEntry 47 }
+
+    tCMPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrivFailCnt - timestamp"
+        ::= { tCMasterEntry 48 }
+
+    tCMPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrivFailCnt"
+        ::= { tCMasterEntry 49 }
+
+    tCMRtxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RtxCnt - timestamp"
+        ::= { tCMasterEntry 50 }
+
+    tCMRtxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RtxCnt"
+        ::= { tCMasterEntry 51 }
+
+    tCMRxCriticalTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxCritical - timestamp"
+        ::= { tCMasterEntry 52 }
+
+    tCMRxCritical OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxCritical"
+        ::= { tCMasterEntry 53 }
+
+    tCMRxPduTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxPdu - timestamp"
+        ::= { tCMasterEntry 54 }
+
+    tCMRxPdu OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxPdu"
+        ::= { tCMasterEntry 55 }
+
+    tCMRxSolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxSolicitedReq - timestamp"
+        ::= { tCMasterEntry 56 }
+
+    tCMRxSolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxSolicitedReq"
+        ::= { tCMasterEntry 57 }
+
+    tCMRxUnsolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxUnsolicitedReq - timestamp"
+        ::= { tCMasterEntry 58 }
+
+    tCMRxUnsolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxUnsolicitedReq"
+        ::= { tCMasterEntry 59 }
+
+    tCMSessKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.SessKeyFailCnt - timestamp"
+        ::= { tCMasterEntry 60 }
+
+    tCMSessKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.SessKeyFailCnt"
+        ::= { tCMasterEntry 61 }
+
+    tCMTxCriticalTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxCritical - timestamp"
+        ::= { tCMasterEntry 62 }
+
+    tCMTxCritical OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxCritical"
+        ::= { tCMasterEntry 63 }
+
+    tCMTxPduTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxPdu - timestamp"
+        ::= { tCMasterEntry 64 }
+
+    tCMTxPdu OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxPdu"
+        ::= { tCMasterEntry 65 }
+
+    tCMTxSolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxSolicitedReq - timestamp"
+        ::= { tCMasterEntry 66 }
+
+    tCMTxSolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxSolicitedReq"
+        ::= { tCMasterEntry 67 }
+
+    tCMTxUnsolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxUnsolicitedReq - timestamp"
+        ::= { tCMasterEntry 68 }
+
+    tCMTxUnsolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxUnsolicitedReq"
+        ::= { tCMasterEntry 69 }
+
+    tCMUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.UpKeyFailCnt - timestamp"
+        ::= { tCMasterEntry 70 }
+
+    tCMUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.UpKeyFailCnt"
+        ::= { tCMasterEntry 71 }
+
+    tCMIEC62351part3 OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.IEC62351part3"
+        ::= { tCMasterEntry 72 }
+
+    tCMPart3ConnectionId OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.Part3ConnectionId"
+        ::= { tCMasterEntry 73 }
+
+    tCMTCPHndShTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TCPHndShTime"
+        ::= { tCMasterEntry 74 }
+
+    tCMTLSHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSHndTime"
+        ::= { tCMasterEntry 75 }
+
+    tCMTLSRenegotiationTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSRenegotiationTime"
+        ::= { tCMasterEntry 76 }
+
+    tCMTLSResumptionTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSResumptionTime"
+        ::= { tCMasterEntry 77 }
+
+    tCMTotalHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TotalHndTime"
+        ::= { tCMasterEntry 78 }
+
+    tCMTransportHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TransportHndTime"
+        ::= { tCMasterEntry 79 }
+
+    tCOAssociationId OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.AssociationId"
+        ::= { tCOutstationEntry 1 }
+
+    tCOCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.CntRs - timestamp"
+        ::= { tCOutstationEntry 2 }
+
+    tCOCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.CntRs"
+        ::= { tCOutstationEntry 3 }
+
+    tCOLocAddress OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.LocAddress"
+        ::= { tCOutstationEntry 4 }
+
+    tCOLocAddressType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.LocAddressType"
+        ::= { tCOutstationEntry 5 }
+
+    tCOProtID OBJECT-TYPE
+        SYNTAX              ProtIdKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.ProtID"
+        ::= { tCOutstationEntry 6 }
+
+    tCOProviderDesc OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.ProviderDesc"
+        ::= { tCOutstationEntry 7 }
+
+    tCOProviderName OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.ProviderName"
+        ::= { tCOutstationEntry 8 }
+
+    tCORemAddress OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.RemAddress"
+        ::= { tCOutstationEntry 9 }
+
+    tCORemAddressType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.RemAddressType"
+        ::= { tCOutstationEntry 10 }
+
+    tCOTLnkErrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.TLnkErrCnt - timestamp"
+        ::= { tCOutstationEntry 11 }
+
+    tCOTLnkErrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.TLnkErrCnt"
+        ::= { tCOutstationEntry 12 }
+
+    tCOTLnkTyp OBJECT-TYPE
+        SYNTAX              LnkKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::Association.TLnkTyp"
+        ::= { tCOutstationEntry 13 }
+
+    tCOAuthFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.AuthFailCnt - timestamp"
+        ::= { tCOutstationEntry 14 }
+
+    tCOAuthFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.AuthFailCnt"
+        ::= { tCOutstationEntry 15 }
+
+    tCOCtrlPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.CtrlPrivFailCnt - timestamp"
+        ::= { tCOutstationEntry 16 }
+
+    tCOCtrlPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.CtrlPrivFailCnt"
+        ::= { tCOutstationEntry 17 }
+
+    tCODecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.DecryptFailCnt - timestamp"
+        ::= { tCOutstationEntry 18 }
+
+    tCODecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.DecryptFailCnt"
+        ::= { tCOutstationEntry 19 }
+
+    tCOExT0CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT0Cnt - timestamp"
+        ::= { tCOutstationEntry 20 }
+
+    tCOExT0Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT0Cnt"
+        ::= { tCOutstationEntry 21 }
+
+    tCOExT1CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT1Cnt - timestamp"
+        ::= { tCOutstationEntry 22 }
+
+    tCOExT1Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT1Cnt"
+        ::= { tCOutstationEntry 23 }
+
+    tCOExT2CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT2Cnt - timestamp"
+        ::= { tCOutstationEntry 24 }
+
+    tCOExT2Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT2Cnt"
+        ::= { tCOutstationEntry 25 }
+
+    tCOExT3CntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT3Cnt - timestamp"
+        ::= { tCOutstationEntry 26 }
+
+    tCOExT3Cnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.ExT3Cnt"
+        ::= { tCOutstationEntry 27 }
+
+    tCOInDiscTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InDisc - timestamp"
+        ::= { tCOutstationEntry 28 }
+
+    tCOInDisc OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InDisc"
+        ::= { tCOutstationEntry 29 }
+
+    tCOInErrCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InErrCnt - timestamp"
+        ::= { tCOutstationEntry 30 }
+
+    tCOInErrCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InErrCnt"
+        ::= { tCOutstationEntry 31 }
+
+    tCOInOvCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InOvCnt - timestamp"
+        ::= { tCOutstationEntry 32 }
+
+    tCOInOvCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InOvCnt"
+        ::= { tCOutstationEntry 33 }
+
+    tCOInterPDUTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.InterPDUTime"
+        ::= { tCOutstationEntry 34 }
+
+    tCOMisPDUCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.MisPDUCnt - timestamp"
+        ::= { tCOutstationEntry 35 }
+
+    tCOMisPDUCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.MisPDUCnt"
+        ::= { tCOutstationEntry 36 }
+
+    tCOOutErrTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutErr - timestamp"
+        ::= { tCOutstationEntry 37 }
+
+    tCOOutErr OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutErr"
+        ::= { tCOutstationEntry 38 }
+
+    tCOOutUvTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutUv - timestamp"
+        ::= { tCOutstationEntry 39 }
+
+    tCOOutUv OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.OutUv"
+        ::= { tCOutstationEntry 40 }
+
+    tCOPDURTT OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDURTT"
+        ::= { tCOutstationEntry 41 }
+
+    tCOPDUSizeFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDUSizeFail - timestamp"
+        ::= { tCOutstationEntry 42 }
+
+    tCOPDUSizeFail OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PDUSizeFail"
+        ::= { tCOutstationEntry 43 }
+
+    tCOPduTampCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PduTampCnt - timestamp"
+        ::= { tCOutstationEntry 44 }
+
+    tCOPduTampCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PduTampCnt"
+        ::= { tCOutstationEntry 45 }
+
+    tCOPrimaryInterfaceTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrimaryInterface - timestamp"
+        ::= { tCOutstationEntry 46 }
+
+    tCOPrimaryInterface OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrimaryInterface"
+        ::= { tCOutstationEntry 47 }
+
+    tCOPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrivFailCnt - timestamp"
+        ::= { tCOutstationEntry 48 }
+
+    tCOPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.PrivFailCnt"
+        ::= { tCOutstationEntry 49 }
+
+    tCORtxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RtxCnt - timestamp"
+        ::= { tCOutstationEntry 50 }
+
+    tCORtxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RtxCnt"
+        ::= { tCOutstationEntry 51 }
+
+    tCORxCriticalTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxCritical - timestamp"
+        ::= { tCOutstationEntry 52 }
+
+    tCORxCritical OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxCritical"
+        ::= { tCOutstationEntry 53 }
+
+    tCORxPduTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxPdu - timestamp"
+        ::= { tCOutstationEntry 54 }
+
+    tCORxPdu OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxPdu"
+        ::= { tCOutstationEntry 55 }
+
+    tCORxSolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxSolicitedReq - timestamp"
+        ::= { tCOutstationEntry 56 }
+
+    tCORxSolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxSolicitedReq"
+        ::= { tCOutstationEntry 57 }
+
+    tCORxUnsolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxUnsolicitedReq - timestamp"
+        ::= { tCOutstationEntry 58 }
+
+    tCORxUnsolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.RxUnsolicitedReq"
+        ::= { tCOutstationEntry 59 }
+
+    tCOSessKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.SessKeyFailCnt - timestamp"
+        ::= { tCOutstationEntry 60 }
+
+    tCOSessKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.SessKeyFailCnt"
+        ::= { tCOutstationEntry 61 }
+
+    tCOTxCriticalTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxCritical - timestamp"
+        ::= { tCOutstationEntry 62 }
+
+    tCOTxCritical OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxCritical"
+        ::= { tCOutstationEntry 63 }
+
+    tCOTxPduTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxPdu - timestamp"
+        ::= { tCOutstationEntry 64 }
+
+    tCOTxPdu OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxPdu"
+        ::= { tCOutstationEntry 65 }
+
+    tCOTxSolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxSolicitedReq - timestamp"
+        ::= { tCOutstationEntry 66 }
+
+    tCOTxSolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxSolicitedReq"
+        ::= { tCOutstationEntry 67 }
+
+    tCOTxUnsolicitedReqTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxUnsolicitedReq - timestamp"
+        ::= { tCOutstationEntry 68 }
+
+    tCOTxUnsolicitedReq OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.TxUnsolicitedReq"
+        ::= { tCOutstationEntry 69 }
+
+    tCOUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.UpKeyFailCnt - timestamp"
+        ::= { tCOutstationEntry 70 }
+
+    tCOUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "IEEE 1815 and IEC 60870-5
+                             Agent::60870andDNPProtocolInfo.UpKeyFailCnt"
+        ::= { tCOutstationEntry 71 }
+
+    tCOIEC62351part3 OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.IEC62351part3"
+        ::= { tCOutstationEntry 72 }
+
+    tCOPart3ConnectionId OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.Part3ConnectionId"
+        ::= { tCOutstationEntry 73 }
+
+    tCOTCPHndShTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TCPHndShTime"
+        ::= { tCOutstationEntry 74 }
+
+    tCOTLSHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSHndTime"
+        ::= { tCOutstationEntry 75 }
+
+    tCOTLSRenegotiationTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSRenegotiationTime"
+        ::= { tCOutstationEntry 76 }
+
+    tCOTLSResumptionTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSResumptionTime"
+        ::= { tCOutstationEntry 77 }
+
+    tCOTotalHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TotalHndTime"
+        ::= { tCOutstationEntry 78 }
+
+    tCOTransportHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TransportHndTime"
+        ::= { tCOutstationEntry 79 }
+
+    ieee1815andiec60870-5-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               tCCntRsTs,
+               tCCntRs,
+               tCLastEventTs,
+               tCLastEvent,
+               tCAuthFailCntTs,
+               tCAuthFailCnt,
+               tCCtrlPrivFailCntTs,
+               tCCtrlPrivFailCnt,
+               tCDecryptFailCntTs,
+               tCDecryptFailCnt,
+               tCExT0CntTs,
+               tCExT0Cnt,
+               tCExT1CntTs,
+               tCExT1Cnt,
+               tCExT2CntTs,
+               tCExT2Cnt,
+               tCExT3CntTs,
+               tCExT3Cnt,
+               tCInDiscTs,
+               tCInDisc,
+               tCInErrCntTs,
+               tCInErrCnt,
+               tCInOvCntTs,
+               tCInOvCnt,
+               tCInterPDUTime,
+               tCMisPDUCntTs,
+               tCMisPDUCnt,
+               tCOutErrTs,
+               tCOutErr,
+               tCOutUvTs,
+               tCOutUv,
+               tCPDURTT,
+               tCPDUSizeFailTs,
+               tCPDUSizeFail,
+               tCPduTampCntTs,
+               tCPduTampCnt,
+               tCPrimaryInterfaceTs,
+               tCPrimaryInterface,
+               tCPrivFailCntTs,
+               tCPrivFailCnt,
+               tCRtxCntTs,
+               tCRtxCnt,
+               tCRxCriticalTs,
+               tCRxCritical,
+               tCRxPduTs,
+               tCRxPdu,
+               tCRxSolicitedReqTs,
+               tCRxSolicitedReq,
+               tCRxUnsolicitedReqTs,
+               tCRxUnsolicitedReq,
+               tCSessKeyFailCntTs,
+               tCSessKeyFailCnt,
+               tCTxCriticalTs,
+               tCTxCritical,
+               tCTxPduTs,
+               tCTxPdu,
+               tCTxSolicitedReqTs,
+               tCTxSolicitedReq,
+               tCTxUnsolicitedReqTs,
+               tCTxUnsolicitedReq,
+               tCUpKeyFailCntTs,
+               tCUpKeyFailCnt,
+               tCMCntRsTs,
+               tCMCntRs,
+               tCMLocAddress,
+               tCMLocAddressType,
+               tCMProtID,
+               tCMProviderDesc,
+               tCMProviderName,
+               tCMRemAddress,
+               tCMRemAddressType,
+               tCMTLnkErrCntTs,
+               tCMTLnkErrCnt,
+               tCMTLnkTyp,
+               tCMAuthFailCntTs,
+               tCMAuthFailCnt,
+               tCMCtrlPrivFailCntTs,
+               tCMCtrlPrivFailCnt,
+               tCMDecryptFailCntTs,
+               tCMDecryptFailCnt,
+               tCMExT0CntTs,
+               tCMExT0Cnt,
+               tCMExT1CntTs,
+               tCMExT1Cnt,
+               tCMExT2CntTs,
+               tCMExT2Cnt,
+               tCMExT3CntTs,
+               tCMExT3Cnt,
+               tCMInDiscTs,
+               tCMInDisc,
+               tCMInErrCntTs,
+               tCMInErrCnt,
+               tCMInOvCntTs,
+               tCMInOvCnt,
+               tCMInterPDUTime,
+               tCMMisPDUCntTs,
+               tCMMisPDUCnt,
+               tCMOutErrTs,
+               tCMOutErr,
+               tCMOutUvTs,
+               tCMOutUv,
+               tCMPDURTT,
+               tCMPDUSizeFailTs,
+               tCMPDUSizeFail,
+               tCMPduTampCntTs,
+               tCMPduTampCnt,
+               tCMPrimaryInterfaceTs,
+               tCMPrimaryInterface,
+               tCMPrivFailCntTs,
+               tCMPrivFailCnt,
+               tCMRtxCntTs,
+               tCMRtxCnt,
+               tCMRxCriticalTs,
+               tCMRxCritical,
+               tCMRxPduTs,
+               tCMRxPdu,
+               tCMRxSolicitedReqTs,
+               tCMRxSolicitedReq,
+               tCMRxUnsolicitedReqTs,
+               tCMRxUnsolicitedReq,
+               tCMSessKeyFailCntTs,
+               tCMSessKeyFailCnt,
+               tCMTxCriticalTs,
+               tCMTxCritical,
+               tCMTxPduTs,
+               tCMTxPdu,
+               tCMTxSolicitedReqTs,
+               tCMTxSolicitedReq,
+               tCMTxUnsolicitedReqTs,
+               tCMTxUnsolicitedReq,
+               tCMUpKeyFailCntTs,
+               tCMUpKeyFailCnt,
+               tCMIEC62351part3,
+               tCMPart3ConnectionId,
+               tCMTCPHndShTime,
+               tCMTLSHndTime,
+               tCMTLSRenegotiationTime,
+               tCMTLSResumptionTime,
+               tCMTotalHndTime,
+               tCMTransportHndTime,
+               tCOCntRsTs,
+               tCOCntRs,
+               tCOLocAddress,
+               tCOLocAddressType,
+               tCOProtID,
+               tCOProviderDesc,
+               tCOProviderName,
+               tCORemAddress,
+               tCORemAddressType,
+               tCOTLnkErrCntTs,
+               tCOTLnkErrCnt,
+               tCOTLnkTyp,
+               tCOAuthFailCntTs,
+               tCOAuthFailCnt,
+               tCOCtrlPrivFailCntTs,
+               tCOCtrlPrivFailCnt,
+               tCODecryptFailCntTs,
+               tCODecryptFailCnt,
+               tCOExT0CntTs,
+               tCOExT0Cnt,
+               tCOExT1CntTs,
+               tCOExT1Cnt,
+               tCOExT2CntTs,
+               tCOExT2Cnt,
+               tCOExT3CntTs,
+               tCOExT3Cnt,
+               tCOInDiscTs,
+               tCOInDisc,
+               tCOInErrCntTs,
+               tCOInErrCnt,
+               tCOInOvCntTs,
+               tCOInOvCnt,
+               tCOInterPDUTime,
+               tCOMisPDUCntTs,
+               tCOMisPDUCnt,
+               tCOOutErrTs,
+               tCOOutErr,
+               tCOOutUvTs,
+               tCOOutUv,
+               tCOPDURTT,
+               tCOPDUSizeFailTs,
+               tCOPDUSizeFail,
+               tCOPduTampCntTs,
+               tCOPduTampCnt,
+               tCOPrimaryInterfaceTs,
+               tCOPrimaryInterface,
+               tCOPrivFailCntTs,
+               tCOPrivFailCnt,
+               tCORtxCntTs,
+               tCORtxCnt,
+               tCORxCriticalTs,
+               tCORxCritical,
+               tCORxPduTs,
+               tCORxPdu,
+               tCORxSolicitedReqTs,
+               tCORxSolicitedReq,
+               tCORxUnsolicitedReqTs,
+               tCORxUnsolicitedReq,
+               tCOSessKeyFailCntTs,
+               tCOSessKeyFailCnt,
+               tCOTxCriticalTs,
+               tCOTxCritical,
+               tCOTxPduTs,
+               tCOTxPdu,
+               tCOTxSolicitedReqTs,
+               tCOTxSolicitedReq,
+               tCOTxUnsolicitedReqTs,
+               tCOTxUnsolicitedReq,
+               tCOUpKeyFailCntTs,
+               tCOUpKeyFailCnt,
+               tCOIEC62351part3,
+               tCOPart3ConnectionId,
+               tCOTCPHndShTime,
+               tCOTLSHndTime,
+               tCOTLSRenegotiationTime,
+               tCOTLSResumptionTime,
+               tCOTotalHndTime,
+               tCOTransportHndTime
+	}
+        STATUS              current
+    	DESCRIPTION         "ieee1815andiec60870-5-agent optional
+                             objects group"
+        ::= { ieee1815andiec60870-5-agent 2 }
+
+    ieee1815andiec60870-5-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "ieee1815andiec60870-5-agent Compliance"
+	MODULE
+		
+        ::= { ieee1815andiec60870-5-agent 3 }
+
+
+END

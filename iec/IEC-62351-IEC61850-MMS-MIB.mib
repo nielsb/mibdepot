@@ -1,0 +1,1055 @@
+IEC-62351-IEC61850-MMS-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY,  OBJECT-IDENTITY,
+    OBJECT-TYPE, Counter32, Integer32, Unsigned32, 
+    Gauge32, TimeTicks, NOTIFICATION-TYPE 
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString, TruthValue,
+    MacAddress, PhysAddress, DateAndTime
+        FROM SNMPv2-TC
+    OBJECT-GROUP, NOTIFICATION-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    Float32TC 
+		FROM FLOAT-TC-MIB
+	AppDatStKind, PhyHealthKind, ExtKind,
+    IntKind, LnkKind, PSPAccKind, ProtIdKind, EventKind,
+    TimSyncIssueKind, SecurityProfileKind, TimSyncSrcKind FROM
+    IEC-62351-ENUM-MIB
+    InetAddressType, InetAddress
+        FROM INET-ADDRESS-MIB;
+		
+    mms-agent MODULE-IDENTITY
+        LAST-UPDATED        "201706061000Z"
+        ORGANIZATION        "IEC"
+        CONTACT-INFO        "IEC TC57 WG15"
+        DESCRIPTION         "Copyright (C) IEC. This version of this MIB module is part
+                             of IEC 57-62351-7-Ed1. 
+                             See the IEC 57-62351-7-Ed1 for full legal notices. 
+                             As shown in Figure 21, the MMS package includes
+                             the IEC 61850 Manufacturing Message
+                             Specification (MMS) classes. MMS Provider and MMS
+                             Association inherit both Security and Protocol Info
+                             attributes from the more general classes."
+
+        REVISION            "201706061000Z"
+        DESCRIPTION         "IEC 57-62351-7-Ed1"
+
+        ::= { iec61850 2 }
+
+	standard  OBJECT IDENTIFIER ::= { iso 0 }
+		
+	iec62351  OBJECT IDENTIFIER ::= { standard 62351 } 
+
+	part7  OBJECT IDENTIFIER ::= { iec62351 7 } 
+
+	application  OBJECT IDENTIFIER ::= { part7 3 } 
+
+	iec61850  OBJECT IDENTIFIER ::= { application 2 } 
+
+	
+		
+
+          
+		
+    mms OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The MMSProvider class includes the attributes
+                             which define the information about the overall IEC
+                             61850 stack MMS provider running on the device."
+        ::= { mms-agent 1 }
+
+    mMSAProfileDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.AProfileDecryptFailCnt -
+                             timestamp"
+        ::= { mms 1 }
+
+    mMSAProfileDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.AProfileDecryptFailCnt"
+        ::= { mms 2 }
+
+    mMSAuthFailTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.AuthFail - timestamp"
+        ::= { mms 3 }
+
+    mMSAuthFail OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.AuthFail"
+        ::= { mms 4 }
+
+    mMSCntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.CntRs - timestamp"
+        ::= { mms 5 }
+
+    mMSCntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.CntRs"
+        ::= { mms 6 }
+
+    mMSConnFailInCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.ConnFailInCnt - timestamp"
+        ::= { mms 7 }
+
+    mMSConnFailInCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.ConnFailInCnt"
+        ::= { mms 8 }
+
+    mMSConnFailOutCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.ConnFailOutCnt -
+                             timestamp"
+        ::= { mms 9 }
+
+    mMSConnFailOutCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.ConnFailOutCnt"
+        ::= { mms 10 }
+
+    mMSDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.DecryptFailCnt -
+                             timestamp"
+        ::= { mms 11 }
+
+    mMSDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.DecryptFailCnt"
+        ::= { mms 12 }
+
+    mMSLastEventTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.LastEvent - timestamp"
+        ::= { mms 13 }
+
+    mMSLastEvent OBJECT-TYPE
+        SYNTAX              EventKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.LastEvent"
+        ::= { mms 14 }
+
+    mMSMMSTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF MMSAssociation
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "MMS::MMSProvider.MMS"
+        ::= { mms 15 }
+
+    mMSMMSEntry OBJECT-TYPE
+        SYNTAX  MMSAssociation
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+                "MMS::MMSProvider.MMS"
+        INDEX   { 
+               mMSEAssociationId
+ 
+	}
+        ::= { mMSMMSTable 1 }
+
+    MMSAssociation ::=
+        SEQUENCE {
+               mMSEActiveTs DateAndTime,
+               mMSEActive TruthValue,
+               mMSEAssociationId Unsigned32,
+               mMSEClient TruthValue,
+               mMSECntRsTs DateAndTime,
+               mMSECntRs TruthValue,
+               mMSEHndShTime Float32TC,
+               mMSERemoteEstAssos TruthValue,
+               mMSERemoteIP InetAddress,
+               mMSERemoteIPAddressType InetAddressType,
+               mMSERemotePSEL DisplayString,
+               mMSERemoteSSEL DisplayString,
+               mMSERemoteTSEL DisplayString,
+               mMSEReportPer100Seconds Integer32,
+               mMSERptReceptionDelayTs DateAndTime,
+               mMSERptReceptionDelay Float32TC,
+               mMSESecurityProfile SecurityProfileKind,
+               mMSEErrorRxCntTs DateAndTime,
+               mMSEErrorRxCnt Counter32 ,
+               mMSEErrorTxCntTs DateAndTime,
+               mMSEErrorTxCnt Counter32 ,
+               mMSEInfoRptRxCntTs DateAndTime,
+               mMSEInfoRptRxCnt Counter32 ,
+               mMSEInfoRptTxCntTs DateAndTime,
+               mMSEInfoRptTxCnt Counter32 ,
+               mMSEMisCmdAckCntTs DateAndTime,
+               mMSEMisCmdAckCnt Counter32 ,
+               mMSEMMSProExchTime Float32TC,
+               mMSERejectRxCntTs DateAndTime,
+               mMSERejectRxCnt Counter32 ,
+               mMSERejectTxCntTs DateAndTime,
+               mMSERejectTxCnt Counter32 ,
+               mMSEReqRxCntTs DateAndTime,
+               mMSEReqRxCnt Counter32 ,
+               mMSEReqTxCntTs DateAndTime,
+               mMSEReqTxCnt Counter32 ,
+               mMSERespRxCntTs DateAndTime,
+               mMSERespRxCnt Counter32 ,
+               mMSERespTxCntTs DateAndTime,
+               mMSERespTxCnt Counter32 ,
+               mMSESessKeyFailCntTs DateAndTime,
+               mMSESessKeyFailCnt Counter32 ,
+               mMSEIEC62351part3 TruthValue,
+               mMSEPart3ConnectionId Integer32,
+               mMSETCPHndShTime Float32TC,
+               mMSETLSHndTime Float32TC,
+               mMSETLSRenegotiationTime Float32TC,
+               mMSETLSResumptionTime Float32TC,
+               mMSETotalHndTime Float32TC,
+               mMSETransportHndTime Float32TC
+        }
+
+    mMSPrivFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.PrivFailCnt - timestamp"
+        ::= { mms 16 }
+
+    mMSPrivFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.PrivFailCnt"
+        ::= { mms 17 }
+
+    mMSProviderDesc OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.ProviderDesc"
+        ::= { mms 18 }
+
+    mMSProviderName OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.ProviderName"
+        ::= { mms 19 }
+
+
+    mMSMMSSecurityNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               mMSDecryptFailCntTs,
+               mMSDecryptFailCnt,
+               mMSLastEventTs,
+               mMSLastEvent,
+               mMSPrivFailCntTs,
+               mMSPrivFailCnt,
+               mMSUpKeyFailCntTs,
+               mMSUpKeyFailCnt
+                }
+        STATUS              current
+        DESCRIPTION         "The MMSSecurityNotification class defines
+                             the content of the notification message to be sent
+                             on event related with the specified objects."
+        ::= { mms 20 }
+
+    mMSMMSSecurityNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                mMSMMSSecurityNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The MMSSecurityNotification class defines
+                             the content of the notification message to be sent
+                             on event related with the specified objects."
+        ::= { mms 21 }
+
+    mMSSessionEstablishmentRate OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "
+                             MMS::MMSProvider.SessionEstablishmentRate"
+        ::= { mms 22 }
+
+    mMSSessionRestartCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.SessionRestartCnt -
+                             timestamp"
+        ::= { mms 23 }
+
+    mMSSessionRestartCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.SessionRestartCnt"
+        ::= { mms 24 }
+
+
+    mMSMMSNotificationType NOTIFICATION-TYPE
+        OBJECTS {           
+                        
+               mMSConnFailInCntTs,
+               mMSConnFailInCnt,
+               mMSConnFailOutCntTs,
+               mMSConnFailOutCnt,
+               mMSRejectRxCntTs,
+               mMSRejectRxCnt,
+               mMSRejectTxCntTs,
+               mMSRejectTxCnt
+                }
+        STATUS              current
+        DESCRIPTION         "The MMSNotification class defines the content
+                             of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { mms 25 }
+
+    mMSMMSNotification NOTIFICATION-GROUP
+        NOTIFICATIONS       {
+                                mMSMMSNotificationType
+                            }
+        STATUS              current
+        DESCRIPTION         "The MMSNotification class defines the content
+                             of the notification message to be sent on event
+                             related with the specified objects."
+        ::= { mms 26 }
+
+    mMSTProfileDecryptFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.TProfileDecryptFailCnt -
+                             timestamp"
+        ::= { mms 27 }
+
+    mMSTProfileDecryptFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.TProfileDecryptFailCnt"
+        ::= { mms 28 }
+
+    mMSTProfileSessKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.TProfileSessKeyFailCnt -
+                             timestamp"
+        ::= { mms 29 }
+
+    mMSTProfileSessKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.TProfileSessKeyFailCnt"
+        ::= { mms 30 }
+
+    mMSUpKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.UpKeyFailCnt - timestamp"
+        ::= { mms 31 }
+
+    mMSUpKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProvider.UpKeyFailCnt"
+        ::= { mms 32 }
+
+    mMSErrorRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorRxCnt -
+                             timestamp"
+        ::= { mms 33 }
+
+    mMSErrorRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorRxCnt"
+        ::= { mms 34 }
+
+    mMSErrorTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorTxCnt -
+                             timestamp"
+        ::= { mms 35 }
+
+    mMSErrorTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorTxCnt"
+        ::= { mms 36 }
+
+    mMSInfoRptRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptRxCnt -
+                             timestamp"
+        ::= { mms 37 }
+
+    mMSInfoRptRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptRxCnt"
+        ::= { mms 38 }
+
+    mMSInfoRptTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptTxCnt -
+                             timestamp"
+        ::= { mms 39 }
+
+    mMSInfoRptTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptTxCnt"
+        ::= { mms 40 }
+
+    mMSMisCmdAckCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.MisCmdAckCnt -
+                             timestamp"
+        ::= { mms 41 }
+
+    mMSMisCmdAckCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.MisCmdAckCnt"
+        ::= { mms 42 }
+
+    mMSMMSProExchTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.MMSProExchTime"
+        ::= { mms 43 }
+
+    mMSRejectRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectRxCnt -
+                             timestamp"
+        ::= { mms 44 }
+
+    mMSRejectRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectRxCnt"
+        ::= { mms 45 }
+
+    mMSRejectTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectTxCnt -
+                             timestamp"
+        ::= { mms 46 }
+
+    mMSRejectTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectTxCnt"
+        ::= { mms 47 }
+
+    mMSReqRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqRxCnt - timestamp"
+        ::= { mms 48 }
+
+    mMSReqRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqRxCnt"
+        ::= { mms 49 }
+
+    mMSReqTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqTxCnt - timestamp"
+        ::= { mms 50 }
+
+    mMSReqTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqTxCnt"
+        ::= { mms 51 }
+
+    mMSRespRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespRxCnt - timestamp"
+        ::= { mms 52 }
+
+    mMSRespRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespRxCnt"
+        ::= { mms 53 }
+
+    mMSRespTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespTxCnt - timestamp"
+        ::= { mms 54 }
+
+    mMSRespTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespTxCnt"
+        ::= { mms 55 }
+
+    mMSSessKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.SessKeyFailCnt -
+                             timestamp"
+        ::= { mms 56 }
+
+    mMSSessKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.SessKeyFailCnt"
+        ::= { mms 57 }
+
+    mMSEActiveTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.Active - timestamp"
+        ::= { mMSMMSEntry 1 }
+
+    mMSEActive OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.Active"
+        ::= { mMSMMSEntry 2 }
+
+    mMSEAssociationId OBJECT-TYPE
+        SYNTAX              Unsigned32
+        MAX-ACCESS          not-accessible
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.AssociationId"
+        ::= { mMSMMSEntry 3 }
+
+    mMSEClient OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.Client"
+        ::= { mMSMMSEntry 4 }
+
+    mMSECntRsTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.CntRs - timestamp"
+        ::= { mMSMMSEntry 5 }
+
+    mMSECntRs OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.CntRs"
+        ::= { mMSMMSEntry 6 }
+
+    mMSEHndShTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.HndShTime"
+        ::= { mMSMMSEntry 7 }
+
+    mMSERemoteEstAssos OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RemoteEstAssos"
+        ::= { mMSMMSEntry 8 }
+
+    mMSERemoteIP OBJECT-TYPE
+        SYNTAX              InetAddress
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RemoteIP"
+        ::= { mMSMMSEntry 9 }
+
+    mMSERemoteIPAddressType OBJECT-TYPE
+        SYNTAX              InetAddressType
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RemoteIPAddressType"
+        ::= { mMSMMSEntry 10 }
+
+    mMSERemotePSEL OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RemotePSEL"
+        ::= { mMSMMSEntry 11 }
+
+    mMSERemoteSSEL OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RemoteSSEL"
+        ::= { mMSMMSEntry 12 }
+
+    mMSERemoteTSEL OBJECT-TYPE
+        SYNTAX              DisplayString
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RemoteTSEL"
+        ::= { mMSMMSEntry 13 }
+
+    mMSEReportPer100Seconds OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.ReportPer100Seconds"
+        ::= { mMSMMSEntry 14 }
+
+    mMSERptReceptionDelayTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RptReceptionDelay -
+                             timestamp"
+        ::= { mMSMMSEntry 15 }
+
+    mMSERptReceptionDelay OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.RptReceptionDelay"
+        ::= { mMSMMSEntry 16 }
+
+    mMSESecurityProfile OBJECT-TYPE
+        SYNTAX              SecurityProfileKind
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSAssociation.SecurityProfile"
+        ::= { mMSMMSEntry 17 }
+
+    mMSEErrorRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorRxCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 18 }
+
+    mMSEErrorRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorRxCnt"
+        ::= { mMSMMSEntry 19 }
+
+    mMSEErrorTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorTxCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 20 }
+
+    mMSEErrorTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ErrorTxCnt"
+        ::= { mMSMMSEntry 21 }
+
+    mMSEInfoRptRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptRxCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 22 }
+
+    mMSEInfoRptRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptRxCnt"
+        ::= { mMSMMSEntry 23 }
+
+    mMSEInfoRptTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptTxCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 24 }
+
+    mMSEInfoRptTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.InfoRptTxCnt"
+        ::= { mMSMMSEntry 25 }
+
+    mMSEMisCmdAckCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.MisCmdAckCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 26 }
+
+    mMSEMisCmdAckCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.MisCmdAckCnt"
+        ::= { mMSMMSEntry 27 }
+
+    mMSEMMSProExchTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.MMSProExchTime"
+        ::= { mMSMMSEntry 28 }
+
+    mMSERejectRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectRxCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 29 }
+
+    mMSERejectRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectRxCnt"
+        ::= { mMSMMSEntry 30 }
+
+    mMSERejectTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectTxCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 31 }
+
+    mMSERejectTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RejectTxCnt"
+        ::= { mMSMMSEntry 32 }
+
+    mMSEReqRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqRxCnt - timestamp"
+        ::= { mMSMMSEntry 33 }
+
+    mMSEReqRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqRxCnt"
+        ::= { mMSMMSEntry 34 }
+
+    mMSEReqTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqTxCnt - timestamp"
+        ::= { mMSMMSEntry 35 }
+
+    mMSEReqTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.ReqTxCnt"
+        ::= { mMSMMSEntry 36 }
+
+    mMSERespRxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespRxCnt - timestamp"
+        ::= { mMSMMSEntry 37 }
+
+    mMSERespRxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespRxCnt"
+        ::= { mMSMMSEntry 38 }
+
+    mMSERespTxCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespTxCnt - timestamp"
+        ::= { mMSMMSEntry 39 }
+
+    mMSERespTxCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.RespTxCnt"
+        ::= { mMSMMSEntry 40 }
+
+    mMSESessKeyFailCntTs OBJECT-TYPE
+        SYNTAX              DateAndTime
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.SessKeyFailCnt -
+                             timestamp"
+        ::= { mMSMMSEntry 41 }
+
+    mMSESessKeyFailCnt OBJECT-TYPE
+        SYNTAX              Counter32 
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "MMS::MMSProtocolInfo.SessKeyFailCnt"
+        ::= { mMSMMSEntry 42 }
+
+    mMSEIEC62351part3 OBJECT-TYPE
+        SYNTAX              TruthValue
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.IEC62351part3"
+        ::= { mMSMMSEntry 43 }
+
+    mMSEPart3ConnectionId OBJECT-TYPE
+        SYNTAX              Integer32
+        MAX-ACCESS          read-write
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.Part3ConnectionId"
+        ::= { mMSMMSEntry 44 }
+
+    mMSETCPHndShTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TCPHndShTime"
+        ::= { mMSMMSEntry 45 }
+
+    mMSETLSHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSHndTime"
+        ::= { mMSMMSEntry 46 }
+
+    mMSETLSRenegotiationTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSRenegotiationTime"
+        ::= { mMSMMSEntry 47 }
+
+    mMSETLSResumptionTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TLSResumptionTime"
+        ::= { mMSMMSEntry 48 }
+
+    mMSETotalHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TotalHndTime"
+        ::= { mMSMMSEntry 49 }
+
+    mMSETransportHndTime OBJECT-TYPE
+        SYNTAX              Float32TC
+        MAX-ACCESS          read-only
+        STATUS              current
+        DESCRIPTION         "Common
+                             objects::CommonProtocolInfo.TransportHndTime"
+        ::= { mMSMMSEntry 50 }
+
+    mms-agentGroupOptional OBJECT-GROUP 
+	OBJECTS {
+	               mMSAProfileDecryptFailCntTs,
+               mMSAProfileDecryptFailCnt,
+               mMSAuthFailTs,
+               mMSAuthFail,
+               mMSCntRsTs,
+               mMSCntRs,
+               mMSConnFailInCntTs,
+               mMSConnFailInCnt,
+               mMSConnFailOutCntTs,
+               mMSConnFailOutCnt,
+               mMSDecryptFailCntTs,
+               mMSDecryptFailCnt,
+               mMSLastEventTs,
+               mMSLastEvent,
+               mMSPrivFailCntTs,
+               mMSPrivFailCnt,
+               mMSProviderDesc,
+               mMSProviderName,
+               mMSSessionEstablishmentRate,
+               mMSSessionRestartCntTs,
+               mMSSessionRestartCnt,
+               mMSTProfileDecryptFailCntTs,
+               mMSTProfileDecryptFailCnt,
+               mMSTProfileSessKeyFailCntTs,
+               mMSTProfileSessKeyFailCnt,
+               mMSUpKeyFailCntTs,
+               mMSUpKeyFailCnt,
+               mMSErrorRxCntTs,
+               mMSErrorRxCnt,
+               mMSErrorTxCntTs,
+               mMSErrorTxCnt,
+               mMSInfoRptRxCntTs,
+               mMSInfoRptRxCnt,
+               mMSInfoRptTxCntTs,
+               mMSInfoRptTxCnt,
+               mMSMisCmdAckCntTs,
+               mMSMisCmdAckCnt,
+               mMSMMSProExchTime,
+               mMSRejectRxCntTs,
+               mMSRejectRxCnt,
+               mMSRejectTxCntTs,
+               mMSRejectTxCnt,
+               mMSReqRxCntTs,
+               mMSReqRxCnt,
+               mMSReqTxCntTs,
+               mMSReqTxCnt,
+               mMSRespRxCntTs,
+               mMSRespRxCnt,
+               mMSRespTxCntTs,
+               mMSRespTxCnt,
+               mMSSessKeyFailCntTs,
+               mMSSessKeyFailCnt,
+               mMSEActiveTs,
+               mMSEActive,
+               mMSEClient,
+               mMSECntRsTs,
+               mMSECntRs,
+               mMSEHndShTime,
+               mMSERemoteEstAssos,
+               mMSERemoteIP,
+               mMSERemoteIPAddressType,
+               mMSERemotePSEL,
+               mMSERemoteSSEL,
+               mMSERemoteTSEL,
+               mMSEReportPer100Seconds,
+               mMSERptReceptionDelayTs,
+               mMSERptReceptionDelay,
+               mMSESecurityProfile,
+               mMSEErrorRxCntTs,
+               mMSEErrorRxCnt,
+               mMSEErrorTxCntTs,
+               mMSEErrorTxCnt,
+               mMSEInfoRptRxCntTs,
+               mMSEInfoRptRxCnt,
+               mMSEInfoRptTxCntTs,
+               mMSEInfoRptTxCnt,
+               mMSEMisCmdAckCntTs,
+               mMSEMisCmdAckCnt,
+               mMSEMMSProExchTime,
+               mMSERejectRxCntTs,
+               mMSERejectRxCnt,
+               mMSERejectTxCntTs,
+               mMSERejectTxCnt,
+               mMSEReqRxCntTs,
+               mMSEReqRxCnt,
+               mMSEReqTxCntTs,
+               mMSEReqTxCnt,
+               mMSERespRxCntTs,
+               mMSERespRxCnt,
+               mMSERespTxCntTs,
+               mMSERespTxCnt,
+               mMSESessKeyFailCntTs,
+               mMSESessKeyFailCnt,
+               mMSEIEC62351part3,
+               mMSEPart3ConnectionId,
+               mMSETCPHndShTime,
+               mMSETLSHndTime,
+               mMSETLSRenegotiationTime,
+               mMSETLSResumptionTime,
+               mMSETotalHndTime,
+               mMSETransportHndTime
+	}
+        STATUS              current
+    	DESCRIPTION         "mms-agent optional objects group"
+        ::= { mms-agent 2 }
+
+    mms-agentCompliance MODULE-COMPLIANCE	
+        STATUS              current
+        DESCRIPTION         "mms-agent Compliance"
+	MODULE
+		
+        ::= { mms-agent 3 }
+
+
+END
