@@ -58,6 +58,11 @@ ciscoRttMonIPExtMIB MODULE-IDENTITY
         "This MIB contains extensions to tables in CISCO-RTTMON-MIB
         to support IP-layer extensions, specifically IPv6 addresses 
         and other information related to IPv6 and other IP information"
+   REVISION        "201804090000Z"
+   DESCRIPTION
+       "Updated cipslaPercentileOWSD object.
+       -Changed the order of cipslaPercentileLatestMin and
+        cipslaPercentileLatestMax objects."
     REVISION        "201709060000Z"
     DESCRIPTION
         "Added new tables: cipslaPercentileConfigTable and
@@ -742,7 +747,7 @@ cipslaPercentileRTT OBJECT-TYPE
 cipslaPercentileOWSD OBJECT-TYPE
     SYNTAX          Integer32 (90..100)
     UNITS           "percent"
-    MAX-ACCESS      read-only
+    MAX-ACCESS      read-create
     STATUS          current
     DESCRIPTION
         "Specifies the percentile value to use in percentile
@@ -858,8 +863,8 @@ cipslaPercentileLatestStatsEntry OBJECT-TYPE
 
 CipslaPercentileLatestStatsEntry ::= SEQUENCE {
         cipslaPercentileTypeVar    CipslaPercentileVar,
-        cipslaPercentileLatestMax  Gauge32,
         cipslaPercentileLatestMin  Gauge32,
+        cipslaPercentileLatestMax  Gauge32,
         cipslaPercentileLatestAvg  Gauge32,
         cipslaPercentileLatestNum  Gauge32,
         cipslaPercentileLatestSum  Gauge32,
@@ -886,20 +891,20 @@ cipslaPercentileTypeVar OBJECT-TYPE
         ICMP jitter, and Ethernet jitter probe types." 
     ::= { cipslaPercentileLatestStatsEntry 1 }
 
-cipslaPercentileLatestMax OBJECT-TYPE
-    SYNTAX          Gauge32
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "The maximum time of all retained samples." 
-    ::= { cipslaPercentileLatestStatsEntry 2 }
-
 cipslaPercentileLatestMin OBJECT-TYPE
     SYNTAX          Gauge32
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
         "The minimum time of all retained samples." 
+    ::= { cipslaPercentileLatestStatsEntry 2 }
+
+cipslaPercentileLatestMax OBJECT-TYPE
+    SYNTAX          Gauge32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "The maximum time of all retained samples." 
     ::= { cipslaPercentileLatestStatsEntry 3 }
 
 cipslaPercentileLatestAvg OBJECT-TYPE
@@ -999,8 +1004,8 @@ ciscoIPExtCtrlGroupRev2 OBJECT-GROUP
                         cipslaPercentileJitterSD,
                         cipslaPercentileJitterDS,
                         cipslaPercentileJitterAvg,
-                        cipslaPercentileLatestMax,
                         cipslaPercentileLatestMin,
+                        cipslaPercentileLatestMax,
                         cipslaPercentileLatestAvg,
                         cipslaPercentileLatestNum,
                         cipslaPercentileLatestSum,
