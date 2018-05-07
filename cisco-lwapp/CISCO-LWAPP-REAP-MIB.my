@@ -18,8 +18,7 @@ IMPORTS
         FROM SNMPv2-CONF
     TruthValue,
     StorageType,
-    RowStatus,
-    DisplayString
+    RowStatus
         FROM SNMPv2-TC
     SnmpAdminString
         FROM SNMP-FRAMEWORK-MIB
@@ -39,7 +38,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappReapMIB MODULE-IDENTITY
-    LAST-UPDATED    "201704200000Z"
+    LAST-UPDATED    "201804240000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -182,6 +181,16 @@ ciscoLwappReapMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol"
+    REVISION        "201804240000Z"
+    DESCRIPTION
+        "Added cLReapAclUrlDomainRuleTable, cLReapIpv6AclTable,
+         cLReapIpv6AclUrlDomainRuleTable, 
+         ciscoLwappReapMIBComplianceRev7,
+  	     ciscoLwappReapIpv6AclConfigGroup, 
+  	     cLReapGroupEfficientApJoinEnable.	
+	     Deprecated ciscoLwappReapMIBComplianceRev6.
+	     Replaced ciscoLwappReapAclConfigGroup by 
+	     ciscoLwappReapAclConfigGroupRev1."
     REVISION        "201704200000Z"
     DESCRIPTION
         "Added cLReapApVlanIdEntry, CLReapApVlanIdAclEntry,
@@ -251,6 +260,8 @@ ciscoLwappReapMasterApConfig OBJECT IDENTIFIER
 ciscoLwappReapGlobalConfig OBJECT IDENTIFIER
     ::= { ciscoLwappReapMIBObjects 6 }
     
+ciscoLwappReapIpv6AclConfig OBJECT IDENTIFIER
+    ::= { ciscoLwappReapMIBObjects 7 }
 -- ********************************************************************
 -- WLAN configuration
 -- ********************************************************************
@@ -826,8 +837,8 @@ cLReapApVlanIdAclEntry OBJECT-TYPE
 CLReapApVlanIdAclEntry ::= 
         SEQUENCE { 
                    cLReapVlanId      Unsigned32, 
-                   cLReapIngressAcl  DisplayString, 
-                   cLReapEgressAcl   DisplayString, 
+                   cLReapIngressAcl  SnmpAdminString, 
+                   cLReapEgressAcl   SnmpAdminString, 
                    cLReapApVlanIdAclRowStatus RowStatus, 
                    cLReapVlanIdAclType INTEGER
         }
@@ -843,7 +854,7 @@ cLReapVlanId OBJECT-TYPE
         ::= { cLReapApVlanIdAclEntry  1 } 
 
 cLReapIngressAcl OBJECT-TYPE 
-      SYNTAX     DisplayString (SIZE(0..32)) 
+      SYNTAX     SnmpAdminString (SIZE(0..32)) 
       MAX-ACCESS read-create 
       STATUS     current 
       DESCRIPTION 
@@ -852,7 +863,7 @@ cLReapIngressAcl OBJECT-TYPE
         ::= { cLReapApVlanIdAclEntry  2 } 
 
 cLReapEgressAcl OBJECT-TYPE
-      SYNTAX     DisplayString (SIZE(0..32)) 
+      SYNTAX     SnmpAdminString (SIZE(0..32))
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
@@ -919,7 +930,7 @@ CLReapApWlanAclEntry ::=
 
 cLReapApWebAuthAcl OBJECT-TYPE
         SYNTAX     SnmpAdminString (SIZE(0..32))
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
                 "This object specifies the webauth ACL name to be 
@@ -1071,7 +1082,7 @@ CLReapApCentralDhcpEntry ::=
         }
 cLReapApDhcpCentral OBJECT-TYPE
     SYNTAX     TruthValue
-    MAX-ACCESS read-write
+    MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
             "This object specifies the behavior of the REAP AP
@@ -1092,7 +1103,7 @@ cLReapApDhcpCentral OBJECT-TYPE
     
 cLReapApDhcpOverrideDNS OBJECT-TYPE
     SYNTAX     TruthValue
-    MAX-ACCESS read-write
+    MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
             "This object specifies the behavior of the REAP AP
@@ -1114,7 +1125,7 @@ cLReapApDhcpOverrideDNS OBJECT-TYPE
     
 cLReapApNatPatEnabled OBJECT-TYPE
     SYNTAX     TruthValue
-    MAX-ACCESS read-write
+    MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
             "This object specifies whether Network Address
@@ -1255,11 +1266,11 @@ CLReapGroupConfigEntry ::= SEQUENCE {
         cLReapGroupPrimaryRadiusServerType     InetAddressType,
         cLReapGroupPrimaryRadiusServerAddress  InetAddress,
         cLReapGroupPrimaryRadiusServerPort     Unsigned32,
-        cLReapGroupPrimaryServerSecret         DisplayString, 
+        cLReapGroupPrimaryServerSecret         SnmpAdminString, 
         cLReapGroupSecRadiusServerType     InetAddressType,
         cLReapGroupSecRadiusServerAddress  InetAddress,
         cLReapGroupSecRadiusServerPort     Unsigned32,
-        cLReapGroupSecServerSecret         DisplayString,
+        cLReapGroupSecServerSecret         SnmpAdminString,
         cLReapGroupRadiusPeapEnable       TruthValue,
         cLReapGroupRadiusEapTlsEnable     TruthValue,
         cLReapGroupCertificateEapTlsEnable  TruthValue,
@@ -1269,7 +1280,8 @@ CLReapGroupConfigEntry ::= SEQUENCE {
         cLReapGroupHttpProxyIpType          InetAddressType,
         cLReapGroupHttpProxyIp              InetAddress,
         cLReapGroupHttpProxyPort            Unsigned32,
-        cLReapGroupVlanTemplateName       SnmpAdminString
+        cLReapGroupVlanTemplateName       SnmpAdminString,
+	cLReapGroupEfficientApJoinEnable    TruthValue
 }
 
 cLReapGroupName OBJECT-TYPE
@@ -1431,7 +1443,7 @@ cLReapGroupRadiusPacTimeoutCtrl OBJECT-TYPE
  
 cLReapGroupEfficientApUpgradeEnable  OBJECT-TYPE
         SYNTAX TruthValue
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
             "This parameter specifies whether efficient AP image
@@ -1447,7 +1459,7 @@ cLReapGroupApUpgradeStart  OBJECT-TYPE
                  initiateBackup(2),
                  abort(3)
               }
-     MAX-ACCESS  read-write
+     MAX-ACCESS  read-create
      STATUS      current
      DESCRIPTION
           "This object specifies which image REAP AP has to download 
@@ -1465,7 +1477,7 @@ cLReapGroupApUpgradeStart  OBJECT-TYPE
 
 cLReapGroupSlaveMaxRetryCount OBJECT-TYPE
         SYNTAX     Unsigned32
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
                  " This object specifies the maximum retries the
@@ -1503,7 +1515,7 @@ cLReapGroupPrimaryRadiusServerPort OBJECT-TYPE
          ::= { cLReapGroupConfigEntry 20 }
 
 cLReapGroupPrimaryServerSecret OBJECT-TYPE
-         SYNTAX      DisplayString
+         SYNTAX      SnmpAdminString
          MAX-ACCESS  read-create
          STATUS      current
          DESCRIPTION
@@ -1539,7 +1551,7 @@ cLReapGroupSecRadiusServerPort OBJECT-TYPE
          ::= { cLReapGroupConfigEntry 24 }
 
 cLReapGroupSecServerSecret OBJECT-TYPE
-         SYNTAX      DisplayString 
+         SYNTAX      SnmpAdminString 
          MAX-ACCESS  read-create
          STATUS      current
          DESCRIPTION
@@ -1587,7 +1599,7 @@ cLReapGroupCertificateEapTlsEnable  OBJECT-TYPE
 
 cLReapGroupNativeVlanId OBJECT-TYPE
         SYNTAX     Unsigned32 (1..4095)
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
                 "This object specifies the Native VLAN ID for the
@@ -1598,7 +1610,7 @@ cLReapGroupNativeVlanId OBJECT-TYPE
 
 cLReapGroupVlanEnable OBJECT-TYPE
         SYNTAX     TruthValue     
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
                 "This object specifies the availability of Native
@@ -1619,7 +1631,7 @@ cLReapGroupVlanEnable OBJECT-TYPE
 
 cLReapGroupOverrideVlanEnable OBJECT-TYPE
         SYNTAX     TruthValue     
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
                 "This object specifies the overriding of vlans at REAP 
@@ -1656,14 +1668,25 @@ cLReapGroupHttpProxyPort OBJECT-TYPE
 
 cLReapGroupVlanTemplateName OBJECT-TYPE
         SYNTAX     SnmpAdminString     
-        MAX-ACCESS read-write
+        MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
                 "This object specifies the vlan template name at REAP 
                 APs by the vlans available from the reap group."
         DEFVAL  { "" }
         ::= { cLReapGroupConfigEntry 35 }
-        
+cLReapGroupEfficientApJoinEnable  OBJECT-TYPE
+        SYNTAX TruthValue
+        MAX-ACCESS read-create
+        STATUS     current
+        DESCRIPTION
+            "This parameter specifies whether efficient AP image
+             join is enabled. A value of 'true' indicates that 
+             efficient AP image upgrade is enabled. A value of 'false'
+             indicates that Efficient AP image upgrade is disabled."
+        DEFVAL { true }
+        ::= { cLReapGroupConfigEntry 36 }      
+
 -- ********************************************************************
 -- Hybrid REAP Group AP configuration
 -- ********************************************************************
@@ -1838,8 +1861,8 @@ cLReapGroupVlanAclEntry OBJECT-TYPE
 CLReapGroupVlanAclEntry ::=
         SEQUENCE {
                    cLReapGroupVlanId      Unsigned32,
-                   cLReapGroupIngressAcl  DisplayString,
-                   cLReapGroupEgressAcl   DisplayString,
+                   cLReapGroupIngressAcl  SnmpAdminString,
+                   cLReapGroupEgressAcl   SnmpAdminString,
                    cLReapGroupVlanAclRowStatus RowStatus,
                    cLReapGroupVlanOrder      Unsigned32
         }
@@ -1856,7 +1879,7 @@ cLReapGroupVlanId OBJECT-TYPE
      ::= { cLReapGroupVlanAclEntry  1 }
         
 cLReapGroupIngressAcl OBJECT-TYPE
-      SYNTAX     DisplayString (SIZE(0..32))
+      SYNTAX     SnmpAdminString (SIZE(0..32))
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
@@ -1866,7 +1889,7 @@ cLReapGroupIngressAcl OBJECT-TYPE
         ::= { cLReapGroupVlanAclEntry  2 }
 
 cLReapGroupEgressAcl OBJECT-TYPE
-      SYNTAX     DisplayString (SIZE(0..32))
+      SYNTAX     SnmpAdminString (SIZE(0..32))
       MAX-ACCESS read-create
       STATUS     current
       DESCRIPTION
@@ -1921,7 +1944,8 @@ cLReapGroupAclEntry OBJECT-TYPE
 CLReapGroupAclEntry ::=
         SEQUENCE {
                    cLReapGroupWebAuthAcl   SnmpAdminString,
-                   cLReapGroupAclRowStatus RowStatus
+                   cLReapGroupAclRowStatus RowStatus,
+                   cLReapGroupWebAuthIpv6Acl   SnmpAdminString
         }
         
 cLReapGroupWebAuthAcl OBJECT-TYPE
@@ -1942,6 +1966,16 @@ cLReapGroupAclRowStatus OBJECT-TYPE
                 "This object specifies the status column for a
                  conceptual row in this table."
         ::= { cLReapGroupAclEntry  2}
+
+cLReapGroupWebAuthIpv6Acl OBJECT-TYPE
+      SYNTAX     SnmpAdminString (SIZE(0..32))
+      MAX-ACCESS read-create
+      STATUS     current
+      DESCRIPTION
+             "This object specifies the name of the Ipv6 webauth access 
+             control list for the wlan-acl mapping in the flexconnect
+      group."
+        ::= { cLReapGroupAclEntry  3 }
 
 cLReapGroupWebPolicyAclTable OBJECT-TYPE
         SYNTAX     SEQUENCE OF CLReapGroupWebPolicyAclEntry
@@ -1965,7 +1999,8 @@ cLReapGroupWebPolicyAclEntry OBJECT-TYPE
 CLReapGroupWebPolicyAclEntry ::=
         SEQUENCE {
                    cLReapGroupWebPolicyAcl            SnmpAdminString,
-                   cLReapGroupWebPolicyAclRowStatus   RowStatus
+                   cLReapGroupWebPolicyAclRowStatus   RowStatus,
+                   cLReapGroupWebPolicyAclType        INTEGER
                   }
 
 cLReapGroupWebPolicyAcl OBJECT-TYPE
@@ -1985,6 +2020,20 @@ cLReapGroupWebPolicyAclRowStatus OBJECT-TYPE
                 "This object specifies the status column for a
                  conceptual row in this table."
         ::= { cLReapGroupWebPolicyAclEntry  2}
+
+cLReapGroupWebPolicyAclType OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        ipv4(1),
+                        ipv6(2)
+                    }
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies whether webpolicy access control list
+         is IPv4 or IPv6."
+    DEFVAL          { ipv4 } 
+    ::= { cLReapGroupWebPolicyAclEntry 3 }
+
 
 cLReapGroupLocalSplitAclTable OBJECT-TYPE
         SYNTAX     SEQUENCE OF CLReapGroupLocalSplitAclEntry
@@ -2063,7 +2112,7 @@ CLReapGroupCentralDhcpEntry ::=
 	
 cLReapGroupDhcpCentral OBJECT-TYPE
     SYNTAX     TruthValue
-    MAX-ACCESS read-write
+    MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
     	    "This object specifies the behavior of the REAP AP
@@ -2085,7 +2134,7 @@ cLReapGroupDhcpCentral OBJECT-TYPE
     
 cLReapGroupDhcpOverrideDNS OBJECT-TYPE
     SYNTAX     TruthValue
-    MAX-ACCESS read-write
+    MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
             "This object specifies the behavior of the REAP AP 
@@ -2106,7 +2155,7 @@ cLReapGroupDhcpOverrideDNS OBJECT-TYPE
     ::= { cLReapGroupCentralDhcpEntry 2 }
 cLReapGroupNatPatEnabled OBJECT-TYPE
     SYNTAX     TruthValue
-    MAX-ACCESS read-write
+    MAX-ACCESS read-create
     STATUS     current
     DESCRIPTION
             "This object specifies whether Network Address
@@ -2303,14 +2352,14 @@ cLReapMasterApConfigEntry OBJECT-TYPE
 
 CLReapMasterApConfigEntry ::=
         SEQUENCE {
-                cLReapMasterApModel   DisplayString,
+                cLReapMasterApModel   SnmpAdminString,
                 cLReapMasterApManual    TruthValue,
                 cLReapMasterApRowStatus RowStatus 
         }
 
 
 cLReapMasterApModel OBJECT-TYPE
-    SYNTAX     DisplayString 
+    SYNTAX     SnmpAdminString 
     MAX-ACCESS read-only
     STATUS current
     DESCRIPTION
@@ -2534,6 +2583,88 @@ cLReapL2AclRuleRowStatus OBJECT-TYPE
       ::= { cLReapL2AclRuleEntry 7 }
 
 -- *******************************************************************
+-- cLReapAclUrlDomainRuleTable
+-- *******************************************************************
+cLReapAclUrlDomainRuleTable OBJECT-TYPE
+      SYNTAX      SEQUENCE OF CLReapAclUrlDomainRuleEntry
+      MAX-ACCESS  not-accessible
+      STATUS      current
+      DESCRIPTION
+            "This table represents url domain acl Rules
+            (url based Access Control List entries) on the 
+             ACL with name cLReapAclName."
+      ::= { ciscoLwappReapAclConfig 5 }
+
+cLReapAclUrlDomainRuleEntry OBJECT-TYPE
+      SYNTAX      CLReapAclUrlDomainRuleEntry 
+      MAX-ACCESS  not-accessible
+      STATUS      current
+      DESCRIPTION
+          "Each Entry represents the attributes for 
+           cLReapAclUrlDomainRuleTable. An Url domain rule 
+           entry gets added to the table on creating 
+           a rule on flexconnect ACL."
+      INDEX           {
+                        cLReapAclName,
+                        cLReapAclUrlDomainRuleIndex
+                    }
+      ::= { cLReapAclUrlDomainRuleTable 1 }
+
+CLReapAclUrlDomainRuleEntry::= SEQUENCE {
+                    cLReapAclUrlDomainRuleIndex        Unsigned32,
+                    cLReapAclUrlDomainRuleUrl          SnmpAdminString,
+                    cLReapAclUrlDomainRuleAction       INTEGER,
+                    cLReapAclUrlDomainRuleRowStatus    RowStatus
+            }
+
+cLReapAclUrlDomainRuleIndex OBJECT-TYPE
+      SYNTAX     Unsigned32(1..20)
+      MAX-ACCESS not-accessible 
+      STATUS     current
+      DESCRIPTION
+          "This object specifies the index of the Url domain 
+           ACL rule. It can be used to reset the sequence of 
+           the Url rules of an ACL."
+      ::= { cLReapAclUrlDomainRuleEntry 1 }
+
+cLReapAclUrlDomainRuleUrl OBJECT-TYPE
+      SYNTAX     SnmpAdminString
+      MAX-ACCESS read-create
+      STATUS     current
+      DESCRIPTION
+          "This object specifies the URL name for the  
+           url domain rule."
+      ::= { cLReapAclUrlDomainRuleEntry 2 }
+
+cLReapAclUrlDomainRuleAction OBJECT-TYPE
+    SYNTAX INTEGER  {
+                        deny(1),
+                        permit(2)
+                    }
+      MAX-ACCESS read-create
+      STATUS     current
+      DESCRIPTION
+          "This object specifies the permission mode of url domain 
+           rule.
+	       A value of 'deny' specifies client traffic matches
+	       this rule will be blocked.
+	       A value of 'permit' specifies client traffic matches
+	       this rule will be allowed to pass through."
+      DEFVAL { deny }
+      ::= { cLReapAclUrlDomainRuleEntry 3 }
+
+cLReapAclUrlDomainRuleRowStatus OBJECT-TYPE
+      SYNTAX     RowStatus
+      MAX-ACCESS read-create
+      STATUS     current
+      DESCRIPTION
+             "This is the status column for this row and is 
+              used to create and delete specific instances of 
+              rows in this table."
+      ::= { cLReapAclUrlDomainRuleEntry 4 }
+
+
+-- *******************************************************************
 -- cLReapAclTable
 -- *******************************************************************
 
@@ -2561,12 +2692,13 @@ cLReapAclEntry OBJECT-TYPE
 CLReapAclEntry ::= SEQUENCE {
                 cLReapAclName            SnmpAdminString,
                 cLReapAclApplyMode       INTEGER,
-                cLReapAclRowStatus       RowStatus
+                cLReapAclRowStatus       RowStatus,
+		cLReapAclUrlDomainListType INTEGER
            }
 
 cLReapAclName OBJECT-TYPE
-      SYNTAX     OCTET STRING (SIZE(1..32))
-      MAX-ACCESS read-create
+      SYNTAX     SnmpAdminString (SIZE(1..32))
+      MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
              "This object represents name of the REAP 
@@ -2597,6 +2729,20 @@ cLReapAclRowStatus OBJECT-TYPE
              "This object specifies the row Status of the ACL."
       ::= { cLReapAclEntry 3 }
 
+cLReapAclUrlDomainListType OBJECT-TYPE
+        SYNTAX          INTEGER  {
+                          blackList(1),
+                          whiteList(2)
+                      }
+        MAX-ACCESS read-create
+        STATUS     deprecated
+        DESCRIPTION
+		    "This object specifies the List type for all the urls 
+		     being confiured on the acl. blackList indicates, access 
+		     to all the urls configured will be denied and whiteList 
+		     indicates permit. Default value is blackList."
+	DEFVAL { blackList }
+        ::= { cLReapAclEntry 4 }  
 
 -- *******************************************************************
 -- cLReapAclRuleTable
@@ -2649,7 +2795,7 @@ CLReapAclRuleEntry ::= SEQUENCE {
 
 cLReapAclRuleIndex OBJECT-TYPE
       SYNTAX Unsigned32(1..64)
-      MAX-ACCESS read-create
+      MAX-ACCESS not-accessible
       STATUS     current
       DESCRIPTION
              "This object represents index of the ACL rule. This can 
@@ -2852,6 +2998,358 @@ cLReapAclRuleRowStatus OBJECT-TYPE
       ::= { cLReapAclRuleEntry 18 }
 
 -- *******************************************************************
+-- cLReapIpv6AclTable
+-- *******************************************************************
+
+cLReapIpv6AclTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CLReapIpv6AclEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "The table listing ACLs (Access Control Lists) on the
+         device."
+    ::= { ciscoLwappReapIpv6AclConfig 1 }
+
+cLReapIpv6AclEntry OBJECT-TYPE
+    SYNTAX          CLReapIpv6AclEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table provides information about
+         one ACL of the controller."
+    INDEX           { cLReapIpv6AclName } 
+    ::= { cLReapIpv6AclTable 1 }
+
+CLReapIpv6AclEntry ::= SEQUENCE {
+        cLReapIpv6AclName         SnmpAdminString,
+        cLReapIpv6AclApplyMode    INTEGER,
+        cLReapIpv6AclRowStatus    RowStatus
+}
+
+cLReapIpv6AclName OBJECT-TYPE
+    SYNTAX          SnmpAdminString(SIZE  (1..32))
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object represents name of the Access Control List." 
+    ::= { cLReapIpv6AclEntry 1 }
+
+cLReapIpv6AclApplyMode OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        notapplied(1),
+                        applied(2)
+                    }
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents whether IPv6 ACL is applied or not. 
+         A value of notapplied (1) indicates that, ACL has not been 
+         applied on the device.
+         A value of applied (2) indicates that, ACL has been applied 
+         on the device." 
+    ::= { cLReapIpv6AclEntry 2 }
+
+cLReapIpv6AclRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This is the status column for this row and is used to create
+         and delete specific instance of row in this table."
+    ::= { cLReapIpv6AclEntry 3 }
+ 
+
+-- *******************************************************************
+-- cLReapIpv6AclRuleTable
+-- *******************************************************************
+
+cLReapIpv6AclRuleTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CLReapIpv6AclRuleEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "The table represents the ACL rules
+         (Access Control List Entries)."
+    ::= { ciscoLwappReapIpv6AclConfig 2 }
+
+cLReapIpv6AclRuleEntry OBJECT-TYPE
+    SYNTAX          CLReapIpv6AclRuleEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table provides information about
+         one ACL rule of the controller."
+    INDEX           {
+                        cLReapIpv6AclName,
+                        cLReapIpv6AclRuleIndex
+                    } 
+    ::= { cLReapIpv6AclRuleTable 1 }
+
+CLReapIpv6AclRuleEntry ::= SEQUENCE {
+        cLReapIpv6AclRuleIndex                          Unsigned32,
+        cLReapIpv6AclRuleAction                         INTEGER,
+        cLReapIpv6AclRuleSourceAddressType              InetAddressType,
+        cLReapIpv6AclRuleSourceAddress                  InetAddress,
+        cLReapIpv6AclRuleSourcePrefixLength             InetAddressPrefixLength,
+        cLReapIpv6AclRuleDestinationAddressType         InetAddressType,
+        cLReapIpv6AclRuleDestinationAddress             InetAddress,
+        cLReapIpv6AclRuleDestinationPrefixLength        InetAddressPrefixLength,
+        cLReapIpv6AclRuleProtocol                       Unsigned32,
+        cLReapIpv6AclRuleStartSourcePort                InetPortNumber,
+        cLReapIpv6AclRuleEndSourcePort                  InetPortNumber,
+        cLReapIpv6AclRuleStartDestinationPort           InetPortNumber,
+        cLReapIpv6AclRuleEndDestinationPort             InetPortNumber,
+        cLReapIpv6AclRuleDscp                           Unsigned32,
+        cLReapIpv6AclNewRuleIndex                       Unsigned32,
+        cLReapIpv6AclRuleRowStatus                      RowStatus
+}
+
+cLReapIpv6AclRuleIndex OBJECT-TYPE
+    SYNTAX          Unsigned32 (1..64)
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object represents a unique ACL rule. This 
+         can be updated by using cLReapIpv6AclNewRuleIndex 
+         to reset the sequence of the rules of an ACL." 
+    ::= { cLReapIpv6AclRuleEntry 1 }
+
+cLReapIpv6AclRuleAction OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        deny(1),
+                        permit(2)
+                    }
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the permission mode of a rule.
+         A value of deny(1) indicates that, rule is to be 
+         denied.
+         A value of permit(2) indicates that, rule is to be 
+         permit."
+    DEFVAL          { deny } 
+    ::= { cLReapIpv6AclRuleEntry 2 }
+
+cLReapIpv6AclRuleSourceAddressType OBJECT-TYPE
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the type of the source 
+         IP address of the ACL rule." 
+    ::= { cLReapIpv6AclRuleEntry 3 }
+
+cLReapIpv6AclRuleSourceAddress OBJECT-TYPE
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the source IP address." 
+    ::= { cLReapIpv6AclRuleEntry 4 }
+
+cLReapIpv6AclRuleSourcePrefixLength OBJECT-TYPE
+    SYNTAX          InetAddressPrefixLength 
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the prefix length for source
+         IP address." 
+    ::= { cLReapIpv6AclRuleEntry 5 }
+
+cLReapIpv6AclRuleDestinationAddressType OBJECT-TYPE
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the type of the destination IP address."
+    ::= { cLReapIpv6AclRuleEntry 6 }
+
+cLReapIpv6AclRuleDestinationAddress OBJECT-TYPE
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the destination IP address."
+    ::= { cLReapIpv6AclRuleEntry 7 }
+
+cLReapIpv6AclRuleDestinationPrefixLength OBJECT-TYPE
+    SYNTAX          InetAddressPrefixLength 
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the prefix length for destination
+         IP address." 
+    ::= { cLReapIpv6AclRuleEntry 8 }
+
+cLReapIpv6AclRuleProtocol OBJECT-TYPE
+    SYNTAX          Unsigned32 (0..256)
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies protocol of the packet. It can 
+         be either of the pre specified protocols like TCP, UDP, 
+         ICMP, ESP, AH, GRE,IP, ethernet over IP, OSPF or any 
+         number between 0 and 255. A value 256 implies that this 
+         rule applies to 'Any' protocol."
+    DEFVAL          { 256 } 
+    ::= { cLReapIpv6AclRuleEntry 9 }
+
+cLReapIpv6AclRuleStartSourcePort OBJECT-TYPE
+    SYNTAX          InetPortNumber
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the start source port of the
+         packet. It can be either of the pre specified ports 
+         like HTTP, HTTPS, Telnet, RADIUS etc or any number 
+         between 0 and 65535." 
+    DEFVAL          { 0 } 
+    ::= { cLReapIpv6AclRuleEntry 10 }
+
+cLReapIpv6AclRuleEndSourcePort OBJECT-TYPE
+    SYNTAX          InetPortNumber
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the end Source Port of the packet.
+         It can be either of the pre specified ports like HTTP, 
+         HTTPS, Telnet, RADIUS etc or any number between 0 and 
+         65535."
+    DEFVAL          { 65535 } 
+    ::= { cLReapIpv6AclRuleEntry 11 }
+
+cLReapIpv6AclRuleStartDestinationPort OBJECT-TYPE
+    SYNTAX          InetPortNumber
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the start Destination Port of the
+         packet. It can be either of the pre specified ports like HTTP,
+         HTTPS, Telnet, RADIUS etc or any number between 0 and 65535."
+    DEFVAL          { 0 } 
+    ::= { cLReapIpv6AclRuleEntry 12 }
+
+cLReapIpv6AclRuleEndDestinationPort OBJECT-TYPE
+    SYNTAX          InetPortNumber
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the End Destination Port of the packet.
+         It can be either of the pre specified ports like HTTP, HTTPS,
+         Telnet, RADIUS etc or any number between 0 and 65535."
+    DEFVAL          { 65535 } 
+    ::= { cLReapIpv6AclRuleEntry 13 }
+
+cLReapIpv6AclRuleDscp OBJECT-TYPE
+    SYNTAX          Unsigned32 (0..256)
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the DSCP value of the rule.
+         A value 256 implies Any."
+    DEFVAL          { 256 } 
+    ::= { cLReapIpv6AclRuleEntry 14 }
+
+cLReapIpv6AclNewRuleIndex OBJECT-TYPE
+    SYNTAX          Unsigned32 (1..64)
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the new Index of the ACL rule. This
+         object should be updated if the requirement is to reset the
+         sequence of the rules of an ACL." 
+    ::= { cLReapIpv6AclRuleEntry 15 }
+
+cLReapIpv6AclRuleRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This is the status column for this row and is used to create
+        and delete specific instances of rows in this table." 
+    ::= { cLReapIpv6AclRuleEntry 16 }
+
+-- *******************************************************************
+-- cLReapIpv6AclUrlDomainRuleTable
+-- *******************************************************************
+cLReapIpv6AclUrlDomainRuleTable OBJECT-TYPE
+      SYNTAX      SEQUENCE OF CLReapIpv6AclUrlDomainRuleEntry
+      MAX-ACCESS  not-accessible
+      STATUS      current
+      DESCRIPTION
+          "This table represents url domain ACL Rules(url 
+           based Access Control List entries) on the ACL 
+           with name cLReapIpv6AclName."
+      ::= { ciscoLwappReapIpv6AclConfig 3 }
+
+cLReapIpv6AclUrlDomainRuleEntry OBJECT-TYPE
+      SYNTAX      CLReapIpv6AclUrlDomainRuleEntry 
+      MAX-ACCESS  not-accessible
+      STATUS      current
+      DESCRIPTION
+          "Each Entry represents the attributes for 
+           cLReapIpv6AclUrlDomainRuleTable. An Url Domain 
+           rule entry gets added to the table on creating 
+           a rule on flexconnect ACL."
+      INDEX           {
+                        cLReapIpv6AclName,
+                        cLReapIpv6AclUrlDomainRuleIndex
+                    }
+      ::= { cLReapIpv6AclUrlDomainRuleTable 1 }
+
+CLReapIpv6AclUrlDomainRuleEntry::= SEQUENCE {
+              cLReapIpv6AclUrlDomainRuleIndex        Unsigned32,
+              cLReapIpv6AclUrlDomainRuleUrl          SnmpAdminString,
+              cLReapIpv6AclUrlDomainRuleAction       INTEGER,
+              cLReapIpv6AclUrlDomainRuleRowStatus    RowStatus
+            }
+
+cLReapIpv6AclUrlDomainRuleIndex OBJECT-TYPE
+      SYNTAX     Unsigned32(1..20)
+      MAX-ACCESS read-create
+      STATUS     current
+      DESCRIPTION
+          "This object specifies the index of the Url domain 
+           Ipv6 ACL rule. It can be used to reset the sequence 
+           of the Url rules of an ACL."
+      ::= { cLReapIpv6AclUrlDomainRuleEntry 1 }
+
+cLReapIpv6AclUrlDomainRuleUrl OBJECT-TYPE
+      SYNTAX     SnmpAdminString
+      MAX-ACCESS read-write
+      STATUS     current
+      DESCRIPTION
+          "This object specifies the URL name for the 
+           url domain rule."
+      ::= { cLReapIpv6AclUrlDomainRuleEntry 2 }
+
+cLReapIpv6AclUrlDomainRuleAction OBJECT-TYPE
+    SYNTAX INTEGER  {
+                        deny(1),
+                        permit(2)
+                    }
+      MAX-ACCESS read-write
+      STATUS     current
+      DESCRIPTION
+          "This object specifies the permission mode of url domain rule.
+	       A value of 'deny(1)' specifies client traffic matches
+	       this rule will be blocked.
+	       A value of 'permit(2)' specifies client traffic matches
+	       this rule will be allowed to pass through."
+      DEFVAL { deny }
+      ::= { cLReapIpv6AclUrlDomainRuleEntry 3 }
+
+cLReapIpv6AclUrlDomainRuleRowStatus OBJECT-TYPE
+      SYNTAX     RowStatus
+      MAX-ACCESS read-create
+      STATUS     current
+      DESCRIPTION
+          "This is the status column for this row and is 
+           used to create and delete specific instances of 
+           rows in this table."
+      ::= { cLReapIpv6AclUrlDomainRuleEntry 4 }
+
+-- *******************************************************************
 -- ciscoLwappReapGlobalConfig
 -- *******************************************************************
 
@@ -2963,7 +3461,7 @@ ciscoLwappReapMIBComplianceRev5 MODULE-COMPLIANCE
     ::= { ciscoLwappReapMIBCompliances 6 }
     
 ciscoLwappReapMIBComplianceRev6 MODULE-COMPLIANCE
-    STATUS          current
+    STATUS          deprecated 
     DESCRIPTION
         "The compliance statement for the SNMP entities that
         implement the ciscoLwappReapMIB module."
@@ -2979,6 +3477,25 @@ ciscoLwappReapMIBComplianceRev6 MODULE-COMPLIANCE
                         ciscoLwappReapAclConfigGroup
                     }
     ::= { ciscoLwappReapMIBCompliances 7 }
+
+ciscoLwappReapMIBComplianceRev7 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappReapMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        ciscoLwappReapWlanConfigGroup,
+                        ciscoLwappReapApConfigGroup,
+                        ciscoLwappReapGroupConfigGroup,
+                        ciscoLwappReapGroupConfigUserAuthGroup,
+                        ciscoLwappReapApConfigGroupHomeAp,
+                        ciscoLwappReapGroupConfigRadiusGroup1,
+                        ciscoLwappReapWlanConfigGroupSup1,
+                        ciscoLwappReapAclConfigGroupRev1,
+                        ciscoLwappReapIpv6AclConfigGroup
+                    }
+    ::= { ciscoLwappReapMIBCompliances 8 }
 
 -- ********************************************************************
 -- *    Units of conformance
@@ -3074,7 +3591,9 @@ ciscoLwappReapGroupConfigGroup OBJECT-GROUP
                    	cLReapGroupVlanOrder,
                    	cLReapGroupWebAuthAcl,
                    	cLReapGroupAclRowStatus,
+                        cLReapGroupWebAuthIpv6Acl,
                    	cLReapGroupWebPolicyAclRowStatus,
+                        cLReapGroupWebPolicyAclType,
                    	cLReapGroupLocalSplitAcl,
                    	cLReapGroupLocalSplitAclRowStatus,
                    	cLReapGroupDhcpCentral,
@@ -3101,7 +3620,8 @@ ciscoLwappReapGroupConfigGroup OBJECT-GROUP
                     	cLReapGroupSecondaryRadiusIndex,
                     	cLReapGroupStorageType,
                     	cLReapGroupEfficientApUpgradeEnable,
-                    	cLReapGroupApUpgradeStart
+                    	cLReapGroupApUpgradeStart,
+			cLReapGroupEfficientApJoinEnable	
                    		  
                     }
     STATUS          current
@@ -3201,16 +3721,77 @@ ciscoLwappReapAclConfigGroup OBJECT-GROUP
                     	cLReapAclNewRuleIndex,
                     	cLReapAclRuleRowStatus
                     }
+    STATUS          deprecated 
+    DESCRIPTION
+        "This collection of objects represent the information
+        needed for flexconnect ACLs."
+    ::= { ciscoLwappReapMIBGroups 9 }
+
+ciscoLwappReapAclConfigGroupRev1 OBJECT-GROUP
+    OBJECTS         {
+                        cLReapAclName,
+                	cLReapAclApplyMode,
+                	cLReapAclRowStatus,
+                	cLReapAclRuleIndex,
+                    	cLReapAclRuleAction,
+                    	cLReapAclRuleSourceIpAddressType,
+                   	cLReapAclRuleSourceIpAddress,
+                    	cLReapAclRuleSourceIpNetmaskType,
+                    	cLReapAclRuleSourceIpNetmask,
+                    	cLReapAclRuleDestinationIpAddressType,
+                    	cLReapAclRuleDestinationIpAddress,
+                    	cLReapAclRuleDestinationIpNetmaskType,
+                    	cLReapAclRuleDestinationIpNetmask,
+                    	cLReapAclRuleProtocol,
+                    	cLReapAclRuleStartSourcePort,
+                    	cLReapAclRuleEndSourcePort,
+                    	cLReapAclRuleStartDestinationPort,
+                    	cLReapAclRuleEndDestinationPort,
+                    	cLReapAclRuleDscp,
+                    	cLReapAclNewRuleIndex,
+                    	cLReapAclRuleRowStatus,
+		    	        cLReapAclUrlDomainRuleIndex,
+                    	cLReapAclUrlDomainRuleUrl,
+                    	cLReapAclUrlDomainRuleAction,
+                    	cLReapAclUrlDomainRuleRowStatus
+                    }
     STATUS          current
     DESCRIPTION
         "This collection of objects represent the information
-        needed for flexconect acls."
-    ::= { ciscoLwappReapMIBGroups 8 }
+        needed for flexconnect ACLs."
+    ::= { ciscoLwappReapMIBGroups 10}
 
+ciscoLwappReapIpv6AclConfigGroup OBJECT-GROUP
+    OBJECTS         {
+                        cLReapIpv6AclName,
+                	    cLReapIpv6AclApplyMode,
+                	    cLReapIpv6AclRowStatus,
+                	    cLReapIpv6AclRuleIndex,
+                    	cLReapIpv6AclRuleAction,
+			            cLReapIpv6AclRuleSourceAddressType,
+		                cLReapIpv6AclRuleSourceAddress,
+        		        cLReapIpv6AclRuleSourcePrefixLength,
+        		        cLReapIpv6AclRuleDestinationAddressType,
+       			        cLReapIpv6AclRuleDestinationAddress,
+        		        cLReapIpv6AclRuleDestinationPrefixLength,
+        		        cLReapIpv6AclRuleProtocol,
+        		        cLReapIpv6AclRuleStartSourcePort,
+        		        cLReapIpv6AclRuleEndSourcePort,
+        		        cLReapIpv6AclRuleStartDestinationPort,
+        		        cLReapIpv6AclRuleEndDestinationPort,
+        		        cLReapIpv6AclRuleDscp,
+        		        cLReapIpv6AclNewRuleIndex,
+        		        cLReapIpv6AclRuleRowStatus,
+		    	        cLReapIpv6AclUrlDomainRuleIndex,
+                    	cLReapIpv6AclUrlDomainRuleUrl,
+                    	cLReapIpv6AclUrlDomainRuleAction,
+                    	cLReapIpv6AclUrlDomainRuleRowStatus
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represent the information
+        needed for flexconnect ACLs."
+    ::= { ciscoLwappReapMIBGroups 11}
 
 END
 
-
---%DNP%  MLC -Compiled MLC
-
---%DNP%  MTF -TRUE MTF

@@ -4,7 +4,7 @@
 -- June 2006, Devesh Pujari, Srinath Candadai
 -- March 2011 Suja Thangaveluchamy
 --   
--- Copyright (c) 2006, 2010-2012, 2016-2017 by Cisco Systems, Inc.
+-- Copyright (c) 2006, 2010-2012, 2016-2018 by Cisco Systems Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -71,7 +71,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappDot11ClientMIB MODULE-IDENTITY
-    LAST-UPDATED    "201712200000Z"
+    LAST-UPDATED    "201804230000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -235,6 +235,9 @@ ciscoLwappDot11ClientMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol"
+    REVISION        "201804230000Z"
+    DESCRIPTION
+        "Added cldcClientiPSKTag."
     REVISION        "201712200000Z"
     DESCRIPTION
         "Added cldcClientCurrentTxRate."
@@ -367,7 +370,8 @@ CldcClientEntry ::= SEQUENCE {
         cldcClientMaxDataRate           Unsigned32,
         cldcClientHtCapable             TruthValue,
         cldcClientVhtCapable            TruthValue,
-        cldcClientCurrentTxRate         Unsigned32
+        cldcClientCurrentTxRate         Unsigned32,
+        cldcClientiPSKTag               OCTET STRING
 }
 
 cldcClientMacAddress OBJECT-TYPE
@@ -1145,6 +1149,16 @@ cldcClientCurrentTxRate OBJECT-TYPE
         cldcClientCurrentTxRateSet."
     REFERENCE       "RFC 5416" 
     ::= { cldcClientEntry 50 }
+
+cldcClientiPSKTag OBJECT-TYPE
+    SYNTAX          OCTET STRING
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object indicates the iPSK peer group that this client is part of.
+        The clients with same ipsk tag can be allowed to have peer to peer traffic by
+        configuring the wlan p2p blocking." 
+    ::= { cldcClientEntry 51 }
  
 
 
@@ -3276,4 +3290,5 @@ ciscoLwappDot11ClientMIBSup1Group OBJECT-GROUP
     ::= { ciscoLwappDot11ClientMIBGroups 9 }
 
 END
+
 

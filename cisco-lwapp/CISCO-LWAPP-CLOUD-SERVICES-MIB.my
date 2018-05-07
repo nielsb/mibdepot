@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-CLOUD-SERVICES-MIB.my
 -- Feb 2017, Leelaram Paspulati.
 --   
--- Copyright(c) 2017 by Cisco Systems Inc.
+-- Copyright(c) 2017-2018 by Cisco Systems Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -37,7 +37,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappCloudServicesMIB MODULE-IDENTITY
-    LAST-UPDATED    "201712210000Z"
+    LAST-UPDATED    "201804240000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems
@@ -156,6 +156,19 @@ ciscoLwappCloudServicesMIB MODULE-IDENTITY
         Network Assurance server. APs can be tentatively put 
         in Sensor mode to do the Sensor Job. There can be 
         dedicated sensors as well."
+    REVISION        "201804240000Z"
+    DESCRIPTION
+        "Added clCSNAServerOnchangeEnable,
+        clCSNAServerSyncInterval,
+        clCSNAServerSubscriptionAction,
+        clCSNAServerSubscriptionTopic
+        Added clCSMIBComplianceRev2,
+        clCSNAGlobalConfigGroupRev1,
+        clCSWebhookConfigGroup
+        Deprecated clCSNAASIEnable, 
+            clCSNADiffSyncEnable,
+            clCSNAGlobalConfigGroup,
+            clCSMIBComplianceRev1"
     REVISION        "201712210000Z"
     DESCRIPTION
         "Updated clCSNAGlobalConfigGroup.
@@ -163,11 +176,10 @@ ciscoLwappCloudServicesMIB MODULE-IDENTITY
         clCSMIBComplianceRev1.
         Added clCSNAASIEnable,clCSNADiffSyncEnable,clCSSecTunObjects,
         clCSSecTunConfig,clCSSecTunInfo,clCSSecTunNotifs."
-
     REVISION        "201702220000Z"
     DESCRIPTION
         "Initial version of config cloud services MIB module."
-    ::= { ciscoMgmt 838}
+    ::= { ciscoMgmt 838 }
 
 
 clCSMIBNotifs  OBJECT IDENTIFIER
@@ -187,7 +199,7 @@ clCSNAObjects  OBJECT IDENTIFIER
 
 clCSNAServerConfig  OBJECT IDENTIFIER
     ::= { clCSNAObjects 1 }
-        
+
 clCSNAGlobalConfig  OBJECT IDENTIFIER
     ::= { clCSNAObjects 2 }
 
@@ -195,13 +207,13 @@ clCSNATrapMgmtObjects  OBJECT IDENTIFIER
     ::= { clCSNAObjects 3 }
 
 clCSDXObjects  OBJECT IDENTIFIER
-    ::= { clCSMIBObjects 2 } 
+    ::= { clCSMIBObjects 2 }
 
 clCSDxConfig  OBJECT IDENTIFIER
     ::= { clCSDXObjects 1 }
 
 clCSCMXObjects  OBJECT IDENTIFIER
-    ::= { clCSMIBObjects 3 } 
+    ::= { clCSMIBObjects 3 }
 
 clCSCMXServerConfig  OBJECT IDENTIFIER
     ::= { clCSCMXObjects 1 }
@@ -210,17 +222,21 @@ clCSCMXConfig  OBJECT IDENTIFIER
     ::= { clCSCMXObjects 2 }
 
 clCSSecTunObjects  OBJECT IDENTIFIER
-    ::= { clCSMIBObjects 4 } 
+    ::= { clCSMIBObjects 4 }
 
-clCSSecTunConfig OBJECT IDENTIFIER 
+clCSSecTunConfig  OBJECT IDENTIFIER
     ::= { clCSSecTunObjects 1 }
- 
-clCSSecTunInfo OBJECT IDENTIFIER 
+
+clCSSecTunInfo  OBJECT IDENTIFIER
     ::= { clCSSecTunObjects 2 }
 
 clCSSecTunNotifs  OBJECT IDENTIFIER
     ::= { clCSMIBNotifs 1 }
-  
+
+clCSWebhookGlobalObjects  OBJECT IDENTIFIER
+    ::= { clCSMIBObjects 5 }
+
+
 -- ****************************************************
 -- cisco LWAPP network assurance server configuration
 -- ****************************************************
@@ -243,6 +259,98 @@ clCSNAServerIdToken OBJECT-TYPE
         server."
     DEFVAL          { "" } 
     ::= { clCSNAServerConfig 2 }
+
+clCSNAServerOnchangeEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the type of telemetry data that will be
+        externalized from the controller. 
+        The type can be bulk or onChange.
+        With onChange enabled, NA server will receive 
+        only the change in data.
+        With onChange disabled, NA server will receive 
+        the entire dataset(bulk)
+
+        A value of 'true' indicates that onchange is enabled.
+        A value of 'false' indicates that onChange is disabled."
+    DEFVAL          { false } 
+    ::= { clCSNAServerConfig 3 }
+
+clCSNAServerSyncInterval OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        fixed(1),
+                        adaptive(2)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the frequency
+        at which the telemetry data would be received 
+        at the NA server. 
+
+        fixed    - The controller will provide the 
+                   telemetry data once in every 5 minutes
+        adaptive - The controller will provide the 
+                   telemetry data once in every 30 seconds"
+    DEFVAL          { fixed } 
+    ::= { clCSNAServerConfig 4 }
+
+clCSNAServerSubscriptionAction OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        add(1),
+                        remove(2)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the possible modifications
+        to the data content in the telemetry stream 
+        sent to the NA server.
+
+        add    - will add the specified channel 
+                 to the telemetry data stream
+        remove - will remove the specified channel 
+                 from the telemetry data stream"
+    DEFVAL          { add } 
+    ::= { clCSNAServerConfig 5 }
+
+clCSNAServerSubscriptionTopic OBJECT-TYPE
+    SYNTAX          BITS {
+                        system(0),
+                        network(1),
+                        client(2),
+                        ap(3),
+                        rogue(4),
+                        interferer(5),
+                        apEvent(6),
+                        clientEvent(7),
+                        scanReport(8),
+                        clientDnsReport(9),
+                        fra(10),
+                        mapserver(11)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the channels that can be modified
+        in the telemetry data stream that is sent to the NA server. 
+        The user can configure a channel from the given enums
+
+        system(0)            - Configures the system channel
+        network(1)           - Configures the network channel
+        client(2)            - Configures the client channel
+        ap(3)                - Configures the AP channel
+        rogue(4)             - Configures the rogue channel
+        interferer(5)        - Configures the interferer channel
+        apEvent(6)           - Configures the ap-event channel
+        clientEvent(7)       - Configures the client-event channel
+        scanReport(8)        - Configures the scan-report channel
+        clientDnsReport(9)   - Configures the client-dns-report channel
+        fra(10)              - Configures the fra channel
+        mapserver(11)        - Configures the mapserver channel" 
+    ::= { clCSNAServerConfig 6 }
 
 -- *********************************************************
 -- cisco LWAPP network assurance Global configuration
@@ -279,7 +387,7 @@ clCSNASensorBackhaulAuthType OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object specifies about authentication type of 
+        "This object specifies about authentication type of
         network assurance sensor backhaul.
         dot1x(1): This value represents the authentication 
         type as dot1x.
@@ -299,7 +407,7 @@ clCSNASensorBackhaulEapType OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object specifies about Extensible Authentication 
+        "This object specifies about Extensible Authentication
         Protocol (EAP) type of network assurance sensor backhaul.
         eapfast(1): This value represents the EAP type as eapfast. 
         peap(2): This value represents the EAP type as peap.
@@ -322,7 +430,7 @@ clCSNASensorBackhaulPassword OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object specifies about the password for 
+        "This object specifies about the password for
         dot1x authentication type of network assurance 
         sensor backhaul."
     DEFVAL          { "" } 
@@ -358,9 +466,9 @@ clCSNASensorBackhaulPsk OBJECT-TYPE
 clCSNAASIEnable OBJECT-TYPE
     SYNTAX          TruthValue
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
-        "This object specifies whether Network Assurance Adaptive 
+        "This object specifies whether Network Assurance Adaptive
         Sync Interval (ASI) mode is enabled or disabled.
         A value of 'true' indicates that Network Assurance ASI 
         mode is enabled.
@@ -372,7 +480,7 @@ clCSNAASIEnable OBJECT-TYPE
 clCSNADiffSyncEnable OBJECT-TYPE
     SYNTAX          TruthValue
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies whether Network Assurance diff sync is
         enabled or disabled. In diff sync mode only modified parameters 
@@ -383,8 +491,6 @@ clCSNADiffSyncEnable OBJECT-TYPE
         mode is disabled."
     DEFVAL          { false } 
     ::= { clCSNAGlobalConfig 10 }
-
-
 
 -- ****************************************************
 -- cisco DX configuration
@@ -454,87 +560,87 @@ clCSSecTunEnable OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object specifies the status of secure tunnel 
+        "This object specifies the status of secure tunnel
         mode on the controller.
         A value of 'true' indicates that, secure tunnel 
         is enabled.
         A value of 'false' indicates that, secure tunnel 
         is disabled."
-    DEFVAL          { false }
+    DEFVAL          { false } 
     ::= { clCSSecTunConfig 1 }
 
 clCSSecTunTlsGwFqdn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-write
-    STATUS       current
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
     DESCRIPTION
-        "This object specifies the Fully Qualified Domain Name(FQDN) 
-        of the TLS Gateway with which secure tunnel is established." 
-    DEFVAL    { "" }
-    ::=    { clCSSecTunConfig 2 } 
- 
+        "This object specifies the Fully Qualified Domain Name(FQDN)
+        of the TLS Gateway with which secure tunnel is established."
+    DEFVAL          { "" } 
+    ::= { clCSSecTunConfig 2 }
+
 clCSSecTunTlsGwIpAddrType OBJECT-TYPE
-    SYNTAX      InetAddressType
-    MAX-ACCESS  read-write 
-    STATUS      current
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-write
+    STATUS          current
     DESCRIPTION
         "This object specifies the TLS Gateway IP
-        address type."
-         ::= { clCSSecTunConfig 3 }
+        address type." 
+    ::= { clCSSecTunConfig 3 }
 
 clCSSecTunTlsGwIpAddr OBJECT-TYPE
-    SYNTAX       InetAddress 
-    MAX-ACCESS   read-write
-    STATUS       current
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-write
+    STATUS          current
     DESCRIPTION
-        "This object specifies the IP address of the TLS 
+        "This object specifies the IP address of the TLS
         Gateway with which secure tunnel is established." 
-    ::=    { clCSSecTunConfig  4 } 
- 
+    ::= { clCSSecTunConfig 4 }
+
 clCSSecTunTlsGwPort OBJECT-TYPE
-    SYNTAX       InetPortNumber 
-    MAX-ACCESS   read-write
-    STATUS       current
+    SYNTAX          InetPortNumber
+    MAX-ACCESS      read-write
+    STATUS          current
     DESCRIPTION
         "This object specifies the TLS Gateway port
-        number." 
-    DEFVAL    { 0 }
-    ::=    { clCSSecTunConfig 5 } 
+        number."
+    DEFVAL          { 0 } 
+    ::= { clCSSecTunConfig 5 }
 
-clCSSecTunPskId   OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-write
-    STATUS       current
+clCSSecTunPskId OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
     DESCRIPTION
-        "This object specifies the PSK Id for the given WLC. 
+        "This object specifies the PSK Id for the given WLC.
         Id along with clCSSecTunPskKey are used as part of 
-        secure tunnel setup with TLS gateway." 
-    DEFVAL    { "" }
-    ::=    { clCSSecTunConfig 6 } 
- 
+        secure tunnel setup with TLS gateway."
+    DEFVAL          { "" } 
+    ::= { clCSSecTunConfig 6 }
+
 clCSSecTunPskKey OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-write
-    STATUS       current
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
     DESCRIPTION
-        "This object specifies the key of the PSK cipher, 
+        "This object specifies the key of the PSK cipher,
         which is used while setting up the secure tunnel 
-        with TLS gateway" 
-    DEFVAL    { "" }
-    ::=    { clCSSecTunConfig 7 } 
- 
+        with TLS gateway"
+    DEFVAL          { "" } 
+    ::= { clCSSecTunConfig 7 }
+
 clCSSecTunRadiusEnable OBJECT-TYPE
     SYNTAX          TruthValue
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object specifies the secure tunneling status of 
-	    RADIUS traffic like Authentication and Accounting servers.
+        "This object specifies the secure tunneling status of
+        RADIUS traffic like Authentication and Accounting servers.
         A value of 'true' indicates that, RADIUS traffic on secure 
         tunnel is enabled.
         A value of 'false' indicates that, RADIUS traffic on secure 
-        tunnel is disabled." 
-    DEFVAL          { false }
+        tunnel is disabled."
+    DEFVAL          { false } 
     ::= { clCSSecTunConfig 8 }
 
 clCSSecTunSnmpTrapEnable OBJECT-TYPE
@@ -542,55 +648,56 @@ clCSSecTunSnmpTrapEnable OBJECT-TYPE
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION
-        "This object specifies the secure tunneling trap is 
+        "This object specifies the secure tunneling trap is
         enabled or disabled.
         A value of 'true' indicates that secure tunnel status 
         trap is enabled. 
         A value of 'false' indicates that secure tunnel status 
         trap is disabled."
-    DEFVAL          { false }
+    DEFVAL          { false } 
     ::= { clCSSecTunConfig 9 }
 
 cLCSSecTunStaticNetworkTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF CLCSSecTunStaticNetworkEntry
-    MAX-ACCESS  not-accessible
-    STATUS      current
+    SYNTAX          SEQUENCE OF CLCSSecTunStaticNetworkEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
     DESCRIPTION
-          "This table represents static Networks configured 
-          for Secure tunneling of it's traffic. This is the 
-          explicit way of configuration to send traffic of 
-          a given network over TLS secure tunnel"
+        "This table represents static Networks configured
+        for Secure tunneling of it's traffic. This is the 
+        explicit way of configuration to send traffic of 
+        a given network over TLS secure tunnel"
     ::= { clCSSecTunConfig 10 }
 
 cLCSSecTunStaticNetworkEntry OBJECT-TYPE
-    SYNTAX      CLCSSecTunStaticNetworkEntry 
-    MAX-ACCESS  not-accessible
-    STATUS      current
+    SYNTAX          CLCSSecTunStaticNetworkEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
     DESCRIPTION
-         "Each entry in this table represents the 
-         attributes of secure tunnel network."
-    INDEX       {   cLSCSecTunNetworkIPAddressType,
-                    cLSCSecTunNetworkIPAddress,
-                    cLSCSecTunNetworkIPNetmaskType,
-                    cLSCSecTunNetworkIPNetmask
-                 }
+        "Each entry in this table represents the
+        attributes of secure tunnel network."
+    INDEX           {
+                        cLSCSecTunNetworkIPAddressType,
+                        cLSCSecTunNetworkIPAddress,
+                        cLSCSecTunNetworkIPNetmaskType,
+                        cLSCSecTunNetworkIPNetmask
+                    } 
     ::= { cLCSSecTunStaticNetworkTable 1 }
 
 CLCSSecTunStaticNetworkEntry ::= SEQUENCE {
-       cLSCSecTunNetworkIPAddressType    InetAddressType,
-       cLSCSecTunNetworkIPAddress        InetAddress,
-       cLSCSecTunNetworkIPNetmaskType    InetAddressType,
-       cLSCSecTunNetworkIPNetmask        InetAddress,
-       cLSCSecTunNetworkRowStatus        RowStatus
-   }
+        cLSCSecTunNetworkIPAddressType InetAddressType,
+        cLSCSecTunNetworkIPAddress     InetAddress,
+        cLSCSecTunNetworkIPNetmaskType InetAddressType,
+        cLSCSecTunNetworkIPNetmask     InetAddress,
+        cLSCSecTunNetworkRowStatus     RowStatus
+}
 
 cLSCSecTunNetworkIPAddressType OBJECT-TYPE
     SYNTAX          InetAddressType
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object specifies the IP address type 
-         of cLSCSecTunNetworkIPAddress." 
+        "This object specifies the IP address type
+        of cLSCSecTunNetworkIPAddress." 
     ::= { cLCSSecTunStaticNetworkEntry 1 }
 
 cLSCSecTunNetworkIPAddress OBJECT-TYPE
@@ -598,8 +705,8 @@ cLSCSecTunNetworkIPAddress OBJECT-TYPE
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object specifies the IP address or subnet of
-         the network to be added for secure tunneling" 
+        "This object specifies the IP address or subnet of
+        the network to be added for secure tunneling" 
     ::= { cLCSSecTunStaticNetworkEntry 2 }
 
 cLSCSecTunNetworkIPNetmaskType OBJECT-TYPE
@@ -607,32 +714,35 @@ cLSCSecTunNetworkIPNetmaskType OBJECT-TYPE
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object specifies IP netmask type of 
-         cLSCSecTunNetworkIPNetmask."
+        "This object specifies IP netmask type of
+        cLSCSecTunNetworkIPNetmask." 
     ::= { cLCSSecTunStaticNetworkEntry 3 }
-    
+
 cLSCSecTunNetworkIPNetmask OBJECT-TYPE
     SYNTAX          InetAddress
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object specifies the IP netmask of the 
-         network added for secure tunneling."
+        "This object specifies the IP netmask of the
+        network added for secure tunneling." 
     ::= { cLCSSecTunStaticNetworkEntry 4 }
 
 cLSCSecTunNetworkRowStatus OBJECT-TYPE
-    SYNTAX     RowStatus
-    MAX-ACCESS read-create                                      
-    STATUS     current                                          
-    DESCRIPTION                                                 
-         "This object specifies status column for this 
-         row and used to create and delete specific 
-         instances of rows in this table."
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies status column for this
+        row and used to create and delete specific 
+        instances of rows in this table." 
     ::= { cLCSSecTunStaticNetworkEntry 5 }
+ 
+
 
 -- ************************************************************
 -- cisco LWAPP Secure tunnel information - clCSSecTunConfig
 -- ************************************************************
+
 clCSSecTunCurrentState OBJECT-TYPE
     SYNTAX          INTEGER  {
                         secureTunnelDown(1),
@@ -641,56 +751,56 @@ clCSSecTunCurrentState OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "This object represents the current state of the 
+        "This object represents the current state of the
         secure tunnel. 
         secureTunnelDown(1): This value indicates that secure tunnel 
         is down. 
         secureTunnelUp(2): This values indicates that secure tunnel 
         is up."
-    DEFVAL          { secureTunnelDown }
+    DEFVAL          { secureTunnelDown } 
     ::= { clCSSecTunInfo 1 }
 
 clCSSecTunTlsGwIpAddrInUseType OBJECT-TYPE
-    SYNTAX      InetAddressType
-    MAX-ACCESS  read-only 
-    STATUS      current
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-only
+    STATUS          current
     DESCRIPTION
-         "This objects represents the TLS Gateway IP
-         address type"
+        "This objects represents the TLS Gateway IP
+        address type" 
     ::= { clCSSecTunInfo 2 }
 
 clCSSecTunTlsGwIpInUseAddr OBJECT-TYPE
-    SYNTAX       InetAddress 
-    MAX-ACCESS   read-only
-    STATUS       current
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-only
+    STATUS          current
     DESCRIPTION
-         "This object represents the IP address of the TLS Gateway 
-         which is currently in-use. User can configure FQDN or 
-         IP address for TLS Gateway. The preference is to resolve 
-         the FQDN and get the IP address, if that fails it will 
-         use the statically configured IP address." 
+        "This object represents the IP address of the TLS Gateway
+        which is currently in-use. User can configure FQDN or 
+        IP address for TLS Gateway. The preference is to resolve 
+        the FQDN and get the IP address, if that fails it will 
+        use the statically configured IP address." 
     ::= { clCSSecTunInfo 3 }
- 
+
 clCSSecTunInnerIpAddrType OBJECT-TYPE
-    SYNTAX      InetAddressType
-    MAX-ACCESS  read-only 
-    STATUS      current
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-only
+    STATUS          current
     DESCRIPTION
-         "This objects represents the IP address type  
-         of the TLS client."
+        "This objects represents the IP address type
+        of the TLS client." 
     ::= { clCSSecTunInfo 4 }
 
 clCSSecTunInnerIpAddr OBJECT-TYPE
-    SYNTAX       InetAddress 
-    MAX-ACCESS   read-only
-    STATUS       current
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-only
+    STATUS          current
     DESCRIPTION
-         "This object represents the inner IP address of the TLS 
-         client on the controller. This IP is issued by TLS 
-         gateway as part of the secure tunnel setup and informed
-         to TLS client as config update." 
+        "This object represents the inner IP address of the TLS
+        client on the controller. This IP is issued by TLS 
+        gateway as part of the secure tunnel setup and informed
+        to TLS client as config update." 
     ::= { clCSSecTunInfo 5 }
- 
+
 clCSSecTunTLSClientProcState OBJECT-TYPE
     SYNTAX          INTEGER  {
                         tlscProcDown(1),
@@ -701,62 +811,63 @@ clCSSecTunTLSClientProcState OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-         "This object represents the state of the TLS Client process.
-         TLS Client process is responsible in establishing TLS tunnel 
-         with the Gateway. It encapsulates the data packets before 
-         sending them to the Gateway over the tunnel. 
-         tlscProcDown(1): This value indicates that the process 
-         is down,
-         tlscProcInProg(2): This value indicates that the 
-         process is just coming up and is in-progress.
-	     tlscProcUp(3): This value indicates that the process 
-	     is up and running. 
-         tlscProcReStart(4): This value indicates that the process 
-         is in restart." 
-    DEFVAL          { tlscProcDown }
+        "This object represents the state of the TLS Client process.
+        TLS Client process is responsible in establishing TLS tunnel 
+        with the Gateway. It encapsulates the data packets before 
+        sending them to the Gateway over the tunnel. 
+        tlscProcDown(1): This value indicates that the process 
+        is down,
+        tlscProcInProg(2): This value indicates that the 
+        process is just coming up and is in-progress.
+            tlscProcUp(3): This value indicates that the process 
+            is up and running. 
+        tlscProcReStart(4): This value indicates that the process 
+        is in restart."
+    DEFVAL          { tlscProcDown } 
     ::= { clCSSecTunInfo 6 }
 
 cLCSSecTunRouteTable OBJECT-TYPE
-    SYNTAX      SEQUENCE OF CLCSSecTunRouteEntry
-    MAX-ACCESS  not-accessible
-    STATUS      current
+    SYNTAX          SEQUENCE OF CLCSSecTunRouteEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
     DESCRIPTION
-          "This table represents the routes for various devices 
-          and networks currently managed by the secure tunnel 
-          module for tunneling of the management traffic. Plumbing
-          and deletion of the routes to linux occurs based on the 
-          tunnel state changes." 
+        "This table represents the routes for various devices
+        and networks currently managed by the secure tunnel 
+        module for tunneling of the management traffic. Plumbing
+        and deletion of the routes to linux occurs based on the 
+        tunnel state changes."
     ::= { clCSSecTunInfo 7 }
 
 cLCSSecTunRouteEntry OBJECT-TYPE
-    SYNTAX      CLCSSecTunRouteEntry 
-    MAX-ACCESS  not-accessible
-    STATUS      current
+    SYNTAX          CLCSSecTunRouteEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
     DESCRIPTION
-         "Each entry in this table represents attributes 
-         needed for adding a route for secure tunneling"
-    INDEX       {  cLSCSecTunRouteIPAddressType,
-                   cLSCSecTunRouteIPAddress,
-                   cLSCSecTunRouteNetmaskType,
-                   cLSCSecTunRouteNetmask
-                }
+        "Each entry in this table represents attributes
+        needed for adding a route for secure tunneling"
+    INDEX           {
+                        cLSCSecTunRouteIPAddressType,
+                        cLSCSecTunRouteIPAddress,
+                        cLSCSecTunRouteNetmaskType,
+                        cLSCSecTunRouteNetmask
+                    } 
     ::= { cLCSSecTunRouteTable 1 }
 
 CLCSSecTunRouteEntry ::= SEQUENCE {
-       cLSCSecTunRouteIPAddressType      InetAddressType,
-       cLSCSecTunRouteIPAddress          InetAddress,
-       cLSCSecTunRouteNetmaskType        InetAddressType,
-       cLSCSecTunRouteNetmask            InetAddress,
-       cLSCSecTunRouteTableRowStatus     Unsigned32
-   }
+        cLSCSecTunRouteIPAddressType  InetAddressType,
+        cLSCSecTunRouteIPAddress      InetAddress,
+        cLSCSecTunRouteNetmaskType    InetAddressType,
+        cLSCSecTunRouteNetmask        InetAddress,
+        cLSCSecTunRouteTableRowStatus Unsigned32
+}
 
 cLSCSecTunRouteIPAddressType OBJECT-TYPE
     SYNTAX          InetAddressType
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object represents the IP address type 
-         of cLSCSecTunRouteIPAddress." 
+        "This object represents the IP address type
+        of cLSCSecTunRouteIPAddress." 
     ::= { cLCSSecTunRouteEntry 1 }
 
 cLSCSecTunRouteIPAddress OBJECT-TYPE
@@ -764,8 +875,8 @@ cLSCSecTunRouteIPAddress OBJECT-TYPE
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object represents the IP address or subnet 
-         of the route to be added for secure tunneling" 
+        "This object represents the IP address or subnet
+        of the route to be added for secure tunneling" 
     ::= { cLCSSecTunRouteEntry 2 }
 
 cLSCSecTunRouteNetmaskType OBJECT-TYPE
@@ -773,27 +884,149 @@ cLSCSecTunRouteNetmaskType OBJECT-TYPE
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object represents IP netmask type of 
-         cLSCSecTunNetworkIPNetmask."
+        "This object represents IP netmask type of
+        cLSCSecTunNetworkIPNetmask." 
     ::= { cLCSSecTunRouteEntry 3 }
 
-cLSCSecTunRouteNetmask OBJECT-TYPE 
+cLSCSecTunRouteNetmask OBJECT-TYPE
     SYNTAX          InetAddress
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
-         "This object represents the IP netmask of the 
-         route to be added for secure tunneling."
+        "This object represents the IP netmask of the
+        route to be added for secure tunneling." 
     ::= { cLCSSecTunRouteEntry 4 }
 
 cLSCSecTunRouteTableRowStatus OBJECT-TYPE
-    SYNTAX     Unsigned32
-    MAX-ACCESS read-only                                  
-    STATUS     current                                          
-    DESCRIPTION                                                 
-        "This object specifies the entry status  
-        of this conceptual row."                             
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the entry status
+        of this conceptual row." 
     ::= { cLCSSecTunRouteEntry 5 }
+ 
+
+
+-- ****************************************************
+-- cisco LWAPP network webhook server configuration
+-- ****************************************************
+
+clCSWebhookUrl OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the URL for the webhook server"
+    DEFVAL          { "" } 
+    ::= { clCSWebhookGlobalObjects 1 }
+
+clCSWebhookAuthToken OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the authentication token
+        of the webhook server."
+    DEFVAL          { "" } 
+    ::= { clCSWebhookGlobalObjects 2 }
+
+-- *********************************************************
+-- cisco LWAPP network webhook Global configuration
+-- *********************************************************
+
+clCSWebhookEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of the controller
+        telemetry data externalization to the webhook server.
+        A value of 'true' indicates that externalization 
+        to the webhook server is enabled.
+        A value of 'false' indicates that externalization 
+        to the webhook server is disabled"
+    DEFVAL          { false } 
+    ::= { clCSWebhookGlobalObjects 3 }
+
+clCSWebhookOnchangeEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the type of telemetry data that will be
+        externalized. The type can be bulk or onChange. 
+
+        With onChange enabled, the server will 
+        receive only the change in data.
+        With onChange disabled, the server will 
+        receive the entire dataset(bulk)
+
+        A value of 'true' indicates that onchange is enabled.
+        A value of 'false' indicates that onChange is disabled."
+    DEFVAL          { false } 
+    ::= { clCSWebhookGlobalObjects 4 }
+
+clCSWebhookSyncInterval OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        fixed(1),
+                        adaptive(2)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the frequency
+        at which the telemetry data
+        would be received at the webhook server. 
+
+        A value of fixed will provide data once in every 5 minutes
+        A value of adaptive will provide data once in 30 seconds"
+    DEFVAL          { fixed } 
+    ::= { clCSWebhookGlobalObjects 5 }
+
+clCSWebhookSubscriptionAction OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        add(1),
+                        remove(2)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the possible
+        modifications to the data content 
+        in the telemetry stream sent to the webhook server.
+
+        add - will add the channel to the telemetry stream
+        remove - will remove the channel from the telemetry stream"
+    DEFVAL          { add } 
+    ::= { clCSWebhookGlobalObjects 6 }
+
+clCSWebhookSubscriptionTopic OBJECT-TYPE
+    SYNTAX          BITS {
+                        system(0),
+                        network(1),
+                        client(2),
+                        ap(3),
+                        rogue(4),
+                        interferer(5),
+                        mapserver(6)
+                    }
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the channels that can be modified
+        in the telemetry data stream that is 
+        sent to the webhook server. 
+        The user can configure a channel from the given enums
+
+        system(0)      - Configures the system channel
+        network(1)     - Configures the network channel
+        client(2)      - Configures the client channel
+        ap(3)          - Configures the AP channel
+        rogue(4)       - Configures the rogue channel
+        interferer(5)  - Configures the interferer channel
+        mapserver(6)   - Configures the mapserver channel" 
+    ::= { clCSWebhookGlobalObjects 7 }
 
 -- ****************************************************
 -- Objects for Notifications
@@ -899,20 +1132,18 @@ clCSNASensorNotReachableDevStatus NOTIFICATION-TYPE
         device status moves out of compliance with 
         respect to smart-licensing"
    ::= { clCSNANotifs 1 }
-   
+
 -- ****************************************************
 -- Objects for secure tunnel notifications
 -- ****************************************************
+
 clCSSecTunStateChange NOTIFICATION-TYPE
-    OBJECTS         {
-                        clCSSecTunCurrentState
-                    }
+    OBJECTS         { clCSSecTunCurrentState }
     STATUS          current
     DESCRIPTION
-        "This object is used to send secure 
+        "This object is used to send secure
         tunnel status change."
    ::= { clCSSecTunNotifs 1 }
-   
 -- *******************************************************************
 -- *    Compliance statements
 -- ********************************************************************
@@ -942,7 +1173,7 @@ clCSMIBCompliance MODULE-COMPLIANCE
     ::= { clCSMIBCompliances 1 }
 
 clCSMIBComplianceRev1 MODULE-COMPLIANCE
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "The compliance statement for the SNMP entities that
         implement this MIB."
@@ -961,6 +1192,26 @@ clCSMIBComplianceRev1 MODULE-COMPLIANCE
                     }
     ::= { clCSMIBCompliances 2 }
 
+clCSMIBComplianceRev2 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement this MIB."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        clCSNAServerConfigGroup,
+                        clCSNAGlobalConfigGroupRev1,
+                        clCSCMXServerConfigGroup,
+                        clCSCMXConfigGroup,
+                        clCSNATrapGroup,
+                        clCSNASensorTrapGroup,
+                        clCSDxConfigGroup,
+                        clCSSecTunConfigGroup,
+                        clCSSecTunInfoGroup,
+                        clCSSecTunNotifsGroup,
+                        clCSWebhookConfigGroup
+                    }
+    ::= { clCSMIBCompliances 3 }
 
 -- ********************************************************************
 -- *    Units of conformance
@@ -991,7 +1242,7 @@ clCSNAGlobalConfigGroup OBJECT-GROUP
                         clCSNAASIEnable,
                         clCSNADiffSyncEnable
                     }
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This collection of objects represent the
         configuration of Network Assuranceon the controller 
@@ -1026,7 +1277,7 @@ clCSDxConfigGroup OBJECT-GROUP
         "This collection of objects represent the configuration
         for data externalization(dx) on the controller to be 
         passed to an LWAPP AP."
-    ::= { clCSMIBGroups 5 } 
+    ::= { clCSMIBGroups 5 }
 
 clCSNATrapGroup OBJECT-GROUP
     OBJECTS         {
@@ -1052,49 +1303,86 @@ clCSNASensorTrapGroup NOTIFICATION-GROUP
 
 clCSSecTunConfigGroup OBJECT-GROUP
     OBJECTS         {
-                     clCSSecTunEnable,
-                     clCSSecTunTlsGwFqdn,
-                     clCSSecTunTlsGwIpAddrType,
-                     clCSSecTunTlsGwIpAddr,
-                     clCSSecTunTlsGwPort,
-                     clCSSecTunPskId,
-                     clCSSecTunPskKey,
-                     clCSSecTunRadiusEnable,
-                     clCSSecTunSnmpTrapEnable,
-                     cLSCSecTunNetworkRowStatus
+                        clCSSecTunEnable,
+                        clCSSecTunTlsGwFqdn,
+                        clCSSecTunTlsGwIpAddrType,
+                        clCSSecTunTlsGwIpAddr,
+                        clCSSecTunTlsGwPort,
+                        clCSSecTunPskId,
+                        clCSSecTunPskKey,
+                        clCSSecTunRadiusEnable,
+                        clCSSecTunSnmpTrapEnable,
+                        cLSCSecTunNetworkRowStatus
                     }
     STATUS          current
     DESCRIPTION
         "This collection of objects represent the
         secure Tunnel configuration."
     ::= { clCSMIBGroups 8 }
-    
+
 clCSSecTunInfoGroup OBJECT-GROUP
     OBJECTS         {
-                       clCSSecTunCurrentState,
-                       clCSSecTunTlsGwIpAddrInUseType,
-                       clCSSecTunTlsGwIpInUseAddr,
-                       clCSSecTunInnerIpAddrType,
-                       clCSSecTunInnerIpAddr,
-                       clCSSecTunTLSClientProcState,
-                       cLSCSecTunRouteTableRowStatus
-		      
+                        clCSSecTunCurrentState,
+                        clCSSecTunTlsGwIpAddrInUseType,
+                        clCSSecTunTlsGwIpInUseAddr,
+                        clCSSecTunInnerIpAddrType,
+                        clCSSecTunInnerIpAddr,
+                        clCSSecTunTLSClientProcState,
+                        cLSCSecTunRouteTableRowStatus
                     }
     STATUS          current
     DESCRIPTION
         "This collection of objects represent the
         secure Tunnel information."
     ::= { clCSMIBGroups 9 }
-    
+
 clCSSecTunNotifsGroup NOTIFICATION-GROUP
    NOTIFICATIONS    { clCSSecTunStateChange }
     STATUS          current
     DESCRIPTION
         "This supplemental collection of objects represents the
         Secure Tunnel related notifications sent by the agent to 
-	a network management station."
+        a network management station."
     ::= { clCSMIBGroups 10 }
 
-  END
+clCSNAGlobalConfigGroupRev1 OBJECT-GROUP
+    OBJECTS         {
+                        clCSNAEnable,
+                        clCSNASensorBackhaulSSID,
+                        clCSNASensorBackhaulAuthType,
+                        clCSNASensorBackhaulEapType,
+                        clCSNASensorBackhaulUsername,
+                        clCSNASensorBackhaulPassword,
+                        clCSNASensorBackhaulPsk,
+                        clCSNASensorBackhaulPskMode,
+                        clCSNAServerOnchangeEnable,
+                        clCSNAServerSyncInterval,
+                        clCSNAServerSubscriptionAction,
+                        clCSNAServerSubscriptionTopic
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represent the
+        configuration of Network Assurance on the controller 
+        to be passed to a Network Assurance Server."
+    ::= { clCSMIBGroups 11 }
 
+clCSWebhookConfigGroup OBJECT-GROUP
+    OBJECTS         {
+                        clCSWebhookUrl,
+                        clCSWebhookAuthToken,
+                        clCSWebhookEnable,
+                        clCSWebhookOnchangeEnable,
+                        clCSWebhookSyncInterval,
+                        clCSWebhookSubscriptionAction,
+                        clCSWebhookSubscriptionTopic
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represent the
+        configuration of a webhook server to receive telemetry 
+        data from the controller"
+    ::= { clCSMIBGroups 12 }
+
+END
 
