@@ -19,7 +19,7 @@ IMPORTS
 		FROM CISCO-SMI;
 
 ciscoProductsMIB MODULE-IDENTITY
-	LAST-UPDATED	"201803150000Z"
+	LAST-UPDATED	"201805150000Z"
 	ORGANIZATION	"Cisco Systems, Inc."
 	CONTACT-INFO
 		"       Cisco Systems
@@ -2182,6 +2182,8 @@ ciscoFpr2130td                      OBJECT IDENTIFIER ::= { ciscoProducts 2406 }
 ciscoFpr2140td                      OBJECT IDENTIFIER ::= { ciscoProducts 2407 } -- Cisco FirePOWER 2140 Security Appliance, 1U with embedded security module 
 ciscoFpr9000SM44                    OBJECT IDENTIFIER ::= { ciscoProducts 2409 } -- Cisco FirePOWER 9000 Security Module 44
 ciscoNCS5011                        OBJECT IDENTIFIER ::= { ciscoProducts 2411 } -- Cisco NCS 5011 Series Router
+catC950012Q                         OBJECT IDENTIFIER ::= { ciscoProducts 2418 } -- Catalyst 9500 12-port 40g data only switch
+catC950024Q                         OBJECT IDENTIFIER ::= { ciscoProducts 2419 } -- Catalyst 9500 24-port 40g data only switch
 ciscoNCS1001                        OBJECT IDENTIFIER ::= { ciscoProducts 2423 } -- NCS 1001 System (1RU, 3 SLOTS, 1 RP, 4 FANs, 2 PSU)
 ciscoIR809G3GGAK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2425 } -- Cisco 809 3G Industrial Integrated Service Routers with multi-mode HSPA+, ETSI compliant
 ciscoIR809GLTELAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 2426 } -- Cisco 809 4G LTE Industrial Integrated Service Routers with multi-mode LTE/HSPA+, ETSI compliant
@@ -2190,6 +2192,12 @@ ciscoCXP2270GSR12                   OBJECT IDENTIFIER ::= { ciscoProducts 2433 }
 ciscoNCS4216F2B                     OBJECT IDENTIFIER ::= { ciscoProducts 2434 } -- NCS 4216-F2B System (14RU and 16 SLOT)
 catC930024T                         OBJECT IDENTIFIER ::= { ciscoProducts 2435 } -- Catalyst 9300 24-port data only switch
 catC930024P                         OBJECT IDENTIFIER ::= { ciscoProducts 2436 } -- Catalyst 9300 24-port PoE+ switch 
+catC930024U                         OBJECT IDENTIFIER ::= { ciscoProducts 2437 } -- Catalyst 9300 24-port UPOE switch
+catC930024X                         OBJECT IDENTIFIER ::= { ciscoProducts 2438 } -- Catalyst 9300 24-port mGig and UPOE switch
+catC930048T                         OBJECT IDENTIFIER ::= { ciscoProducts 2439 } -- Catalyst 9300 48-port data only switch
+catC930048P                         OBJECT IDENTIFIER ::= { ciscoProducts 2440 } -- Catalyst 9300 48-port PoE+ switch
+catC930048U                         OBJECT IDENTIFIER ::= { ciscoProducts 2441 } -- Catalyst 9300 48-port UPOE switch
+catC930048UXM                       OBJECT IDENTIFIER ::= { ciscoProducts 2442 } -- Catalyst 9300 48-port switch, with 12 ports of mGig and 36 ports of UPOE
 ciscoASR914                         OBJECT IDENTIFIER ::= { ciscoProducts 2480 } -- ASR 914 Series Router
 ciscoNCSFFC2                        OBJECT IDENTIFIER ::= { ciscoProducts 2481 } -- NCS-F-FC2: NCS6000 Fabric Chassis 2nd Gen Fabric Card
 cisco2911A                          OBJECT IDENTIFIER ::= { ciscoProducts 2486 } -- CISCO2911A/K9 with 3 GE, 4 EHWIC, 2 DSP, 1 SM , 256 MB CF, 512 MB DRAM, IPB 
@@ -2197,6 +2205,7 @@ ciscoUCSS3260                       OBJECT IDENTIFIER ::= { ciscoProducts 2487 }
 ciscoWSC365048TSE                   OBJECT IDENTIFIER ::= { ciscoProducts 2491 } -- Catalyst Switch
 ciscoUCSC220M5                      OBJECT IDENTIFIER ::= { ciscoProducts 2492 } -- Cisco UCS C220 M5 Rack server
 ciscoUCSC240M5                      OBJECT IDENTIFIER ::= { ciscoProducts 2493 } -- Cisco UCS C240 M5 Rack server
+cisco9300FixedSwitchStack           OBJECT IDENTIFIER ::= { ciscoProducts 2494 } -- A stack of any Cisco Catalyst 9300 Fixed stack-able ethernet switches with unified identity (as a single unified switch), control and management
 ciscoCatWSC2960L24TQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2495 } -- Catalyst 2960L 24 x GE downlink, 4 x 10 GE (4 SFP+) uplinks 
 ciscoCatWSC2960L48TQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2496 } -- Catalyst 2960L 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks 
 ciscoCatWSC2960L24PQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2497 } -- Catalyst 2960L 24 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support 
@@ -2214,6 +2223,7 @@ ciscoUCSE1120DM3K9                  OBJECT IDENTIFIER ::= { ciscoProducts 2563 }
 ciscoNFVIS                          OBJECT IDENTIFIER ::= { ciscoProducts 2565 } -- Cisco Network Functions Virtualization Infrastructure Software (NFVIS)
 ciscoIR829GWLTEGAxK9                OBJECT IDENTIFIER ::= { ciscoProducts 2569 } -- Cisco 829 4G LTE Industrial Integrated Service Routers with multi-mode Global LTE/HSPA+ with 802.11n, contact pakulka2
 ciscoASR9906                        OBJECT IDENTIFIER ::= { ciscoProducts 2572 } -- Cisco Aggregation Services Router (ASR) 9906 Chassis 
+ciscoCatC950016X                    OBJECT IDENTIFIER ::= { ciscoProducts 2592 } -- Catalyst 9500 16-port switch
 cisco9500FixedSwitchStack           OBJECT IDENTIFIER ::= { ciscoProducts 2593 } -- A stack of any Cisco Catalyst 9500 Fixed stack-able ethernet switches with unified identity (as a single unified switch), control and management 
 ciscoIR829MLTELAxK9                 OBJECT IDENTIFIER ::= { ciscoProducts 2609 } -- Cisco 829 Single LTE with mSATA card and POE
 ciscoIR829M2LTEEAxK9                OBJECT IDENTIFIER ::= { ciscoProducts 2610 } -- Cisco 829 Dual LTE with mSATA card and POE
@@ -2256,7 +2266,9 @@ ciscoRAIE1783MMS10ER                OBJECT IDENTIFIER ::= { ciscoProducts 2702 }
 ciscoRAIE1783MMS10EA                OBJECT IDENTIFIER ::= { ciscoProducts 2703 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Essentials, Expandable System  2 Port SFP + 8 Port GE PoE+ Advanced
 ciscoRAIE1783MMS10EAR               OBJECT IDENTIFIER ::= { ciscoProducts 2704 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Advantage, Expandable System  2 Port SFP + 8 Port GE PoE+ Advanced
 ciscoASR92020SZM                    OBJECT IDENTIFIER ::= { ciscoProducts 2705 } -- ASR 920 Route Switch Processor, Base Scale, 64Gbps
-
+ciscoAP1900                         OBJECT IDENTIFIER ::= { ciscoProducts 2728 } -- 4x4 11ax Access point
+ciscoAP2900                         OBJECT IDENTIFIER ::= { ciscoProducts 2729 } -- 8x8 11ax Access point
+ciscoAP1840                         OBJECT IDENTIFIER ::= { ciscoProducts 2730 } -- 4x4 11ac 4x4 Wave2 Access Point
 
 END
 
