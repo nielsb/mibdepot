@@ -38,7 +38,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappMobilityMIB MODULE-IDENTITY
-    LAST-UPDATED    "201804240000Z"
+    LAST-UPDATED    "201805280000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -220,6 +220,9 @@ ciscoLwappMobilityMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol."
+    REVISION        "201805280000Z"
+    DESCRIPTION
+        "Added cLMobilityGroupMemberRev02ConfigGroup."
     REVISION        "201804240000Z"
     DESCRIPTION
         "Added cLMobilityGroupMemberDataDtls in table
@@ -1033,7 +1036,8 @@ ciscoLwappMobilityMIBComplianceRev01 MODULE-COMPLIANCE
                         cLNplus1RedundancyRev01StatusGroup,
                         cLNplus1RedundancyRev01NotifsGroup,
                         cLSymmetricTunnelingRev01ConfigGroup,
-                        cLSymmetricTunnelingRev01StatusGroup
+                        cLSymmetricTunnelingRev01StatusGroup,
+                        cLMobilityGroupRev01ConfigGroup
                     }
     ::= { ciscoLwappMobilityMIBCompliances 2 }
 
@@ -1122,22 +1126,23 @@ cLSymmetricTunnelingRev01StatusGroup OBJECT-GROUP
         tunneling feature."
     ::= { ciscoLwappMobilityMIBGroups 5 }
 
-cLMobilityGroupMemberRev02ConfigGroup OBJECT-GROUP
+cLMobilityGroupRev01ConfigGroup OBJECT-GROUP
     OBJECTS         {
                         cLMobilityMulticastMessagingEnable,
-                        cLMobilityGroupMemberHashKey,
-                        cLMobilityGroupMemberAddressType,
-                        cLMobilityGroupMemberAddress,
-                        cLMobilityGroupMemberGroupName,
-                        cLMobilityGroupMemberRowStatus,
+                        cLMobilityMulticastGroupIPAddress,
+                        cLMobilityMulticastGroupIPAddressType,
+                        cLMobilityGroupMemberIPAddressType,
+                        cLMobilityGroupMemberIPAddress,
+                        cLMobilityGroupMemberControlPathStatusUp,
+                        cLMobilityGroupMemberDataPathStatusUp,
                         cLMobilityForeignWlcMapIf,
-                        cLMobilityForeignWlcMapRowStatus,
-                        cLMobilityGroupMemberDataDtls
+                        cLMobilityForeignWlcMapRowStatus
                     }
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
-        "This is a collection of objects which can
-        configured to Global Mobility Group Configuration of WLC."
+        "This collection of objects represents the
+        information about the mobility groups and the
+        interface mappings with foreign controllers."
     ::= { ciscoLwappMobilityMIBGroups 6 }
 
 cLMobilityGroupMemberRev02StatusGroup OBJECT-GROUP
@@ -1155,5 +1160,28 @@ cLMobilityGroupMemberRev02StatusGroup OBJECT-GROUP
         about the Global Mobility Group Configuration of WLC."
     ::= { ciscoLwappMobilityMIBGroups 7 }
 
+cLMobilityGroupMemberRev02ConfigGroup OBJECT-GROUP
+    OBJECTS         {
+                        cLMobilityMulticastMessagingEnable,
+                        cLMobilityMulticastGroupIPAddress,
+                        cLMobilityMulticastGroupIPAddressType,
+                        cLMobilityGroupMemberControlPathStatusUp,
+                        cLMobilityGroupMemberDataPathStatusUp,
+                        cLMobilityGroupMemberHashKey,
+                        cLMobilityGroupMemberAddressType,
+                        cLMobilityGroupMemberAddress,
+                        cLMobilityGroupMemberGroupName,
+                        cLMobilityGroupMemberRowStatus,
+                        cLMobilityForeignWlcMapIf,
+                        cLMobilityForeignWlcMapRowStatus,
+                        cLMobilityGroupMemberDataDtls
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This is a collection of objects which can
+        configured to Global Mobility Group Configuration of WLC."
+    ::= { ciscoLwappMobilityMIBGroups 8 }
+
 END
+
 
