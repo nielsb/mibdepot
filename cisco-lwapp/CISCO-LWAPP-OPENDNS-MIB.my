@@ -30,7 +30,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappOpendnsMIB MODULE-IDENTITY
-    LAST-UPDATED    "201702100000Z"
+    LAST-UPDATED    "201807030000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -92,6 +92,11 @@ ciscoLwappOpendnsMIB MODULE-IDENTITY
            communication between the Access Points and the
            controllers."
 
+    REVISION        "201807030000Z"
+    DESCRIPTION
+            "Added following objects
+			-claOpendnsWlanDhcpOpt6."
+		   
     REVISION        "201702100000Z"
     DESCRIPTION
             "Initial version of this MIB module."
@@ -268,7 +273,8 @@ claOpendnsWlanEntry OBJECT-TYPE
 CLaOpendnsWlanEntry ::= SEQUENCE {
         claOpendnsWlanProfileName          SnmpAdminString,
         claOpendnsWlanMode                 INTEGER,
-        claOpendnsWlanProfileStatus        TruthValue
+        claOpendnsWlanProfileStatus        TruthValue,
+		claOpendnsWlanDhcpOpt6			   TruthValue
 }
 
 claOpendnsWlanProfileName OBJECT-TYPE
@@ -313,6 +319,20 @@ claOpendnsWlanProfileStatus    OBJECT-TYPE
         DEFVAL          { false } 
         ::= { claOpendnsWlanEntry 3 }
 
+claOpendnsWlanDhcpOpt6         OBJECT-TYPE
+        SYNTAX                 TruthValue
+        MAX-ACCESS             read-write
+        STATUS                 current
+        DESCRIPTION
+             "This object represents the Opendns dhcp option 6 status
+             of a WLAN.
+             A value of 'true' indicates that Opendns dhcp option 6 
+             is enabled for the WLAN.   
+             A value of 'false' indicates that Opendns dhcp option 6
+             is disabled for the WLAN."
+        DEFVAL          { true }
+        ::= { claOpendnsWlanEntry 4 }
+		
 --*******************************************************************
 --*    Compliance statements  
 --*******************************************************************
@@ -333,7 +353,7 @@ ciscoLwappOpendnsMIBCompliance MODULE-COMPLIANCE
     ::= { ciscoLwappOpendnsMIBCompliances 1 } 
 
 ciscoLwappOpendnsMIBComplianceRev1 MODULE-COMPLIANCE
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "The compliance statement for the SNMP entities that   
         implement the ciscoLwappOpendnsMIB module."
@@ -344,6 +364,18 @@ ciscoLwappOpendnsMIBComplianceRev1 MODULE-COMPLIANCE
                     }   
     ::= { ciscoLwappOpendnsMIBCompliances 2 } 
 
+ciscoLwappOpendnsMIBComplianceRev2 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that   
+        implement the ciscoLwappOpendnsMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        ciscoLwappOpendnsTagGroup,
+                        ciscoLwappOpendnsConfigGroup,
+						ciscoLwappOpendnsTagGroupVer2
+                    }   
+    ::= { ciscoLwappOpendnsMIBCompliances 3 }
 
 -- *******************************************************************
 -- *    Units of conformance
@@ -355,9 +387,9 @@ ciscoLwappOpendnsTagGroup OBJECT-GROUP
                             claOpendnsWlanMode,
                             claOpendnsWlanProfileStatus,
                             claOpendnsProfileStatus,
-                            claOpendnsProfileIdentity  
+                            claOpendnsProfileIdentity							
                     }
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This collection of objects represents the information 
         about the general attributes of Opendns."
@@ -374,6 +406,22 @@ ciscoLwappOpendnsConfigGroup OBJECT-GROUP
         "This collection of objects represents the information
         about the general attributes of Opendns."
     ::= { ciscoLwappOpendnsMIBGroups 2 }
+	
+ciscoLwappOpendnsTagGroupVer2 OBJECT-GROUP
+    OBJECTS         {
+                            claOpendnsProfileRowStatus,
+                            claOpendnsWlanProfileName,
+                            claOpendnsWlanMode,
+                            claOpendnsWlanProfileStatus,
+                            claOpendnsProfileStatus,
+                            claOpendnsProfileIdentity,
+							claOpendnsWlanDhcpOpt6
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represents the information 
+        about the general attributes of Opendns."
+    ::= { ciscoLwappOpendnsMIBGroups 3 }
 
 END
 

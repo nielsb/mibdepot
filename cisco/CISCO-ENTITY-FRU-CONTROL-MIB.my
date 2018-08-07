@@ -3,8 +3,10 @@
 --   
 -- October 2002, Srini Kode
 --   
+-- %DNP% October 2003, Wen Xu
+-- %DNP% November 2003, Vasanta Kottapalli
 --   
--- Copyright (c) 1998-2008, 2010-2011, 2013 by cisco Systems Inc.
+-- Copyright (c) 1998-2017 by cisco Systems Inc.
 -- All rights reserved.
 -- ****************************************************************
 
@@ -43,7 +45,7 @@ IMPORTS
 
 
 ciscoEntityFRUControlMIB MODULE-IDENTITY
-    LAST-UPDATED    "201308190000Z"
+    LAST-UPDATED    "201712060000Z"
     ORGANIZATION    "Cisco Systems, Inc."
     CONTACT-INFO
             "Postal: Cisco Systems, Inc.
@@ -63,6 +65,11 @@ ciscoEntityFRUControlMIB MODULE-IDENTITY
 
         FRUs include assemblies such as power supplies, fans, 
         processor modules, interface modules, etc."
+    REVISION        "201712060000Z"
+    DESCRIPTION
+        "Added following OBJECT-GROUP
+        - cefcFanDirectionGroup
+        - cefcFanSpeedGroup"
     REVISION        "201308190000Z"
     DESCRIPTION
         "Added fwMismatchFound(25), fwDownloadSuccess(26)
@@ -694,6 +701,14 @@ FRUCoolingUnit ::= TEXTUAL-CONVENTION
                         cfm(1),
                         watts(2)
                     }
+
+CefcPercentOrMinusOne ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT    "d"
+    STATUS          current
+    DESCRIPTION
+        "An integer that is in the range of a percent value.
+        A value of -1 means that the percentage is not available."
+    SYNTAX          Integer32 (-1 | 0..100)
 -- MIB variables
 
 cefcFRUPower  OBJECT IDENTIFIER
@@ -1360,7 +1375,8 @@ cefcFanTrayStatusEntry OBJECT-TYPE
     ::= { cefcFanTrayStatusTable 1 }
 
 CefcFanTrayStatusEntry ::= SEQUENCE {
-        cefcFanTrayOperStatus INTEGER
+        cefcFanTrayOperStatus INTEGER,
+        cefcFanTrayDirection  INTEGER
 }
 
 cefcFanTrayOperStatus OBJECT-TYPE
@@ -1380,6 +1396,74 @@ cefcFanTrayOperStatus OBJECT-TYPE
         warning(4) - partial failure, needs replacement 
                      as soon as possible." 
     ::= { cefcFanTrayStatusEntry 1 }
+
+cefcFanTrayDirection OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        unknown(1),
+                        frontToBack(2),
+                        backToFront(3)
+                    }
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "The air flow direction of the fan or fan tray.
+        unknown(1) - unknown.
+        frontToBack(2) - air flow from front to back
+        backToFront(3) - air flow from back to front" 
+    ::= { cefcFanTrayStatusEntry 2 }
+ 
+
+-- cefcFanTable
+
+cefcFanTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CefcFanEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table contains a list of fan information
+        for all the fans that have entPhysicalTable
+        entries with 'fan' in the entPhysicalClass
+        and capable of providing management information
+        defined in this table."
+    ::= { cefcFRUFan 2 }
+
+cefcFanEntry OBJECT-TYPE
+    SYNTAX          CefcFanEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "An entry containing management information
+        applicable to a particular fan unit.
+
+        Entries are created by the agent at system power-up or 
+        fan or fan tray insertion.  Entries are deleted 
+        by the agent at the fan or fan tray removal."
+    INDEX           { entPhysicalIndex } 
+    ::= { cefcFanTable 1 }
+
+CefcFanEntry ::= SEQUENCE {
+        cefcFanSpeed        Unsigned32,
+        cefcFanSpeedPercent CefcPercentOrMinusOne
+}
+
+cefcFanSpeed OBJECT-TYPE
+    SYNTAX          Unsigned32
+    UNITS           "rpm"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "The speed of the fan." 
+    ::= { cefcFanEntry 1 }
+
+cefcFanSpeedPercent OBJECT-TYPE
+    SYNTAX          CefcPercentOrMinusOne
+    UNITS           "percent"
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "The percent of speed relative to the maximum
+        speed of the fan." 
+    ::= { cefcFanEntry 2 }
  
 
 -- cefcPhysicalTable
@@ -3166,10 +3250,24 @@ cefcFanCoolingGroup OBJECT-GROUP
         capacity modes and properties of the fans."
     ::= { cefcMIBGroups 30 }
 
+cefcFanDirectionGroup OBJECT-GROUP
+    OBJECTS         { cefcFanTrayDirection }
+    STATUS          current
+    DESCRIPTION
+        "The collection of objects provide the direction
+        information of the manageable fan entities."
+    ::= { cefcMIBGroups 31 }
+
+cefcFanSpeedGroup OBJECT-GROUP
+    OBJECTS         {
+                        cefcFanSpeed,
+                        cefcFanSpeedPercent
+                    }
+    STATUS          current
+    DESCRIPTION
+        "The collection of objects provide the speed
+        information of the manageable fan entities."
+    ::= { cefcMIBGroups 32 }
+
 END
-
-
-
-
-
 

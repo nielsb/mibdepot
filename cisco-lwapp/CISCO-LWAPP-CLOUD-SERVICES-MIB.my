@@ -37,7 +37,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappCloudServicesMIB MODULE-IDENTITY
-    LAST-UPDATED    "201804240000Z"
+    LAST-UPDATED    "201807030000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems
@@ -155,7 +155,33 @@ ciscoLwappCloudServicesMIB MODULE-IDENTITY
         The sensors are controlled and instructed by the 
         Network Assurance server. APs can be tentatively put 
         in Sensor mode to do the Sensor Job. There can be 
-        dedicated sensors as well."
+        dedicated sensors as well.
+
+        Filtered Channels ( FC )
+
+        These are user-defined channels which use the filters
+        configured by the user to choose and carry the required 
+        data."
+    REVISION        "201807030000Z"
+    DESCRIPTION
+        "Added cLCSNAServerResetSubscriptions,
+        cLCSWebhookResetSubscriptions,
+        clCSCMXOnPremisesEnable
+        Added cLCSTelemetryFCTable,
+        cLCSTelemetryFCFilterTable,
+        cLCSNAServerChannelTable,
+        cLCSWebhookChannelTable,
+        clCSTelemetryConfigGroup,
+        clCSNAGlobalConfigGroupRev2,
+        clCSWebhookConfigGroupRev1,
+        clCSCMXConfigGroupRev1
+        Deprecated clCSNAServerOnchangeEnable,
+             clCSNAServerSyncInterval,
+             clCSNAServerSubscriptionAction,
+             clCSNAServerSubscriptionTopic,
+             clCSNAGlobalConfigGroupRev1,
+             clCSWebhookConfigGroup,
+             clCSCMXConfigGroup"
     REVISION        "201804240000Z"
     DESCRIPTION
         "Added clCSNAServerOnchangeEnable,
@@ -185,14 +211,14 @@ ciscoLwappCloudServicesMIB MODULE-IDENTITY
 clCSMIBNotifs  OBJECT IDENTIFIER
     ::= { ciscoLwappCloudServicesMIB 0 }
 
-clCSMIBObjects  OBJECT IDENTIFIER
-    ::= { ciscoLwappCloudServicesMIB 1 }
-
-clCSMIBConform  OBJECT IDENTIFIER
-    ::= { ciscoLwappCloudServicesMIB 2 }
-
 clCSNANotifs  OBJECT IDENTIFIER
     ::= { clCSMIBNotifs 0 }
+
+clCSSecTunNotifs  OBJECT IDENTIFIER
+    ::= { clCSMIBNotifs 1 }
+
+clCSMIBObjects  OBJECT IDENTIFIER
+    ::= { ciscoLwappCloudServicesMIB 1 }
 
 clCSNAObjects  OBJECT IDENTIFIER
     ::= { clCSMIBObjects 1 }
@@ -205,6 +231,9 @@ clCSNAGlobalConfig  OBJECT IDENTIFIER
 
 clCSNATrapMgmtObjects  OBJECT IDENTIFIER
     ::= { clCSNAObjects 3 }
+
+clCSNAServerConfigTable  OBJECT IDENTIFIER
+    ::= { clCSNAObjects 4 }
 
 clCSDXObjects  OBJECT IDENTIFIER
     ::= { clCSMIBObjects 2 }
@@ -230,11 +259,17 @@ clCSSecTunConfig  OBJECT IDENTIFIER
 clCSSecTunInfo  OBJECT IDENTIFIER
     ::= { clCSSecTunObjects 2 }
 
-clCSSecTunNotifs  OBJECT IDENTIFIER
-    ::= { clCSMIBNotifs 1 }
-
 clCSWebhookGlobalObjects  OBJECT IDENTIFIER
     ::= { clCSMIBObjects 5 }
+
+clCSWebhookTableObjects  OBJECT IDENTIFIER
+    ::= { clCSMIBObjects 6 }
+
+clCSFilterChanTableObjects  OBJECT IDENTIFIER
+    ::= { clCSMIBObjects 7 }
+
+clCSMIBConform  OBJECT IDENTIFIER
+    ::= { ciscoLwappCloudServicesMIB 2 }
 
 
 -- ****************************************************
@@ -263,7 +298,7 @@ clCSNAServerIdToken OBJECT-TYPE
 clCSNAServerOnchangeEnable OBJECT-TYPE
     SYNTAX          TruthValue
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the type of telemetry data that will be
         externalized from the controller. 
@@ -274,7 +309,9 @@ clCSNAServerOnchangeEnable OBJECT-TYPE
         the entire dataset(bulk)
 
         A value of 'true' indicates that onchange is enabled.
-        A value of 'false' indicates that onChange is disabled."
+        A value of 'false' indicates that onChange is disabled.
+        clCSNAServerOnchangeEnable object is superseded by 
+        clCSNAServerChannelOnChangeMode."
     DEFVAL          { false } 
     ::= { clCSNAServerConfig 3 }
 
@@ -284,7 +321,7 @@ clCSNAServerSyncInterval OBJECT-TYPE
                         adaptive(2)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the frequency
         at which the telemetry data would be received 
@@ -293,7 +330,9 @@ clCSNAServerSyncInterval OBJECT-TYPE
         fixed    - The controller will provide the 
                    telemetry data once in every 5 minutes
         adaptive - The controller will provide the 
-                   telemetry data once in every 30 seconds"
+                   telemetry data once in every 30 seconds
+        clCSNAServerSyncInterval object is superseded by 
+        clCSNAServerChannelSyncInterval."
     DEFVAL          { fixed } 
     ::= { clCSNAServerConfig 4 }
 
@@ -303,7 +342,7 @@ clCSNAServerSubscriptionAction OBJECT-TYPE
                         remove(2)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the possible modifications
         to the data content in the telemetry stream 
@@ -312,7 +351,9 @@ clCSNAServerSubscriptionAction OBJECT-TYPE
         add    - will add the specified channel 
                  to the telemetry data stream
         remove - will remove the specified channel 
-                 from the telemetry data stream"
+                 from the telemetry data stream
+        clCSNAServerSubscriptionAction object is superseded by 
+        clCSNAServerChannelRowStatus."
     DEFVAL          { add } 
     ::= { clCSNAServerConfig 5 }
 
@@ -332,7 +373,7 @@ clCSNAServerSubscriptionTopic OBJECT-TYPE
                         mapserver(11)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the channels that can be modified
         in the telemetry data stream that is sent to the NA server. 
@@ -349,8 +390,327 @@ clCSNAServerSubscriptionTopic OBJECT-TYPE
         scanReport(8)        - Configures the scan-report channel
         clientDnsReport(9)   - Configures the client-dns-report channel
         fra(10)              - Configures the fra channel
-        mapserver(11)        - Configures the mapserver channel" 
+        mapserver(11)        - Configures the mapserver channel
+        clCSNAServerSubscriptionTopic object is superseded by 
+        clCSNAServerChannelName
+        ." 
     ::= { clCSNAServerConfig 6 }
+
+cLCSNAServerResetSubscriptions OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specfies the option to reset NA server channel
+        subscriptions to defaults.
+        A value of 'true' indicates that subscriptions are reset.
+        A value of 'false' indicates that subscriptions are not reset.
+        User can only set the value 'true'.
+        Read on this object always returns the value 'false'."
+    DEFVAL          { false } 
+    ::= { clCSNAServerConfig 7 }
+
+cLCSNAServerChannelTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CLCSNAServerChannelEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents NA server subscription channel
+        related configurations."
+    ::= { clCSNAServerConfigTable 1 }
+
+cLCSNAServerChannelEntry OBJECT-TYPE
+    SYNTAX          CLCSNAServerChannelEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents and includes the
+        attributes needed for subscribing a NA server channel"
+    INDEX           { clCSNAServerChannelName } 
+    ::= { cLCSNAServerChannelTable 1 }
+
+CLCSNAServerChannelEntry ::= SEQUENCE {
+        clCSNAServerChannelName         SnmpAdminString,
+        clCSNAServerChannelSyncInterval INTEGER,
+        clCSNAServerChannelOnChangeMode TruthValue,
+        clCSNAServerIsFilterChannel     TruthValue,
+        clCSNAServerChannelRowStatus    RowStatus
+}
+
+clCSNAServerChannelName OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the NA server channel name
+        to subscribe/unsubscribe/set sync interval/set on-change 
+        mode based on the value of respective objects.
+        'ap': This value indicates aps channel.
+        'ap-fra': This value indicates ap-fra channel.
+        'ap-capwap': This value indicates ap-capwap channel.
+        'ap-channel': This value indicates ap-channel channel.
+        'ap-fra-sensor': This value indicates ap-fra-sensor channel.
+        'ap-interface-stats': This value indicates ap-interface-stats 
+         channel.
+        'ap-inventory': This value indicates ap-inventory channel.
+        'ap-network-stats': This value indicates ap-network-stats 
+         channel.
+        'ap-reports': This value indicates ap-reports channel.
+        'ap-rf': This value indicates ap-rf channel.
+        'ap-rf-neighbors': This value indicates ap-rf-neighbors channel.
+        'ap-rf-stats': This value indicates ap-rf-stats channel.
+        'ap-events': This value indicates ap-events channel.
+        'ap-system': This value indicates ap-system channel.
+        'cdp': This value indicates cdp channel.
+        'client-app-stats': This value indicates client-app-stats 
+         channel.
+        'client-mobility-stats': This value indicates 
+         client-mobility-stats channel.
+        'client-network-stats': This value indicates 
+         client-network-stats channel.
+        'client-policies': This value indicates client-policies channel.
+        'client-reports': This value indicates client-reports channel.
+        'client-rf-measurements': This value indicates 
+         client-rf-measurements channel.
+        'client-traffic-measurements': This value indicates 
+         client-traffic-measurements channel.
+        'client-wireless-stats': This value indicates 
+         client-wireless-stats channel.
+        'client-dns-reports': This value indicates 
+         client-dns-reports channel.
+        'client-events': This value indicates client-events channel.
+        'client': This value indicates clients channel.
+        'dhcp': This value indicates dhcp channel.
+        'eogre': This value indicates eogre channel.
+        'fabric': This value indicates fabric channel.
+        'interferers': This value indicates interferers channel.
+        'licensing': This value indicates licensing channel.
+        'mobility': This value indicates mobility channel.
+        'ndp': This value indicates ndp channel.
+        'radius-events': This value indicates radius-events channel.
+        'radius': This value indicates radius channel.
+        'redundancy-events': This value indicates redundancy-events 
+         channel.
+        'redundancy': This value indicates redundancy channel.
+        'rogues': This value indicates rogues channel.
+        'scan-reports': This value indicates scan-reports channel.
+        'system-core-stats': This value indicates system-core-stats 
+         channel.
+        'system-dataplane-stats': This value indicates 
+         system-dataplane-stats channel.
+        'system-general-stats': This value indicates 
+         system-general-stats channel.
+        'system-port-stats': This value indicates system-port-stats 
+         channel.
+        'system-process-stats': This value indicates 
+         system-process-stats channel.
+        'tacacs': This value indicates tacacs channel.
+        <filter channel name> : User can also specify filter channel 
+         name to subscribe" 
+    ::= { cLCSNAServerChannelEntry 1 }
+
+clCSNAServerChannelSyncInterval OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        fifteen(15),
+                        thirty(30),
+                        sixty(60),
+                        threehundred(300)
+                    }
+    UNITS           "Seconds"
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the NA server channel sync interval.
+        fifteen(15): This value indicates 15 sec interval
+        thirty(30): This value indicates 30 sec interval
+        sixty(60): This value indicates 60 sec interval
+        threehundred(300): This value indicates 300 sec interval.
+        This object can't be used to set interval for 
+        filter-channels." 
+    ::= { cLCSNAServerChannelEntry 2 }
+
+clCSNAServerChannelOnChangeMode OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the value of on-change mode of a
+        NA server channel. Only the changed data is synced if it's 
+        enabled. 
+        A value of 'true' indicates that only changed data 
+        will be synced. 
+        A value of 'false' indicates that all the data 
+        present in DB will be synced. 
+        This object can't be used to set 
+        on-change mode for filter-channels." 
+    ::= { cLCSNAServerChannelEntry 3 }
+
+clCSNAServerIsFilterChannel OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents whether the given channel is filter
+        channel or static channel.
+        A value of 'true' indicates that the channel is filter channel
+        A value of 'false' indicates that the channel is 
+        static channel" 
+    DEFVAL          { false } 
+    ::= { cLCSNAServerChannelEntry 4 }
+
+clCSNAServerChannelRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This is the status column for this row and is used to
+        create and delete specific instances of rows in this 
+        table." 
+    ::= { cLCSNAServerChannelEntry 5 }
+ 
+
+-- *********************************************************
+-- cisco LWAPP network Telemetry Filter channel configuration
+-- *********************************************************
+
+cLCSTelemetryFCTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CLCSTelemetryFCEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents telemetry filter channel
+        related configurations. Filter channel is a user
+        created channel which uses filters added by user 
+        to externalize the data."
+    ::= { clCSFilterChanTableObjects 1 }
+
+cLCSTelemetryFCEntry OBJECT-TYPE
+    SYNTAX          CLCSTelemetryFCEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the attributes
+        needed for managing a filter channel."
+    INDEX           { clCSTelemetryFCName } 
+    ::= { cLCSTelemetryFCTable 1 }
+
+CLCSTelemetryFCEntry ::= SEQUENCE {
+        clCSTelemetryFCName        SnmpAdminString,
+        clCSTelemetryFCParent      SnmpAdminString,
+        clCSTelemetryFCSubStatus   INTEGER,
+        clCSTelemetryFCFilterCount Unsigned32,
+        clCSTelemetryFCRowStatus   RowStatus
+}
+
+clCSTelemetryFCName OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the name of filter channel." 
+    ::= { cLCSTelemetryFCEntry 1 }
+
+clCSTelemetryFCParent OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the name of parent channel to which
+        the filter channel belongs. Parent channel should be 
+        a static channel." 
+    ::= { cLCSTelemetryFCEntry 2 }
+
+clCSTelemetryFCSubStatus OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        none(1),
+                        assurance(2),
+                        webhook(3)
+                    }
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents whether the filter channel is
+        subscribed or not.
+        none(1): This value indicates that filter channel is
+        not subscribed.
+        assurance(2): This value indicates that filter channel
+        is subscribed to assurance.
+        webhook(3): This value indicates that filter channel
+        is subscribed to webhook."
+    DEFVAL          { none } 
+    ::= { cLCSTelemetryFCEntry 3 }
+
+clCSTelemetryFCFilterCount OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents the number of filters configured
+        on this filter channel."
+    DEFVAL          { 0 } 
+    ::= { cLCSTelemetryFCEntry 4 }
+
+clCSTelemetryFCRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This is the status column for this row and is used to
+        create and delete specific instances of rows in this 
+        table." 
+    ::= { cLCSTelemetryFCEntry 5 }
+ 
+
+
+cLCSTelemetryFCFilterTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CLCSTelemetryFCFilterEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents all the filters configured on the
+        filter channels."
+    ::= { clCSFilterChanTableObjects 2 }
+
+cLCSTelemetryFCFilterEntry OBJECT-TYPE
+    SYNTAX          CLCSTelemetryFCFilterEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents the attributes
+        needed for managing the filters of a perticular filter
+        channel"
+    INDEX           {
+                        clCSTelemetryFCName,
+                        clCSTelemetryFCFilter
+                    } 
+    ::= { cLCSTelemetryFCFilterTable 1 }
+
+CLCSTelemetryFCFilterEntry ::= SEQUENCE {
+        clCSTelemetryFCFilter          SnmpAdminString,
+        clCSTelemetryFCFilterRowStatus RowStatus
+}
+
+clCSTelemetryFCFilter OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the filters of a given filter channel.
+        Filter channel extracts the data from parent channel 
+        based on the provided filters." 
+    ::= { cLCSTelemetryFCFilterEntry 1 }
+
+clCSTelemetryFCFilterRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This is the status column for this row and is used to
+        create and delete specific instances of rows in this 
+        table." 
+    ::= { cLCSTelemetryFCFilterEntry 2 }
+ 
+
 
 -- *********************************************************
 -- cisco LWAPP network assurance Global configuration
@@ -543,13 +903,27 @@ clCSCMXEnable OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "This object specifies whether cloud services for
-        cmx is enabled or disabled.
+        CMX is enabled or disabled.
         A value of 'true' indicates that cloud services enables
-        for cmx.
+        for CMX.
         A value of 'false' indicates that cloud services disables
-        for cmx."
+        for CMX."
     DEFVAL          { false } 
     ::= { clCSCMXConfig 1 }
+
+clCSCMXOnPremisesEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies whether NMSP service for on-premises
+        CMX is enabled or disabled.
+        A value of 'true' indicates that NMSP service is enabled for 
+        on-premises CMX.
+        A value of 'false' indicates that NMSP service is disabled for
+        on-premises CMX."
+    DEFVAL          { true } 
+    ::= { clCSCMXConfig 2 }
 
 -- ************************************************************
 -- cisco LWAPP Secure tunnel configuration - clCSSecTunConfig
@@ -952,7 +1326,7 @@ clCSWebhookEnable OBJECT-TYPE
 clCSWebhookOnchangeEnable OBJECT-TYPE
     SYNTAX          TruthValue
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the type of telemetry data that will be
         externalized. The type can be bulk or onChange. 
@@ -963,7 +1337,9 @@ clCSWebhookOnchangeEnable OBJECT-TYPE
         receive the entire dataset(bulk)
 
         A value of 'true' indicates that onchange is enabled.
-        A value of 'false' indicates that onChange is disabled."
+        A value of 'false' indicates that onChange is disabled.
+        clCSWebhookOnchangeEnable object is superseded by 
+        clCSWebhookChannelOnChangeMode."
     DEFVAL          { false } 
     ::= { clCSWebhookGlobalObjects 4 }
 
@@ -973,14 +1349,18 @@ clCSWebhookSyncInterval OBJECT-TYPE
                         adaptive(2)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the frequency
         at which the telemetry data
         would be received at the webhook server. 
 
         A value of fixed will provide data once in every 5 minutes
-        A value of adaptive will provide data once in 30 seconds"
+        A value of adaptive will provide data once in 30 seconds
+        clCSWebhookSyncInterval object is superseded by 
+        clCSWebhookChannelSyncInterval
+
+        ."
     DEFVAL          { fixed } 
     ::= { clCSWebhookGlobalObjects 5 }
 
@@ -990,14 +1370,16 @@ clCSWebhookSubscriptionAction OBJECT-TYPE
                         remove(2)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the possible
         modifications to the data content 
         in the telemetry stream sent to the webhook server.
 
         add - will add the channel to the telemetry stream
-        remove - will remove the channel from the telemetry stream"
+        remove - will remove the channel from the telemetry stream
+        clCSWebhookSubscriptionAction object is superseded by 
+        clCSWebhookChannelRowStatus."
     DEFVAL          { add } 
     ::= { clCSWebhookGlobalObjects 6 }
 
@@ -1012,7 +1394,7 @@ clCSWebhookSubscriptionTopic OBJECT-TYPE
                         mapserver(6)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object specifies the channels that can be modified
         in the telemetry data stream that is 
@@ -1025,8 +1407,162 @@ clCSWebhookSubscriptionTopic OBJECT-TYPE
         ap(3)          - Configures the AP channel
         rogue(4)       - Configures the rogue channel
         interferer(5)  - Configures the interferer channel
-        mapserver(6)   - Configures the mapserver channel" 
+        mapserver(6)   - Configures the mapserver channel
+        clCSWebhookSubscriptionTopic object is superseded by 
+        clCSWebhookChannelName." 
     ::= { clCSWebhookGlobalObjects 7 }
+
+cLCSWebhookResetSubscriptions OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specfies the option to reset webhook channel
+        subscriptions to defaults.
+        A value of 'true' indicates that subscriptions are reset.
+        A value of 'false' indicates that subscriptions are not reset.
+        User can only set the value 'true'.
+        Read on this object always returns the value 'false'."
+    DEFVAL          { false } 
+    ::= { clCSWebhookGlobalObjects 8 }
+
+cLCSWebhookChannelTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF CLCSWebhookChannelEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents Webhook subscription channel
+        related configurations."
+    ::= { clCSWebhookTableObjects 1 }
+
+cLCSWebhookChannelEntry OBJECT-TYPE
+    SYNTAX          CLCSWebhookChannelEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "Each entry in this table represents and includes the
+        attributes needed for subscribing a webhook channel"
+    INDEX           { clCSWebhookChannelName } 
+    ::= { cLCSWebhookChannelTable 1 }
+
+CLCSWebhookChannelEntry ::= SEQUENCE {
+        clCSWebhookChannelName         SnmpAdminString,
+        clCSWebhookChannelSyncInterval INTEGER,
+        clCSWebhookChannelOnChangeMode TruthValue,
+        clCSWebhookChannelRowStatus    RowStatus
+}
+
+clCSWebhookChannelName OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the webhook channel name
+        to subscribe/unsubscribe/set sync interval/set on-change 
+        mode based on the value of respective objects.
+        'ap': This value indicates aps channel.
+        'ap-fra': This value indicates ap-fra channel.
+        'ap-capwap': This value indicates ap-capwap channel.
+        'ap-channel': This value indicates ap-channel channel.
+        'ap-fra-sensor': This value indicates ap-fra-sensor channel.
+        'ap-interface-stats': This value indicates ap-interface-stats 
+         channel.
+        'ap-inventory': This value indicates ap-inventory channel.
+        'ap-network-stats': This value indicates ap-network-stats 
+         channel.
+        'ap-reports': This value indicates ap-reports channel.
+        'ap-rf': This value indicates ap-rf channel.
+        'ap-rf-neighbors': This value indicates ap-rf-neighbors channel.
+        'ap-rf-stats': This value indicates ap-rf-stats channel.
+        'ap-events': This value indicates ap-events channel.
+        'ap-system': This value indicates ap-system channel.
+        'cdp': This value indicates cdp channel.
+        'client-app-stats': This value indicates client-app-stats 
+         channel.
+        'client-mobility-stats': This value indicates 
+         client-mobility-stats channel.
+        'client-network-stats': This value indicates 
+         client-network-stats channel.
+        'client-policies': This value indicates client-policies channel.
+        'client-reports': This value indicates client-reports channel.
+        'client-rf-measurements': This value indicates 
+         client-rf-measurements channel.
+        'client-traffic-measurements': This value indicates 
+         client-traffic-measurements channel.
+        'client-wireless-stats': This value indicates 
+         client-wireless-stats channel.
+        'client-dns-reports': This value indicates client-dns-reports 
+         channel.
+        'client-events': This value indicates client-events channel.
+        'client': This value indicates clients channel.
+        'dhcp': This value indicates dhcp channel.
+        'eogre': This value indicates eogre channel.
+        'fabric': This value indicates fabric channel.
+        'interferers': This value indicates interferers channel.
+        'licensing': This value indicates licensing channel.
+        'mobility': This value indicates mobility channel.
+        'ndp': This value indicates ndp channel.
+        'radius-events': This value indicates radius-events channel.
+        'radius': This value indicates radius channel.
+        'redundancy-events': This value indicates redundancy-events 
+         channel.
+        'redundancy': This value indicates redundancy channel.
+        'rogues': This value indicates rogues channel.
+        'system-core-stats': This value indicates system-core-stats 
+         channel.
+        'system-dataplane-stats': This value indicates 
+         system-dataplane-stats channel.
+        'system-general-stats': This value indicates 
+         system-general-stats channel.
+        'system-port-stats': This value indicates system-port-stats 
+         channel.
+        'system-process-stats': This value indicates 
+         system-process-stats channel.
+        'tacacs': This value indicates tacacs channel." 
+    ::= { cLCSWebhookChannelEntry 1 }
+
+clCSWebhookChannelSyncInterval OBJECT-TYPE
+    SYNTAX          INTEGER  {
+                        fifteen(15),
+                        thirty(30),
+                        sixty(60),
+                        threehundred(300)
+                    }
+    UNITS           "Seconds"
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the webhook channel sync interval.
+        fifteen(15): This value indicates 15 sec interval
+        thirty(30): This value indicates 30 sec interval
+        sixty(60): This value indicates 60 sec interval
+        threehundred(300): This value indicates 300 sec interval." 
+    ::= { cLCSWebhookChannelEntry 2 }
+
+clCSWebhookChannelOnChangeMode OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the value of on-change mode
+        of a webhook server channel.
+        A value of 'true' indicates that only changed data will be 
+        synced.
+        A value of 'false' indicates that all the data present
+        in DB will be synced." 
+    ::= { cLCSWebhookChannelEntry 3 }
+
+clCSWebhookChannelRowStatus OBJECT-TYPE
+    SYNTAX          RowStatus
+    MAX-ACCESS      read-create
+    STATUS          current
+    DESCRIPTION
+        "This is the status column for this row and is used to
+        create and delete specific instances of rows in this 
+        table." 
+    ::= { cLCSWebhookChannelEntry 4 }
+ 
+
 
 -- ****************************************************
 -- Objects for Notifications
@@ -1193,7 +1729,7 @@ clCSMIBComplianceRev1 MODULE-COMPLIANCE
     ::= { clCSMIBCompliances 2 }
 
 clCSMIBComplianceRev2 MODULE-COMPLIANCE
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "The compliance statement for the SNMP entities that
         implement this MIB."
@@ -1212,6 +1748,28 @@ clCSMIBComplianceRev2 MODULE-COMPLIANCE
                         clCSWebhookConfigGroup
                     }
     ::= { clCSMIBCompliances 3 }
+
+clCSMIBComplianceRev3 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement this MIB."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        clCSNAServerConfigGroup,
+                        clCSNAGlobalConfigGroupRev2,
+                        clCSCMXServerConfigGroup,
+                        clCSCMXConfigGroupRev1,
+                        clCSNATrapGroup,
+                        clCSNASensorTrapGroup,
+                        clCSDxConfigGroup,
+                        clCSSecTunConfigGroup,
+                        clCSSecTunInfoGroup,
+                        clCSSecTunNotifsGroup,
+                        clCSWebhookConfigGroupRev1,
+                        clCSTelemetryConfigGroup
+                    }
+    ::= { clCSMIBCompliances 4 }
 
 -- ********************************************************************
 -- *    Units of conformance
@@ -1263,11 +1821,13 @@ clCSCMXServerConfigGroup OBJECT-GROUP
 
 clCSCMXConfigGroup OBJECT-GROUP
     OBJECTS         { clCSCMXEnable }
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This collection of objects represent the configuration
         for Connected Mobility Experience (CMX) on the controller
-        to be passed to an LWAPP AP."
+        to be passed to an LWAPP AP.
+        clCSCMXConfigGroup object is superseded by 
+        clCSCMXConfigGroupRev1."
     ::= { clCSMIBGroups 4 }
 
 clCSDxConfigGroup OBJECT-GROUP
@@ -1360,12 +1920,37 @@ clCSNAGlobalConfigGroupRev1 OBJECT-GROUP
                         clCSNAServerSubscriptionAction,
                         clCSNAServerSubscriptionTopic
                     }
+    STATUS          deprecated
+    DESCRIPTION
+        "This collection of objects represent the
+        configuration of Network Assuranceon the controller 
+        to be passed to a Network Assurance Server.
+        clCSNAGlobalConfigGroupRev1 object is superseded by 
+        clCSNAGlobalConfigGroupRev2."
+    ::= { clCSMIBGroups 11 }
+
+clCSNAGlobalConfigGroupRev2 OBJECT-GROUP
+    OBJECTS         {
+                        clCSNAEnable,
+                        clCSNASensorBackhaulSSID,
+                        clCSNASensorBackhaulAuthType,
+                        clCSNASensorBackhaulEapType,
+                        clCSNASensorBackhaulUsername,
+                        clCSNASensorBackhaulPassword,
+                        clCSNASensorBackhaulPsk,
+                        clCSNASensorBackhaulPskMode,
+                        clCSNAServerChannelSyncInterval,
+                        clCSNAServerChannelOnChangeMode,
+                        clCSNAServerChannelRowStatus,
+                        clCSNAServerIsFilterChannel,
+                        cLCSNAServerResetSubscriptions
+                    }
     STATUS          current
     DESCRIPTION
         "This collection of objects represent the
-        configuration of Network Assurance on the controller 
-        to be passed to a Network Assurance Server."
-    ::= { clCSMIBGroups 11 }
+        configuration of network assurance on the controller 
+        to be passed to a network assurance server."
+    ::= { clCSMIBGroups 12 }
 
 clCSWebhookConfigGroup OBJECT-GROUP
     OBJECTS         {
@@ -1377,12 +1962,58 @@ clCSWebhookConfigGroup OBJECT-GROUP
                         clCSWebhookSubscriptionAction,
                         clCSWebhookSubscriptionTopic
                     }
+    STATUS          deprecated
+    DESCRIPTION
+        "This collection of objects represent the
+        configuration of a webhook server to receive telemetry 
+        data from the controller
+        clCSWebhookConfigGroup object is superseded by 
+        clCSWebhookConfigGroupRev1."
+    ::= { clCSMIBGroups 13 }
+
+clCSWebhookConfigGroupRev1 OBJECT-GROUP
+    OBJECTS         {
+                        clCSWebhookUrl,
+                        clCSWebhookAuthToken,
+                        clCSWebhookEnable,
+                        clCSWebhookChannelSyncInterval,
+                        clCSWebhookChannelOnChangeMode,
+                        clCSWebhookChannelRowStatus,
+                        cLCSWebhookResetSubscriptions
+                    }
     STATUS          current
     DESCRIPTION
         "This collection of objects represent the
         configuration of a webhook server to receive telemetry 
         data from the controller"
-    ::= { clCSMIBGroups 12 }
+    ::= { clCSMIBGroups 14 }
+
+clCSCMXConfigGroupRev1 OBJECT-GROUP
+    OBJECTS         {
+                        clCSCMXEnable,
+                        clCSCMXOnPremisesEnable
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represent the configuration
+        for Connected Mobility Experience (CMX) on the controller
+        to be passed to an LWAPP AP."
+    ::= { clCSMIBGroups 15 }
+
+clCSTelemetryConfigGroup OBJECT-GROUP
+    OBJECTS         {
+                        clCSTelemetryFCParent,
+                        clCSTelemetryFCSubStatus,
+                        clCSTelemetryFCFilterCount,
+                        clCSTelemetryFCRowStatus,
+                        clCSTelemetryFCFilterRowStatus
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represent the
+        configuration of  telemetry filter channels."
+    ::= { clCSMIBGroups 16 }
 
 END
+
 
