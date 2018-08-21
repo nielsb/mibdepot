@@ -2239,6 +2239,7 @@ ciscoCatWSC2960L24TQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2495 }
 ciscoCatWSC2960L48TQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2496 } -- Catalyst 2960L 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks 
 ciscoCatWSC2960L24PQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2497 } -- Catalyst 2960L 24 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support 
 ciscoCatWSC2960L48PQLL              OBJECT IDENTIFIER ::= { ciscoProducts 2498 } -- Catalyst 2960L 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support 
+ciscoCat9404R                       OBJECT IDENTIFIER ::= { ciscoProducts 2499 } -- Cisco Catalyst 9400 Series 4 slot
 ciscoCat9407R                       OBJECT IDENTIFIER ::= { ciscoProducts 2500 } -- Cisco Catalyst 9400 Series 7 slot 
 ciscoCat9410R                       OBJECT IDENTIFIER ::= { ciscoProducts 2501 } -- Cisco Catalyst 9400 Series 10 slot
 ciscoASR903U                        OBJECT IDENTIFIER ::= { ciscoProducts 2502 } -- Cisco Aggregation Services Router 900U Series with 3RU Chassis  
@@ -2350,6 +2351,7 @@ ciscoC11164PLteLA                   OBJECT IDENTIFIER ::= { ciscoProducts 2657 }
 ciscoEsxSECPA                       OBJECT IDENTIFIER ::= { ciscoProducts 2659 } -- Security Packet Analyzer running on ESX Hypervisor 
 ciscoKvmSECPA                       OBJECT IDENTIFIER ::= { ciscoProducts 2660 } -- Security Packet Analyzer running on KVM Hypervisor 
 ciscoIR1101K9                       OBJECT IDENTIFIER ::= { ciscoProducts 2661 } -- Next-generation Industrial Modular Router with 4 Copper Ports + 1 Combo Port + expansion slot, no Fog computing 
+ciscoCat9400VirtualStack            OBJECT IDENTIFIER ::= { ciscoProducts 2664 } -- Virtual Stack of Cisco Catalyst 9400
 ciscoISRAP1100ACME                  OBJECT IDENTIFIER ::= { ciscoProducts 2665 } -- Cisco Integrated Services Router 1K Series Mobility Express
 ciscoISR4221X                       OBJECT IDENTIFIER ::= { ciscoProducts 2666 } -- Cisco ISR 4221X Router with 8 GB memory
 ciscoC1111X8P                       OBJECT IDENTIFIER ::= { ciscoProducts 2668 } -- Cisco C1111X-8P Router
@@ -2393,6 +2395,11 @@ ciscoN54024Z8Q2CM                   OBJECT IDENTIFIER ::= { ciscoProducts 2741 }
 ciscoN540X24Z8Q2CM                  OBJECT IDENTIFIER ::= { ciscoProducts 2742 } -- Conformal Coated NCS 540 Series Router 24x10G, 8x25G, 2x100G
 ciscoN560RSP4                       OBJECT IDENTIFIER ::= { ciscoProducts 2743 } -- Cisco NCS 560 Route Switch Processor 4 - 800G, L Scale
 ciscoN560RSP4E                      OBJECT IDENTIFIER ::= { ciscoProducts 2744 } -- Cisco NCS 560 Route Switch Processor 4 Enhanced - 800G, XL
+ciscoC891FJK9                       OBJECT IDENTIFIER ::= { ciscoProducts 2771 } -- C891FJ-K9 router with 1 Giga Ethernet Primary WAN, 1 SFP (Small Form-factor Pluggable) Giga Ethernet Primary WAN, 1 Fast Ethernet WAN, 1 V.92, 1 ISDN BRI S/T interface, 8 Giga Ethernet LAN, 4 PoE Optional, 1 USB 2.0 port, 1 Console/Aux port, 256MB flash memory and 1GB DRAM
+ciscoFpr4145K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2777 } -- Cisco FirePOWER 4145 Security Appliance, 1U with embedded security module 44
+ciscoFpr4125K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2778 } -- Cisco FirePOWER 4125 Security Appliance, 1U with embedded security module 32
+ciscoFpr4115K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2779 } -- Cisco FirePOWER 4115 Security Appliance, 1U with embedded security module 24
+ciscoIOSXREdgecoreAS591654XKSB      OBJECT IDENTIFIER ::= { ciscoProducts 2782 } -- Cisco IOS XR enabled on 3rd Party HW Edgecore AS5916-54XKSB
+ciscoIOSXREdgecoreAS781664X         OBJECT IDENTIFIER ::= { ciscoProducts 2783 } -- Cisco IOS XR enabled on 3rd Party HW Edgecore AS7816-64X        
  
 END
-

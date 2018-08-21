@@ -135,6 +135,7 @@ cevAcceleratorAsa5506K7  OBJECT IDENTIFIER ::= { cevOther 13 }  -- Accelerator f
 cevAcceleratorAsa5508K7  OBJECT IDENTIFIER ::= { cevOther 14 }  -- Accelerator for 5508 with No Payload Encryption  Adaptive Security Appliance
 cevAcceleratorAsa5506H   OBJECT IDENTIFIER ::= { cevOther 15 }  -- Accelerator for 5506H Adaptive Security Appliance
 cevAcceleratorAsa5516    OBJECT IDENTIFIER ::= { cevOther 16 }  -- Accelerator for 5516 Adaptive Security Appliance
+cevAcceleratorFPR1xxx    OBJECT IDENTIFIER ::= { cevOther 17 }  -- Crypto Accelerator for FPR 1xxx series
 
 cevUnknown 	OBJECT IDENTIFIER ::= { cevMIBObjects 2 }
 
@@ -1109,6 +1110,7 @@ cevChassisECDS50IVB             OBJECT IDENTIFIER ::= { cevChassis 1173 } -- Cis
 
 cevChassisN5kC5596TFA           OBJECT IDENTIFIER ::= { cevChassis 1175 } -- Nexus 5596 Switch with 2 Power Supplies, 4 Fan Modules and 48x 10G BaseT Ethernet/FCoE ports
 cevChassisASR9001               OBJECT IDENTIFIER ::= { cevChassis 1178 } -- Cisco Aggregation Services Router (ASR) 9001 Chassis
+
 cevChassis819GM                 OBJECT IDENTIFIER ::= { cevChassis 1188 } -- C819GM Router series with 1 Gigabit Ethernet WAN, 4 Fast Ethernet LAN, 1 3G WAN, 1 Serial, 1 Console/Aux ports, 1GB flash memory and 1GB DRAM
 cevChassis819HGM                OBJECT IDENTIFIER ::= { cevChassis 1189 } -- C819HGM Hardened Router series with 1 Gigabit Ethernet WAN, 4 Fast Ethernet LAN, 1 3G WAN, 1 Serial, 1 Console/Aux ports, 1GB flash memory and 1GB DRAM
 cevChassisN2kC2232TME10GE       OBJECT IDENTIFIER ::= { cevChassis 1190 } -- Nexus 2000 Series 10GE Fabric Extender, 2 Power Supplies, 1 Fan Module, 32x10G-BaseT + field upgradeable module
@@ -1628,6 +1630,7 @@ cevChassisWSC2960L48TQLL                OBJECT IDENTIFIER ::= { cevChassis 1909 
 cevChassisWSC2960L24PQLL                OBJECT IDENTIFIER ::= { cevChassis 1910 } -- Catalyst 2960L 24 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support 
 cevChassisWSC2960L48PQLL                OBJECT IDENTIFIER ::= { cevChassis 1911 } -- Catalyst 2960L 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support 
 cevChassisN3KC3264CE                    OBJECT IDENTIFIER ::= { cevChassis 1912 } -- Nexus 3000 series 2 RU fixed chassis with 64x100G QSFP Ethernet 
+cevChassisC9404R                        OBJECT IDENTIFIER ::= { cevChassis 1913 } -- Cisco Catalyst 9400 Series 4 slot chassis
 cevChassisC9407R                        OBJECT IDENTIFIER ::= { cevChassis 1914 } -- Cisco Catalyst 9400 Series 7 slot chassis 
 cevChassisC9410R                        OBJECT IDENTIFIER ::= { cevChassis 1915 } -- Cisco Catalyst 9400 Series 10 slot chassis 
 cevChassisASR920U16SZIM                 OBJECT IDENTIFIER ::= { cevChassis 1916 } -- Cisco ASR920U Series - 12GE and 4-10GE - Modular PSU and IM  
@@ -1781,7 +1784,14 @@ cevChassisC9274PMLTEGB                  OBJECT IDENTIFIER ::= { cevChassis 2134 
 cevChassisC9264PLTEGB                   OBJECT IDENTIFIER ::= { cevChassis 2135 } -- C926-4PLTEGB Router with 1 Eth+DSL, 1 LTE interface,4 GE LAN interface, 1GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Bootflash
 cevChassisC931J4P                       OBJECT IDENTIFIER ::= { cevChassis 2139 } -- C931J-4P Router with External Power Supply 4 GE LAN interface, 2GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash
 cevChassisNCS5064                       OBJECT IDENTIFIER ::= { cevChassis 2140 } -- Cisco NCS 5064 Series Router
-
+cevChassis01FT566E04                     OBJECT IDENTIFIER ::= { cevChassis 2173 } -- IBM SAN192C-6 8978-E04 (4 Module) SAN Director
+cevChassis01FT565E08                     OBJECT IDENTIFIER ::= { cevChassis 2174 } -- IBM SAN384C-6 8978-E08 (8 Module) SAN Director
+cevChassis01FT564E16                     OBJECT IDENTIFIER ::= { cevChassis 2175 } -- IBM SAN768C-6 8978-E16 (16 Module) SAN Director
+cevChassis01FT562R50                     OBJECT IDENTIFIER ::= { cevChassis 2176 } -- IBM SAN50C-R 8977-R50 50 Port SAN Extension Switch
+cevChassis01FT563T32                     OBJECT IDENTIFIER ::= { cevChassis 2177 } -- IBM SAN32C-6 8977-T32 32X32G FC SAN Switch
+cevChassisFPR4115                        OBJECT IDENTIFIER ::= { cevChassis 2179 } -- FirePOWER 4115 chassis
+cevChassisFPR4125                        OBJECT IDENTIFIER ::= { cevChassis 2180 } -- FirePOWER 4125 chassis
+cevChassisFPR4145                        OBJECT IDENTIFIER ::= { cevChassis 2181 } -- FirePOWER 4145 chassis
 
 cevBackplane				OBJECT IDENTIFIER ::= { cevMIBObjects 4 }
 cevBackplaneAtm			        OBJECT IDENTIFIER ::= { cevBackplane 4 }	-- LS1010 Chassis
@@ -1841,6 +1851,7 @@ cevBackplaneNCS4K                       OBJECT IDENTIFIER ::= { cevBackplane 69 
 cevBackplaneN77c7702                    OBJECT IDENTIFIER ::= { cevBackplane 70 } -- Nexus7700 2-slot backplane 
 cevBackplaneDSC9718                     OBJECT IDENTIFIER ::= { cevBackplane 71 } -- DS-C9718, Backplane of MDS 18-Slot Director Switch
 cevBackplaneNCS1002                     OBJECT IDENTIFIER ::= { cevBackplane 76 } -- Cisco NCS1002 Line Card Chassis Backplane
+cevBackplaneC9404R                      OBJECT IDENTIFIER ::= { cevBackplane 78 } -- Cisco Catalyst 9400 Series 4 slot chassis backplane 
 cevBackplaneC9407R                      OBJECT IDENTIFIER ::= { cevBackplane 79 } -- Cisco Catalyst 9400 Series 7 slot chassis backplane  
 cevBackplaneC9410R                      OBJECT IDENTIFIER ::= { cevBackplane 80 } -- Cisco Catalyst 9400 Series 10 slot chassis backplane
 
@@ -2205,6 +2216,11 @@ cevContainerDSC9396TK9PSU               OBJECT IDENTIFIER ::= { cevContainer 409
 cevContainerDSC9148TK9FanBay            OBJECT IDENTIFIER ::= { cevContainer 410 } -- DS-C9148T-K9-Fan-Bay, Container for Fan Bay of DS-C9148T-K9
 cevContainerDSC9396TK9FanBay            OBJECT IDENTIFIER ::= { cevContainer 411 } -- DS-C9396T-K9-Fan-Bay, Container for Fan Bay of DS-C9396T-K9
 cevContainerFanBay                      OBJECT IDENTIFIER ::= { cevContainer 412 } -- Generic power supply bay
+cevContainerASR907FanSlot               OBJECT IDENTIFIER ::= { cevContainer 415 } -- ASR 907 Fan tray slot
+cevContainerASR907PowerSupplySlot       OBJECT IDENTIFIER ::= { cevContainer 416 } -- ASR 907 Power Module Slot
+cevContainerASR907RPSlot                OBJECT IDENTIFIER ::= { cevContainer 417 } -- ASR 907 Route Processor Slot
+cevContainerASR907LineCardSlot          OBJECT IDENTIFIER ::= { cevContainer 418 } -- ASR 907 IM Slot
+
 
 
 cevPowerSupply		OBJECT IDENTIFIER ::= { cevMIBObjects 6 }
@@ -2693,11 +2709,16 @@ cevPowerSupplyASR9K9901DC               OBJECT IDENTIFIER ::= { cevPowerSupply 5
 cevPowerSupplyNCS1K2KWAC2               OBJECT IDENTIFIER ::= { cevPowerSupply 595 } -- Cisco NCS1001 PSU 2KW AC2
 cevPowerSupplyC9400PWR3200AC            OBJECT IDENTIFIER ::= { cevPowerSupply 596 } -- Cisco Catalyst 9400 Series 3200W AC Power Supply  
 cevPowerSupplyC9400PWR3000AC            OBJECT IDENTIFIER ::= { cevPowerSupply 597 } -- Cisco Catalyst 9400 Series 3000W AC Power Supply  
+cevPowerSupplyC9400PWR3200DC            OBJECT IDENTIFIER ::= { cevPowerSupply 598 } -- Cisco Catalyst 9400 Series 3200W DC Power Supply 
 cevPowerSupplyC9400PS                   OBJECT IDENTIFIER ::= { cevPowerSupply 599 } -- Cisco Catalyst 9400 Series Power Supply
 cevPowerSupplyPWR1100ACIP2              OBJECT IDENTIFIER ::= { cevPowerSupply 601 } -- Cisco ISR series 1100W AC 2 pin Power Supply  POE Module
 cevPowerSupplyDSCAC650WE                OBJECT IDENTIFIER ::= { cevPowerSupply 602 } -- DS-CAC-650W-E, Port side exhaust, 650W AC Power Supply Unit for DS-C9132T-K9
 cevPowerSupplyDSCAC650WI                OBJECT IDENTIFIER ::= { cevPowerSupply 603 } -- DS-CAC-650W-I, Port side intake, 650W AC Power Supply Unit for DS-C9132T-K9
 cevPowerSupplyNXAPAC1100WPI2            OBJECT IDENTIFIER ::= { cevPowerSupply 605 } -- Nexus 3000 Series 1100W Dual input AC power supply, Port Intake
+cevPowerSupplyC9KPWR930DCR              OBJECT IDENTIFIER ::= { cevPowerSupply 606 } -- Cisco Catalyst 9500 Series 930W DC Power Supply
+cevPowerSupplyC9KPWR1600DCR             OBJECT IDENTIFIER ::= { cevPowerSupply 607 } -- Cisco Catalyst 9500 Series 1600W DC Power Supply
+cevPowerSupplyC9KPWR1600ACR             OBJECT IDENTIFIER ::= { cevPowerSupply 608 } -- Cisco Catalyst 9500 Series 1600W AC Power Supply
+cevPowerSupplyC9KPWR650ACR              OBJECT IDENTIFIER ::= { cevPowerSupply 609 } -- Cisco Catalyst 9500 Series 650W AC Power Supply
 cevPowerSupplyNXAPAC1100WPE2            OBJECT IDENTIFIER ::= { cevPowerSupply 610 } -- Nexus 3000 Series 1100W Dual input AC power supply, Port Exhaust air flow
 cevPowerSupplyNXAPDC1100WPI             OBJECT IDENTIFIER ::= { cevPowerSupply 611 } -- Nexus 3000 Series 1100W DC power supply, Port Intake air flow
 cevPowerSupplyNXAPDC1100WPE             OBJECT IDENTIFIER ::= { cevPowerSupply 612 } -- Nexus 3000 Series 1100W DC power supply, Port Exhaust air flow
@@ -2738,6 +2759,10 @@ cevPowerSupplyADHL2DC1500W              OBJECT IDENTIFIER ::= { cevPowerSupply 6
 cevPowerSupplyIE3k480WDc                OBJECT IDENTIFIER ::= { cevPowerSupply 668 } -- Cisco Industrial Ethernet Switch IE3k 480 Watt DC Power Supply
 cevPowerSupplyESS3300720WDc             OBJECT IDENTIFIER ::= { cevPowerSupply 669 } -- Cisco ESS-3300 Embedded Service Switch 720 Watt DC Power Supply
 cevPowerSupplyN9KPuv23000WB              OBJECT IDENTIFIER ::= { cevPowerSupply 673} -- Nexus 9500 platform 3150W universal high-voltage 200 to 277V AC or 240 to 380V DC power supply with port-side intake
+cevPowerSupplyNCS5KPAC1200WFR           OBJECT IDENTIFIER ::= { cevPowerSupply 678 } -- Cisco NCS 5000 Series Router Power AC 1200W Front flow
+cevPowerSupplyNCS5KPAC1200WBK           OBJECT IDENTIFIER ::= { cevPowerSupply 679 } -- Cisco NCS 5000 Series Router Power AC 1200W Back flow
+cevPowerSupplyNCS5KPUV1200W             OBJECT IDENTIFIER ::= { cevPowerSupply 680 } -- Cisco NCS 5000 Series Router Power UV 1200W
+
 
 
 cevFan			OBJECT IDENTIFIER ::= { cevMIBObjects 7 }
@@ -3002,7 +3027,9 @@ cevFanAsr9901Fan                OBJECT IDENTIFIER ::= { cevFan 318 } -- ASR 9901
 cevFanNCS1001FanTray            OBJECT IDENTIFIER ::= { cevFan 319 } -- Cisco NCS1001 Fan Tray
 cevFanC9410FAN                  OBJECT IDENTIFIER ::= { cevFan 320 } -- Cisco Catalyst 9400 Series 10 slot chassis Fan Tray
 cevFanC9407FAN                  OBJECT IDENTIFIER ::= { cevFan 321 } -- Cisco Catalyst 9400 Series 7 slot chassis Fan Tray
+cevFanC9404FAN                  OBJECT IDENTIFIER ::= { cevFan 322 } -- Cisco Catalyst 9400 Series 4 slot chassis Fan Tray
 cevFanC9400FAN                  OBJECT IDENTIFIER ::= { cevFan 323 } -- Cisco Catalyst 9400 Series Fan 
+cevFanNCS4009FANFC              OBJECT IDENTIFIER ::= { cevFan 326 } -- NCS4009 Glaurung2 Fan
 cevFanNXAFAN160CFMPI            OBJECT IDENTIFIER ::= { cevFan 328 } -- NXA-FAN-160CFM-PI  Nexus Fan, 160CFM, port side intake airflow  
 cevFanNXAFAN160CFMPE            OBJECT IDENTIFIER ::= { cevFan 329 } -- NXA-FAN-160CFM-PE  Nexus Fan, 160CFM, port side exhaust airflow
 cevFanDSC32TFANE                OBJECT IDENTIFIER ::= { cevFan 330 } -- DS-C32T-FAN-E, Port Side Exhaust Fan unit for DS-C9132T-K9
@@ -3020,6 +3047,7 @@ cevFanNXAFAN35CFMPE             OBJECT IDENTIFIER ::= { cevFan 358 } -- NXA-FAN-
 cevFanASR9922FANV3              OBJECT IDENTIFIER ::= { cevFan 359 } -- ASR 9922 Fan Tray v3   
 cevFanNCS5064FANFR              OBJECT IDENTIFIER ::= { cevFan 361 } -- NCS 5064 Router Fan Front to Back AirFlow
 cevFanNCS5064FANBK              OBJECT IDENTIFIER ::= { cevFan 362 } -- NCS 5064 Router Fan Back to Front AirFlow
+cevFanN560Fan                   OBJECT IDENTIFIER ::= { cevFan 364 } -- NCS 560 Fan
 
  
 cevSensor			OBJECT IDENTIFIER ::= { cevMIBObjects 8 }
@@ -3676,6 +3704,7 @@ cevModuleA900IMA3GIMSG                  OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleNCS1001EDFA                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 638 } -- Cisco NCS1001 EDFA Optical Module 
 cevModuleNCS1001PSM                     OBJECT IDENTIFIER ::= { cevModuleCommonCards 639 } -- Cisco NCS1001 PSM Optical Module 
 cevModuleNCS1001InterBoard              OBJECT IDENTIFIER ::= { cevModuleCommonCards 640 } -- Cisco NCS1001 Interconnected Card
+cevModuleNCS4009FC2SF                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 642 } -- NCS4009 FC2 S123 card with Fan (Glaurung2)
 cevModuleC9300NM4X1G                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 643 } -- Catalyst 9300 4P 1G Network Module
 cevModuleC9300NM4X10G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 644 } -- Catalyst 9300 4P 10G Network Module
 cevModuleC9300NM2X10G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 645 } -- Catalyst 9300 2P 1G + 2P 10G Network Module
@@ -3688,6 +3717,7 @@ cevModuleSPAETHER20xGE4x10GEDUAL        OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleNC6FC2TMCRIGEL                 OBJECT IDENTIFIER ::= { cevModuleCommonCards 655 } -- NCS 6000 2T MC Rigel Fabric Card. NCS: Network Convergence System MC: Multi-Chassis 
 cevModuleN9KX96136YCR                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 664 } -- Nexus 9000 series module with 16x10G SFP, 32x25G SFP ports and 4x100G QSFP ports
 cevModuleQSFP40GCSRS                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 676 } -- QSFP-40G-CSR-S
+
 
 --cevModuleC36xxType cards are slot-cards specific to the c36xx platforms
 cevModuleC36xxType	OBJECT IDENTIFIER ::= { cevModule 3 }
@@ -4248,7 +4278,17 @@ cevCpuC9274PLTE                         OBJECT IDENTIFIER ::= { cevModuleCpuType
 cevCpuC9274PMLTEGB                      OBJECT IDENTIFIER ::= { cevModuleCpuType 349 } -- C927-4PMLTEGB  Router with 1 Eth+DSL with Annex M, 1 LTE interface,4 GE LAN interface, 1GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash 
 cevCpuC9264PLTEGB                       OBJECT IDENTIFIER ::= { cevModuleCpuType 350 } -- C926-4PLTEGB Router with 1 Eth+DSL, 1 LTE interface,4 GE LAN interface, 1GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Bootflash
 cevCPUC931J4P                           OBJECT IDENTIFIER ::= { cevModuleCpuType 354 } -- C931J-4P Router with External Power Supply 4 GE LAN interface, 2GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash
-
+cevCpuFPR1140                           OBJECT IDENTIFIER ::= { cevModuleCpuType 355 } -- Central Processing Unit for Cisco Firepower 1140 Security Appliance
+cevCpuFPR1120                           OBJECT IDENTIFIER ::= { cevModuleCpuType 356 } -- Central Processing Unit for Cisco Firepower 1120 Security Appliance 
+cevCpuFPR1010                           OBJECT IDENTIFIER ::= { cevModuleCpuType 357 } -- Central Processing Unit for Cisco Firepower 1010 Security Appliance
+cevCpuFPR2140                           OBJECT IDENTIFIER ::= { cevModuleCpuType 358 } -- Central Processing Unit for Cisco Firepower 2140 Security Appliance
+cevCpuFPR2120                           OBJECT IDENTIFIER ::= { cevModuleCpuType 359 } -- Central Processing Unit for Cisco Firepower 2120 Security Appliance 
+cevCpuFPR2110                           OBJECT IDENTIFIER ::= { cevModuleCpuType 360 } -- Central Processing Unit for Cisco Firepower 2110 Security Appliance
+cevCpuFPR2130                           OBJECT IDENTIFIER ::= { cevModuleCpuType 361 } -- Central Processing Unit for Cisco Firepower 2130 Security Appliance
+cevCpuFPR2140N                          OBJECT IDENTIFIER ::= { cevModuleCpuType 362 } -- Network Processing Unit for Cisco Firepower 2140 Security Appliance
+cevCpuFPR2120N                          OBJECT IDENTIFIER ::= { cevModuleCpuType 363 } -- Network Processing Unit for Cisco Firepower 2120 Security Appliance 
+cevCpuFPR2110N                          OBJECT IDENTIFIER ::= { cevModuleCpuType 364 } -- Network Processing Unit for Cisco Firepower 2110 Security Appliance
+cevCpuFPR2130N                          OBJECT IDENTIFIER ::= { cevModuleCpuType 365 } -- Network Processing Unit for Cisco Firepower 2130 Security Appliance
 
 
 
@@ -7227,6 +7267,9 @@ cevModuleA9K16X100GESE     OBJECT IDENTIFIER ::= { cevModuleASR9KType 118 } -- A
 cevModuleA9K16X100GECM     OBJECT IDENTIFIER ::= { cevModuleASR9KType 119 } -- ASR 9000 16-port 100GE CM card
 cevModuleA9932X100GECM     OBJECT IDENTIFIER ::= { cevModuleASR9KType 120 } -- ASR 9900 32-port 100GE CM card
 cevModuleA9K8X100GEXCM     OBJECT IDENTIFIER ::= { cevModuleASR9KType 121 } -- ASR 9000 8-port 100GE CM card
+cevModuleA9948X10GE1GSE    OBJECT IDENTIFIER ::= { cevModuleASR9KType 125 } -- ASR 9900 48-port 10GE & 1GE dual rate Service Edge optimized LC
+cevModuleA9948X10GE1GTR    OBJECT IDENTIFIER ::= { cevModuleASR9KType 126 } -- ASR 9900 48-port 10GE & 1GE dual rate Packet Transport optimized LC
+
 
 
 cevModuleASR14KType        OBJECT IDENTIFIER ::= { cevModule 75 }               -- Represents the base class for all modules used in ASR14000 Series
@@ -7450,6 +7493,126 @@ cevSFP10GLRS                            OBJECT IDENTIFIER ::= { cevModuleSFPPlus
 cevSFP10GSRS                            OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 218 } -- 10GBASE-SR SFP Module, Enterprise-Class
 cevSFPONSSIOCVCOP                       OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 219 } -- Transparent SONET(STS-1/STS-3c/STS-12c) over Packet, Small Form Factor Pluggable Optics(SFP)
 cevSFPONSSIPDHVCOP                      OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 220 } -- Transparent SONET STS-1 over Packet, DS3 VCoP, Small Form Factor Pluggable Optics(SFP)
+cevSFPDwdmLimitSrSfp10g3347             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 221 } -- 10GBASE-DWDM Limiting Short reach 1533.47 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3033             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 222 } -- 10GBASE-DWDM Limiting Short reach 1530.33 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3112             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 223 } -- 10GBASE-DWDM Limiting Short reach 1531.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3190             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 224 } -- 10GBASE-DWDM Limiting Short reach 1531.90 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3268             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 225 } -- 10GBASE-DWDM Limiting Short reach 1532.68 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3819             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 226 } -- 10GBASE-DWDM Limiting Short reach 1538.19 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3661             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 227 } -- 10GBASE-DWDM Limiting Short reach 1536.61 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3425             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 228 } -- 10GBASE-DWDM Limiting Short reach 1534.25 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3504             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 229 } -- 10GBASE-DWDM Limiting Short reach 1535.04 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3582             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 230 } -- 10GBASE-DWDM Limiting Short reach 1535.82 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3740             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 231 } -- 10GBASE-DWDM Limiting Short reach 1537.40 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3898             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 232 } -- 10GBASE-DWDM Limiting Short reach 1538.98 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g3977             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 233 } -- 10GBASE-DWDM Limiting Short reach 1539.77 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4056             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 234 } -- 10GBASE-DWDM Limiting Short reach 1540.56 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4135             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 235 } -- 10GBASE-DWDM Limiting Short reach 1541.35 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4214             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 236 } -- 10GBASE-DWDM Limiting Short reach 1542.14 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4294             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 237 } -- 10GBASE-DWDM Limiting Short reach 1542.94 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4373             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 238 } -- 10GBASE-DWDM Limiting Short reach 1543.73 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4453             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 239 } -- 10GBASE-DWDM Limiting Short reach 1544.53 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4692             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 240 } -- 10GBASE-DWDM Limiting Short reach 1546.92 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4772             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 241 } -- 10GBASE-DWDM Limiting Short reach 1547.72 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4851             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 242 } -- 10GBASE-DWDM Limiting Short reach 1548.51 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4932             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 243 } -- 10GBASE-DWDM Limiting Short reach 1549.32 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5012             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 244 } -- 10GBASE-DWDM Limiting Short reach 1550.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5092             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 245 } -- 10GBASE-DWDM Limiting Short reach 1550.92 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5172             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 246 } -- 10GBASE-DWDM Limiting Short reach 1551.72 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5252             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 247 } -- 10GBASE-DWDM Limiting Short reach 1552.52 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5333             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 248 } -- 10GBASE-DWDM Limiting Short reach 1553.33 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5413             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 249 } -- 10GBASE-DWDM Limiting Short reach 1554.13 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5494             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 250 } -- 10GBASE-DWDM Limiting Short reach 1554.94 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5575             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 251 } -- 10GBASE-DWDM Limiting Short reach 1555.75 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5655             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 252 } -- 10GBASE-DWDM Limiting Short reach 1556.55 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5736             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 253 } -- 10GBASE-DWDM Limiting Short reach 1557.36 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5817             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 254 } -- 10GBASE-DWDM Limiting Short reach 1558.17 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5898             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 255 } -- 10GBASE-DWDM Limiting Short reach 1558.98 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g5979             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 256 } -- 10GBASE-DWDM Limiting Short reach 1559.79 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g6061             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 257 } -- 10GBASE-DWDM Limiting Short reach 1560.61 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g6142             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 258 } -- 10GBASE-DWDM Limiting Short reach 1561.42 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3033             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 259 } -- 10GBASE-DWDM Limiting Long reach 1530.33 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3112             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 260 } -- 10GBASE-DWDM Limiting Long reach 1531.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3190             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 261 } -- 10GBASE-DWDM Limiting Long reach 1531.90 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3268             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 262 } -- 10GBASE-DWDM Limiting Long reach 1532.68 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3347             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 263 } -- 10GBASE-DWDM Limiting Long reach 1533.47 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3425             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 264 } -- 10GBASE-DWDM Limiting Long reach 1534.25 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3504             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 265 } -- 10GBASE-DWDM Limiting Long reach 1535.04 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3582             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 266 } -- 10GBASE-DWDM Limiting Long reach 1535.82 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3661             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 267 } -- 10GBASE-DWDM Limiting Long reach 1536.61 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3740             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 268 } -- 10GBASE-DWDM Limiting Long reach 1537.40 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3819             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 269 } -- 10GBASE-DWDM Limiting Long reach 1538.19 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3898             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 270 } -- 10GBASE-DWDM Limiting Long reach 1538.98 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g3977             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 271 } -- 10GBASE-DWDM Limiting Long reach 1539.77 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4056             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 272 } -- 10GBASE-DWDM Limiting Long reach 1540.56 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4135             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 273 } -- 10GBASE-DWDM Limiting Long reach 1541.35 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4214             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 274 } -- 10GBASE-DWDM Limiting Long reach 1542.14 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4294             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 275 } -- 10GBASE-DWDM Limiting Long reach 1542.94 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4373             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 276 } -- 10GBASE-DWDM Limiting Long reach 1543.73 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4453             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 277 } -- 10GBASE-DWDM Limiting Long reach 1544.53 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4532             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 278 } -- 10GBASE-DWDM Limiting Long reach 1545.32 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4612             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 279 } -- 10GBASE-DWDM Limiting Long reach 1546.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4692             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 280 } -- 10GBASE-DWDM Limiting Long reach 1546.92 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4772             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 281 } -- 10GBASE-DWDM Limiting Long reach 1547.72 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4851             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 282 } -- 10GBASE-DWDM Limiting Long reach 1548.51 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g4932             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 283 } -- 10GBASE-DWDM Limiting Long reach 1549.32 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5012             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 284 } -- 10GBASE-DWDM Limiting Long reach 1550.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5092             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 285 } -- 10GBASE-DWDM Limiting Long reach 1550.92 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5172             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 286 } -- 10GBASE-DWDM Limiting Long reach 1551.72 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5252             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 287 } -- 10GBASE-DWDM Limiting Long reach 1552.52 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5333             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 288 } -- 10GBASE-DWDM Limiting Long reach 1553.33 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5413             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 289 } -- 10GBASE-DWDM Limiting Long reach 1554.13 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5494             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 290 } -- 10GBASE-DWDM Limiting Long reach 1554.94 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5575             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 291 } -- 10GBASE-DWDM Limiting Long reach 1555.75 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5655             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 292 } -- 10GBASE-DWDM Limiting Long reach 1556.55 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5736             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 293 } -- 10GBASE-DWDM Limiting Long reach 1557.36 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5817             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 294 } -- 10GBASE-DWDM Limiting Long reach 1558.17 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5898             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 295 } -- 10GBASE-DWDM Limiting Long reach 1558.98 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g5979             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 296 } -- 10GBASE-DWDM Limiting Long reach 1559.79 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g6061             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 297 } -- 10GBASE-DWDM Limiting Long reach 1560.61 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitLrSfp10g6142             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 298 } -- 10GBASE-DWDM Limiting Long reach 1561.42 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3033             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 299 } -- 10GBASE-DWDM Limiting Medium reach 1530.33 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3112             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 300 } -- 10GBASE-DWDM Limiting Medium reach 1531.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3190             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 301 } -- 10GBASE-DWDM Limiting Medium reach 1531.90 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3268             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 302 } -- 10GBASE-DWDM Limiting Medium reach 1532.68 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3347             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 303 } -- 10GBASE-DWDM Limiting Medium reach 1533.47 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3425             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 304 } -- 10GBASE-DWDM Limiting Medium reach 1534.25 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3504             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 305 } -- 10GBASE-DWDM Limiting Medium reach 1535.04 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3582             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 306 } -- 10GBASE-DWDM Limiting Medium reach 1535.82 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4294             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 307 } -- 10GBASE-DWDM Limiting Medium reach 1542.94 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3661             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 308 } -- 10GBASE-DWDM Limiting Medium reach 1536.61 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3740             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 309 } -- 10GBASE-DWDM Limiting Medium reach 1537.40 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3819             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 310 } -- 10GBASE-DWDM Limiting Medium reach 1538.19 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3898             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 311 } -- 10GBASE-DWDM Limiting Medium reach 1538.98 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g3977             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 312 } -- 10GBASE-DWDM Limiting Medium reach 1539.77 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4056             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 313 } -- 10GBASE-DWDM Limiting Medium reach 1540.56 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4135             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 314 } -- 10GBASE-DWDM Limiting Medium reach 1541.35 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4214             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 315 } -- 10GBASE-DWDM Limiting Medium reach 1542.14 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4373             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 316 } -- 10GBASE-DWDM Limiting Medium reach 1543.73 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4453             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 317 } -- 10GBASE-DWDM Limiting Medium reach 1544.53 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4532             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 318 } -- 10GBASE-DWDM Limiting Medium reach 1545.32 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4612             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 319 } -- 10GBASE-DWDM Limiting Medium reach 1546.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4692             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 320 } -- 10GBASE-DWDM Limiting Medium reach 1546.92 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4772             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 321 } -- 10GBASE-DWDM Limiting Medium reach 1547.72 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4851             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 322 } -- 10GBASE-DWDM Limiting Medium reach 1548.51 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g4932             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 323 } -- 10GBASE-DWDM Limiting Medium reach 1549.32 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5012             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 324 } -- 10GBASE-DWDM Limiting Medium reach 1550.12 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5092             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 325 } -- 10GBASE-DWDM Limiting Medium reach 1550.92 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5172             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 326 } -- 10GBASE-DWDM Limiting Medium reach 1551.72 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5252             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 327 } -- 10GBASE-DWDM Limiting Medium reach 1552.52 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5333             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 328 } -- 10GBASE-DWDM Limiting Medium reach 1553.33 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5413             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 329 } -- 10GBASE-DWDM Limiting Medium reach 1554.13 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5494             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 330 } -- 10GBASE-DWDM Limiting Medium reach 1554.94 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5575             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 331 } -- 10GBASE-DWDM Limiting Medium reach 1555.75 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5655             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 332 } -- 10GBASE-DWDM Limiting Medium reach 1556.55 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5736             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 333 } -- 10GBASE-DWDM Limiting Medium reach 1557.36 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5817             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 334 } -- 10GBASE-DWDM Limiting Medium reach 1558.17 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5898             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 335 } -- 10GBASE-DWDM Limiting Medium reach 1558.98 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g5979             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 336 } -- 10GBASE-DWDM Limiting Medium reach 1559.79 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g6061             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 337 } -- 10GBASE-DWDM Limiting Medium reach 1560.61 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitMrSfp10g6142             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 338 } -- 10GBASE-DWDM Limiting Medium reach 1561.42 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4532             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 339 } -- 10GBASE-DWDM Limiting Short reach 1545.32 nm SFP+ (100-GHz ITU grid)
+cevSFPDwdmLimitSrSfp10g4612             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 340 } -- 10GBASE-DWDM Limiting Short reach 1546.12 nm SFP+ (100-GHz ITU grid)
 cevSFP10GTX                             OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 341 } -- 10GBASE-T SFP+ Module, PID = SFP-10G-T-X
 
 cevDirectAttachCable10Gs   OBJECT IDENTIFIER ::= { cevModule 77 }               -- Group for DirectAttachCable10Gs Type of Cards
@@ -7712,6 +7875,7 @@ cevModuleCGM4gLteNA7354MNAAB  OBJECT IDENTIFIER ::= { cevModuleCgrType 29 } -- C
 cevModuleCGMServerX86C4F800D128  OBJECT IDENTIFIER ::= { cevModuleCgrType 30 } -- A server module for CGR1000 routers, x86 processor, 4 cores @ 800MHz, 128GB disk
 cevModuleCGM4gLteLA7430       OBJECT IDENTIFIER ::= { cevModuleCgrType 31 } -- Connected Grid Module - 4G Latin America and Asia Pacific Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
 cevModuleCGM4gLteEA7455       OBJECT IDENTIFIER ::= { cevModuleCgrType 32 } -- Connected Grid Module - 4G Europe and North America Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
+cevModuleCGMWPANOFDMFCC       OBJECT IDENTIFIER ::= { cevModuleCgrType 36 } -- Connected Grid Module - IEEE 802.15.4 g/e, 902-928 MHz OFDM
 
 cevModuleISR4400Type    OBJECT IDENTIFIER ::= { cevModule 92 }     -- These are modules that are used in Cisco ISR 4400 Series Router
 cevModuleISR4441RP	    OBJECT IDENTIFIER ::= { cevModuleISR4400Type 1 }  -- Cisco ISR 4441 Routing Processor Module
@@ -7800,6 +7964,7 @@ cevQSFPH40GCU5M               OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 37 } --
 cevQSFP40GBDRX                OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 39 } -- QSFP-40G-BD-RX Bi-Directional QSFP+ Module for MMF, but this transceiver is RX only, no signal is transmitted
 cevQSFP100GLR4                OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 40 } -- 100G-LR4 QSFP+ Module for SMF
 cevQSFP100GSR4                OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 41 } -- 100G-SR4 QSFP+ Module for MMF
+cevQSFP40GCSRS                OBJECT IDENTIFIER ::= { cevModuleQSFPPlusS 42 } -- 40G-CSR4 QSFP+ Module for MMF, MPO
 
 
 
@@ -8059,6 +8224,9 @@ cevQSFP4SFP10GCU4M           OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 22
 cevQSFP4SFP10GCU2M           OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 23 } -- QSFP to 4xSFP10G Passive Copper Splitter Cable, 2m
 cevQSFP4SFP10GCUDOT5M        OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 24 } -- QSFP to 4xSFP10G Passive Copper Splitter Cable, 0.5m
 cevQSFP4SFP10GAOC15M         OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 25 } -- QSFP to 4xSFP10G Active Optical breakout Cable, 15m
+cevQSFPH40GBACU1M            OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 26 } -- 40GBASE-Active CU QSFP Cable 1 Meter
+cevQSFPH40GBACU3M            OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 27 } -- 40GBASE-Active CU QSFP Cable 3 Meter
+cevQSFPH40GBACU5M            OBJECT IDENTIFIER ::= { cevDirectAttachCable40Gs 28 } -- 40GBASE-Active CU QSFP Cable 5 Meter
 
 cevModuleN93KType                       OBJECT IDENTIFIER ::= { cevModule 103 } -- These cards are used for Nexus 9300 series
 cevN9KM6PQ                              OBJECT IDENTIFIER ::= { cevModuleN93KType 1 } -- 6x40G QSFP GEM Card for Nexus 9300 TOR platform
@@ -8231,6 +8399,9 @@ cevFprUS23074                           OBJECT IDENTIFIER ::= { cevModuleFPRType
 cevFPRNM8X1F                            OBJECT IDENTIFIER ::= { cevModuleFPRType 19 } -- 8x1GE multi-mode copper EPM with programmable fail-to-wire (FTW) functionality 
 cevFPRNM2X40GF	                        OBJECT IDENTIFIER ::= { cevModuleFPRType 20 } -- Cisco FirePower 2 port 40G FTW (Fail to Wire) Network Module
 cevFPRNetworkModule8X1G                 OBJECT IDENTIFIER ::= { cevModuleFPRType 21 } -- FirePOWER Network Module 8x1G
+cevFPR4125SUPFixedModule                OBJECT IDENTIFIER ::= { cevModuleFPRType 24 } --  FirePOWER 4125 Supervisor Module
+cevFPR4145SUPFixedModule                OBJECT IDENTIFIER ::= { cevModuleFPRType 25 } --  FirePOWER 4145 Supervisor Module
+cevFPR4115SUPFixedModule                OBJECT IDENTIFIER ::= { cevModuleFPRType 26 } --  FirePOWER 4115 Supervisor Module
 
 cevModuleQSFP28                         OBJECT IDENTIFIER ::= { cevModule 117 } --  QSFP28 group of Optics
 cevQSFP100GELR4                         OBJECT IDENTIFIER ::= { cevModuleQSFP28 1 } --  100GE-LR4 QSFP Module
@@ -8336,6 +8507,7 @@ cevModuleC930048T                      OBJECT IDENTIFIER ::= { cevModule93xxType
 cevModuleC930048P                      OBJECT IDENTIFIER ::= { cevModule93xxType 6 } -- Catalyst 9300 48-port PoE+ switch
 cevModuleC930048U                      OBJECT IDENTIFIER ::= { cevModule93xxType 7 } -- Catalyst 9300 48-port UPOE switch
 cevModuleC930048UXM                    OBJECT IDENTIFIER ::= { cevModule93xxType 8 } -- Catalyst 9300 48-port switch, with 12 ports of mGig and 36 ports of UPOE
+ 
 
 cevModule94xxType                       OBJECT IDENTIFIER ::= { cevModule 128 } -- Module for 94xx Types 
 cevModuleC9400SUP1                      OBJECT IDENTIFIER ::= { cevModule94xxType 1 } -- Cisco Catalyst 9400 Series Supervisor 1 Module 
@@ -8347,6 +8519,7 @@ cevModuleC9400LC48P                     OBJECT IDENTIFIER ::= { cevModule94xxTyp
 cevModuleC9400LC24XS                    OBJECT IDENTIFIER ::= { cevModule94xxType 7 } -- Cisco Catalyst 9400 Series 24-Port 10 Gigabit Ethernet (SFP+) Line Card
 cevModuleC9400LC48S                     OBJECT IDENTIFIER ::= { cevModule94xxType 8 } -- Cisco Catalyst 9400 Series 48-Port GE (SFP) Line Card
 cevModuleC9400LC24S                     OBJECT IDENTIFIER ::= { cevModule94xxType 9 } -- Cisco Catalyst 9400 Series 24-Port GE (SFP) Line Card
+cevModuleC9400SUP1XLY                   OBJECT IDENTIFIER ::= { cevModule94xxType 10 } -- Cisco Catalyst 9400 Series Supervisor 1XL Module with 25G
 
 cevModuleNCS1000Type                    OBJECT IDENTIFIER ::= { cevModule 129 } -- Modules for  NCS1K Platforms
 cevModuleNCS1000RP0                     OBJECT IDENTIFIER ::= { cevModuleNCS1000Type 1 } -- Route Processor 0 for NCS1K Platforms (NCS1001/NCS1002)
@@ -8369,6 +8542,10 @@ cevModuleThirdPartyType                 OBJECT IDENTIFIER ::= { cevModule 132 } 
 cevModuleCXP270GType                    OBJECT IDENTIFIER ::= { cevModule 134 } -- Group of 270G CXP modules 
 cevModuleCXP270GSR12                    OBJECT IDENTIFIER ::= { cevModuleCXP270GType 1 } -- 270G SR12 CXP modules
 
+
+
+cevModuleNCS4200Type                    OBJECT IDENTIFIER ::= { cevModule 137 } -- InterfaceModule NCS4200 Type Pre-Aggregation series
+cevModuleNCS42002HPQ                    OBJECT IDENTIFIER ::= { cevModuleNCS4200Type 1 } -- NCS4200 2 port 100 GE QSFP28 port IM
 
 
 cevPort   OBJECT IDENTIFIER ::= { cevMIBObjects 10 }
@@ -8720,13 +8897,13 @@ cevStackC68xxVirSwitch  OBJECT IDENTIFIER ::= { cevStack 20 } -- Catalyst 68xx V
 cevC35xxStack           OBJECT IDENTIFIER ::= { cevStack 21 } -- A stack of C35XX switch modules
 cevC9300FixedSwitchStack  OBJECT IDENTIFIER ::= { cevStack 22 } -- A stack of Cisco Catalyst 9300 Fixed switch modules
 cevC9500FixedSwitchStack OBJECT IDENTIFIER ::= { cevStack 23 } -- A stack of Cisco Catalyst 9500 Fixed switch modules
+cevC9400VirtualStack     OBJECT IDENTIFIER ::= { cevStack 24 } -- Cisco Catalyst 9400 Virtual Stack
 
 cevMidplane                  OBJECT IDENTIFIER ::= { cevMIBObjects 12 }	-- Midplane of the chassis
 cevMidplaneUmg9820           OBJECT IDENTIFIER ::= { cevMidplane 1 } -- Midplane of umg9820
 
 cevTCAMType                  OBJECT IDENTIFIER ::= { cevMIBObjects 13 } -- TCAM type used on the router card
 
-cevTCAM                      OBJECT IDENTIFIER ::= { cevTCAMType 1 }  -- default TCAM type %DNP% until Feb 2015, contact sararuna        
 
 END
 
