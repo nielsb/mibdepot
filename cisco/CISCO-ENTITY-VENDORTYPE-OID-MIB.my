@@ -1792,6 +1792,9 @@ cevChassis01FT563T32                     OBJECT IDENTIFIER ::= { cevChassis 2177
 cevChassisFPR4115                        OBJECT IDENTIFIER ::= { cevChassis 2179 } -- FirePOWER 4115 chassis
 cevChassisFPR4125                        OBJECT IDENTIFIER ::= { cevChassis 2180 } -- FirePOWER 4125 chassis
 cevChassisFPR4145                        OBJECT IDENTIFIER ::= { cevChassis 2181 } -- FirePOWER 4145 chassis
+cevChassisN9KC9358GYFX                   OBJECT IDENTIFIER ::= { cevChassis 2183 } -- 2RU TOR fixed module with 8x100/1000M + 2x10G SFP ports
+cevChassisAIRCT9510CK9                   OBJECT IDENTIFIER ::= { cevChassis 2185 } -- AIR-CT9510-C-K9 (Katar copper)
+cevChassisN9KC9358GYFXP                  OBJECT IDENTIFIER ::= { cevChassis 2191 } -- 1RU TOR fixed chassis with 96x10/25G SFP28 + 6x40/100G QSFP28 ports
 
 cevBackplane				OBJECT IDENTIFIER ::= { cevMIBObjects 4 }
 cevBackplaneAtm			        OBJECT IDENTIFIER ::= { cevBackplane 4 }	-- LS1010 Chassis
@@ -3048,7 +3051,8 @@ cevFanASR9922FANV3              OBJECT IDENTIFIER ::= { cevFan 359 } -- ASR 9922
 cevFanNCS5064FANFR              OBJECT IDENTIFIER ::= { cevFan 361 } -- NCS 5064 Router Fan Front to Back AirFlow
 cevFanNCS5064FANBK              OBJECT IDENTIFIER ::= { cevFan 362 } -- NCS 5064 Router Fan Back to Front AirFlow
 cevFanN560Fan                   OBJECT IDENTIFIER ::= { cevFan 364 } -- NCS 560 Fan
-
+cevFanFPR1KPSFan                OBJECT IDENTIFIER ::= { cevFan 365 } -- Power Supply Fan in FPR1K
+cevFanFPR2KPSFan                OBJECT IDENTIFIER ::= { cevFan 366 } -- Power Supply Fan in FPR2K
  
 cevSensor			OBJECT IDENTIFIER ::= { cevMIBObjects 8 }
 cevSensorMGX8800Temp			OBJECT IDENTIFIER ::= { cevSensor 11 }		-- Cabinet Temperature sensor device in MGX8800 Universal Chassis
@@ -3196,8 +3200,17 @@ cevSensorModuleDeviceUncorrectedBER     OBJECT IDENTIFIER ::= { cevSensor 215 } 
 cevSensorModuleDeviceTECCurrent         OBJECT IDENTIFIER ::= { cevSensor 216 } -- Generic Sensor for monitoring the TEC Current 
 cevSensorModuleDevDiffLaserFrequency    OBJECT IDENTIFIER ::= { cevSensor 217 } -- Generic Sensor for monitoring the difference (in frequency units) between the target center frequency and the actual current center frequency
 cevSensorModuleDeviceDiffLaserTemp      OBJECT IDENTIFIER ::= { cevSensor 218 } -- Generic Sensor for monitoring the difference (in Celsius units) between the target laser temperature for a cooled laser and the actual current temperature
-
-
+cevSensorFPR2KChassisFanSensor          OBJECT IDENTIFIER ::= { cevSensor 219 } -- Chassis Cooling Fan Sensor for FPR2K
+cevSensorFPR1KChassisFanSensor          OBJECT IDENTIFIER ::= { cevSensor 220 } -- Chassis Cooling Fan Sensor for FPR1K
+cevSensorFPR1KCpuTempSensor             OBJECT IDENTIFIER ::= { cevSensor 221 } -- Central Processing Unit Temperature Sensor for FPR1K
+cevSensorFPR2KCpuTempSensor             OBJECT IDENTIFIER ::= { cevSensor 222 } -- Central Processing Unit Temperature Sensor for FPR2K
+cevSensorFPR2KNpuTempSensor             OBJECT IDENTIFIER ::= { cevSensor 223 } -- Network Processing Unit Temperature Sensor for FPR2K
+cevSensorFPR1KChassisTempSensor         OBJECT IDENTIFIER ::= { cevSensor 224 } -- Chassis Ambient Temperature Sensor for FPR1K
+cevSensorFPR2KChassisTempSensor         OBJECT IDENTIFIER ::= { cevSensor 225 } -- Chassis Ambient Temperature Sensor for FPR2K
+cevFanFPR1KPSFanSensor                  OBJECT IDENTIFIER ::= { cevSensor 226 } -- Power Supply Fan Sensor in FPR1K
+cevFanFPR2KPSFanSensor                  OBJECT IDENTIFIER ::= { cevSensor 227 } -- Power Supply Fan Sensor in FPR2K
+cevFanFPR1KPSTempSensor                 OBJECT IDENTIFIER ::= { cevSensor 228 } -- Power Supply Temp Sensor in FPR1K
+cevFanFPR2KPSTempSensor                 OBJECT IDENTIFIER ::= { cevSensor 229 } -- Power Supply Temp Sensor in FPR2K
 
 cevModule		OBJECT IDENTIFIER ::= { cevMIBObjects 9 }
 
@@ -6602,7 +6615,11 @@ cevDSC9396TK9SUP        OBJECT IDENTIFIER ::= { cevModuleMDSType 82 }  -- DS-C93
 cevDSC9396T64SUP        OBJECT IDENTIFIER ::= { cevModuleMDSType 83 }  -- DS-C9396T-K9-SUP, 64X32G FC Supervisor module for DS-C9396T-K9
 cevDSC9396T80SUP        OBJECT IDENTIFIER ::= { cevModuleMDSType 84 }  -- DS-C9396T-K9-SUP, 80X32G FC Supervisor module for DS-C9396T-K9
 cevDSC9396T96SUP        OBJECT IDENTIFIER ::= { cevModuleMDSType 85 }  -- DS-C9396T-K9-SUP, 96X32G FC Supervisor module for DS-C9396T-K9  
- 
+cevDSX9706FAB3          OBJECT IDENTIFIER ::= { cevModuleMDSType 86 }  -- DS-X9706-FAB3, Fabric Module for MDS 6-Slot Director Switch  DS9706
+cevDSX9710FAB3          OBJECT IDENTIFIER ::= { cevModuleMDSType 87 }  -- DS-X9710-FAB3, Fabric Module for MDS 10-Slot Director Switch DS9710
+cevDSX9718FAB3          OBJECT IDENTIFIER ::= { cevModuleMDSType 88 }  -- DS-X9718-FAB3, Fabric Module for MDS 18-Slot Director Switch DS9718
+cevDSX97SF3K9           OBJECT IDENTIFIER ::= { cevModuleMDSType 89 }  -- DS-X97-SF3-K9, Supervisor Module 3 for NextGen MDS Director switch
+
 cevModuleC3220Type		OBJECT IDENTIFIER ::= { cevModule 54 }			--  Represents the base class for all the modules used in c3220.
 cevC3220Smic			OBJECT IDENTIFIER ::= { cevModuleC3220Type 1 }		-- Serial Mobile Interface Card(SMIC) for the C3220 Mobile Access Router with 2 Serial Interfaces.
 cevC3220Fesmic			OBJECT IDENTIFIER ::= { cevModuleC3220Type 2 }		-- Fast Ethernet Switch Mobile Interface Card(FESMIC) for the C3220 Mobile Access Router with 2 Fast Ethernet Interfaces.
@@ -6924,6 +6941,8 @@ cevModuleASR1002HXMIP     OBJECT IDENTIFIER ::= { cevModuleASR1000Type 53 } -- C
 cevModuleASR1001HXRP      OBJECT IDENTIFIER ::= { cevModuleASR1000Type 56 } -- Cisco ASR1001-HX Routing Processor Module
 cevModuleASR1001HXESP     OBJECT IDENTIFIER ::= { cevModuleASR1000Type 57 } -- Cisco ASR1001-HX Embedded Services Processor Module
 cevModuleASR1001HXMIP     OBJECT IDENTIFIER ::= { cevModuleASR1000Type 58 } -- Cisco ASR1001-HX Modular Interface Processor Module
+
+
 
 cevModuleCatRfgwType    OBJECT IDENTIFIER ::= { cevModule 69 }                  -- Cards that go into Rfgw chassis
 cevRfgwDtcc             OBJECT IDENTIFIER ::= { cevModuleCatRfgwType 1 }        -- DOCSIS Timing, Communication, and Control Plus Card for RF gateway
@@ -8113,7 +8132,8 @@ cevModuleIR11015ES           OBJECT IDENTIFIER ::= { cevModuleISRType 141 } -- C
 
 
 
-
+cevModuleIRM1100SPMI         OBJECT IDENTIFIER ::= { cevModuleISRType 176 } -- IR1100 expansion module with Pluggable slot, SFP, mSATA SSD slot and Digital GPIO
+cevModuleIRM1100SP           OBJECT IDENTIFIER ::= { cevModuleISRType 177 } -- IR1100 expansion module with Pluggable slot and SFP
 
 
 cevModuleN77Type             OBJECT IDENTIFIER ::= { cevModule 97 }       -- Group for the Nexus7700 type of cards 
@@ -8256,6 +8276,7 @@ cevN9KC93240YCFX2FixedModule            OBJECT IDENTIFIER ::= { cevModuleN93KTyp
 cevN9KC9332CFixedModule                 OBJECT IDENTIFIER ::= { cevModuleN93KType 27 } -- Single chip spine fixed module with 32x100G QSFP28 + 2x10G SFP+ Ethernet
 cevN9KC93360YCFX3FixedModule            OBJECT IDENTIFIER ::= { cevModuleN93KType 28 } -- 2RU TOR fixed module with 96x10/25G SFP28 + 12x40/100G QSFP28 ports
 cevN9KC93240YCFX2ZFixedModule           OBJECT IDENTIFIER ::= { cevModuleN93KType 29 } -- Nexus 9300 series fixed module with 48x10/25G SFP+ & 12x40/100G 
+cevN9KC9358GYFXPFixedModule             OBJECT IDENTIFIER ::= { cevModuleN93KType 30 } -- 2RU TOR fixed module with 8x100/1000M + 2x10G SFP ports
 
 
 cevModuleISR4300Type                    OBJECT IDENTIFIER ::= { cevModule 104 } -- These are modules that are used in Cisco ISR 4300 Series Router
@@ -8520,6 +8541,7 @@ cevModuleC9400LC24XS                    OBJECT IDENTIFIER ::= { cevModule94xxTyp
 cevModuleC9400LC48S                     OBJECT IDENTIFIER ::= { cevModule94xxType 8 } -- Cisco Catalyst 9400 Series 48-Port GE (SFP) Line Card
 cevModuleC9400LC24S                     OBJECT IDENTIFIER ::= { cevModule94xxType 9 } -- Cisco Catalyst 9400 Series 24-Port GE (SFP) Line Card
 cevModuleC9400SUP1XLY                   OBJECT IDENTIFIER ::= { cevModule94xxType 10 } -- Cisco Catalyst 9400 Series Supervisor 1XL Module with 25G
+
 
 cevModuleNCS1000Type                    OBJECT IDENTIFIER ::= { cevModule 129 } -- Modules for  NCS1K Platforms
 cevModuleNCS1000RP0                     OBJECT IDENTIFIER ::= { cevModuleNCS1000Type 1 } -- Route Processor 0 for NCS1K Platforms (NCS1001/NCS1002)

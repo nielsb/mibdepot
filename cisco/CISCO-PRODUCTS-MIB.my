@@ -2399,7 +2399,11 @@ ciscoC891FJK9                       OBJECT IDENTIFIER ::= { ciscoProducts 2771 }
 ciscoFpr4145K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2777 } -- Cisco FirePOWER 4145 Security Appliance, 1U with embedded security module 44
 ciscoFpr4125K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2778 } -- Cisco FirePOWER 4125 Security Appliance, 1U with embedded security module 32
 ciscoFpr4115K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2779 } -- Cisco FirePOWER 4115 Security Appliance, 1U with embedded security module 24
-ciscoIOSXREdgecoreAS591654XKSB      OBJECT IDENTIFIER ::= { ciscoProducts 2782 } -- Cisco IOS XR enabled on 3rd Party HW Edgecore AS5916-54XKSB
+ciscoIOSXREdgecore591654XKSOACF     OBJECT IDENTIFIER ::= { ciscoProducts 2782 } --  Cisco IOS XR enabled on 3rd Party HW Edgecore 5916-54XKS-O-AC-F
 ciscoIOSXREdgecoreAS781664X         OBJECT IDENTIFIER ::= { ciscoProducts 2783 } -- Cisco IOS XR enabled on 3rd Party HW Edgecore AS7816-64X        
- 
+ciscoSNS3615K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2784 } -- Cisco Secure Network Server platform SNS-3615 appliance
+ciscoSNS3655K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2785 } -- Cisco Secure Network Server platform SNS-3655 appliance
+ciscoSNS3695K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2786 } -- Cisco Secure Network Server platform SNS-3695 appliance
+
 END
+
