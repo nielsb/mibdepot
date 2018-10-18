@@ -1,0 +1,24 @@
+diff -ru new/scte/HMS154-1R6.txt ../scte/HMS154-1R6.txt
+--- new/scte/HMS154-1R6.txt	2012-01-30 16:10:50.000000000 +0100
++++ ../scte/HMS154-1R6.txt	2018-10-18 13:26:06.953960107 +0200
+@@ -15,7 +15,7 @@
+ 	  FROM SCTE-HMS-HEADENDIDENT-TC-MIB; 
+ 
+ heDigitalCommonMIB MODULE-IDENTITY
+-    LAST-UPDATED    "200807210000Z "
++    LAST-UPDATED    "200807210000Z"
+     ORGANIZATION    "SCTE HMS Working Group"
+     CONTACT-INFO    "SCTE HMS Subcommittee, Chairman 
+                      mail to:  standards@scte.org "
+diff -ru new/scte/HMS154-3R15.txt ../scte/HMS154-3R15.txt
+--- new/scte/HMS154-3R15.txt	2012-01-30 16:10:54.000000000 +0100
++++ ../scte/HMS154-3R15.txt	2018-10-18 13:25:52.594585848 +0200
+@@ -17,7 +17,7 @@
+ 		FROM ENTITY-MIB   
+ 	DeviceEnableDisableValues, MpegErrorStatus, 
+ 	HePIDValue,VideoInputFrameRateType    
+-		FROM SCTE-HMS-HEADENDIDENT-TC;
++		FROM SCTE-HMS-HEADENDIDENT-TC-MIB;
+ 
+ mpegEncoderMIB MODULE-IDENTITY
+ 	LAST-UPDATED "200710031700Z"

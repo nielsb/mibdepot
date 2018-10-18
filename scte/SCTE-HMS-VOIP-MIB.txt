@@ -1,0 +1,671 @@
+SCTE-HMS-VOIP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE, enterprises,
+    Counter32, Unsigned32
+        FROM SNMPv2-SMI
+    OBJECT-GROUP, MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    DateAndTime, TEXTUAL-CONVENTION
+        FROM SNMPv2-TC
+    SnmpAdminString 
+        FROM SNMP-FRAMEWORK-MIB
+    InetAddress, InetAddressType, InetPortNumber
+        FROM INET-ADDRESS-MIB
+    voipIdent    
+        FROM SCTE-HMS-ROOTS;        
+
+voipModuleMib MODULE-IDENTITY
+    LAST-UPDATED    "200701291300Z"
+    ORGANIZATION    "SCTE HMS Working Group"
+    CONTACT-INFO    "SCTE HMS Subcommittee, Chairman 
+                     mail to:  standards@scte.org "
+
+    DESCRIPTION
+        "This MIB module, contains the interface for the hms VoIP testing
+        specification. It allows an HMS/DOCSIS transponder or any other
+        device that implements it to be used as a test point to validate
+        VoIP service in the network and to report a common basic set of 
+        measurements.
+        
+        Theory Of operation:
+        The device controlled by this MIB is called an endpoint. Each 
+        endpoint sends or receives a test stream to/from another test
+        endpoint. A measurement application is responsible for
+        controlling both endpoints to setup compatible test streams and
+        to gather results.
+        
+        An endpoint can implement a number simultaneous test streams 
+        (reported in voipMaxTestInstance). Each test stream is 
+        controlled by a separate entry in the voipTestControlTable.
+        This table contains a series of controls that enable the server
+        to set VoIP tests 
+
+        The purpose of such a test is to simultate an RTP VoIP
+        connection and estimate the equivalent call quality between two
+        known points in the network. From the endpoint's perspective's,
+        each test stream has three possible directions: transmission,
+        reception or loopback. The direction is inferred from the 
+        voipTestControlSenderAddress & voipTestControlReceiverAddress
+        MIBs. The endpoint will detect its address in one of the two MIB
+        and set itself up accordingly. When none of the two MIB contains
+        the endpoint's address, a mirror (loopback) mode is used."
+    ::= { enterprises scteRoot(5591) scteHmsTree (1) voipIdent (12) voipTestGroup (1) 1}
+
+
+--
+-- TEXTUAL CONVENTIONS used by this MIB
+--
+Rfactor ::=     TEXTUAL-CONVENTION
+DISPLAY-HINT    "d"
+STATUS          current
+DESCRIPTION
+      "Call or transmission quality expressed as an 
+       R factor in the range 0 to 120. A value of
+       127 shall be interpreted as NULL or unsupported."
+REFERENCE       "ITU-T G.107"
+SYNTAX          Unsigned32 (0..120|127)
+
+
+ScaledMOSscore ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT    "d"
+    STATUS          current
+    DESCRIPTION
+        "Call or transmission quality expressed as a 
+         MOS score scaled by 10.  MOS is typically represented
+         as a 1.0 to 5.0 score with a single decimal place and
+         hence in this representation as 10 to 50. A value of
+         127 shall be interpreted as NULL or unsupported."
+    REFERENCE
+    "ITU-T P.800"
+    SYNTAX      Unsigned32 (10..50|127)
+
+
+
+--                
+-- voipIdent MIb Branch root
+--
+voipMibObjects OBJECT IDENTIFIER ::= { voipModuleMib 1 } 
+
+voipVersion OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current    
+    DESCRIPTION
+        "Displays the version of the specification running on
+         this endpoint"
+    ::= { voipMibObjects 1 }
+
+
+voipMaxTestInstance OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current    
+    DESCRIPTION
+        "The number of concurrent tests supported by this endpoint."
+    ::= { voipMibObjects 2 }
+
+--
+-- Test Mibs
+--
+voipTest OBJECT IDENTIFIER ::= { voipMibObjects 3 }
+
+
+--
+-- Test Control table
+-- 
+
+voipTestControlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF VoipTestControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current    
+    DESCRIPTION
+        "Table of Test Controls
+         Each entry is used to control a test instance.  
+         Tests parameters shall be inputed to the endpoint first, then
+         the voipTestControl MIB must be set the setupTest value and
+         Ready status verified before starting a test."
+    ::= { voipTest 1 }
+
+
+voipTestControlEntry OBJECT-TYPE
+    SYNTAX      VoipTestControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current    
+    DESCRIPTION
+        "An entry in the Table of Test Control.  There will be one entry 
+         per supported simultaneous tests."
+    INDEX {voipTestControlIndex}
+    ::= { voipTestControlTable 1 }
+
+
+VoipTestControlEntry ::= SEQUENCE {
+    voipTestControlIndex             Unsigned32,
+    voipTestControlIdString          SnmpAdminString,
+    voipTestControl                  INTEGER,
+    voipTestSenderAddressType        InetAddressType,
+    voipTestSenderAddress            InetAddress,
+    voipTestSenderUDPPort            InetPortNumber,
+    voipTestReceiverAddressType      InetAddressType,
+    voipTestReceiverAddress          InetAddress,
+    voipTestReceiverUDPPort          InetPortNumber,
+    voipTestPacketInterval           Unsigned32,
+    voipTestNumOfPackets             Unsigned32,
+    voipTestJitterBufferSize         Unsigned32,
+    voipTestCodecType                OCTET STRING,
+    voipTestRoundTripTimeEstimate    Unsigned32
+    }
+    
+voipTestControlIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for this set of test controls.  
+         One set controls one instance of the test."
+    ::= {voipTestControlEntry 1}
+
+voipTestControlIdString OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (0..255))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This String can be used by the management entity as a unique
+         test identifier string."
+    ::= {voipTestControlEntry 2}
+
+voipTestControl OBJECT-TYPE
+    SYNTAX      INTEGER {
+        stopTest(1),
+        setupTest(2),
+        startTest(3)
+    }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Used to control the test engine.  Once the control parameter
+        for the test are set, the management entity must set this to 
+        setupTest(2) & verify that the test control status returns ready
+        before starting the test with startTest(2). This is necessary to
+        reserve the resources required for the tests such as service
+        flows, etc.
+        
+        The test will run a for maximum number of packets
+        (voipTestNumOfPackets), or it can be stopped at any time by
+        setting this MIB to stopTest(1)."
+    ::= {voipTestControlEntry 3}
+
+voipTestSenderAddressType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This is the address type of the sender endpoint for the test
+         stream. To set this device as the transmitter for the test,
+         set this MIB to its address."
+    ::= {voipTestControlEntry 4}
+    
+voipTestSenderAddress OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This is the address of the sender endpoint for the test stream.
+         To set this device as the transmitter for the test, set this
+         MIB to its address."
+    ::= {voipTestControlEntry 5}
+
+voipTestSenderUDPPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " Port Number that the sender will use.
+        
+        In loopback mode this port number is used as the destination
+        address by the loopbacking entity, it may also be used as the
+        source port for the generating entity."
+    ::= {voipTestControlEntry 6}
+
+voipTestReceiverAddressType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This is the address of the receiving endpoint for this test
+        stream. To set this device as the receiver for the test, set 
+        this MIB to its IP address.
+        
+        If both voipTestReceiverIP & voipTestSenderIP do not match
+        the endpoint's own address, it will start a loopback mode test."
+    ::= {voipTestControlEntry 7}
+
+voipTestReceiverAddress OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This is the address of the receiving endpoint for this test
+        stream. To set this device as the receiver for the test, set 
+        this MIB to its IP address.
+        
+        If both voipTestReceiverIP & voipTestSenderIP do not match
+        the endpoint's own address, it will start a loopback mode test."
+    ::= {voipTestControlEntry 8}
+
+voipTestReceiverUDPPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        " UDP port number to be used by the receiving entity.
+        
+        In loopback mode, the receiver Port number is also used as both
+        the reception and source port of the loopbacking entity."
+    ::= {voipTestControlEntry 9}
+
+voipTestPacketInterval OBJECT-TYPE
+    SYNTAX      Unsigned32 (10|20|30)
+    UNITS       "milliseconds"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Interval in milliseconds between each packets.
+        
+        This MIB MUST be set to a voip standard 10, 20, or 30 ms interval."
+    DEFVAL      {10}
+    ::= {voipTestControlEntry 10 }
+    
+    
+voipTestNumOfPackets OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..86400000)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Maximum duration of the test expressed in number of packets.
+        
+        A sender will stop the transmitting when it reaches this amount.
+        A receiver can use this parameter to know how many packets to 
+        expect. The test can be stopped by the management entity before 
+        that number is reached."
+    ::= {voipTestControlEntry 11}
+
+
+    
+voipTestJitterBufferSize OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..500)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Jitter buffer size in millisecond to be implemented by the
+        receiving endpoint.  This will impact the total delay and the
+        discarded packet count."
+    DEFVAL  {20}
+    ::= {voipTestControlEntry 12}
+
+    
+voipTestCodecType OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The Codec type to be used for the voip test. 
+        
+        It is used by sender to set the appropriate value in the
+        rtp header. The receiver can use this parameter in the 
+        computation of the R-Factor.
+        
+        Note that the list of supported codecs is device specific. 
+        The format used shall be ITU-T G.7xx or similar.  
+
+        Each endpoint must at least support the ITU-T G.711 codec."
+    ::= {voipTestControlEntry 13 }
+
+    
+voipTestRoundTripTimeEstimate OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..60000)
+    UNITS       "milliseconds"
+    MAX-ACCESS  read-write
+    STATUS      current
+    
+    DESCRIPTION
+        "The round trip time (in milliseconds) is used by the receiving
+        endpoint in the computation of the CQE R-Factor. It must be 
+        estimated by the management entity and supplied to the endpoint 
+        via the use of this MIB for the RCQE result to be accurate.
+        Note that the one way delay used by the endpoint in its 
+        computation will be RoundTripTime / 2.
+
+        Writing a value of zero to this MIB will cause the round-trip 
+        delay to be NULL and the resulting R-Factor will be 
+        Listening Quality Equivalent (LQE)"
+    ::= {voipTestControlEntry 14}
+
+
+
+
+--
+-- Test Result table
+-- 
+
+voipTestResultTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF VoipTestResultEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current    
+    DESCRIPTION
+        "Table of Test Results
+        Each entry is used to display the results a test instance."
+    ::= { voipTest 2 }
+
+
+voipTestResultEntry OBJECT-TYPE
+    SYNTAX      VoipTestResultEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current    
+    DESCRIPTION
+        "An entry in the Table of Test Control.  There will be one entry 
+        per supported simultaneous tests."
+    INDEX {voipTestResultIndex}
+    ::= { voipTestResultTable 1 }
+
+
+VoipTestResultEntry ::= SEQUENCE {
+
+    voipTestResultIndex              Unsigned32,
+    voipTestResultIdString           SnmpAdminString,
+    voipTestStatus                   INTEGER,
+    voipTestStatusString             SnmpAdminString,
+    voipTestDuration                 Unsigned32,
+    voipTestStartTime                DateAndTime,
+    voipTestStopTime                 DateAndTime,
+    voipTestProcessedPacketCount     Counter32,
+    voipTestLossPacketCount          Counter32,
+    voipTestDiscardedPacketCount     Counter32,  
+    voipTestMinJitterLevel           Counter32,
+    voipTestMaxJitterLevel           Counter32,
+    voipTestAvgJitterLevel           Counter32,
+    voipTestRfactor                  Rfactor,
+    voipTestMOS                      ScaledMOSscore
+    }
+
+
+voipTestResultIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for this set of test controls.  One set controls one 
+        instance of the test."
+    ::= {voipTestResultEntry 1}
+
+voipTestResultIdString OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This String is copied over from the associated control table 
+        entry identifier string."
+    ::= {voipTestResultEntry 2}
+
+voipTestStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+        na(0),
+        running(1),
+        completed(2),
+        resourceUnavailable(3),
+        invalidParameter(4), 
+        ready(5),
+        other(6)
+    }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This MIB indicates the test status.  A value of  N/A(0) is 
+        returned before the test is ran. 
+        
+        A value of Running (1) is returned while the test is in progress.
+        
+        A value of Completed (2) is returned when the test is stopped by
+        the TestControl MIB or by the end-point when the
+        voipTestNumOfPackets is reached. 
+        
+        A value of ResourceUnavailable (3) is returned when the 
+        end-point is not able to start the test due to internal 
+        or network limitations. A value of InvalidParameters(4) is 
+        returned if the test parameters cannot be accepted by the 
+        end-point.  
+        
+        A value of Ready(5) is reported if the SetUpTest command 
+        succeeded.
+        
+        A value of other(6) is a device specific error code. When other(6) is reported,
+        a custom error message is reported in the voipTestStatusString."
+    ::= {voipTestResultEntry 3}
+
+voipTestStatusString OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This field is used by the device to further explain the Status
+        of the test. and its content is device specific.
+        "
+    ::= {voipTestResultEntry 4}
+
+
+voipTestDuration OBJECT-TYPE
+    SYNTAX      Unsigned32
+    UNITS       "milliseconds"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Total Duration of the test in milliseconds.
+        "
+    ::= { voipTestResultEntry 5 }
+ 
+ 
+voipTestStartTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "System time at the beginning of the test.
+        "
+    ::= { voipTestResultEntry 6 }
+
+    
+voipTestStopTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "System time at the end of the test.  
+         The value of this MIB is valid only if the voipTestStatus is 
+         complete(2)
+        "
+    ::= { voipTestResultEntry 7 }
+
+
+voipTestProcessedPacketCount OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Total number of packets that have been processed by the 
+         endpoint.
+         In transmission this indicates the number of packets sent
+         In reception this is the sum of the good packets and the
+         discarded packets."
+    ::= { voipTestResultEntry 8 }
+
+
+voipTestLossPacketCount OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of packets lost in the network before their arrival to 
+         this endpoint.
+         The value reported by this MIB is valid only in the receiving
+         endpoint.
+         The sending endpoint shall report zero.
+        "
+    ::= { voipTestResultEntry 9 }
+
+
+voipTestDiscardedPacketCount OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Number of packets discarded by this device because they arrived
+         too late or too early to be played out by the codec.
+         The value reported by this MIB is valid only in the receiving
+         endpoint.
+        "
+    ::= { voipTestResultEntry 10 }
+
+
+voipTestMinJitterLevel OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Mimimum of the Jitter level computed as per rfc3550.
+         
+         The value reported by this MIB is valid only in the receiving
+         endpoint.
+        "
+    ::= { voipTestResultEntry 11 }
+
+
+voipTestMaxJitterLevel OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Maximum of the  Jitter level computed as per rfc3550.
+         
+         The value reported by this MIB is valid only in the receiving 
+         endpoint.
+        "
+    ::= { voipTestResultEntry 12 }
+
+
+voipTestAvgJitterLevel OBJECT-TYPE
+    SYNTAX      Counter32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Average of the Jitter level computed as per rfc3550.
+         
+         The value reported by this MIB is valid only in the receiving
+         endpoint.
+        "
+    ::= { voipTestResultEntry 13 }
+
+
+voipTestRfactor OBJECT-TYPE
+    SYNTAX      Rfactor
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Computed R-Factor - Conversationnal Quality Equivalent as per 
+         ITU G.107
+         
+         The value reported by this MIB is valid only in the receiving
+         endpoint.
+         "
+
+    ::= { voipTestResultEntry 14 }
+
+
+voipTestMOS OBJECT-TYPE
+    SYNTAX      ScaledMOSscore
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Computed MOS - Conversationnal Quality Equivalent as per 
+         ITU G.107
+         
+         The value reported by this MIB is valid only in the receiving
+         endpoint.
+        "
+    ::= { voipTestResultEntry 15 }
+
+
+--                
+-- hmsVoip Conformance / Compliance statements
+--
+voipMibConformance OBJECT IDENTIFIER ::= { voipModuleMib 2 }
+
+voipMibCompliances  OBJECT IDENTIFIER ::= { voipMibConformance 1 }
+voipMibGroups       OBJECT IDENTIFIER ::= { voipMibConformance 2 }
+
+-- Compliance statements
+
+voipCompliances  MODULE-COMPLIANCE
+	STATUS     current
+	DESCRIPTION 
+		"The minimum compliance statement for VOIP Testing."
+	MODULE
+		MANDATORY-GROUPS { voipMibObjectsGroup, voipTestControlGroup, voipTestResultGroup } 
+	::= { voipMibCompliances 1 }
+
+-- this module
+
+voipMibObjectsGroup  OBJECT-GROUP
+	OBJECTS { voipVersion, voipMaxTestInstance }
+	STATUS     current
+	DESCRIPTION 
+		"voipMibObjectsGroup defines mandatory objects of the voipMibObjects mib."
+	::= { voipMibGroups 1 }
+
+
+voipTestControlGroup  OBJECT-GROUP
+	OBJECTS {
+    	voipTestControlIdString,
+    	voipTestControl,
+    	voipTestSenderAddressType,
+    	voipTestSenderAddress,
+    	voipTestSenderUDPPort,
+    	voipTestReceiverAddressType,    	
+    	voipTestReceiverAddress,
+    	voipTestReceiverUDPPort,
+    	voipTestPacketInterval,
+    	voipTestNumOfPackets,
+    	voipTestJitterBufferSize,
+    	voipTestCodecType,
+    	voipTestRoundTripTimeEstimate
+	}
+	STATUS     current
+	DESCRIPTION 
+		"voipTestControlGroup defines mandatory objects of the voipTestControlTable."
+	::= { voipMibGroups 2 }
+
+voipTestResultGroup  OBJECT-GROUP
+	OBJECTS {
+    	voipTestResultIdString,
+    	voipTestStatus,
+    	voipTestStatusString,
+    	voipTestDuration,
+    	voipTestStartTime,
+    	voipTestStopTime,
+    	voipTestProcessedPacketCount,
+    	voipTestLossPacketCount,
+    	voipTestDiscardedPacketCount,  
+    	voipTestMinJitterLevel,
+    	voipTestMaxJitterLevel,
+    	voipTestAvgJitterLevel,
+    	voipTestRfactor,
+    	voipTestMOS	
+	}
+	STATUS     current
+	DESCRIPTION 
+		"voipTestControlGroup defines mandatory objects of the voipTestResultTable."
+	::= { voipMibGroups 3 }
+
+ 
+END
+        

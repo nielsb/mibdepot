@@ -1,0 +1,24 @@
+#!/bin/sh
+
+TMP=tmp/docsis3
+DIR=$PWD/new/docsis3
+CDIR=$PWD/new/clab3
+
+rm -fr $TMP
+mkdir -p $TMP
+( cd $TMP
+  wget -r -A .txt -np -nd -nv -l 1 http://mibs.cablelabs.com/MIBs/common
+  wget -r -A .txt -np -nd -nv -l 1 http://mibs.cablelabs.com/MIBs/DOCSIS
+)
+
+rm -fr $DIR
+mkdir -p $DIR
+for f in $TMP/*
+do
+    g=$(echo $f | sed -e 's/[-0-9Z]*.txt/.txt/' -e s%$TMP/%%)
+    sed -e 's/\r//' $f | tr '\r' '\n' | awk '{if(NR==1)sub(/^[\xef\xbb\xbf]*/,"");print}' >$DIR/$g
+done
+
+rm -fr $CDIR
+mkdir -p $CDIR
+mv $DIR/CLAB* $CDIR

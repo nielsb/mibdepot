@@ -1,0 +1,2056 @@
+
+SCTE-HMS-SDV-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+	NOTIFICATION-TYPE, OBJECT-IDENTITY, OBJECT-TYPE, MODULE-IDENTITY, enterprises, Unsigned32, Integer32
+		FROM SNMPv2-SMI
+	NOTIFICATION-GROUP, OBJECT-GROUP, MODULE-COMPLIANCE
+		FROM SNMPv2-CONF
+	TruthValue, DateAndTime, DisplayString, 
+	MacAddress
+		FROM SNMPv2-TC
+	InetAddress, InetAddressType
+		FROM INET-ADDRESS-MIB;
+
+hmsScteSdvMib MODULE-IDENTITY
+	LAST-UPDATED "200809241530Z"
+	ORGANIZATION 
+		"SCTE HMS Working Group"
+	CONTACT-INFO 
+		"SCTE HMS Subcommittee, Chairman
+		mailto: standards@SCTE.org"
+	DESCRIPTION 
+		"The SCTE HMS MIB module to configure and monitor a
+		compliant Switched Digital Video server."
+
+	REVISION "200809241530Z"
+	DESCRIPTION 
+		"ver 0.9
+		1. Changed objects with SYNTAX IpAddress to InetAddress.
+		2. Added objects for InetAddressType as required.
+		3. Changed enumerations starting with values of 0 to start with 1."
+
+	REVISION "200805221030Z"
+	DESCRIPTION 
+		"ver 0.8
+		1. Removed extraneous comments and spacing.
+		2. Changed INTEGER to Integer32 per SMIv2
+		3. Moved SDV-MIB under heManagedServer under scteHmsTree
+		4. Renumbered nodes to remove gaps.
+		5. Changed sdvsmFreqPlanIndex and sdvsmAdZoneID from Integer32 to
+		   Unsigned32 to prevent negative #'s
+		6. Added sdvsmProgramGroup and sdvsmClientConfigGroup to the
+		   compliance statement"
+
+	REVISION "200704181730Z"
+	DESCRIPTION 
+		"ver 0.2
+		1. Removed extraneous comments which described OID explicitly
+		   (i.e. 1.3.6.1.4.1.5591.1.11.100).
+		2. Replaced SDB references w/ SDV.
+		3. Removed any SA or GQAM references.
+		4. Added unit and default clauses.
+		5. Changed indices to not-accessible and reordered objects so index
+		   is first in table.
+		6. Added Compliance statement.
+		7. Used OBJECT-IDENTIFIER instead of OBJECT-IDENTITY for node
+		   definitions that will not change.
+		8. Removed node definitions which had only one table defined under
+		   it to avoid excessive layers.
+		9. Renamed node from sdvServerClientConfigParams to
+		   sdvServerClientConfig.
+		10. There are several objects with ACCESS read-create; however,
+		    comments indicate they are status only.
+		11. What does Alarm 209 mean?
+		12. Added alarm objects to eventTable instead of augmenting a
+		    separate table.
+		13. Changed INT32 to UINT32 where descriptions indicated.
+		14. Changed INT32 to UINT32 where range was 1-2147483647.
+		15. Added/Removed objects from IMPORTS statement.
+		16. Updated organization and contact info.
+		17. Renamed sdvServerObjs as sdvServerMIBObjects.
+		18. Renumbered objects where there were gaps in numbering.
+		19. Changed SYNTAX from INTEGER to Integer32.
+		20. Removed not-accessible indices from conformance groups."
+::= { enterprises scteRoot(5591) scteHmsTree (1) insidePlantIdent (11) heDigital(5) heManagedServer(6) 1 }
+
+-- 
+-- Node definitions
+-- 
+--  
+-- All the objects of the SDV Server MIB.
+-- 
+
+sdvServerMIBObjects  OBJECT IDENTIFIER ::= { hmsScteSdvMib 1 }
+
+sdvsmConfigObjects  OBJECT-IDENTITY
+	STATUS     current
+	DESCRIPTION 
+		"The node for the SDVSM (SDV Session Manager) configuration MIB
+		objects."
+	::= { sdvServerMIBObjects 3 }
+
+sdvsmOfferedPrograms  OBJECT-IDENTITY
+	STATUS     current
+	DESCRIPTION 
+		"This node describes the SDVSM offered programs."
+	::= { sdvsmConfigObjects 8 }
+
+sdvsmSTBCapabilities  OBJECT-IDENTITY
+	STATUS     current
+	DESCRIPTION 
+		"This node describes the topology and capabilities of the STBs that
+		have requested channel changes from the SDVSM."
+	::= { sdvServerMIBObjects 4 }
+
+--  
+-- Status/Diagnostic of the SDV Server.
+-- 
+
+sdvsmDiagnostics     OBJECT IDENTIFIER ::= { sdvServerMIBObjects 8 }
+
+--  
+-- Events associated with the SDV Server.
+-- 
+
+sdvServerEvents      OBJECT IDENTIFIER ::= { hmsScteSdvMib 2 }
+
+--  
+-- Dummy node under which all events must be defined. This is required for
+-- SNMP v1/v2 compatibility.
+-- 
+
+sdvServerEventsV2    OBJECT IDENTIFIER ::= { sdvServerEvents 0 }
+
+--  
+-- Conformance.
+-- 
+
+sdvServerConformance  OBJECT IDENTIFIER ::= { hmsScteSdvMib 3 }
+
+--  
+-- Compliance statements of the SDV Server MIB.
+-- 
+
+sdvServerCompliances  OBJECT IDENTIFIER ::= { sdvServerConformance 1 }
+
+--  
+-- The different groups of objects of the SDV Server.
+-- 
+
+sdvServerGroups      OBJECT IDENTIFIER ::= { sdvServerConformance 2 }
+
+sdvsmName  OBJECT-TYPE
+	SYNTAX     OCTET STRING
+	MAX-ACCESS read-write
+	STATUS     current
+	DESCRIPTION 
+		"The name of the SDVSM."
+	::= { sdvServerMIBObjects 1 }
+
+sdvsmMacAddress  OBJECT-TYPE
+	SYNTAX     MacAddress
+	MAX-ACCESS read-write
+	STATUS     current
+	DESCRIPTION 
+		"The MAC address of the SDVSM."
+	::= { sdvServerMIBObjects 2 }
+
+sdvsmMiniCarouselTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmMiniCarouselEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Describes the mini-carousels transmitted by the SDVSM."
+	::= { sdvsmConfigObjects 1 }
+
+sdvsmMiniCarouselEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmMiniCarouselEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry fully describes a mini-carousel of the SDVSM."
+	INDEX { sdvsmServiceGroupID }
+	::= { sdvsmMiniCarouselTable 1 }
+
+SdvsmMiniCarouselEntry ::= SEQUENCE {
+	sdvsmMiniCarouselPath
+		INTEGER,
+	sdvsmMiniCarouselBitRate
+		Integer32,
+	sdvsmMiniCarouselDestIpAddrType
+		InetAddressType,
+	sdvsmMiniCarouselDestIpAddr
+		InetAddress,
+	sdvsmMiniCarouselUdpPort
+		Integer32,
+	sdvsmMiniCarouselSize
+		Integer32,
+	sdvsmMiniCarouselTransmissionFrequency
+		Integer32
+}
+
+sdvsmMiniCarouselPath  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		oob (1),
+		ib (2)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Indicates whether the mini-carousel is carried 1=out-of-band or
+		2=in-band."
+	::= { sdvsmMiniCarouselEntry 1 }
+
+sdvsmMiniCarouselBitRate  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The transmission rate of the mini-carousel."
+	::= { sdvsmMiniCarouselEntry 2 }
+
+sdvsmMiniCarouselDestIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack (IPv4 or IPv6) of the destination."
+	::= { sdvsmMiniCarouselEntry 3 }
+
+sdvsmMiniCarouselDestIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The IP address of the mini-carousel which can be unicast or
+		multicast."
+	::= { sdvsmMiniCarouselEntry 4 }
+
+sdvsmMiniCarouselUdpPort  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The destination UDP port for the mini-carousel."
+	::= { sdvsmMiniCarouselEntry 5 }
+
+sdvsmMiniCarouselSize  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bytes"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Size of the mini-carousel."
+	::= { sdvsmMiniCarouselEntry 6 }
+
+sdvsmMiniCarouselTransmissionFrequency  OBJECT-TYPE
+	SYNTAX     Integer32 (1..100)
+	UNITS 	"# mini-carousel/second"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of times the mini-carousel is transmitted per second."
+	::= { sdvsmMiniCarouselEntry 7 }
+
+sdvsmClientTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmClientEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table specifies SDV Client configuration objects that are
+		transmitted in the mini-carousel configuration file."
+	::= { sdvsmConfigObjects 2 }
+
+sdvsmClientEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmClientEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry specifies client configuration objetcs for SDV that
+		belong to the same service group or TSID group."
+	INDEX { sdvsmServiceGroupID }
+	::= { sdvsmClientTable 1 }
+
+SdvsmClientEntry ::= SEQUENCE {
+	sdvsmClientRexmitPgmSelectInterval
+		Integer32,
+	sdvsmClientLastUserActivityInterval
+		Integer32,
+	sdvsmClientMsgRespTimeout
+		Integer32,
+	sdvsmClientMsgReqMaxRetries
+		Integer32,
+	sdvsmClientMsgReqMinRetryInterval
+		Integer32,
+	sdvsmClientMsgReqMaxRetryInterval
+		Integer32,
+	sdvsmClientUserInteractionTimeout
+		Integer32,
+	sdvsmClientDefaultCaSystemId
+		Integer32,
+	sdvsmClientDefaultEncoding
+		Integer32,
+	sdvsmClientDefaultCapabilities
+		Integer32,
+	sdvsmClientTunerHealthTest
+		Integer32,
+	sdvsmClientMinimizeChannelReport
+		Integer32
+}
+
+sdvsmClientRexmitPgmSelectInterval  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"seconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"If non-zero, retransmit last SDV Program Select Request message
+		within the specified number of seconds."
+	::= { sdvsmClientEntry 1 }
+
+sdvsmClientLastUserActivityInterval  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"seconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Reporting interval in seconds for the last user activity report."
+	::= { sdvsmClientEntry 2 }
+
+sdvsmClientMsgRespTimeout  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"milliseconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Response message timeout."
+	::= { sdvsmClientEntry 3 }
+
+sdvsmClientMsgReqMaxRetries  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Maximum retry count for retransmitting request messages."
+	::= { sdvsmClientEntry 4 }
+
+sdvsmClientMsgReqMinRetryInterval  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"milliseconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Minimum time before retransmitting a request."
+	::= { sdvsmClientEntry 5 }
+
+sdvsmClientMsgReqMaxRetryInterval  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"milliseconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Maximum time before the SDV client retransmits a request."
+	::= { sdvsmClientEntry 6 }
+
+sdvsmClientUserInteractionTimeout  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"seconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Time to wait for the subscriber to respond to activity prompts
+		(Are you watching TV?)."
+	::= { sdvsmClientEntry 7 }
+
+sdvsmClientDefaultCaSystemId  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Communicates the default conditional access system ID to the SDV
+		client."
+	::= { sdvsmClientEntry 8 }
+
+sdvsmClientDefaultEncoding  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Default standard audio and video encoding supported by the
+		set-top."
+	::= { sdvsmClientEntry 9 }
+
+sdvsmClientDefaultCapabilities  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Default capabilities of the set-top, such as modulation mode
+		supported, HD, and wide screen."
+	::= { sdvsmClientEntry 10 }
+
+sdvsmClientTunerHealthTest  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Determine whether set-top tuned to appropriate frequency."
+	::= { sdvsmClientEntry 11 }
+
+sdvsmClientMinimizeChannelReport  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Specifies whether to SDV client (STB) is to report all channel
+		changes, including broadcast, or only SDV channel changes."
+	::= { sdvsmClientEntry 12 }
+
+sdvsmFrequencyPlanTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmFrequencyPlanEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Specifies the frequency plan parameters for the configuration
+		message. Note that for the frequency plan, the actual frequencies to
+		scan should come from the QAMs assigned to those settops."
+	::= { sdvsmConfigObjects 3 }
+
+sdvsmFrequencyPlanEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmFrequencyPlanEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry represents a frequency plan associated with one or more
+		service/TSID groups."
+	INDEX { sdvsmServiceGroupID }
+	::= { sdvsmFrequencyPlanTable 1 }
+
+SdvsmFrequencyPlanEntry ::= SEQUENCE {
+	sdvsmFrequencyPlanIndex
+		Unsigned32,
+	sdvsmFrequencyPlanIpAddrType
+		InetAddressType,
+	sdvsmFrequencyPlanReportIpAddr
+		InetAddress,
+	sdvsmFrequencyPlanReportPort
+		Integer32,
+	sdvsmFrequencyPlanReportInterval
+		Integer32,
+	sdvsmFrequencyPlanMinFreqScanCount
+		Integer32,
+	sdvsmFrequencyPlanMaxFreqScanTime
+		Integer32,
+	sdvsmFrequencyPlanDiscoveryMethod
+		INTEGER,
+	sdvsmFrequencyPlanServiceGroup
+		Integer32
+}
+
+sdvsmFrequencyPlanIndex  OBJECT-TYPE
+	SYNTAX     Unsigned32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Table index."
+	::= { sdvsmFrequencyPlanEntry 1 }
+
+sdvsmFrequencyPlanIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack of the server that receives the auto-discovery
+		reports."
+	::= { sdvsmFrequencyPlanEntry 2 }
+
+sdvsmFrequencyPlanReportIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"IP address of the server that receives auto discovery reports."
+	::= { sdvsmFrequencyPlanEntry 3 }
+
+sdvsmFrequencyPlanReportPort  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Port number of the server that receives auto discovery reports."
+	::= { sdvsmFrequencyPlanEntry 4 }
+
+sdvsmFrequencyPlanReportInterval  OBJECT-TYPE
+	SYNTAX     Integer32 (1..24)
+	UNITS 	"hours"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Maximum number of hours between discovery reports."
+	::= { sdvsmFrequencyPlanEntry 5 }
+
+sdvsmFrequencyPlanMinFreqScanCount  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Minimum number of frequencies that must be scanned before sending
+		an auto discovery report."
+	::= { sdvsmFrequencyPlanEntry 6 }
+
+sdvsmFrequencyPlanMaxFreqScanTime  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"seconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Maximum amount of time to spend for auto discovery process.
+		Cannot be zero."
+	::= { sdvsmFrequencyPlanEntry 7 }
+
+sdvsmFrequencyPlanDiscoveryMethod  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		frequencyPlusModulation (1),
+		sourceID (2),
+		virtualChannel (3)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Method used to determine the frequency to scan.
+		1=frequency+modulation, 2=source ID, 3=virtual channel"
+	::= { sdvsmFrequencyPlanEntry 8 }
+
+sdvsmFrequencyPlanServiceGroup  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Optional component to assign a frequency plan to a specific Service
+		Group or TSID Group.  If no Service Group/TSID Group is specified,
+		then this frequency plan is the default frequency plan configuration
+		for all service groups/TSID Groups without an explicit frequency
+		plan entry."
+	::= { sdvsmFrequencyPlanEntry 9 }
+
+sdvsmFrequencyPlanFreqTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmFrequencyPlanFreqEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table specifies the frequencies associated with a service
+		group."
+	::= { sdvsmConfigObjects 4 }
+
+sdvsmFrequencyPlanFreqEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmFrequencyPlanFreqEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry specifies a frequency and its associated output TSID."
+	INDEX { sdvsmFrequencyPlanIndex }
+	::= { sdvsmFrequencyPlanFreqTable 1 }
+
+SdvsmFrequencyPlanFreqEntry ::= SEQUENCE {
+	sdvsmFrequencyPlanFrequency
+		Integer32,
+	sdvsmFrequencyPlanTSID
+		Integer32
+}
+
+sdvsmFrequencyPlanFrequency  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"Hertz"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The frequency to scan."
+	::= { sdvsmFrequencyPlanFreqEntry 1 }
+
+sdvsmFrequencyPlanTSID  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The output TSID."
+	::= { sdvsmFrequencyPlanFreqEntry 2 }
+
+sdvsmMpegProgNumRangeTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmMpegProgNumRangeEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table specifies SDV offered MPEG program number ranges."
+	::= { sdvsmConfigObjects 5 }
+
+sdvsmMpegProgNumRangeEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmMpegProgNumRangeEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry describes an MPEG program number range."
+	INDEX { sdvsmMpegProgNumRangeIndex }
+	::= { sdvsmMpegProgNumRangeTable 1 }
+
+SdvsmMpegProgNumRangeEntry ::= SEQUENCE {
+	sdvsmMpegProgNumRangeIndex
+		Integer32,
+	sdvsmMpegProgNumRangeLowEnd
+		Integer32,
+	sdvsmMpegProgNumRangeHighEnd
+		Integer32
+}
+
+sdvsmMpegProgNumRangeIndex  OBJECT-TYPE
+	SYNTAX     Integer32 (1..100)
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table index."
+	::= { sdvsmMpegProgNumRangeEntry 1 }
+
+sdvsmMpegProgNumRangeLowEnd  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The lower end of the MPEG program number range used for Switched
+		Digital Video. The range must be disjoint from the VOD MPEG
+		program number range(s)."
+	::= { sdvsmMpegProgNumRangeEntry 2 }
+
+sdvsmMpegProgNumRangeHighEnd  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The upper end of the MPEG program number range used for Switched
+		Digital Video. The range must be disjoint from the VOD MPEG
+		program number range(s)."
+	::= { sdvsmMpegProgNumRangeEntry 3 }
+
+sdvsmOdrmrTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmOdrmrEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table describes the On-Demand Resource Managers Redirector
+		(ODRMR) associated for switched digital unicast. There can be 0 or
+		more ODRMRs."
+	::= { sdvsmConfigObjects 6 }
+
+sdvsmOdrmrEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmOdrmrEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry describes a specific ERM."
+	INDEX { sdvsmOdrmrIndex }
+	::= { sdvsmOdrmrTable 1 }
+
+SdvsmOdrmrEntry ::= SEQUENCE {
+	sdvsmOdrmrIndex
+		Integer32,
+	sdvsmOdrmrName
+		DisplayString,
+	sdvsmOdrmrIpAddrType
+		InetAddressType,
+	sdvsmOdrmrIpAddr
+		InetAddress,
+	sdvsmOdrmrTcpPort
+		Integer32
+}
+
+sdvsmOdrmrIndex  OBJECT-TYPE
+	SYNTAX     Integer32 (1..10000)
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table index."
+	::= { sdvsmOdrmrEntry 1 }
+
+sdvsmOdrmrName  OBJECT-TYPE
+	SYNTAX     DisplayString
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The name of the ODRM."
+	::= { sdvsmOdrmrEntry 2 }
+
+sdvsmOdrmrIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack of the ODRM that the SDVSM communicates with."
+	::= { sdvsmOdrmrEntry 3 }
+
+sdvsmOdrmrIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The IP address of the ODRM."
+	::= { sdvsmOdrmrEntry 4 }
+
+sdvsmOdrmrTcpPort  OBJECT-TYPE
+	SYNTAX     Integer32 (0..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The TCP port of the ODRM."
+	::= { sdvsmOdrmrEntry 5 }
+
+sdvsmAdZoneTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmAdZoneEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table specifies the association between ad zone and
+		service/TSID group."
+	::= { sdvsmConfigObjects 7 }
+
+sdvsmAdZoneEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmAdZoneEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry desscribes the mapping between ad zone and
+		service/TSID group."
+	INDEX { sdvsmServiceGroupID }
+	::= { sdvsmAdZoneTable 1 }
+
+SdvsmAdZoneEntry ::= SEQUENCE {
+	sdvsmAdZoneID
+		Unsigned32
+}
+
+sdvsmAdZoneID  OBJECT-TYPE
+	SYNTAX     Unsigned32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The Ad Zone identifier."
+	::= { sdvsmAdZoneEntry 1 }
+
+--  SDV Program attributes.
+
+sdvsmOfferedProgramTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmOfferedProgramEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table of offered programs. This table defines the programs
+		offered in the switched service and the associated configuration
+		information."
+	::= { sdvsmOfferedPrograms 1 }
+
+sdvsmOfferedProgramEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmOfferedProgramEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table entry for offer program configuration."
+	INDEX { sdvsmOfferedProgramSourceID, 
+		sdvsmAdZoneID }
+	::= { sdvsmOfferedProgramTable 1 }
+
+SdvsmOfferedProgramEntry ::= SEQUENCE {
+	sdvsmOfferedProgramSourceID
+		Integer32,
+	sdvsmOfferedProgramName
+		DisplayString,
+	sdvsmOfferedProgramPriority
+		Integer32,
+	sdvsmOfferedProgramEncryption
+		INTEGER,
+	sdvsmOfferedProgramEncoding
+		INTEGER,
+	sdvsmOfferedProgramResolution
+		INTEGER,
+	sdvsmOfferedProgramBW
+		Integer32,
+	sdvsmOfferedProgramReclaimTime
+		Integer32,
+	sdvsmOfferedProgramRecapAckTime
+		Integer32,
+	sdvsmOfferedProgramInputMpegNo
+		Integer32,
+	sdvsmOfferedProgramState
+		INTEGER,
+	sdvsmOfferedProgramProviderID
+		Integer32,
+	sdvsmOfferedProgramAssetID
+		Integer32
+}
+
+sdvsmOfferedProgramSourceID  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The source ID and also the index of the entry in the table."
+	::= { sdvsmOfferedProgramEntry 1 }
+
+sdvsmOfferedProgramName  OBJECT-TYPE
+	SYNTAX     DisplayString
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The optional name of the switched service program."
+	::= { sdvsmOfferedProgramEntry 2 }
+
+sdvsmOfferedProgramPriority  OBJECT-TYPE
+	SYNTAX     Integer32 (1..16)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The priority of the switched service program. 
+		1 is the highest priority."
+	::= { sdvsmOfferedProgramEntry 3 }
+
+sdvsmOfferedProgramEncryption  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		none (1),
+		dvb (2),
+		mediaCipher (3),
+		powerKEY (4),
+		nds (5)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The encryption type of the program."
+	::= { sdvsmOfferedProgramEntry 4 }
+
+sdvsmOfferedProgramEncoding  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		mpeg2 (1),
+		h264 (2),
+		vc1 (3)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The encoding of the program (MPEG-2/MPEG-4/etc.)."
+	::= { sdvsmOfferedProgramEntry 5 }
+
+sdvsmOfferedProgramResolution  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		sd (1),
+		hd (2)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The resolution of the program (HD/SD)."
+	::= { sdvsmOfferedProgramEntry 6 }
+
+sdvsmOfferedProgramBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The bandwidth of the switched service program, CBR or maximum VBR."
+	::= { sdvsmOfferedProgramEntry 7 }
+
+sdvsmOfferedProgramReclaimTime  OBJECT-TYPE
+	SYNTAX     Integer32 (120..65535)
+	UNITS 	"minutes"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The reclaim time for the offered program. When all users of a
+		program have been on the program without user activity for greater
+		than this configured time, the bandwidth is considered eligible to
+		be reclaimed."
+	DEFVAL { 240 }
+	::= { sdvsmOfferedProgramEntry 8 }
+
+sdvsmOfferedProgramRecapAckTime  OBJECT-TYPE
+	SYNTAX     Integer32 (10..9999)
+	UNITS 	"seconds"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The recapture acknowledge time for the offered program. When a
+		program is eligible for recapture, the SDV Server may cause the
+		client to generate a message requesting acknowledgement. If the
+		user does not acknowledge the message within this configured time,
+		the program bandwidth can be reclaimed if bandwidth is needed."
+	DEFVAL { 600 }
+	::= { sdvsmOfferedProgramEntry 9 }
+
+sdvsmOfferedProgramInputMpegNo  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Input MPEG program number."
+	::= { sdvsmOfferedProgramEntry 10 }
+
+sdvsmOfferedProgramState  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		switched (1),
+		dynamic (2)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"An indication that the program can be switched or not."
+	::= { sdvsmOfferedProgramEntry 11 }
+
+sdvsmOfferedProgramProviderID  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Optional attribute for switched unicast to identify the provider ID
+		of this offered program."
+	::= { sdvsmOfferedProgramEntry 12 }
+
+sdvsmOfferedProgramAssetID  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Optional attribute for switched unicast to identify the asset ID of
+		this offered program."
+	::= { sdvsmOfferedProgramEntry 13 }
+
+sdvsmOfferedProgramMulticastTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmOfferedProgramMulticastEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table describes the program multicast attributes."
+	::= { sdvsmOfferedPrograms 2 }
+
+sdvsmOfferedProgramMulticastEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmOfferedProgramMulticastEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry describes multicast attributes associated with a given
+		program."
+	INDEX { sdvsmOfferedProgramSourceID, 
+		sdvsmAdZoneID }
+	::= { sdvsmOfferedProgramMulticastTable 1 }
+
+SdvsmOfferedProgramMulticastEntry ::= SEQUENCE {
+	sdvsmOfferedProgramMulticastSourceIpAddrType
+		InetAddressType,
+	sdvsmOfferedProgramMulticastSourceIpAddr
+		InetAddress,
+	sdvsmOfferedProgramMulticastIpAddrType
+		InetAddressType,
+	sdvsmOfferedProgramMulticastIpAddr
+		InetAddress,
+	sdvsmOfferedProgramMulticastPort
+		Integer32,
+	sdvsmOfferedProgramMulticastSourcePriority
+		INTEGER
+}
+
+sdvsmOfferedProgramMulticastSourceIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack of the content source for this multicast."
+	::= { sdvsmOfferedProgramMulticastEntry 1 }
+
+sdvsmOfferedProgramMulticastSourceIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The content source IP for this multicast."
+	::= { sdvsmOfferedProgramMulticastEntry 2 }
+
+sdvsmOfferedProgramMulticastIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack (IPv4 or IPv6) of the multicast program."
+	::= { sdvsmOfferedProgramMulticastEntry 3 }
+
+sdvsmOfferedProgramMulticastIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The multicast IP address of the program."
+	::= { sdvsmOfferedProgramMulticastEntry 4 }
+
+sdvsmOfferedProgramMulticastPort  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The multicast port of the program."
+	::= { sdvsmOfferedProgramMulticastEntry 5 }
+
+sdvsmOfferedProgramMulticastSourcePriority  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		first (1),
+		second (2),
+		third (3)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The priority of the multicast source, e.g., first=1, second=2, and
+		third=3. The priority helps the SDVSM determine which source to join
+		first and next in case of failure of any given source."
+	::= { sdvsmOfferedProgramMulticastEntry 6 }
+
+sdvsmSTBMacAddrTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmSTBMacAddrEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"The list of STB MAC addresses."
+	::= { sdvsmSTBCapabilities 1 }
+
+sdvsmSTBMacAddrEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmSTBMacAddrEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry consists of an STB MAC address."
+	INDEX { sdvsmSTBIpAddr }
+	::= { sdvsmSTBMacAddrTable 1 }
+
+SdvsmSTBMacAddrEntry ::= SEQUENCE {
+	sdvsmSTBMacAddress
+		MacAddress
+}
+
+sdvsmSTBMacAddress  OBJECT-TYPE
+	SYNTAX     MacAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The MAC address of the STB referenced by IP address."
+	::= { sdvsmSTBMacAddrEntry 1 }
+
+--  Set-tops assigned to the SDV Server.
+
+sdvsmSTBTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmSTBEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table of STBs learned from CCP."
+	::= { sdvsmSTBCapabilities 2 }
+
+sdvsmSTBEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmSTBEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each table entry describes an STB."
+	INDEX { sdvsmSTBMacAddress }
+	::= { sdvsmSTBTable 1 }
+
+SdvsmSTBEntry ::= SEQUENCE {
+	sdvsmSTBIpAddrType
+		InetAddressType,
+	sdvsmSTBIpAddr
+		InetAddress,
+	sdvsmSTBCapabilityDescriptorResolution
+		Integer32,
+	sdvsmSTBStreamLUAEvent
+		INTEGER,
+	sdvsmSTBStreamLUATime
+		DateAndTime,
+	sdvsmSTBStreamProgramID
+		Integer32,
+	sdvsmSTBCaSystemBitmap
+		Integer32,
+	sdvsmSTBCaSystemID
+		Integer32,
+	sdvsmSTBNetworkBitmap
+		Integer32,
+	sdvsmSTBDvrSize
+		Integer32,
+	sdvsmSTBTotalNumTuners
+		Integer32
+}
+
+sdvsmSTBIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack of the STB."
+	::= { sdvsmSTBEntry 1 }
+
+sdvsmSTBIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS accessible-for-notify
+	STATUS     current
+	DESCRIPTION 
+		"The STB IP address."
+	::= { sdvsmSTBEntry 2 }
+
+sdvsmSTBCapabilityDescriptorResolution  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The configured resolution of the STB (HD/SD)."
+	::= { sdvsmSTBEntry 3 }
+
+sdvsmSTBStreamLUAEvent  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		powerOff (1),
+		tune (2),
+		keyPress (3)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The last user activity."
+	::= { sdvsmSTBEntry 4 }
+
+sdvsmSTBStreamLUATime  OBJECT-TYPE
+	SYNTAX     DateAndTime
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The time of the last user activity."
+	::= { sdvsmSTBEntry 5 }
+
+sdvsmSTBStreamProgramID  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The current broadcast program ID for the stream entry."
+	::= { sdvsmSTBEntry 6 }
+
+sdvsmSTBCaSystemBitmap  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Bitmap indicating the conditional access systems supported by the
+		set-top.
+		
+		How to decode the conditional access bitmap:
+		
+		Field    Bits           Description
+		-----    ----           -----------
+		
+		reserved 4-15           Unused set to zero
+		
+		NDS         3           Set-top supports NDS
+		
+		PowerKey    2           Set-top supports PowerKEY
+		
+		MediaCipher 1           Set-top supports MediaCipher
+		
+		DVB_CA      0           Set-top supports DVB Simulcrypt"
+	::= { sdvsmSTBEntry 7 }
+
+sdvsmSTBCaSystemID  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The ID of the conditional access system currently active on the
+		STB."
+	::= { sdvsmSTBEntry 8 }
+
+sdvsmSTBNetworkBitmap  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Specifies the networks on which video/audio streams can be
+		received.
+		
+		How to decode the network bitmap:
+		
+		Field    Bits       Description
+		-----    ----       -----------
+		
+		reserved 8-15       Unused set to zero
+		
+		GSM         7       Set-top supports GSM
+		
+		CDMA        6       Set-top support CDMA
+		
+		MOCA        5       Set-top supports MOCA
+		
+		WiFi        4       Set-top supports WiFi (802.11x)
+		
+		Ethernet    3       Set-top supports Ethernet (10/100/1000)
+		
+		DOCSIS      2       Set-top supports DOCSIS
+		
+		QAM         1       Set-top supports QAM video delivery
+		
+		reserved    0       Unused set to zero"
+	::= { sdvsmSTBEntry 9 }
+
+sdvsmSTBDvrSize  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"GB"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Size of the DVR hard drive. Zero (0) or 0xFFFF indicates no DVR
+		capability."
+	::= { sdvsmSTBEntry 10 }
+
+sdvsmSTBTotalNumTuners  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The total number of tuners in the set-top."
+	::= { sdvsmSTBEntry 11 }
+
+sdvsmSTBTunerCapabilitiesTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmSTBTunerCapabilitiesEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"This table describes the capabilities of each tuner of a given
+		STB."
+	::= { sdvServerMIBObjects 5 }
+
+sdvsmSTBTunerCapabilitiesEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmSTBTunerCapabilitiesEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Each entry describes the capabilities of an STB tuner."
+	INDEX { sdvsmSTBMacAddress }
+	::= { sdvsmSTBTunerCapabilitiesTable 1 }
+
+SdvsmSTBTunerCapabilitiesEntry ::= SEQUENCE {
+	sdvsmSTBTunerIdentifier
+		Integer32,
+	sdvsmSTBVideoDecodeBitmap
+		Integer32,
+	sdvsmSTBAudioDecodeBitmap
+		Integer32
+}
+
+sdvsmSTBTunerIdentifier  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"This field identifies the ID of the tuner that possesses the
+		specified capabilities. A value of 0xFF indicates that the
+		capabilities apply to all tuners."
+	::= { sdvsmSTBTunerCapabilitiesEntry 1 }
+
+sdvsmSTBVideoDecodeBitmap  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Bitmap that describes the video codec that are supported.
+		
+		How to decode the video codec bitmap:
+		
+		Field    Bits          Description
+		-----    ----          -----------
+		
+		reserved 3-15          Unused set to zero
+		
+		VC-1        2          Settop supports VC-1
+		
+		H.264       1          Settop supports H.264 (MPEG-4 Part 10 or AVC)
+		
+		MPEG-2      0          Settop supports MPEG-2"
+	::= { sdvsmSTBTunerCapabilitiesEntry 2 }
+
+sdvsmSTBAudioDecodeBitmap  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Bitmap that specifies the audio codecs that are supported.
+		
+		How to decode the audio codec bitmap:
+		
+		FIELD    Bits         Description
+		-----    ----         -----------
+		
+		reserved 3-15         Unused  set to zero
+		
+		MP3         2         Set-top supports MPEG audio layer-3
+		
+		AAC         1         Set-top supports AAC (Advanced Audio Coding)
+		
+		AC3         0         Set-top supports AC3 (Dolby Digital)."
+	::= { sdvsmSTBTunerCapabilitiesEntry 3 }
+
+--  
+-- Service Groups assigned to the SDV Server.
+-- 
+
+sdvsmServiceGroupTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmServiceGroupEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table for service or TSID group configuration."
+	::= { sdvServerMIBObjects 6 }
+
+sdvsmServiceGroupEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmServiceGroupEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table entry for service or TSID group configuration."
+	INDEX { sdvsmServiceGroupID }
+	::= { sdvsmServiceGroupTable 1 }
+
+SdvsmServiceGroupEntry ::= SEQUENCE {
+	sdvsmServiceGroupID
+		Unsigned32,
+	sdvsmServiceGroupLowWaterMark
+		Integer32,
+	sdvsmServiceGroupShareableBW
+		Integer32,
+	sdvsmServiceGroupHighWaterMark
+		Integer32,
+	sdvsmServiceGroupTotalBW
+		Integer32,
+	sdvsmServiceGroupActiveSdvBW
+		Integer32,
+	sdvsmServiceGroupBwThreshold
+		Integer32,
+	sdvsmServiceGroupPeakBW
+		Integer32,
+	sdvsmServiceGroupPeakTime
+		DateAndTime,
+	sdvsmServiceGroupPrevPeakTime
+		DateAndTime,
+	sdvsmServiceGroupPrevPeakBW
+		Integer32,
+	sdvsmServiceGroupYearPeakTime
+		DateAndTime,
+	sdvsmServiceGroupCcRequests
+		Integer32,
+	sdvsmServiceGroupCcSDRequests
+		Integer32,
+	sdvsmServiceGroupCcHDequests
+		Integer32,
+	sdvsmServiceGroupCcNCRequests
+		Integer32,
+	sdvsmServiceGroupCcH264Requests
+		Integer32,
+	sdvsmServiceGroupCcVC1Requests
+		Integer32,
+	sdvsmServiceGroupFailedBindings
+		Integer32,
+	sdvsmServiceGroupFailedSDBindings
+		Integer32,
+	sdvsmServiceGroupFailedHDBindings
+		Integer32,
+	sdvsmServiceGroupFailedNCBindings
+		Integer32,
+	sdvsmServiceGroupFailedH264Bindings
+		Integer32,
+	sdvsmServiceGroupFailedVC1Bindings
+		Integer32,
+	sdvsmServiceGroupCcWM9Requests
+		Integer32,
+	sdvsmServiceGroupMCPIpAddrType
+		InetAddressType,
+	sdvsmServiceGroupMCPIpAddr
+		InetAddress,
+	sdvsmServiceGroupMCversion
+		Integer32,
+	sdvsmServiceGroupActiveSTBs
+		Integer32,
+	sdvsmServiceGroupSTBCapacity
+		Integer32
+}
+
+sdvsmServiceGroupID  OBJECT-TYPE
+	SYNTAX     Unsigned32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The service group ID or TSID group ID and the index to the table
+		entry."
+	::= { sdvsmServiceGroupEntry 1 }
+
+sdvsmServiceGroupLowWaterMark  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The amount of service or TSID group bandwidth partitioned for
+		SDV-only use."
+	::= { sdvsmServiceGroupEntry 2 }
+
+sdvsmServiceGroupShareableBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The amount of service or TSID group bandwidth which is available to
+		SDV and other services (typically VoD)."
+	::= { sdvsmServiceGroupEntry 3 }
+
+sdvsmServiceGroupHighWaterMark  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Low Water Mark and Shareable Bandwidth combined. Service or TSID
+		group bandwidth above the High Water Mark is not available to SDV,
+		and is typically reserved for VoD use only."
+	::= { sdvsmServiceGroupEntry 4 }
+
+sdvsmServiceGroupTotalBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The total amount of bandwidth in the service or TSID group."
+	::= { sdvsmServiceGroupEntry 5 }
+
+sdvsmServiceGroupActiveSdvBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The bandwidth currently in use on the QAM carriers by SDV."
+	::= { sdvsmServiceGroupEntry 6 }
+
+sdvsmServiceGroupBwThreshold  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"%"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The threshold expressed as a percentage of total
+		ServiceGroup/SIDGroup Bandwidth that if exceeded would trigger an
+		alarm."
+	DEFVAL { 90 }
+	::= { sdvsmServiceGroupEntry 7 }
+
+sdvsmServiceGroupPeakBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The maximum bandwidth consumed by the switched service since
+		midnight. This object is moved to the previous peak object and
+		then reset at midnight."
+	::= { sdvsmServiceGroupEntry 8 }
+
+sdvsmServiceGroupPeakTime  OBJECT-TYPE
+	SYNTAX     DateAndTime
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The date/time of maximum bandwidth usage."
+	::= { sdvsmServiceGroupEntry 9 }
+
+sdvsmServiceGroupPrevPeakTime  OBJECT-TYPE
+	SYNTAX     DateAndTime
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The date/time of maximum bandwidth usage for the previous day."
+	::= { sdvsmServiceGroupEntry 10 }
+
+sdvsmServiceGroupPrevPeakBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	UNITS 	"bps"
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The maximum bandwidth consumed by the switched service on the
+		previous day. This object is updated at midnight."
+	::= { sdvsmServiceGroupEntry 11 }
+
+sdvsmServiceGroupYearPeakTime  OBJECT-TYPE
+	SYNTAX     DateAndTime
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The date/time of maximum bandwidth usage for the year so far."
+	::= { sdvsmServiceGroupEntry 12 }
+
+sdvsmServiceGroupCcRequests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of channel change requests."
+	::= { sdvsmServiceGroupEntry 13 }
+
+sdvsmServiceGroupCcSDRequests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of channel change requests for SD channels."
+	::= { sdvsmServiceGroupEntry 14 }
+
+sdvsmServiceGroupCcHDequests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of channel change requests for HD."
+	::= { sdvsmServiceGroupEntry 15 }
+
+sdvsmServiceGroupCcNCRequests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of channel change requests for 
+		narrowcast."
+	::= { sdvsmServiceGroupEntry 16 }
+
+sdvsmServiceGroupCcH264Requests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of channel change requests for H.264
+		channels."
+	::= { sdvsmServiceGroupEntry 17 }
+
+sdvsmServiceGroupCcVC1Requests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of channel change requests for VC-1
+		channels."
+	::= { sdvsmServiceGroupEntry 18 }
+
+sdvsmServiceGroupFailedBindings  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of failed binding requests."
+	::= { sdvsmServiceGroupEntry 19 }
+
+sdvsmServiceGroupFailedSDBindings  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of failed SD binding requests."
+	::= { sdvsmServiceGroupEntry 20 }
+
+sdvsmServiceGroupFailedHDBindings  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of failed HD binding requests."
+	::= { sdvsmServiceGroupEntry 21 }
+
+sdvsmServiceGroupFailedNCBindings  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of failed narrowcast binding requests."
+	::= { sdvsmServiceGroupEntry 22 }
+
+sdvsmServiceGroupFailedH264Bindings  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of failed H.264 binding requests."
+	::= { sdvsmServiceGroupEntry 23 }
+
+sdvsmServiceGroupFailedVC1Bindings  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of failed VC1 binding requests."
+	::= { sdvsmServiceGroupEntry 24 }
+
+sdvsmServiceGroupCcWM9Requests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of channel change requests for WM9
+		channels."
+	::= { sdvsmServiceGroupEntry 25 }
+
+sdvsmServiceGroupMCPIpAddrType  OBJECT-TYPE
+	SYNTAX     InetAddressType
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The type of IP stack (IPv4 or IPv6) of the mini-carousel destination."
+	::= { sdvsmServiceGroupEntry 26 }
+
+sdvsmServiceGroupMCPIpAddr  OBJECT-TYPE
+	SYNTAX     InetAddress
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Mini Carousel destination IP address (multicast or unicast)."
+	::= { sdvsmServiceGroupEntry 27 }
+
+sdvsmServiceGroupMCversion  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The version of the mini-carousel currently being multicast for
+		this service group."
+	::= { sdvsmServiceGroupEntry 28 }
+
+sdvsmServiceGroupActiveSTBs  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Number of active STBs."
+	::= { sdvsmServiceGroupEntry 29 }
+
+sdvsmServiceGroupSTBCapacity  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The total number of set-tops this service group is allowed to
+		support."
+	DEFVAL { 2000 }
+	::= { sdvsmServiceGroupEntry 30 }
+
+--  SDV program status.
+
+sdvsmActiveProgramTable  OBJECT-TYPE
+	SYNTAX SEQUENCE OF SdvsmActiveProgramEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table of active programs. This table defines the programs active
+		in the switched service."
+	::= { sdvServerMIBObjects 7 }
+
+sdvsmActiveProgramEntry  OBJECT-TYPE
+	SYNTAX 	SdvsmActiveProgramEntry
+	MAX-ACCESS not-accessible
+	STATUS     current
+	DESCRIPTION 
+		"Table entry for offer program configuration."
+	INDEX { sdvsmOfferedProgramSourceID, 
+		sdvsmServiceGroupID, 
+		sdvsmAdZoneID }
+	::= { sdvsmActiveProgramTable 1 }
+
+SdvsmActiveProgramEntry ::= SEQUENCE {
+	sdvsmActiveProgramSessionID
+		OCTET STRING,
+	sdvsmActiveProgramMpegPN
+		Integer32,
+	sdvsmActiveProgramNumUsers
+		Integer32,
+	sdvsmActiveProgramBW
+		Integer32,
+	sdvsmActiveProgramIsfallback
+		TruthValue
+}
+
+sdvsmActiveProgramSessionID  OBJECT-TYPE
+	SYNTAX     OCTET STRING (SIZE(0..9))
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The session ID of the session bound to the program."
+	::= { sdvsmActiveProgramEntry 1 }
+
+sdvsmActiveProgramMpegPN  OBJECT-TYPE
+	SYNTAX     Integer32 (1..65535)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The MPEG program number assigned to the bound program."
+	::= { sdvsmActiveProgramEntry 2 }
+
+sdvsmActiveProgramNumUsers  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of users tuned to the service."
+	::= { sdvsmActiveProgramEntry 3 }
+
+sdvsmActiveProgramBW  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The bandwidth of the active program."
+	::= { sdvsmActiveProgramEntry 4 }
+
+sdvsmActiveProgramIsfallback  OBJECT-TYPE
+	SYNTAX     TruthValue
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"Indicates whether the active program is a fallback for
+		another program."
+	::= { sdvsmActiveProgramEntry 5 }
+
+sdvsmNumberSTBs  OBJECT-TYPE
+	SYNTAX     Integer32 (0..15000)
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of STBs in the STB table."
+	::= { sdvsmDiagnostics 1 }
+
+sdvsmSTBCapacityStatus  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		ok (1),
+		minor (2),
+		major (3)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The status of the available space in the STB table. The state
+		Alarm-xxxxx indicates that less than the configured threshold is
+		available."
+	::= { sdvsmDiagnostics 2 }
+
+sdvsmSRMStatus  OBJECT-TYPE
+	SYNTAX     INTEGER {
+		ok (1),
+		major (2)
+	}
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The status of the interface to the SRM. Alarm indicates the SRM is
+		not responding to bandwidth requests."
+	::= { sdvsmDiagnostics 3 }
+
+sdvsmSRMRequests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of requests to the SRM."
+	::= { sdvsmDiagnostics 4 }
+
+sdvsmSRMRequestDenied  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The count of the number of bandwidth requests to the SRM that
+		were denied."
+	::= { sdvsmDiagnostics 5 }
+
+sdvsmInvalidSGRequests  OBJECT-TYPE
+	SYNTAX     Integer32
+	MAX-ACCESS read-only
+	STATUS     current
+	DESCRIPTION 
+		"The number of invalid CCP requests for unsupported SGs."
+	::= { sdvsmDiagnostics 6 }
+
+sdvsmInitTrapInfo  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMacAddress }
+	STATUS     current
+	DESCRIPTION 
+		"Initialization trap."
+	::= { sdvServerEventsV2 1 }
+
+sdvsmHeartbeatTrap  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMacAddress }
+	STATUS     current
+	DESCRIPTION 
+		"A periodic heartbeat sent by the secondary SDV Server in a
+		redundancy configuration and by every primary in a non-redundant
+		configuration. In a redundancy configuration, the primaries do not
+		send heartbeats to the DNCS. They sent heartbeats to the secondary
+		or backup instead."
+	::= { sdvServerEventsV2 2 }
+
+sdvsmProvisionedTrap  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMacAddress }
+	STATUS     current
+	DESCRIPTION 
+		"A trap indicating that the SDV Server has successfully provisioned
+		itself. This trap is sent ONLY following initialization and
+		provisioning."
+	::= { sdvServerEventsV2 3 }
+
+sdvSsmProgramViewersRemovedTrap  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMacAddress, 
+		sdvsmOfferedProgramName, 
+		sdvsmOfferedProgramPriority, 
+		sdvsmOfferedProgramInputMpegNo, 
+		sdvsmActiveProgramSessionID }
+	STATUS     current
+	DESCRIPTION 
+		"The SDV Server has removed a program with viewers to free up
+		bandwidth."
+	::= { sdvServerEventsV2 4 }
+
+sdvsmLackBWDeniedCC  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMacAddress, 
+		sdvsmOfferedProgramName, 
+		sdvsmOfferedProgramBW }
+	STATUS     current
+	DESCRIPTION 
+		"SDV Channel Change Request Denied for Lack of Bandwidth."
+	::= { sdvServerEventsV2 5 }
+
+sdvsmExceededTunerCount  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMiniCarouselDestIpAddr }
+	STATUS     current
+	DESCRIPTION 
+		"This trap is issued by the SDVSM when its rated tuner count is
+		exceeded."
+	::= { sdvServerEventsV2 6 }
+
+sdvsmAutoDiscoverFailure  NOTIFICATION-TYPE
+	OBJECTS { sdvsmName, 
+		sdvsmMacAddress, 
+		sdvsmFrequencyPlanServiceGroup, 
+		sdvsmFrequencyPlanTSID }
+	STATUS     current
+	DESCRIPTION 
+		"This trap is sent when a TSID mismatch occurs."
+	::= { sdvServerEventsV2 7 }
+
+--  Compliance statements
+
+sdvServerCompliance  MODULE-COMPLIANCE
+	STATUS     current
+	DESCRIPTION 
+		"The minimum compliance statement for SDV Servers."
+	MODULE
+		MANDATORY-GROUPS { sdvsmConfigGroup,
+					sdvsmDiagsGroup,
+					sdvsmServiceGrpObjsGroup,
+					sdvsmSTBGroup,
+					sdvsmTrapGroup } 
+		GROUP sdvsmProgramGroup
+		DESCRIPTION 
+		"The sdvsmProgram Group is unconditionally optional."
+		GROUP sdvsmClientConfigGroup
+		DESCRIPTION 
+		"The sdvsmClientConfigGroup is unconditionally optional."
+	::= { sdvServerCompliances 1 }
+
+sdvsmConfigGroup  OBJECT-GROUP
+	OBJECTS { sdvsmMiniCarouselPath, 
+		sdvsmMiniCarouselBitRate, 
+		sdvsmMiniCarouselDestIpAddrType, 
+		sdvsmMiniCarouselDestIpAddr, 
+		sdvsmMiniCarouselUdpPort, 
+		sdvsmFrequencyPlanIpAddrType, 
+		sdvsmFrequencyPlanReportIpAddr, 
+		sdvsmFrequencyPlanReportPort, 
+		sdvsmFrequencyPlanReportInterval, 
+		sdvsmFrequencyPlanMinFreqScanCount, 
+		sdvsmFrequencyPlanMaxFreqScanTime, 
+		sdvsmFrequencyPlanDiscoveryMethod, 
+		sdvsmFrequencyPlanServiceGroup, 
+		sdvsmOfferedProgramSourceID, 
+		sdvsmOfferedProgramName, 
+		sdvsmOfferedProgramPriority, 
+		sdvsmOfferedProgramEncryption, 
+		sdvsmOfferedProgramEncoding, 
+		sdvsmOfferedProgramResolution, 
+		sdvsmOfferedProgramBW, 
+		sdvsmOfferedProgramReclaimTime, 
+		sdvsmOfferedProgramRecapAckTime, 
+		sdvsmOfferedProgramInputMpegNo, 
+		sdvsmOfferedProgramState, 
+		sdvsmOfferedProgramProviderID, 
+		sdvsmOfferedProgramAssetID, 
+		sdvsmOfferedProgramMulticastSourceIpAddr, 
+		sdvsmOfferedProgramMulticastIpAddr, 
+		sdvsmOfferedProgramMulticastPort, 
+		sdvsmMpegProgNumRangeLowEnd, 
+		sdvsmMiniCarouselSize, 
+		sdvsmMiniCarouselTransmissionFrequency, 
+		sdvsmFrequencyPlanIndex, 
+		sdvsmMacAddress, 
+		sdvsmName, 
+		sdvsmMpegProgNumRangeHighEnd, 
+		sdvsmFrequencyPlanFrequency, 
+		sdvsmFrequencyPlanTSID, 
+		sdvsmOdrmrName, 
+		sdvsmOdrmrIpAddrType, 
+		sdvsmOdrmrIpAddr, 
+		sdvsmOdrmrTcpPort }
+	STATUS     current
+	DESCRIPTION 
+		"The SDV Server configuration objects."
+	::= { sdvServerGroups 1 }
+
+sdvsmDiagsGroup  OBJECT-GROUP
+	OBJECTS { sdvsmNumberSTBs, 
+		sdvsmSTBCapacityStatus, 
+		sdvsmSRMStatus, 
+		sdvsmSRMRequests, 
+		sdvsmSRMRequestDenied, 
+		sdvsmInvalidSGRequests }
+	STATUS     current
+	DESCRIPTION 
+		"The status/diagnostic objects of the SDV Server."
+	::= { sdvServerGroups 2 }
+
+sdvsmServiceGrpObjsGroup  OBJECT-GROUP
+	OBJECTS { sdvsmServiceGroupID, 
+		sdvsmServiceGroupTotalBW, 
+		sdvsmServiceGroupActiveSdvBW, 
+		sdvsmServiceGroupBwThreshold, 
+		sdvsmServiceGroupPeakBW, 
+		sdvsmServiceGroupPeakTime, 
+		sdvsmServiceGroupPrevPeakTime, 
+		sdvsmServiceGroupPrevPeakBW, 
+		sdvsmServiceGroupYearPeakTime, 
+		sdvsmServiceGroupCcRequests, 
+		sdvsmServiceGroupCcSDRequests, 
+		sdvsmServiceGroupCcHDequests, 
+		sdvsmServiceGroupCcNCRequests, 
+		sdvsmServiceGroupCcH264Requests, 
+		sdvsmServiceGroupCcVC1Requests, 
+		sdvsmServiceGroupFailedBindings, 
+		sdvsmServiceGroupFailedSDBindings, 
+		sdvsmServiceGroupFailedHDBindings, 
+		sdvsmServiceGroupFailedNCBindings, 
+		sdvsmServiceGroupFailedH264Bindings, 
+		sdvsmServiceGroupFailedVC1Bindings, 
+		sdvsmServiceGroupCcWM9Requests, 
+		sdvsmServiceGroupMCPIpAddrType, 
+		sdvsmServiceGroupMCPIpAddr, 
+		sdvsmServiceGroupMCversion, 
+		sdvsmServiceGroupActiveSTBs, 
+		sdvsmAdZoneID, 
+		sdvsmServiceGroupSTBCapacity, 
+		sdvsmServiceGroupLowWaterMark, 
+		sdvsmServiceGroupShareableBW, 
+		sdvsmServiceGroupHighWaterMark }
+	STATUS     current
+	DESCRIPTION 
+		"The service groups objects for the SDV Server."
+	::= { sdvServerGroups 3 }
+
+sdvsmProgramGroup  OBJECT-GROUP
+	OBJECTS { sdvsmActiveProgramSessionID, 
+		sdvsmActiveProgramMpegPN, 
+		sdvsmActiveProgramNumUsers, 
+		sdvsmActiveProgramBW, 
+		sdvsmActiveProgramIsfallback, 
+		sdvsmOfferedProgramSourceID, 
+		sdvsmOfferedProgramName, 
+		sdvsmOfferedProgramPriority, 
+		sdvsmOfferedProgramEncryption, 
+		sdvsmOfferedProgramEncoding, 
+		sdvsmOfferedProgramResolution, 
+		sdvsmOfferedProgramBW, 
+		sdvsmOfferedProgramReclaimTime, 
+		sdvsmOfferedProgramRecapAckTime, 
+		sdvsmOfferedProgramInputMpegNo, 
+		sdvsmOfferedProgramState, 
+		sdvsmOfferedProgramProviderID, 
+		sdvsmOfferedProgramAssetID, 
+		sdvsmOfferedProgramMulticastSourceIpAddrType, 
+		sdvsmOfferedProgramMulticastSourceIpAddr, 
+		sdvsmOfferedProgramMulticastIpAddrType, 
+		sdvsmOfferedProgramMulticastIpAddr, 
+		sdvsmOfferedProgramMulticastPort, 
+		sdvsmOfferedProgramMulticastSourcePriority }
+	STATUS     current
+	DESCRIPTION 
+		"The objects of characterizing an SDV program."
+	::= { sdvServerGroups 4 }
+
+sdvsmSTBGroup  OBJECT-GROUP
+	OBJECTS { sdvsmSTBIpAddrType, 
+		sdvsmSTBIpAddr, 
+		sdvsmSTBCapabilityDescriptorResolution, 
+		sdvsmSTBStreamLUAEvent, 
+		sdvsmSTBStreamLUATime, 
+		sdvsmSTBStreamProgramID, 
+		sdvsmSTBVideoDecodeBitmap, 
+		sdvsmSTBTunerIdentifier, 
+		sdvsmSTBAudioDecodeBitmap, 
+		sdvsmSTBCaSystemBitmap, 
+		sdvsmSTBCaSystemID, 
+		sdvsmSTBNetworkBitmap, 
+		sdvsmSTBDvrSize, 
+		sdvsmSTBTotalNumTuners, 
+		sdvsmSTBMacAddress }
+	STATUS     current
+	DESCRIPTION 
+		"STB objects group."
+	::= { sdvServerGroups 5 }
+
+sdvsmClientConfigGroup  OBJECT-GROUP
+	OBJECTS { sdvsmClientRexmitPgmSelectInterval, 
+		sdvsmClientLastUserActivityInterval, 
+		sdvsmClientMsgRespTimeout, 
+		sdvsmClientMsgReqMaxRetries, 
+		sdvsmClientMsgReqMinRetryInterval, 
+		sdvsmClientMsgReqMaxRetryInterval, 
+		sdvsmClientUserInteractionTimeout, 
+		sdvsmClientDefaultCaSystemId, 
+		sdvsmClientDefaultEncoding, 
+		sdvsmClientDefaultCapabilities, 
+		sdvsmClientTunerHealthTest, 
+		sdvsmClientMinimizeChannelReport }
+	STATUS     current
+	DESCRIPTION 
+		"This group describes the SDV client configuration objects."
+	::= { sdvServerGroups 6 }
+
+sdvsmTrapGroup  NOTIFICATION-GROUP
+	NOTIFICATIONS { sdvsmInitTrapInfo, 
+		sdvsmHeartbeatTrap, 
+		sdvsmProvisionedTrap, 
+		sdvSsmProgramViewersRemovedTrap, 
+		sdvsmLackBWDeniedCC, 
+		sdvsmExceededTunerCount, 
+		sdvsmAutoDiscoverFailure }
+	STATUS     current
+	DESCRIPTION 
+		"The group of SDVSM traps."
+	::= { sdvServerGroups 7 }
+END
+

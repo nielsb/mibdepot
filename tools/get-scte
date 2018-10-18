@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+TMP=tmp/scte
+DIR=`pwd`/new/scte
+
+mkdir -p tmp new
+cd tmp
+rm -f "SCTE Standards HMS MIB Codes.zip"
+wget http://www.scte.org/documents/pdf/Standards/SCTE%20Standards%20HMS%20MIB%20Codes.zip
+
+rm -fr $DIR
+mkdir -p $DIR
+cd $DIR
+unzip -j "../../tmp/SCTE Standards HMS MIB Codes.zip"
+
+patch <../../scte.patch

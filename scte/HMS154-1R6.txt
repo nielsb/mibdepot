@@ -1,0 +1,244 @@
+SCTE-HE-DIGITAL-COMMON-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    enterprises, MODULE-IDENTITY, OBJECT-TYPE, OBJECT-IDENTITY
+        FROM SNMPv2-SMI
+    DisplayString, DateAndTime
+        FROM SNMPv2-TC 
+    MODULE-COMPLIANCE, OBJECT-GROUP
+        FROM SNMPv2-CONF
+    entPhysicalIndex
+        FROM ENTITY-MIB
+    heDigital
+        FROM SCTE-HMS-HEADENDIDENT-MIB  -- see SCTE 38-11 (formerly HMS114)
+    HeClockSource, HeResetValue, HeTenthCentigrade 
+	  FROM SCTE-HMS-HEADENDIDENT-TC-MIB; 
+
+heDigitalCommonMIB MODULE-IDENTITY
+    LAST-UPDATED    "200807210000Z"
+    ORGANIZATION    "SCTE HMS Working Group"
+    CONTACT-INFO    "SCTE HMS Subcommittee, Chairman 
+                     mail to:  standards@scte.org "
+
+    DESCRIPTION
+            "The MIB module is for representing general information
+            about HeadEnd Digital equipment present(or indoor)
+            and is supported by an SNMP agent. heDigital is supported in 
+            HMS114R11.mib (SCTE 38-11)"
+
+	REVISION "200807210000Z"
+	DESCRIPTION 
+         "Updated file with Comments from meeting 7/9/08
+1. Update IMPORTS clause to reference:
+ SCTE-HMS-HEADENDIDENT-TC-MIB for HeTenthCentigrade
+ Remove Integer32."
+
+	REVISION "200806100000Z"
+	DESCRIPTION 
+         "Added tree branches for MPEG and QAM so MIB would parse with 
+	   any compiler."
+
+	REVISION "200712180000Z"
+	DESCRIPTION 
+         "Modifications due to voting comments
+		1. Reordered MIB tree to fit under the heDigital branch.
+		2. Took out unused imports.
+		3. added temperature.
+		4. added compliance statement and made everything optional."
+
+	REVISION "200709250000Z"
+	DESCRIPTION 
+         "Took out everything except the most basic place holders for future
+          additions."
+    ::= { enterprises scteRoot(5591) scteHmsTree (1) insidePlantIdent (11) heDigital(5) 2 }
+
+heDigitalCommonMIBObjects OBJECT IDENTIFIER ::= {heDigitalCommonMIB 1 }
+heDigitalQAM OBJECT IDENTIFIER ::= {heDigital 3 }
+heDigitalMPEG OBJECT IDENTIFIER ::= {heDigital 4 }
+
+-- MIB contains 3 groups
+heDigitalCommonConfig  OBJECT IDENTIFIER ::= { heDigitalCommonMIBObjects 1 }
+heDigitalCommonStatus  OBJECT IDENTIFIER ::= { heDigitalCommonMIBObjects 2 }
+heDigitalCommonAlarms  OBJECT IDENTIFIER ::= { heDigitalCommonMIBObjects 3 }
+heDigitalCommonLog       OBJECT IDENTIFIER ::= { heDigitalCommonMIBObjects 4 }
+
+
+
+--  The Common Tables
+
+heDigitalCommonClockTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HeDigitalCommonClockEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about headend (or indoor)
+            equipment."
+    ::= { heDigitalCommonConfig 1 }
+
+heDigitalCommonClockEntry OBJECT-TYPE
+    SYNTAX      HeDigitalCommonClockEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Information about particular headend equipment."
+    INDEX       { entPhysicalIndex }
+    ::= { heDigitalCommonClockTable 1 }
+
+HeDigitalCommonClockEntry ::= SEQUENCE {
+    heDigitalCommonTime	DateAndTime,
+    heDigitalCommonClockSource	HeClockSource
+}
+
+heDigitalCommonTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+            "Real time clock value for this module."
+    ::= { heDigitalCommonClockEntry 1 }
+
+heDigitalCommonClockSource OBJECT-TYPE
+    SYNTAX      HeClockSource
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+            "Real time clock source for this module."
+    ::= { heDigitalCommonClockEntry 2 }
+
+
+
+heDigitalCommonResetTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HeDigitalCommonResetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about headend (or indoor)
+            equipment."
+    ::= { heDigitalCommonConfig 2 }
+
+heDigitalCommonResetEntry OBJECT-TYPE
+    SYNTAX      HeDigitalCommonResetEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Software / Hardware Reset of a specific Entity."
+    INDEX       { entPhysicalIndex }
+    ::= { heDigitalCommonResetTable 1 }
+
+HeDigitalCommonResetEntry ::= SEQUENCE {
+    heDigitalCommonSoftwareReset	HeResetValue,
+    heDigitalCommonHardwareReset	HeResetValue,
+    heDigitalCommonWarmReset       HeResetValue
+}
+
+heDigitalCommonSoftwareReset OBJECT-TYPE
+    SYNTAX      HeResetValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+            "All running Software will reset. This function will initiate 
+             a cold start trap depending on the device. Software reset
+             functions will be vendor specific."
+    ::= { heDigitalCommonResetEntry 1 }
+
+heDigitalCommonHardwareReset OBJECT-TYPE
+    SYNTAX      HeResetValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+            "The Hardware for this device will reset. This function will initiate 
+             a cold start trap from the device."
+    ::= { heDigitalCommonResetEntry 2 }
+
+heDigitalCommonWarmReset OBJECT-TYPE
+    SYNTAX      HeResetValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+            "All running Software will reset. This function will initiate 
+              a warm start trap on the device. Software reset
+             functions will be vendor specific. No configuration parameters
+             can change during a Software Warm Start."
+    ::= { heDigitalCommonResetEntry 3 }
+
+
+heDigitalCommonTempTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HeDigitalCommonTempEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing information about headend (or indoor)
+            equipment temperature values."
+    ::= { heDigitalCommonStatus 1 }
+
+heDigitalCommonTempEntry OBJECT-TYPE
+    SYNTAX      HeDigitalCommonTempEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Information about particular headend equipment."
+    INDEX       { entPhysicalIndex }
+    ::= { heDigitalCommonTempTable 1 }
+
+HeDigitalCommonTempEntry ::= SEQUENCE {
+    heDigitalCommonTemperature                 HeTenthCentigrade
+}
+
+heDigitalCommonTemperature OBJECT-TYPE
+    SYNTAX      HeTenthCentigrade
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+            "Temperature measured inside the headend equipment.
+
+            This object must provide for the alarm management capabilities
+            with a corresponding entry in the propertyTable of
+            SCTE-HMS-PROPERTY-MIB (HMS026).
+
+            An alarm shall be recorded as an entry in the currentAlarmTable
+            of SCTE-HMS-PROPERTY-MIB (HMS026).  
+
+            A log record shall be added as an entry in the heCommonLogTable.
+
+            An heCommonAlarmEvent notification shall be sent."
+    ::= { heDigitalCommonTempEntry 1 }
+
+
+-- Conformance information
+heDigitalCommonConformance OBJECT IDENTIFIER ::= {heDigitalCommonMIB 2 }
+heDigitalCommonCompliances OBJECT IDENTIFIER ::= { heDigitalCommonConformance 1 }
+
+
+heDigitalCompliance  MODULE-COMPLIANCE
+	STATUS     current
+	DESCRIPTION 
+		"These objects describe the support level for QAM."
+	MODULE
+		GROUP heDigitalConfigGroup
+		DESCRIPTION 
+			"The heDigitalConfigGroup is unconditionally optional"
+		GROUP heDigitalStatusGroup
+		DESCRIPTION 
+			"The heDigitalStatusGroup is unconditionally optional"
+	::= { heDigitalCommonCompliances 1 }
+
+-- MIB Groupings
+heDigitalCommonGroups OBJECT IDENTIFIER ::= {heDigitalCommonConformance 2}
+
+heDigitalConfigGroup  OBJECT-GROUP
+	OBJECTS { heDigitalCommonTime,heDigitalCommonClockSource, heDigitalCommonSoftwareReset,
+    heDigitalCommonHardwareReset, heDigitalCommonWarmReset}
+	STATUS     current
+	DESCRIPTION 
+		"Configuration that is common to network devices."
+	::= { heDigitalCommonGroups 1 }
+
+heDigitalStatusGroup  OBJECT-GROUP
+	OBJECTS { heDigitalCommonTemperature  }
+	STATUS     current
+	DESCRIPTION 
+		"Status that is common to network devices."
+	::= { heDigitalCommonGroups 2 }
+
+END
+
