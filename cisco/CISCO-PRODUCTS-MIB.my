@@ -2297,6 +2297,8 @@ ciscoUCSE180DM3K9                   OBJECT IDENTIFIER ::= { ciscoProducts 2562 }
 ciscoUCSE1120DM3K9                  OBJECT IDENTIFIER ::= { ciscoProducts 2563 } -- UCSE 12 Core Double Wide service module
 ciscoNFVIS                          OBJECT IDENTIFIER ::= { ciscoProducts 2565 } -- Cisco Network Functions Virtualization Infrastructure Software (NFVIS)
 ciscoIR829GWLTEGAxK9                OBJECT IDENTIFIER ::= { ciscoProducts 2569 } -- Cisco 829 4G LTE Industrial Integrated Service Routers with multi-mode Global LTE/HSPA+ with 802.11n, contact pakulka2
+ciscoNCS55A2MODSES                  OBJECT IDENTIFIER ::= { ciscoProducts 2570 } -- Network Convergence Services NCS55A2 Scaled Fixed 24x10G & 16x25G with 2xMPA Chassis
+ciscoNCS55A2MODS                    OBJECT IDENTIFIER ::= { ciscoProducts 2571 } -- Network Convergence Services NCS55A2 Fixed 24x10G & 16x25G with 2xMPA Chassis
 ciscoASR9906                        OBJECT IDENTIFIER ::= { ciscoProducts 2572 } -- Cisco Aggregation Services Router (ASR) 9906 Chassis 
 ciscoCat950016X                     OBJECT IDENTIFIER ::= { ciscoProducts 2592 } -- Catalyst 9500 16-port 10g data only switch
 ciscoCat9500FixedSwitchStack        OBJECT IDENTIFIER ::= { ciscoProducts 2593 } -- A stack of any Cisco Catalyst 9500 Fixed stack-able ethernet switches with unified identity (as a single unified switch), control and management 
@@ -2389,6 +2391,10 @@ ciscoASR92020SZM                    OBJECT IDENTIFIER ::= { ciscoProducts 2705 }
 ciscoAP1900                         OBJECT IDENTIFIER ::= { ciscoProducts 2728 } -- 4x4 11ax Access point
 ciscoAP2900                         OBJECT IDENTIFIER ::= { ciscoProducts 2729 } -- 8x8 11ax Access point
 ciscoAP1840                         OBJECT IDENTIFIER ::= { ciscoProducts 2730 } -- 4x4 11ac 4x4 Wave2 Access Point
+ciscoC11118PWS                      OBJECT IDENTIFIER ::= { ciscoProducts 2731 } -- Cisco C1111-8PWS Router
+ciscoC11118PLteLAWS                 OBJECT IDENTIFIER ::= { ciscoProducts 2732 } -- Cisco C1111-8PLTELAWS Router
+ciscoC11118PLteLAWA                 OBJECT IDENTIFIER ::= { ciscoProducts 2733 } -- Cisco C1111-8PLTELAWA Router
+ciscoC11118PLteLAWE                 OBJECT IDENTIFIER ::= { ciscoProducts 2734 } -- Cisco C1111-8PLTELAWE Router
 ciscoWSC6506E                       OBJECT IDENTIFIER ::= { ciscoProducts 2738 } -- Catalyst 6000 series chassis with 6 slots
 ciscoWSC6509E                       OBJECT IDENTIFIER ::= { ciscoProducts 2739 } -- Catalyst 6000 series chassis with 9 slots
 ciscoN54024Z8Q2CM                   OBJECT IDENTIFIER ::= { ciscoProducts 2741 } -- NCS 540 Series 24x1/10GE, 8x10/25GE, 2x100GE Fixed Chassis
@@ -2406,4 +2412,5 @@ ciscoSNS3655K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2785 }
 ciscoSNS3695K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2786 } -- Cisco Secure Network Server platform SNS-3695 appliance
 
 END
+
 

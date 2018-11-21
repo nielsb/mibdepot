@@ -1674,6 +1674,8 @@ cevChassisN9KC9336CFX2                  OBJECT IDENTIFIER ::= { cevChassis 1955 
 cevChassisC11138PLteEAWE                OBJECT IDENTIFIER ::= { cevChassis 1956 } -- Cisco C1113-8PLTEEAWE Router Chassis
 cevChassisC11188P                       OBJECT IDENTIFIER ::= { cevChassis 1963 } -- Cisco C1118-8P Router Chassis
 cevChassisciscoIR829GWLTEGAxK9          OBJECT IDENTIFIER ::= { cevChassis 1970 } -- IR829 Hardened WAN GE 4G LTE secure platform multi-mode Global LTE/HSPA+ with 802.11n, PoE
+cevChassisNCS55A2MODSES                 OBJECT IDENTIFIER ::= { cevChassis 1971 } -- NCS55A2 Scaled Fixed 24x10G & 16x25G with 2xMPA Chassis
+cevChassisNCS55A2MODS                   OBJECT IDENTIFIER ::= { cevChassis 1972 } -- NCS55A2  Fixed 24x10G & 16x25G with 2xMPA Chassis
 cevChassisN5204GAZA                     OBJECT IDENTIFIER ::= { cevChassis 1974 } -- Cisco NCS520 Series - 4-1GE and 4-10GE - Single AC model
 cevChassisN52020G4ZA                    OBJECT IDENTIFIER ::= { cevChassis 1975 } -- Cisco NCS520 Series - 20-1GE and 4-10GE - Dual AC model
 cevChassisN52020G4ZD                    OBJECT IDENTIFIER ::= { cevChassis 1976 } -- Cisco NCS520 Series - 20-1GE and 4-10GE - Dual DC model
@@ -1784,6 +1786,10 @@ cevChassisC9274PMLTEGB                  OBJECT IDENTIFIER ::= { cevChassis 2134 
 cevChassisC9264PLTEGB                   OBJECT IDENTIFIER ::= { cevChassis 2135 } -- C926-4PLTEGB Router with 1 Eth+DSL, 1 LTE interface,4 GE LAN interface, 1GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Bootflash
 cevChassisC931J4P                       OBJECT IDENTIFIER ::= { cevChassis 2139 } -- C931J-4P Router with External Power Supply 4 GE LAN interface, 2GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash
 cevChassisNCS5064                       OBJECT IDENTIFIER ::= { cevChassis 2140 } -- Cisco NCS 5064 Series Router
+cevChassisC11118PWS                     OBJECT IDENTIFIER ::= { cevChassis 2141 } -- Cisco C1111-8PWS Router Chassis
+cevChassisC11118PLteLAWS                OBJECT IDENTIFIER ::= { cevChassis 2142 } -- Cisco C1111-8PLTELAWS Router Chassis
+cevChassisC11118PLteLAWA                OBJECT IDENTIFIER ::= { cevChassis 2143 } -- Cisco C1111-8PLTELAWA Router Chassis
+cevChassisC11118PLteLAWE                OBJECT IDENTIFIER ::= { cevChassis 2144 } -- Cisco C1111-8PLTELAWE Router Chassis
 cevChassis01FT566E04                     OBJECT IDENTIFIER ::= { cevChassis 2173 } -- IBM SAN192C-6 8978-E04 (4 Module) SAN Director
 cevChassis01FT565E08                     OBJECT IDENTIFIER ::= { cevChassis 2174 } -- IBM SAN384C-6 8978-E08 (8 Module) SAN Director
 cevChassis01FT564E16                     OBJECT IDENTIFIER ::= { cevChassis 2175 } -- IBM SAN768C-6 8978-E16 (16 Module) SAN Director
@@ -2758,9 +2764,11 @@ cevPowerSupplyC9300PWR715DC2            OBJECT IDENTIFIER ::= { cevPowerSupply 6
 cevPowerSupplyISR1100PS                 OBJECT IDENTIFIER ::= { cevPowerSupply 657 } -- Cisco ISR 1100 Series Generic Power Supply Module
 cevPowerSupplyISR4400PWR650WAC          OBJECT IDENTIFIER ::= { cevPowerSupply 659 } -- Cisco ISR 4400 650W AC Power Supply
 cevPowerSupplyPwrIR1101DC               OBJECT IDENTIFIER ::= { cevPowerSupply 660 } -- Cisco IR1101 DC Power Supply
+cevPowerSupplyNC55900WDCFWHD            OBJECT IDENTIFIER ::= { cevPowerSupply 661 } -- 900W DC power supply port-side exhaust airflow
 cevPowerSupplyADHL2DC1500W              OBJECT IDENTIFIER ::= { cevPowerSupply 667 } -- Third party 1500 DC power supply  for N9K-C93240YC-FX2Z 
 cevPowerSupplyIE3k480WDc                OBJECT IDENTIFIER ::= { cevPowerSupply 668 } -- Cisco Industrial Ethernet Switch IE3k 480 Watt DC Power Supply
 cevPowerSupplyESS3300720WDc             OBJECT IDENTIFIER ::= { cevPowerSupply 669 } -- Cisco ESS-3300 Embedded Service Switch 720 Watt DC Power Supply
+cevPowerSupplyNC55900WACFWHD            OBJECT IDENTIFIER ::= { cevPowerSupply 670 } -- 900W AC power supply port-side exhaust airflow
 cevPowerSupplyN9KPuv23000WB              OBJECT IDENTIFIER ::= { cevPowerSupply 673} -- Nexus 9500 platform 3150W universal high-voltage 200 to 277V AC or 240 to 380V DC power supply with port-side intake
 cevPowerSupplyNCS5KPAC1200WFR           OBJECT IDENTIFIER ::= { cevPowerSupply 678 } -- Cisco NCS 5000 Series Router Power AC 1200W Front flow
 cevPowerSupplyNCS5KPAC1200WBK           OBJECT IDENTIFIER ::= { cevPowerSupply 679 } -- Cisco NCS 5000 Series Router Power AC 1200W Back flow
@@ -3725,6 +3733,8 @@ cevModuleC9300NM8X10G                   OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleC9300NM2X40G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 647 } -- Catalyst 9300 2P 40G Network Module
 cevModuleC9300NM4M                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 648 } -- Catalyst 9300 Network module 4 * multi gig support
 cevModuleC9300NM2Y                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 649 } -- Catalyst 9300 2 * 25GE Network module
+cevModuleNC55MODABM                     OBJECT IDENTIFIER ::= { cevModuleCommonCards 651 } -- NCS 5500 36X10G SFP & 2x40G QSFP & 2xMPA MACsec Base Line Card
+cevModuleNC55MODASM                     OBJECT IDENTIFIER ::= { cevModuleCommonCards 652 } -- NCS 5500 36X10G SFP & 2x40G QSFP & 2xMPA MACsec Base Scaled Line Card
 cevModuleSPAETHER4xGE4x10GEDUAL         OBJECT IDENTIFIER ::= { cevModuleCommonCards 653 } -- 4-port Gig & 4-port Ten Gig Dual Ethernet Interface Module
 cevModuleSPAETHER20xGE4x10GEDUAL        OBJECT IDENTIFIER ::= { cevModuleCommonCards 654 } -- 20-port Gig & 4-port Ten Gig Dual Ethernet Interface Module
 cevModuleNC6FC2TMCRIGEL                 OBJECT IDENTIFIER ::= { cevModuleCommonCards 655 } -- NCS 6000 2T MC Rigel Fabric Card. NCS: Network Convergence System MC: Multi-Chassis 
@@ -7940,6 +7950,8 @@ cevModuleISR4461NIM            OBJECT IDENTIFIER ::= { cevModuleISR4400Type 59 }
 cevModuleISRVG450RP            OBJECT IDENTIFIER ::= { cevModuleISR4400Type 60 }  -- Cisco VG450 Routing Processor Module
 cevModuleISRVG450FP            OBJECT IDENTIFIER ::= { cevModuleISR4400Type 61 }  -- Cisco VG450 Forwarding Processor Module 
 cevModuleISRVG450NIM           OBJECT IDENTIFIER ::= { cevModuleISR4400Type 62 }  -- Cisco VG450 Built-In Network Interface M
+cevModuleISR4461ESM            OBJECT IDENTIFIER ::= { cevModuleISR4400Type 63 }  -- Cisco ISR 4461 Built-In Enhanced Service Module controller Module
+cevModuleVG450ESM              OBJECT IDENTIFIER ::= { cevModuleISR4400Type 64 }  -- Cisco VG450 Built-In Enhanced Service Module controller Module
 
 
 cevModuleQSFPPlusS            OBJECT IDENTIFIER ::= { cevModule 93 } -- group for QSFP+ Modules
@@ -8129,6 +8141,7 @@ cevModuleC1111X8PNIM         OBJECT IDENTIFIER ::= { cevModuleISRType 135 } -- C
 cevModuleC1118SHDSL          OBJECT IDENTIFIER ::= { cevModuleISRType 139 } -- Cisco C1118 Series Built-In Multi-Mode Multi-Group SHDSL
 cevModuleIR1101K9MB          OBJECT IDENTIFIER ::= { cevModuleISRType 140 } -- Cisco IR1101 Motherboard with 4 Copper Ports + 1 Combo Port
 cevModuleIR11015ES           OBJECT IDENTIFIER ::= { cevModuleISRType 141 } -- Cisco IR1101 Built-In Ethernet Switch Module
+cevModuleISRAP1100S          OBJECT IDENTIFIER ::= { cevModuleISRType 145 } -- Cisco ISR Series WLAN Access Point Module that supports 802.11ac in S domain
 
 
 
@@ -8928,4 +8941,5 @@ cevTCAMType                  OBJECT IDENTIFIER ::= { cevMIBObjects 13 } -- TCAM 
 
 
 END
+
 

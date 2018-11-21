@@ -45,7 +45,7 @@ IMPORTS
 
 
 ciscoEntityFRUControlMIB MODULE-IDENTITY
-    LAST-UPDATED    "201808200000Z"
+    LAST-UPDATED    "201811050000Z"
     ORGANIZATION    "Cisco Systems, Inc."
     CONTACT-INFO
             "Postal: Cisco Systems, Inc.
@@ -65,6 +65,10 @@ ciscoEntityFRUControlMIB MODULE-IDENTITY
 
         FRUs include assemblies such as power supplies, fans, 
         processor modules, interface modules, etc."
+    REVISION        "201811050000Z"
+    DESCRIPTION
+        "Corrected MAX-ACCESS of cefcFRUActualInputCurrent
+        and cefcFRUActualOutputCurrent."
     REVISION        "201808200000Z"
     DESCRIPTION
         "Added CefcVmModuleOperType Textual Convention.
@@ -724,7 +728,7 @@ CefcPercentOrMinusOne ::= TEXTUAL-CONVENTION
     SYNTAX          Integer32 (-1 | 0..100)
 
 CefcVmModuleOperType ::= TEXTUAL-CONVENTION
-    STATUS       current
+    STATUS          current
     DESCRIPTION
         "Operational VM module states.  Valid values are :
 
@@ -732,13 +736,12 @@ CefcVmModuleOperType ::= TEXTUAL-CONVENTION
         up(2)          module is operational.
         unknown(3)     module is unknown.
         goingDown(4)   module is goingDown from Up."
-    SYNTAX 			INTEGER	{
+    SYNTAX          INTEGER  {
                         down(1),
                         up(2),
                         unknown(3),
                         goingDown(4)
-					} 
-
+                    }
 -- MIB variables
 
 cefcFRUPower  OBJECT IDENTIFIER
@@ -1091,7 +1094,7 @@ cefcFRUDrawnInlineCurrent OBJECT-TYPE
 
 cefcFRUActualInputCurrent OBJECT-TYPE
     SYNTAX          FRUCurrentType
-    MAX-ACCESS      read-write
+    MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
         "Amount of actual input current of this power supply." 
@@ -1099,7 +1102,7 @@ cefcFRUActualInputCurrent OBJECT-TYPE
 
 cefcFRUActualOutputCurrent OBJECT-TYPE
     SYNTAX          FRUCurrentType
-    MAX-ACCESS      read-write
+    MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
         "Amount of actual output current of this power supply." 
@@ -1261,21 +1264,22 @@ cefcModuleUpTime OBJECT-TYPE
     ::= { cefcModuleEntry 8 }
 
 cefcVmModuleOperStatus OBJECT-TYPE
-    SYNTAX        	CefcVmModuleOperType
-    MAX-ACCESS    	read-only
-    STATUS        	current
+    SYNTAX          CefcVmModuleOperType
+    MAX-ACCESS      read-only
+    STATUS          current
     DESCRIPTION
-        "This object indicates the VM module's operational state."
+        "This object indicates the VM module's operational state." 
     ::= { cefcModuleEntry 9 }
 
 cefcVmModuleStatusLastChangeTime OBJECT-TYPE
-    SYNTAX        	TimeStamp
-    MAX-ACCESS    	read-only
-    STATUS        	current
+    SYNTAX          TimeStamp
+    MAX-ACCESS      read-only
+    STATUS          current
     DESCRIPTION
         "The value of sysUpTime at the time the cefcVmModuleOperStatus
-         is changed."
+        is changed." 
     ::= { cefcModuleEntry 10 }
+ 
 
 -- cefcIntelliModuleTable
 
@@ -2110,7 +2114,6 @@ cefcEnablePSOutputChangeNotif OBJECT-TYPE
         will prevent this notification to generated."
     DEFVAL          { false } 
     ::= { cefcMIBNotificationEnables 2 }
-
 cefcMIBNotifications  OBJECT IDENTIFIER
     ::= { cefcFRUMIBNotificationPrefix 0 }
 
@@ -2210,14 +2213,13 @@ cefcVmModuleStatusChangeNotif NOTIFICATION-TYPE
                         cefcVmModuleOperStatus,
                         cefcVmModuleStatusLastChangeTime
                     }
-    STATUS 			current
+    STATUS          current
     DESCRIPTION
         "This notification is generated when the value of
-         cefcVmModuleOperStatus changes. It can be utilized by 
-         an NMS to update the status of the module it is
-         managing."
-    ::= { cefcMIBNotifications 8 }
-	
+        cefcVmModuleOperStatus changes. It can be utilized by 
+        an NMS to update the status of the module it is
+        managing."
+   ::= { cefcMIBNotifications 8 }
 -- conformance information
 
 cefcMIBCompliances  OBJECT IDENTIFIER
@@ -3588,7 +3590,7 @@ cefcVmModuleGroup OBJECT-GROUP
     ::= { cefcMIBGroups 34 }
 
 cefcVmModuleNotifsGroup NOTIFICATION-GROUP
-    NOTIFICATIONS    { cefcVmModuleStatusChangeNotif }
+   NOTIFICATIONS    { cefcVmModuleStatusChangeNotif }
     STATUS          current
     DESCRIPTION
         "A collection of notifications for VM module
