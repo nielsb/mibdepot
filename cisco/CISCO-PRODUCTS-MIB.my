@@ -2300,6 +2300,14 @@ ciscoIR829GWLTEGAxK9                OBJECT IDENTIFIER ::= { ciscoProducts 2569 }
 ciscoNCS55A2MODSES                  OBJECT IDENTIFIER ::= { ciscoProducts 2570 } -- Network Convergence Services NCS55A2 Scaled Fixed 24x10G & 16x25G with 2xMPA Chassis
 ciscoNCS55A2MODS                    OBJECT IDENTIFIER ::= { ciscoProducts 2571 } -- Network Convergence Services NCS55A2 Fixed 24x10G & 16x25G with 2xMPA Chassis
 ciscoASR9906                        OBJECT IDENTIFIER ::= { ciscoProducts 2572 } -- Cisco Aggregation Services Router (ASR) 9906 Chassis 
+ciscoCat9200L24P4X                  OBJECT IDENTIFIER ::= { ciscoProducts 2574 } -- Catalyst 9200L 24 Gig Downlinks, 4 SFP+ uplinks. PoE support for 720W
+ciscoCat9200L48P4X                  OBJECT IDENTIFIER ::= { ciscoProducts 2575 } -- Catalyst 9200L 48 Gig Downlinks, 4 SFP+ uplinks. PoE support for 1440W
+ciscoCat9200L24T4G                  OBJECT IDENTIFIER ::= { ciscoProducts 2581 } -- Catalyst 9200L 24 Gig Downlinks, 4 Gig uplinks 
+ciscoCat9200L48T4G                  OBJECT IDENTIFIER ::= { ciscoProducts 2582 } -- Catalyst 9200L 48 Gig Downlinks, 4 Gig uplinks
+ciscoCat9200L24T4X                  OBJECT IDENTIFIER ::= { ciscoProducts 2583 } -- Catalyst 9200L 24 Gig Downlinks, 4 SFP+ uplinks 
+ciscoCat9200L48T4X                  OBJECT IDENTIFIER ::= { ciscoProducts 2584 } -- Catalyst 9200L 48 Gig Downlinks, 4 SFP+ uplinks
+ciscoCat9200L24P4G                  OBJECT IDENTIFIER ::= { ciscoProducts 2585 } -- Catalyst 9200L 24 Gig Downlinks, 4 Gig uplinks. PoE support for 720W
+ciscoCat9200L48P4G                  OBJECT IDENTIFIER ::= { ciscoProducts 2586 } -- Catalyst 9200L 48 Gig Downlinks, 4 Gig uplinks. PoE support for 720W
 ciscoCat950016X                     OBJECT IDENTIFIER ::= { ciscoProducts 2592 } -- Catalyst 9500 16-port 10g data only switch
 ciscoCat9500FixedSwitchStack        OBJECT IDENTIFIER ::= { ciscoProducts 2593 } -- A stack of any Cisco Catalyst 9500 Fixed stack-able ethernet switches with unified identity (as a single unified switch), control and management 
 ciscoN5204GAZA                      OBJECT IDENTIFIER ::= { ciscoProducts 2602 } -- Cisco NCS520 Series - 4-1GE and 4-10GE - Single AC model
@@ -2379,6 +2387,7 @@ ciscoNam2540                        OBJECT IDENTIFIER ::= { ciscoProducts 2690 }
 ciscoCSPA2520                       OBJECT IDENTIFIER ::= { ciscoProducts 2691 } -- Cisco Security Packet Analyzer 2520
 ciscoIR1101XK9                      OBJECT IDENTIFIER ::= { ciscoProducts 2692 } -- Industrial ISR 1101 with 4-port FE, modular LTE and fog computing 
 ciscoVG450                          OBJECT IDENTIFIER ::= { ciscoProducts 2693 } -- Cisco VG450 Router
+ciscoCat9200LFixedSwitchStack       OBJECT IDENTIFIER ::= { ciscoProducts 2694 } -- A stack of any Cisco Catalyst 9200L Fixed stack-able ethernet switches with unified identity (as a single unified switch), control and management
 ciscoRAIE1783MMS10B                 OBJECT IDENTIFIER ::= { ciscoProducts 2697 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Essentials, Fixed System 2 Port SFP + 8 Port GE Copper Basic 
 ciscoRAIE1783MMS10BE                OBJECT IDENTIFIER ::= { ciscoProducts 2698 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Essentials, Fixed System 2 Port SFP + 8 Port GE PoE+ Basic 
 ciscoRAIE1783MMS10                  OBJECT IDENTIFIER ::= { ciscoProducts 2699 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Essentials, Expandable System  2 Port SFP + 8 Port GE Copper Basic           
@@ -2388,8 +2397,6 @@ ciscoRAIE1783MMS10ER                OBJECT IDENTIFIER ::= { ciscoProducts 2702 }
 ciscoRAIE1783MMS10EA                OBJECT IDENTIFIER ::= { ciscoProducts 2703 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Essentials, Expandable System  2 Port SFP + 8 Port GE PoE+ Advanced
 ciscoRAIE1783MMS10EAR               OBJECT IDENTIFIER ::= { ciscoProducts 2704 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Advantage, Expandable System  2 Port SFP + 8 Port GE PoE+ Advanced
 ciscoASR92020SZM                    OBJECT IDENTIFIER ::= { ciscoProducts 2705 } -- ASR 920 Route Switch Processor, Base Scale, 64Gbps
-ciscoAP1900                         OBJECT IDENTIFIER ::= { ciscoProducts 2728 } -- 4x4 11ax Access point
-ciscoAP2900                         OBJECT IDENTIFIER ::= { ciscoProducts 2729 } -- 8x8 11ax Access point
 ciscoAP1840                         OBJECT IDENTIFIER ::= { ciscoProducts 2730 } -- 4x4 11ac 4x4 Wave2 Access Point
 ciscoC11118PWS                      OBJECT IDENTIFIER ::= { ciscoProducts 2731 } -- Cisco C1111-8PWS Router
 ciscoC11118PLteLAWS                 OBJECT IDENTIFIER ::= { ciscoProducts 2732 } -- Cisco C1111-8PLTELAWS Router
@@ -2402,15 +2409,19 @@ ciscoN540X24Z8Q2CM                  OBJECT IDENTIFIER ::= { ciscoProducts 2742 }
 ciscoN560RSP4                       OBJECT IDENTIFIER ::= { ciscoProducts 2743 } -- Cisco NCS 560 Route Switch Processor 4 - 800G, L Scale
 ciscoN560RSP4E                      OBJECT IDENTIFIER ::= { ciscoProducts 2744 } -- Cisco NCS 560 Route Switch Processor 4 Enhanced - 800G, XL
 ciscoC891FJK9                       OBJECT IDENTIFIER ::= { ciscoProducts 2771 } -- C891FJ-K9 router with 1 Giga Ethernet Primary WAN, 1 SFP (Small Form-factor Pluggable) Giga Ethernet Primary WAN, 1 Fast Ethernet WAN, 1 V.92, 1 ISDN BRI S/T interface, 8 Giga Ethernet LAN, 4 PoE Optional, 1 USB 2.0 port, 1 Console/Aux port, 256MB flash memory and 1GB DRAM
-ciscoFpr4145K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2777 } -- Cisco FirePOWER 4145 Security Appliance, 1U with embedded security module 44
-ciscoFpr4125K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2778 } -- Cisco FirePOWER 4125 Security Appliance, 1U with embedded security module 32
-ciscoFpr4115K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2779 } -- Cisco FirePOWER 4115 Security Appliance, 1U with embedded security module 24
 ciscoIOSXREdgecore591654XKSOACF     OBJECT IDENTIFIER ::= { ciscoProducts 2782 } --  Cisco IOS XR enabled on 3rd Party HW Edgecore 5916-54XKS-O-AC-F
 ciscoIOSXREdgecoreAS781664X         OBJECT IDENTIFIER ::= { ciscoProducts 2783 } -- Cisco IOS XR enabled on 3rd Party HW Edgecore AS7816-64X        
 ciscoSNS3615K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2784 } -- Cisco Secure Network Server platform SNS-3615 appliance
 ciscoSNS3655K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2785 } -- Cisco Secure Network Server platform SNS-3655 appliance
 ciscoSNS3695K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2786 } -- Cisco Secure Network Server platform SNS-3695 appliance
+ciscoCMeWlc                         OBJECT IDENTIFIER ::= { ciscoProducts 2825 } -- Wireless LAN  controller running on Access Point
+ciscoIE34008FTMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2826 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 8 port FE Copper , No PoE, FPGA available
+ciscoIE340016FTMC                   OBJECT IDENTIFIER ::= { ciscoProducts 2827 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 16 port FE Copper , No PoE, FPGA available
+ciscoIE340024FTMC                   OBJECT IDENTIFIER ::= { ciscoProducts 2828 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 24 port FE Copper , No PoE, FPGA available
+ciscoIE34008TMC                     OBJECT IDENTIFIER ::= { ciscoProducts 2829 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 8 portÂ 1G Copper , No PoE, FPGA available
+ciscoIE340016TMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2830 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 16 port 1G Copper , No PoE, FPGA available
+ciscoIE340024TMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2831 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 24 port 1G Copper , No PoE, FPGA available
+
 
 END
-
 
