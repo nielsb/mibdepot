@@ -2414,6 +2414,18 @@ ciscoIOSXREdgecoreAS781664X         OBJECT IDENTIFIER ::= { ciscoProducts 2783 }
 ciscoSNS3615K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2784 } -- Cisco Secure Network Server platform SNS-3615 appliance
 ciscoSNS3655K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2785 } -- Cisco Secure Network Server platform SNS-3655 appliance
 ciscoSNS3695K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2786 } -- Cisco Secure Network Server platform SNS-3695 appliance
+ciscoCatWSC2960LSM8TS               OBJECT IDENTIFIER ::= { ciscoProducts 2806 } -- Catalyst 2960L-SM 8 x GE downlink, 2 x GE (2 SFP) uplinks
+ciscoCatWSC2960LSM8PS               OBJECT IDENTIFIER ::= { ciscoProducts 2807 } -- Catalyst 2960L-SM 8 x GE downlink,POE support, 2 x GE (2 SFP) uplinks
+ciscoCatWSC2960LSM16TS              OBJECT IDENTIFIER ::= { ciscoProducts 2808 } -- Catalyst 2960L-SM 16 x GE downlink, 2 x GE (2 SFP) uplinks
+ciscoCatWSC2960LSM16PS              OBJECT IDENTIFIER ::= { ciscoProducts 2809 } -- Catalyst 2960L-SM 16 x GE downlink,POE support, 2 x GE (2 SFP) uplinks
+ciscoCatWSC2960LSM24TS              OBJECT IDENTIFIER ::= { ciscoProducts 2810 } -- Catalyst 2960L-SM 24 x GE downlink, 4 x GE (4 SFP) uplinks
+ciscoCatWSC2960LSM24PS              OBJECT IDENTIFIER ::= { ciscoProducts 2811 } -- Catalyst 2960L-SM 24 x GE downlink,POE support, 4 x GE (4 SFP) uplinks
+ciscoCatWSC2960LSM48TS              OBJECT IDENTIFIER ::= { ciscoProducts 2812 } -- Catalyst 2960L-SM 48 x GE downlink, 4 x GE (4 SFP) uplinks
+ciscoCatWSC2960LSM48PS              OBJECT IDENTIFIER ::= { ciscoProducts 2813 } -- Catalyst 2960L-SM 48 x GE downlink,POE support, 4 x GE (4 SFP) uplinks
+ciscoCatWSC2960LSM24TQ              OBJECT IDENTIFIER ::= { ciscoProducts 2814 } --  Catalyst 2960L-SM 24 x GE downlink, 4 x 10 GE (4 SFP+) uplinks
+ciscoCatWSC2960LSM48TQ              OBJECT IDENTIFIER ::= { ciscoProducts 2815 } --  Catalyst 2960L-SM 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks
+ciscoCatWSC2960LSM24PQ              OBJECT IDENTIFIER ::= { ciscoProducts 2816 } --  Catalyst 2960L-SM 24 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support
+ciscoCatWSC2960LSM48PQ              OBJECT IDENTIFIER ::= { ciscoProducts 2817 } --  Catalyst 2960L-SM 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support
 ciscoCMeWlc                         OBJECT IDENTIFIER ::= { ciscoProducts 2825 } -- Wireless LAN  controller running on Access Point
 ciscoIE34008FTMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2826 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 8 port FE Copper , No PoE, FPGA available
 ciscoIE340016FTMC                   OBJECT IDENTIFIER ::= { ciscoProducts 2827 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 16 port FE Copper , No PoE, FPGA available
@@ -2421,7 +2433,16 @@ ciscoIE340024FTMC                   OBJECT IDENTIFIER ::= { ciscoProducts 2828 }
 ciscoIE34008TMC                     OBJECT IDENTIFIER ::= { ciscoProducts 2829 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 8 portÂ 1G Copper , No PoE, FPGA available
 ciscoIE340016TMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2830 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 16 port 1G Copper , No PoE, FPGA available
 ciscoIE340024TMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2831 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 24 port 1G Copper , No PoE, FPGA available
+ciscoAIRIW6000ME                    OBJECT IDENTIFIER ::= { ciscoProducts 2832 } -- IW-6000H-AC-x-K9: 802.11ac W2 industrial wireless 6000 series hazloc AP, AC power, x Reg Dom. IW-6000H-DC-x-K9: 802.11ac W2 industrial wireless 6000 series hazloc AP, DC power, x Reg Dom. IW-6000H-DCW-x-K9: 802.11ac W2 industrial wireless 6000 series hazloc AP, DC wide range power, x Reg Dom. ESW-6000-CON-X-K9: 802.11ac W2 industrial wireless 6000 Embedded Access Point, x Reg Dom. All of these APs can be configured as mobility express
+ciscoNCS5064                        OBJECT IDENTIFIER ::= { ciscoProducts 2843 } -- Cisco NCS 5064 Series Router
+ciscoESR1115CONK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2844 } -- Next-generation Embedded Services Router with 2 Gigabit Ethernet routed ports, 4 Gigabit Ethernet switched ports, with cooling plate
+ciscoESR1115NCPK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2845 } -- Next-generation Embedded Services Router with 2 Gigabit Ethernet routed ports, 4 Gigabit Ethernet switched ports, no cooling plate
+ciscoN5604                          OBJECT IDENTIFIER ::= { ciscoProducts 2853 } -- Cisco Aggregation Services Router 900 Series with 4RU Chassis
+ciscoN5604CC                        OBJECT IDENTIFIER ::= { ciscoProducts 2854 } -- Cisco Aggregation Services Router 900 Series with 4RU Chassis with conformal coated
+ciscoN5604RSP4                      OBJECT IDENTIFIER ::= { ciscoProducts 2855 } -- Cisco NCS 560-4 Route Switch Processor 4 - 800G, L Scale
+ciscoN5604RSP4E                     OBJECT IDENTIFIER ::= { ciscoProducts 2856 } -- Cisco NCS 560 Route Switch Processor 4 Enhanced - 800G, XL
+ciscoN5604RSP4CC                    OBJECT IDENTIFIER ::= { ciscoProducts 2857 } -- Cisco NCS 560 Route Switch Processor 4 - 800G, L Scale, Conformal Coated
+ciscoN5604RSP4ECC                   OBJECT IDENTIFIER ::= { ciscoProducts 2858 } -- Cisco NCS 560 Route Switch Processor 4 Enhanced - 800G, XL, Conformal Coated
 
 
 END
-

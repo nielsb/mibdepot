@@ -530,6 +530,8 @@
                         ,c1861-srst-2b-cue-k9(642)              -- C1861 SRST with support for 2 BRI ports and CUE
                         ,c1861-srst-4f-cue-k9(643)              -- C1861 SRST with support for 4 FXO ports and CUE
                         ,cvgd-1t3(644)                          -- VGD Voice Gateway with 1xCT3 supporting CCM and MGCP 
+                        ,ws-cbs3130g-s(648)                     -- Cisco Catalyst Blade Switch 3130G for Dell %DNP until Mar 2008, contact unknown /* Earlier contact was alexv */
+                        ,ws-cbs3130x-s(649)                     -- Cisco Catalyst Blade Switch 3130X for Dell %DNP until Mar 2008, contact unknown /* Earlier contact was alexv */
                         ,cat3560e-12-sd(650)                    -- Catalyst 3560E, 12 SFP Gigabit Ethernet ports + 2 TenGigabit Ethernet (X2) ports
                         ,ccisco-optimization-engine-674(651)    -- Cisco Optimization Engine 674              
                         ,cie3000-4tc(652)                       -- Cisco Industrial Ethernet 3000 Switch, 4 10/100 + 2 T/SFP
@@ -706,6 +708,8 @@
                         ,c5915(908)                              -- Chassis Type for 5915 Embedded Services Router
                         ,cn7k-c7006(909)                         -- Nexus7000 6slot elsie n7k chassis N7K-C7006
                         ,c86xvae(910)                            -- Chassis for Cisco 86xVAE series products
+                        ,cap802-agn(911)                         -- Cisco AP802 Access Point with dual IEEE 802.11a/g/n radio ports %DNP until Jun 2011, contact vnanduri
+                        ,cap802-gn(912)                          -- Cisco AP802 Access Point with single IEEE 802.11g/n radio port %DNP until Jun 2011, contact vnanduri
                         ,c2811ve(913)                            -- Cisco 2811ve router with two integrated fast ethernets and integrated VPN
                         ,c1841ve(914)                            -- Cisco 1841ve data only router with 2 HWIC slots
                         ,c2960c-8tc-s(915)                       -- Catalyst 2960C 8 10/100 FE ports + 2 Gig Dual Media Uplinks fixed configuration Layer 2 Ethernet switch, lanlite only Chassis
@@ -778,6 +782,8 @@
                         ,ca901-4c-f-d(1010)                      -- A new Chassis PID for Ethernet only chassis (with Port based feature)
                         ,ca901-4c-ft-d(1011)                     -- A new Chassis PID  for Ethernet + TDM chassis( with Port based Feature)
                         ,cmde10xvb(1012)                         -- Cisco Enterprise Content Delivery System Model MDE10XVB
+                        ,cap802h-agn(1023)                       -- Cisco AP802 Hardened Access Point with dual IEEE 802.11a/g/n radio ports for M2M environments %DNP until August 2012, contact vnanduri 
+                        ,cairap802-agn(1024)                     -- Cisco AP802 Smart Access Point with dual IEEE 802.11a/g/n radio ports %DNP until August 2012, contact vnanduri 
                         ,casr1002xc(1032)                        -- Cisco Aggregation Services Router 1000 Series, ASR1002-XC Chassis
                         ,c86xvaew(1033)                          -- Chassis for Cisco 86xVAEW series products
                         ,cairap1553(1034)                        -- Cisco Aironet 1550 Series Outdoor Mesh Access Points with three IEEE 802.11n radio port
@@ -878,6 +884,18 @@
                         ,c927-4pmltegb(1209)                     -- C927-4PMLTEGB  Router with 1 Eth+DSL with Annex M, 1 LTE interface,4 GE LAN interface, 1GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Bootflash 
                         ,c926-4pltegb(1210)                      -- C926-4PLTEGB Router with 1 Eth+DSL, 1 LTE interface,4 GE LAN interface, 1GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Bootflash
                         ,c931j-4p(1214)                          -- C931J-4P Router with External Power Supply 4 GE LAN interface, 2GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash
+                        ,cws-c2960l-sm-24ts(1215)                -- Catalyst 2960L-SM 24 x GE downlink, 4 x GE (4 SFP) uplinks
+                        ,cws-c2960l-sm-24ps(1216)                --  Catalyst 2960L-SM 24 x GE downlink, POE support, 4 x GE (4 SFP) uplinks
+                        ,cws-c2960l-sm-48ts(1217)                -- Catalyst 2960L-SM 48 x GE downlink, 4 x GE (4 SFP) uplinks
+                        ,cws-c2960l-sm-48ps(1218)                -- Catalyst 2960L-SM 48 x GE downlink, POE support, 4 x GE (4 SFP) uplinks
+                        ,cws-c2960l-sm-16ts(1219)                -- Catalyst 2960L-SM 16 x GE downlink, 2 x GE (2 SFP) uplinks
+                        ,cws-c2960l-sm-16ps(1220)                --  Catalyst 2960L-SM 16 x GE downlink, POE support, 2 x GE (2SFP) uplinks
+                        ,cws-c2960l-sm-8ts(1221)                 --  Catalyst 2960L-SM 8 x GE downlink, 2 x GE (2 SFP) uplinks
+                        ,cws-c2960l-sm-8ps(1222)                 -- Catalyst 2960L-SM 8 x GE downlink, POE support, 2 x GE (2SFP) uplinks
+                        ,cws-c2960l-sm-24tq(1223)                -- Catalyst 2960L-SM 24 x GE downlink, 4 x 10GE (4 SFP+) uplinks
+                        ,cws-c2960l-sm-48tq(1224)                --  Catalyst 2960L-SM 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks
+                        ,cws-c2960l-sm-24pq(1225)                -- Catalyst 2960L-SM 24 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support
+                        ,cws-c2960l-sm-48pq(1226)                -- Catalyst 2960L-SM 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support
 
                    }
                    ACCESS  read-only
@@ -2921,7 +2939,7 @@
                        ,wim-lte-al(5185)                     -- WIM-4G, Single SIM, Global (SEAsia) Multimode LTE WAN Interface Module
                        ,cpu-931j-4p(5186)                    -- C931J-4P Router with External Power Supply , 4 GE LAN interface, 2GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash
                        ,grwic-4g-lte-la(5187)                -- 4G WWAN GRWIC - Latin America and Asia Pacific Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
-                       ,grwic-4g-lte-ea(5188)                -- 4G WWAN GRWIC - North America and Europe Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
+                       ,grwic-4g-lte-ea(5188)                -- 4G WWAN GRWIC - North America and Europe Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS 
                                                
                         }
                    ACCESS  read-only
@@ -3177,4 +3195,4 @@
 
 
                END
-
+      
