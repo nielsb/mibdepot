@@ -4,7 +4,7 @@
 --
 -- January 1995, Jeffrey T. Johnson
 --
--- Copyright (c) 1995-2018 by cisco Systems, Inc.
+-- Copyright (c) 1995-2019 by cisco Systems, Inc.
 -- All rights reserved.
 -- 
 -- *****************************************************************
@@ -2187,6 +2187,9 @@ ciscoFpr2140td                      OBJECT IDENTIFIER ::= { ciscoProducts 2407 }
 ciscoFpr9000SM44                    OBJECT IDENTIFIER ::= { ciscoProducts 2409 } -- Cisco FirePOWER 9000 Security Module 44
 ciscoNCS5011                        OBJECT IDENTIFIER ::= { ciscoProducts 2411 } -- Cisco NCS 5011 Series Router
 ciscoNCS5504                        OBJECT IDENTIFIER ::= { ciscoProducts 2413 } -- Network Convergence Services NCS5500 4 Slot Single Chassis
+ciscoUCSE160S                       OBJECT IDENTIFIER ::= { ciscoProducts 2415 } -- UCS-E,SingleWide generation 3, 6 Core 1.9 GHzCPU,2x7.5G eMMC,2x8G RDIMM,1-2 HDD
+ciscoUCSE180DM3                     OBJECT IDENTIFIER ::= { ciscoProducts 2416 } -- UCS-E , DoubleWide Generation 3, 8 Core 2.0G CPU, eMMC, 16GB RDIMM , 1-4HDD
+ciscoUCSE1120DM3                    OBJECT IDENTIFIER ::= { ciscoProducts 2417 } -- UCS-E , DoubleWide Generation 3, 12 Core 2.0G CPU, eMMC, 16GB RDIMM , 1-4HDD
 ciscoCat950012Q                     OBJECT IDENTIFIER ::= { ciscoProducts 2418 } -- Catalyst 9500 12-port 40g data only switch
 ciscoCat950024Q                     OBJECT IDENTIFIER ::= { ciscoProducts 2419 } -- Catalyst 9500 24-port 40g data only switch
 ciscoCat950040X                     OBJECT IDENTIFIER ::= { ciscoProducts 2420 } -- Catalyst 9500 40-port 10g data only switch
@@ -2229,6 +2232,7 @@ ciscoC11118PLteLAWF                 OBJECT IDENTIFIER ::= { ciscoProducts 2463 }
 ciscoC11118PLteLAWD                 OBJECT IDENTIFIER ::= { ciscoProducts 2464 } -- Cisco C1111-8PLTELAWD Router
 ciscoASR914                         OBJECT IDENTIFIER ::= { ciscoProducts 2480 } -- ASR 914 Series Router
 ciscoNCSFFC2                        OBJECT IDENTIFIER ::= { ciscoProducts 2481 } -- NCS-F-FC2: NCS6000 Fabric Chassis 2nd Gen Fabric Card
+ciscoNCS4KF                         OBJECT IDENTIFIER ::= { ciscoProducts 2482 } -- NCS 4000 Fabric Chassis
 cisco2911A                          OBJECT IDENTIFIER ::= { ciscoProducts 2486 } -- CISCO2911A/K9 with 3 GE, 4 EHWIC, 2 DSP, 1 SM , 256 MB CF, 512 MB DRAM, IPB 
 ciscoUCSS3260                       OBJECT IDENTIFIER ::= { ciscoProducts 2487 } -- Cisco UCS S3260 Rack server
 ciscoWSC365048TSE                   OBJECT IDENTIFIER ::= { ciscoProducts 2491 } -- Catalyst Switch
@@ -2270,6 +2274,7 @@ ciscoC11174PWZ                      OBJECT IDENTIFIER ::= { ciscoProducts 2526 }
 ciscoC11174PM                       OBJECT IDENTIFIER ::= { ciscoProducts 2527 } -- Cisco C1117-4PM Router with VDSL/ADSL Annex M
 ciscoC11174PMLteEA                  OBJECT IDENTIFIER ::= { ciscoProducts 2528 } -- Cisco C1117-4PMLTEEA Router
 ciscoC11174PMWE                     OBJECT IDENTIFIER ::= { ciscoProducts 2529 } -- Cisco C1117-4PMWE Router with WLAN E domain
+ciscoAIRCT9880K9                    OBJECT IDENTIFIER ::= { ciscoProducts 2531 } -- AIR-CT9880-K9 is a 80G WLC that occupies 2RU rack space and will populate a total of 8 ports
 ciscoC11128P                        OBJECT IDENTIFIER ::= { ciscoProducts 2532 } -- Cisco C1112-8P Router
 ciscoC11128PLteEA                   OBJECT IDENTIFIER ::= { ciscoProducts 2533 } -- Cisco C1112-8PLTEEA Router with Multimode Europe and North America Advanced LTE
 ciscoC11138P                        OBJECT IDENTIFIER ::= { ciscoProducts 2534 } -- Cisco C1113-8P Router
@@ -2415,6 +2420,7 @@ ciscoC11118PLteLAWA                 OBJECT IDENTIFIER ::= { ciscoProducts 2733 }
 ciscoC11118PLteLAWE                 OBJECT IDENTIFIER ::= { ciscoProducts 2734 } -- Cisco C1111-8PLTELAWE Router
 ciscoWSC6506E                       OBJECT IDENTIFIER ::= { ciscoProducts 2738 } -- Catalyst 6000 series chassis with 6 slots
 ciscoWSC6509E                       OBJECT IDENTIFIER ::= { ciscoProducts 2739 } -- Catalyst 6000 series chassis with 9 slots
+ciscoNCS1004                        OBJECT IDENTIFIER ::= { ciscoProducts 2740 } -- NCS 1004 System (1RP, 3 FANs, 2 Powers, 4 LCs)
 ciscoN54024Z8Q2CM                   OBJECT IDENTIFIER ::= { ciscoProducts 2741 } -- NCS 540 Series 24x1/10GE, 8x10/25GE, 2x100GE Fixed Chassis
 ciscoN540X24Z8Q2CM                  OBJECT IDENTIFIER ::= { ciscoProducts 2742 } -- Conformal Coated NCS 540 Series Router 24x10G, 8x25G, 2x100G
 ciscoN560RSP4                       OBJECT IDENTIFIER ::= { ciscoProducts 2743 } -- Cisco NCS 560 Route Switch Processor 4 - 800G, L Scale
@@ -2437,6 +2443,7 @@ ciscoCatWSC2960LSM24TQ              OBJECT IDENTIFIER ::= { ciscoProducts 2814 }
 ciscoCatWSC2960LSM48TQ              OBJECT IDENTIFIER ::= { ciscoProducts 2815 } --  Catalyst 2960L-SM 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks
 ciscoCatWSC2960LSM24PQ              OBJECT IDENTIFIER ::= { ciscoProducts 2816 } --  Catalyst 2960L-SM 24 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support
 ciscoCatWSC2960LSM48PQ              OBJECT IDENTIFIER ::= { ciscoProducts 2817 } --  Catalyst 2960L-SM 48 x GE downlink, 4 x 10 GE (4 SFP+) uplinks, POE Support
+
 ciscoCMeWlc                         OBJECT IDENTIFIER ::= { ciscoProducts 2825 } -- Wireless LAN  controller running on Access Point
 ciscoIE34008FTMC                    OBJECT IDENTIFIER ::= { ciscoProducts 2826 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 8 port FE Copper , No PoE, FPGA available
 ciscoIE340016FTMC                   OBJECT IDENTIFIER ::= { ciscoProducts 2827 } -- Cisco Industrial Ethernet 3400 Switch, IP65/67 rated, 16 port FE Copper , No PoE, FPGA available
@@ -2448,6 +2455,8 @@ ciscoAIRIW6300ME                    OBJECT IDENTIFIER ::= { ciscoProducts 2832 }
 ciscoNCS5064                        OBJECT IDENTIFIER ::= { ciscoProducts 2843 } -- Cisco NCS 5064 Series Router
 ciscoESR1115CONK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2844 } -- Next-generation Embedded Services Router with 2 Gigabit Ethernet routed ports, 4 Gigabit Ethernet switched ports, with cooling plate
 ciscoESR1115NCPK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2845 } -- Next-generation Embedded Services Router with 2 Gigabit Ethernet routed ports, 4 Gigabit Ethernet switched ports, no cooling plate
+ciscoCE9331SX                       OBJECT IDENTIFIER ::= { ciscoProducts 2847 } -- Cisco CE9331SX (2x10GE, 4xGE, 1 NIM, 1 SM, 1PIM, 8Core, 8G FLASH, 8G DRAM)
+ciscoCE9331S                        OBJECT IDENTIFIER ::= { ciscoProducts 2848 } -- Cisco CE9331S (2x1GE, 4xGE, 1 NIM, 1 SM, 1PIM, 8Core, 8G FLASH, 8G DRAM)
 ciscoN5604                          OBJECT IDENTIFIER ::= { ciscoProducts 2853 } -- Cisco Aggregation Services Router 900 Series with 4RU Chassis
 ciscoN5604CC                        OBJECT IDENTIFIER ::= { ciscoProducts 2854 } -- Cisco Aggregation Services Router 900 Series with 4RU Chassis with conformal coated
 ciscoN5604RSP4                      OBJECT IDENTIFIER ::= { ciscoProducts 2855 } -- Cisco NCS 560-4 Route Switch Processor 4 - 800G, L Scale
@@ -2458,8 +2467,14 @@ ciscoESR6300CONK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2864 }
 ciscoESR6300NCPK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2865 } --  Next-generation Embedded Services Router with 2 Gigabit Ethernet routed ports, 4 Gigabit Ethernet switched ports, no cooling plate
 ciscoNCS55A148Q6H                   OBJECT IDENTIFIER ::= { ciscoProducts 2866 } --  NCS 55A1 48x25G + 6 x 100G Fixed Chassis, Spare
 ciscoNCS55A148T6H                   OBJECT IDENTIFIER ::= { ciscoProducts 2867 } --  Network Convergence Services 55A1 24x25G 24x10G 6x100G Fixed
-ciscoCDB4PC                         OBJECT IDENTIFIER ::= { ciscoProducts 2869 } --  Catalyst Digital Building 4 Port PoE with Copper and Fiber uplink
 ciscoIE34008T2S                     OBJECT IDENTIFIER ::= { ciscoProducts 2872 } --   Cisco Industrial Ethernet 3400 Switch, Petra Expandable System 2 Port SFP + 8 Port GE Copper Adv
+ciscoIE3400H8FT                     OBJECT IDENTIFIER ::= { ciscoProducts 2881 } -- Cisco Catalyst IE3400 Heavy-duty Series, 8 D-code M12 interfaces
+ciscoIE3400H16FT                    OBJECT IDENTIFIER ::= { ciscoProducts 2882 } -- Cisco Catalyst IE3400 Heavy-duty Series, 16 D-code M12 interfaces
+ciscoIE3400H24FT                    OBJECT IDENTIFIER ::= { ciscoProducts 2883 } -- Cisco Catalyst IE3400 Heavy-duty Series, 24 D-code M12 Interfaces
+ciscoIE3400H8T                      OBJECT IDENTIFIER ::= { ciscoProducts 2884 } -- Cisco Catalyst IE3400 Heavy-duty Series, 8 X-code M12 interfaces
+ciscoIE3400H16T                     OBJECT IDENTIFIER ::= { ciscoProducts 2885 } -- Cisco Catalyst IE3400 Heavy-duty Series, 16 X-code M12 interfaces
+ciscoIE3400H24T                     OBJECT IDENTIFIER ::= { ciscoProducts 2886 } -- Cisco Catalyst IE3400 Heavy-duty Series, 24 X-code M12 interfaces
+ciscoRAIE1783MMS10A                 OBJECT IDENTIFIER ::= { ciscoProducts 2891 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Essentials, Expandable System : 2 Port SFP + 8 Port GE Copper Advanced
+ciscoRAIE1783MMS10AR                OBJECT IDENTIFIER ::= { ciscoProducts 2892 } -- Cisco Rockwell Industrial Ethernet Stratix 5800 Switch, Network Advantage, Expandable System : 2 Port SFP + 8 Port GE Copper Advanced
+
 END
-
-
