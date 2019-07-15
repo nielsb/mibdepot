@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-RRM-MIB.my
 -- February 2007, Devesh Pujari, Srinath Candadai
 --   
--- Copyright (c) 2007, 2014-2018 by Cisco Systems, Inc.
+-- Copyright (c) 2007, 2014-2019 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -50,7 +50,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappRrmMIB MODULE-IDENTITY
-    LAST-UPDATED    "201809250000Z"
+    LAST-UPDATED    "201906270000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -236,7 +236,6 @@ ciscoLwappRrmMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol"
-    
     REVISION        "201809250000Z"
     DESCRIPTION
         "Added following table
@@ -589,7 +588,7 @@ clrRrmParametersDcaChannelWidth OBJECT-TYPE
     ::= { clrRrmParametersEntry 10 }
 
 clrRrmParametersMaxTxPower OBJECT-TYPE
-    SYNTAX          Integer32 (-126..126)
+    SYNTAX          Integer32 (-10..30)
     UNITS           "dBm"
     MAX-ACCESS      read-write
     STATUS          current
@@ -608,7 +607,7 @@ clrRrmParametersMaxTxPower OBJECT-TYPE
     ::= { clrRrmParametersEntry 11 }
 
 clrRrmParametersMinTxPower OBJECT-TYPE
-    SYNTAX          Integer32 (-126..126)
+    SYNTAX          Integer32 (-10..30)
     UNITS           "dBm"
     MAX-ACCESS      read-write
     STATUS          current
@@ -1106,14 +1105,16 @@ clrRrmDot11BandGrpEntry OBJECT-TYPE
     ::= { clrRrmDot11BandGrpTable 1 }
 
 ClrRrmDot11BandGrpEntry ::= SEQUENCE {
-        clrRrmDot11BandGrpLeaderIpAddressType InetAddressType,
-        clrRrmDot11BandGrpLeaderIpAddress     InetAddress,
-        clrRrmDot11BandGrpLeaderName          SnmpAdminString,
-        clrRrmDot11BandGrpMode                INTEGER,
-        clrRrmDot11BandGrpRole                INTEGER,
-        clrRrmDot11BandGrpRestart             TruthValue,
-        clrRrmDot11BandGrpLastUpdateTime      Unsigned32,
-        clrRrmDot11BandGrpInterval            Unsigned32
+        clrRrmDot11BandGrpLeaderIpAddressType   InetAddressType,
+        clrRrmDot11BandGrpLeaderIpAddress       InetAddress,
+        clrRrmDot11BandGrpLeaderName            SnmpAdminString,
+        clrRrmDot11BandGrpMode                  INTEGER,
+        clrRrmDot11BandGrpRole                  INTEGER,
+        clrRrmDot11BandGrpRestart               TruthValue,
+        clrRrmDot11BandGrpLastUpdateTime        Unsigned32,
+        clrRrmDot11BandGrpInterval              Unsigned32,
+        clrRrmDot11BandGrpLeaderIpv6AddressType InetAddressType,
+        clrRrmDot11BandGrpLeaderIpv6Address     InetAddress
 }
 
 clrRrmDot11BandGrpLeaderIpAddressType OBJECT-TYPE
@@ -1230,6 +1231,24 @@ clrRrmDot11BandGrpInterval OBJECT-TYPE
         grouping is enabled. The system administrator can 
         start grouping on demand." 
     ::= { clrRrmDot11BandGrpEntry 8 }
+
+clrRrmDot11BandGrpLeaderIpv6AddressType OBJECT-TYPE
+    SYNTAX          InetAddressType
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents the IP address type of
+        the RRM RF group leader." 
+    ::= { clrRrmDot11BandGrpEntry 9 }
+
+clrRrmDot11BandGrpLeaderIpv6Address OBJECT-TYPE
+    SYNTAX          InetAddress
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents the IPv6 address of the
+        RRM RF group leader." 
+    ::= { clrRrmDot11BandGrpEntry 10 }
  
 
 -- ********************************************************************
@@ -1463,8 +1482,8 @@ clrRrmDcaChannelListEntry OBJECT-TYPE
     ::= { clrRrmDcaChannelListTable 1 }
 
 ClrRrmDcaChannelListEntry ::= SEQUENCE {
-        clrRrmDcaUsedChannelList   SnmpAdminString,
-        clrRrmDcaUnusedChannelList SnmpAdminString,
+        clrRrmDcaUsedChannelList    SnmpAdminString,
+        clrRrmDcaUnusedChannelList  SnmpAdminString,
         clrRrmDcaDefaultChannelList SnmpAdminString
 }
 
@@ -1487,6 +1506,16 @@ clrRrmDcaUnusedChannelList OBJECT-TYPE
         of the Dynamic Channel Allocation (DCA) list. This is
         a comma separated list of unused channel numbers." 
     ::= { clrRrmDcaChannelListEntry 2 }
+
+clrRrmDcaDefaultChannelList OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object provides the default DCA channels based on
+        configured country code/country code list. This is
+        a comma separated list of default DCA channel numbers." 
+    ::= { clrRrmDcaChannelListEntry 3 }
  
 
 clrRrmPakRssiConfig  OBJECT IDENTIFIER
@@ -1762,15 +1791,6 @@ clrRrmRemoveChannelRowStatus OBJECT-TYPE
         at any time." 
     ::= { clrRrmRemoveChannelEntry 3 }
  
-clrRrmDcaDefaultChannelList OBJECT-TYPE
-    SYNTAX          SnmpAdminString
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "This object provides the default DCA channels based on
-        configured country code/country code list. This is
-        a comma separated list of default DCA channel numbers." 
-    ::= { clrRrmDcaChannelListEntry 3 }
 
 
 clrRrmAddChannelTable OBJECT-TYPE
@@ -1846,9 +1866,11 @@ clrRrmAddChannelRowStatus OBJECT-TYPE
         All writable objects in this row may be modified 
         at any time." 
     ::= { clrRrmAddChannelEntry 3 }
+ 
+
 
 clrRrmDot11BandJoinedGrpMemberTable OBJECT-TYPE
-    SYNTAX          SEQUENCE OF ClrRrmDot11BandJoinedGrpMemberEntry
+    SYNTAX          SEQUENCE OF ClrRrmDot11BandJoinedGrpMemberEntry 
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
@@ -1860,9 +1882,9 @@ clrRrmDot11BandJoinedGrpMemberTable OBJECT-TYPE
         The entries are members of the group represented by
         clrRrmDot11BandGrpTable."
     ::= { clrRrmConfig 15 }
- 
+
 clrRrmDot11BandJoinedGrpMemberEntry OBJECT-TYPE
-    SYNTAX          ClrRrmDot11BandJoinedGrpMemberEntry 
+    SYNTAX          ClrRrmDot11BandJoinedGrpMemberEntry
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
@@ -1877,14 +1899,16 @@ clrRrmDot11BandJoinedGrpMemberEntry OBJECT-TYPE
                         clrRrmDot11BandJoinedMemberIpAddressType,
                         clrRrmDot11BandJoinedMemberIpAddress
                     } 
-    ::= { clrRrmDot11BandJoinedGrpMemberTable 1 } 
+    ::= { clrRrmDot11BandJoinedGrpMemberTable 1 }
 
 ClrRrmDot11BandJoinedGrpMemberEntry ::= SEQUENCE {
         clrRrmDot11BandJoinedMemberIpAddressType     InetAddressType,
         clrRrmDot11BandJoinedMemberIpAddress         InetAddress,
         clrRrmDot11BandJoinedMemberName              SnmpAdminString,
         clrRrmDot11BandJoinedMemberIsJoined          TruthValue,
-        clrRrmDot11BandJoinedMemberJoinFailureReason INTEGER
+        clrRrmDot11BandJoinedMemberJoinFailureReason INTEGER,
+        clrRrmDot11BandJoinedMemberIpv6AddressType   InetAddressType,
+        clrRrmDot11BandJoinedMemberIpv6Address       InetAddress
 }
 
 clrRrmDot11BandJoinedMemberIpAddressType OBJECT-TYPE
@@ -1991,7 +2015,25 @@ clrRrmDot11BandJoinedMemberJoinFailureReason OBJECT-TYPE
     DEFVAL          { joinedSuccessfully } 
     ::= { clrRrmDot11BandJoinedGrpMemberEntry 5 }
 
+clrRrmDot11BandJoinedMemberIpv6AddressType OBJECT-TYPE
+    SYNTAX          InetAddressType
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object indicates the IP address type of the
+        member controller joined to the RRM RF group." 
+    ::= { clrRrmDot11BandJoinedGrpMemberEntry 6 }
+
+clrRrmDot11BandJoinedMemberIpv6Address OBJECT-TYPE
+    SYNTAX          InetAddress
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This object indicates the IPv6 address of the
+        member controller joined to the RRM RF group." 
+    ::= { clrRrmDot11BandJoinedGrpMemberEntry 7 }
  
+
 -- ********************************************************************
 -- *    NOTIFICATION Variable
 -- ********************************************************************
@@ -2891,7 +2933,7 @@ ciscoLwappRrmMIBComplianceRev4 MODULE-COMPLIANCE
         "Implementation of this group is mandatory for the
         devices which support deletion of
         802.11 channels."
-        
+
     GROUP           ciscoLwappRrmConfigGroupSup9
     DESCRIPTION
         "Implementation of this group is mandatory for
@@ -3052,7 +3094,9 @@ ciscoLwappRrmGrpStatusGroup OBJECT-GROUP
                         clrRrmDot11BandGrpLastUpdateTime,
                         clrRrmDot11BandGrpInterval,
                         clrRrmDot11BandMemberIsJoined,
-                        clrRrmDot11BandMemberJoinFailureReason
+                        clrRrmDot11BandMemberJoinFailureReason,
+                        clrRrmDot11BandGrpLeaderIpv6AddressType,
+                        clrRrmDot11BandGrpLeaderIpv6Address
                     }
     STATUS          current
     DESCRIPTION
@@ -3241,7 +3285,9 @@ ciscoLwappRrmConfigGroupSup9 OBJECT-GROUP
                         clrRrmDot11BandJoinedMemberName,
                         clrRrmDot11BandJoinedMemberIsJoined,
                         clrRrmDot11BandMemberName,
-                        clrRrmDot11BandJoinedMemberJoinFailureReason
+                        clrRrmDot11BandJoinedMemberJoinFailureReason,
+                        clrRrmDot11BandJoinedMemberIpv6AddressType,
+                        clrRrmDot11BandJoinedMemberIpv6Address
                     }
     STATUS          current
     DESCRIPTION
@@ -3252,5 +3298,4 @@ ciscoLwappRrmConfigGroupSup9 OBJECT-GROUP
     ::= { ciscoLwappRrmMIBGroups 20 }
 
 END
-
 
