@@ -37,6 +37,27 @@ nsSwap                      OBJECT IDENTIFIER ::= {netSnmpObjects 32}
 nsCPU                       OBJECT IDENTIFIER ::= {netSnmpObjects 33}
 nsLoad                      OBJECT IDENTIFIER ::= {netSnmpObjects 34}
 nsDiskIO                    OBJECT IDENTIFIER ::= {netSnmpObjects 35}
+nsUpTime                    OBJECT IDENTIFIER ::= {netSnmpObjects 36}
+
+
+nsAgentUpTime OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	    "The time (in hundredths of a second) since the
+	    network management portion of the system was last
+	    re-initialized."
+    ::= { nsUpTime 1 }
+
+nsHostUpTime OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	    "The time (in hundredths of a second) since the
+	    operating system was last re-initialized."
+    ::= { nsUpTime 2 }
 
 
 --
