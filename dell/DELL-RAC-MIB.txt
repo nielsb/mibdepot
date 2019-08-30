@@ -9,11 +9,11 @@
 --
 -- This MIB is also the CMC MIB.  Changes are made to this MIB only for CMCs now.
 --
--- Copyright (c) 2016 Dell Inc.
+-- Copyright (c) 2017 Dell Inc.
 --
 -- Last Changed Revision: 19
--- Last Changed Date: 2016-04-23 23:46:06 -0530 (Sat, 23 Apr 2016)
--- Text Last Updated: 2016-04-23 23:46:06 -0530 (Sat, 23 Apr 2016)
+-- Last Changed Date: 2017-07-13 03:46:06 -0530 (Thu, 13 Jul 2017)
+-- Text Last Updated: 2017-07-13 03:46:06 -0530 (Thu, 13 Jul 2017)
 --
 
 DELL-RAC-MIB DEFINITIONS ::= BEGIN
@@ -1210,7 +1210,8 @@ ControllerTableEntry                            ::=SEQUENCE {
     controllerBootModeSupported                 BooleanType,
     controllerBootMode                          INTEGER,
     controllerHighAvailabilityMode              INTEGER,
-    controllerPeerController                    FQDDString
+    controllerPeerController                    FQDDString,
+    controllerEncryptionKeyIdentifier           DisplayString
 }
 
 controllerTable OBJECT-TYPE
@@ -1726,10 +1727,10 @@ controllerBootMode OBJECT-TYPE
 controllerHighAvailabilityMode OBJECT-TYPE
     SYNTAX          INTEGER
                     {
-                    None (1),
-                    FaultTolerantActivePassive (2),
-                    FaultTolerantActiveActive (3),
-                    Degraded (4)
+                    none (1),
+                    faultTolerantActivePassive (2),
+                    faultTolerantActiveActive (3),
+                    degraded (4)
                     }
     ACCESS          read-only
     STATUS          mandatory
@@ -1753,6 +1754,15 @@ controllerPeerController OBJECT-TYPE
         "
     ::= { controllerTableEntry 86 }
 
+controllerEncryptionKeyIdentifier OBJECT-TYPE
+    SYNTAX         DisplayString
+    ACCESS         read-only
+    STATUS         mandatory
+    DESCRIPTION
+        "Displays the encryption security key identifier of the controller, if the
+        controller is encryption enabled and a security key is configured for the
+        controller."
+    ::= { controllerTableEntry 87 }
 
 
 
@@ -1800,7 +1810,8 @@ PhysicalDiskTableEntry                          ::=SEQUENCE {
     physicalDiskPCIeNegotiatedLinkWidth         INTEGER,
     physicalDiskPCIeCapableLinkWidth            INTEGER,
     physicalDiskCurrentActiveController         FQDDString,
-    physicalDiskFailoverController              FQDDString
+    physicalDiskFailoverController              FQDDString,
+    physicalDiskForeignKeyIdentifier            DisplayString
  }
 
 physicalDiskTable OBJECT-TYPE
@@ -2370,6 +2381,15 @@ physicalDiskFailoverController    OBJECT-TYPE
         "
     ::= { physicalDiskTableEntry 63 }
 
+physicalDiskForeignKeyIdentifier  OBJECT-TYPE
+    SYNTAX          DisplayString
+    ACCESS          read-only
+    STATUS          mandatory
+    DESCRIPTION
+        "Displays the encryption key identifier of the physical disk if it is in
+        locked or foreign state."
+
+    ::= { physicalDiskTableEntry 64 }
 
 
 
@@ -2790,8 +2810,8 @@ virtualDiskBlockSizeInBytes OBJECT-TYPE
 virtualDiskAdapter1AccessPolicy OBJECT-TYPE
     SYNTAX          INTEGER
                     {
-                    NoAccess (1), 
-                    FullAccess (2)
+                    noAccess (1),
+                    fullAccess (2)
                     }
     ACCESS          read-only
     STATUS          mandatory
@@ -2807,8 +2827,8 @@ virtualDiskAdapter1AccessPolicy OBJECT-TYPE
 virtualDiskAdapter2AccessPolicy OBJECT-TYPE
     SYNTAX          INTEGER
                     {
-                    NoAccess (1), 
-                    FullAccess (2)
+                    noAccess (1),
+                    fullAccess (2)
                     }
     ACCESS          read-only
     STATUS          mandatory
@@ -2824,8 +2844,8 @@ virtualDiskAdapter2AccessPolicy OBJECT-TYPE
 virtualDiskAdapter3AccessPolicy OBJECT-TYPE
     SYNTAX          INTEGER
                     {
-                    NoAccess (1), 
-                    FullAccess (2)
+                    noAccess (1),
+                    fullAccess (2)
                     }
     ACCESS          read-only
     STATUS          mandatory
@@ -2841,8 +2861,8 @@ virtualDiskAdapter3AccessPolicy OBJECT-TYPE
 virtualDiskAdapter4AccessPolicy OBJECT-TYPE
     SYNTAX          INTEGER
                     {
-                    NoAccess (1), 
-                    FullAccess (2)
+                    noAccess (1),
+                    fullAccess (2)
                     }
     ACCESS          read-only
     STATUS          mandatory
@@ -2957,10 +2977,10 @@ enclosureState OBJECT-TYPE
                     ready(2),
                     failed(3),
                     missing(4),
-                    degraded(5)
-                    foreign(6)
-                    offline(7)
-                    online(8)
+                    degraded(5),
+                    foreign(6),
+                    offline(7),
+                    online(8),
                     blocked(9)
                     }
     ACCESS          read-only
@@ -3668,8 +3688,8 @@ enclosureTemperatureProbeState OBJECT-TYPE
                     ready(2),
                     failed(3),
                     missing(4),
-                    degraded(5)
-                    overWarning(6)
+                    degraded(5),
+                    overWarning(6),
                     underWarning(7)
                     }
     ACCESS          read-only
@@ -4691,6 +4711,31 @@ enclosureTemperatureProbeDisplayName OBJECT-TYPE
         --#STATUS     MANDATORY
         ::= 2185
 
+    alert2PowerSupplyRedundancyPolicyChanged TRAP-TYPE
+        ENTERPRISE  drsCMCAlert2Group
+        VARIABLES { drsCA2MessageID,
+                    drsCA2Message,
+                    drsCA2MessageArgs,
+                    drsCA2AlertStatus,
+                    drsCA2FQDD,
+                    drsProductChassisName,
+                    drsProductChassisLocation,
+                    drsChassisServiceTag,
+                    drsGlobalCurrStatus }
+        DESCRIPTION
+             "PSU redundancy policy changed."
+        --#TYPE       "System: Power Supply Redundancy policy changed"
+        --#SEVERITY   INFORMATIONAL
+        --#SUMMARY    "Message ID: %s, Message: %s,"
+        --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+        --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+        --#SUMMARY    "Chassis Location: %s, Global Status: %d"
+        --#ARGUMENTS  {0, 1, 3, 4, 7, 5, 6, 8}
+        --#CATEGORY   "Status Events"
+        --#STATE      OPERATIONAL
+        --#STATUS     MANDATORY
+        ::= 8331
+
     ------------------------------------------------------------------------------
     -- Chassis Alerts 2: System: Power Supply Absent Traps
     --
@@ -5214,6 +5259,56 @@ enclosureTemperatureProbeDisplayName OBJECT-TYPE
         --#STATE      DEGRADED
         --#STATUS     MANDATORY
         ::= 2161
+
+    alert2IOMTemperatureExceeded TRAP-TYPE
+        ENTERPRISE  drsCMCAlert2Group
+        VARIABLES { drsCA2MessageID,
+                    drsCA2Message,
+                    drsCA2MessageArgs,
+                    drsCA2AlertStatus,
+                    drsCA2FQDD,
+                    drsProductChassisName,
+                    drsProductChassisLocation,
+                    drsChassisServiceTag,
+                    drsGlobalCurrStatus }
+        DESCRIPTION
+            "I/O Module <iom slot name> temperature exceeded operating range."
+        --#TYPE       "System: Temperature Failure"
+        --#SEVERITY   CRITICAL
+        --#SUMMARY    "Message ID: %s, Message: %s,"
+        --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+        --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+        --#SUMMARY    "Chassis Location: %s, Global Status: %d"
+        --#ARGUMENTS  {0, 1, 3, 4, 7, 5, 6, 8}
+        --#CATEGORY   "Error Events"
+        --#STATE      DEGRADED
+        --#STATUS     MANDATORY
+        ::= 8305
+
+    alert2Unable2ReadTemperatureSensors TRAP-TYPE
+        ENTERPRISE  drsCMCAlert2Group
+        VARIABLES { drsCA2MessageID,
+                    drsCA2Message,
+                    drsCA2MessageArgs,
+                    drsCA2AlertStatus,
+                    drsCA2FQDD,
+                    drsProductChassisName,
+                    drsProductChassisLocation,
+                    drsChassisServiceTag,
+                    drsGlobalCurrStatus }
+        DESCRIPTION
+            "Unable to read planar board temperature sensors. The cooling has been increased to safeguard the system."
+        --#TYPE       "System: Temperature Failure"
+        --#SEVERITY   MINOR
+        --#SUMMARY    "Message ID: %s, Message: %s,"
+        --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+        --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+        --#SUMMARY    "Chassis Location: %s, Global Status: %d"
+        --#ARGUMENTS  {0, 1, 3, 4, 7, 5, 6, 8}
+        --#CATEGORY   "Error Events"
+        --#STATE      DEGRADED
+        --#STATUS     MANDATORY
+        ::= 8306
 
     ------------------------------------------------------------------------------
     -- Chassis Alerts 2: System: Voltage Probe Traps

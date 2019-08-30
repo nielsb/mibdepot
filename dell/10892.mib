@@ -385,6 +385,14 @@ systemManagementSoftwareManufacturerName        OBJECT-TYPE
 "0100.0013 This attribute defines the manufacturer of the
 systems management software."
     ::= { systemManagementSoftwareGroup 13 }
+systemManagementSoftwareProdUseFeedback        OBJECT-TYPE
+    SYNTAX      DellUnsigned16BitRange
+    ACCESS      read-only
+    STATUS      mandatory
+    DESCRIPTION
+"0100.0014 This attribute defines the current state of the
+Product Use Feedback feature. Possible values are Enabled(1) and Disabled(0)."
+    ::= { systemManagementSoftwareGroup 14 }
 
 
 -------------------------------------------------------------------------------
@@ -4596,6 +4604,7 @@ AC power cord."
 
 DellBatteryReading                              ::= INTEGER {
     -- Note: These values are bit masks, so combination values are possible.
+	-- If 0 (zero), battery is absent
 	predictiveFailure(1),                       -- battery predictive failure
     failed(2),                                  -- battery failed
     presenceDetected(4)                         -- battery presence detected
@@ -7406,6 +7415,7 @@ DellProcessorDeviceFamily                       ::= INTEGER {
     deviceFamilyIs68010(99),                    -- family is 68010
     deviceFamilyIs68020(100),                   -- family is 68020
     deviceFamilyIs68030(101),                   -- family is 68030
+	deviceFamilyIsAMDZen(107),                  -- family is AMD Zen Processor Family
     deviceFamilyIsHobbit(112),                  -- family is Hobbit Family
     deviceFamilyIsCrusoeTM5000(120),            -- family is Crusoe TM5000 Family
     deviceFamilyIsCrusoeTM3000(121),            -- family is Crusoe TM3000 Family
@@ -9900,14 +9910,18 @@ DellSystemSlotType                              ::= INTEGER {
     systemSlotIsAGP(15),                        -- type is AGP
     systemSlotIsAGP2X(16),                      -- type is AGP 2X
     systemSlotIsAGP4X(17),                      -- type is AGP 4X
-    systemSlotIsPC98C20(18),                    -- type is PC-98/C20
-    systemSlotIsPC98C24(19),                    -- type is PC-98/C24
-    systemSlotIsPC98E(20),                      -- type is PC-98/E
-    systemSlotIsPC98LocalBus(21),               -- type is PC-98/Local Bus
-    systemSlotIsPC98Card(22),                   -- type is PC-98/Card
-    systemSlotIsPCIX(23),                       -- type is PCI-X
-    systemSlotIsPCIExpress(24),                 -- type is PCI Express
-    systemSlotIsAGP8X(25),                      -- type is AGP 8X
+    systemSlotIsPCIX(18),                       -- type is PCI-X
+    systemSlotIsAGP8X(19),                      -- type is AGP 8X
+    systemSlotIsM2Socket1DP(20),                -- type is M.2 Socket 1-DP (Mechanical Key A)
+    systemSlotIsM2Socket1SD(21),                -- type is M.2 Socket 1-SD (Mechanical Key E)
+    systemSlotIsM2Socket2(22),                  -- type is M.2 Socket 2 (Mechanical Key B)
+    systemSlotIsM2Socket3(23),                  -- type is M.2 Socket 3 (Mechanical Key M)
+    systemSlotIsPC98C20(160),                   -- type is PC-98/C20
+    systemSlotIsPC98C24(161),                   -- type is PC-98/C24
+    systemSlotIsPC98E(162),                     -- type is PC-98/E
+    systemSlotIsPC98LocalBus(163),              -- type is PC-98/Local Bus
+    systemSlotIsPC98Card(164),                  -- type is PC-98/Card
+    systemSlotIsPCIExpress(165),                -- type is PCI Express
     systemSlotIsPCIExpressX1(166),              -- type is PCI Express x1
     systemSlotIsPCIExpressX2(167),              -- type is PCI Express x2
     systemSlotIsPCIExpressX4(168),              -- type is PCI Express x4

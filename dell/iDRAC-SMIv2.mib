@@ -2,8 +2,8 @@
 --
 -- Title: iDRAC MIB
 --
--- Version: 3.3
--- Date: 7 July 2015
+-- Version: 3.4
+-- Date: 21 August 2018
 --
 -- Description: This MIB defines MIB objects that make iDRAC data available
 -- to SNMP management applications.
@@ -12,7 +12,7 @@
 -- of Managed Information) notations: SMIv1 and SMIv2. This copy of the iDRAC
 -- MIB file is the SMIv2 version of the MIB file.
 --
--- Copyright (c) 2012-2015 Dell Inc.
+-- Copyright (c) 2012-2018 Dell Inc.
 -- All Rights Reserved.
 --
 -- Note: The information and functionality described by this MIB file,
@@ -44,7 +44,7 @@ IMPORTS
 
 
 outOfBandGroup MODULE-IDENTITY
-    LAST-UPDATED "201501190000Z" -- 19 January 2015
+    LAST-UPDATED "201808210000Z" -- 21 August 2018
     ORGANIZATION "Dell Inc."
     CONTACT-INFO
         "Visit the Dell Support website at: support.dell.com"
@@ -53,6 +53,13 @@ outOfBandGroup MODULE-IDENTITY
          available to SNMP management applications. It also defines the traps
          that iDRAC supports."
     -- Revision history, in reverse chronological order.
+
+    REVISION "201808210000Z" -- 21 August 2018
+    DESCRIPTION
+        "Version: 3.4
+         * Updated alertStorageSolidstateDrive trap.
+         * Updated alertInternaliDRACMemoryUnresponsive trap.
+		 * Added new memory properties - memoryDeviceTechnology, memoryDeviceVolatileSize, memoryDeviceNonVolatilesSize, memoryDeviceCacheSize & memoryDeviceRemainingRatedWriteEndurance."
 
     REVISION "201501190000Z" -- 19 January 2015
     DESCRIPTION
@@ -306,7 +313,16 @@ StateCapabilitiesFlags  ::= TEXTUAL-CONVENTION
     enableCapable(2),           -- be disabled (offline) or be enabled (online)
     notReadyCapable(4),         -- not ready
     enableAndNotReadyCapable(6)
+}
 
+SystemLockdownModeEnum  ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION
+        "State Capabilities flags."
+    SYNTAX              INTEGER {
+    --disabled(0),                             -  LockdownMode disabled
+    enabled(1),                                  -- LockdownMode enabled
+	unknown(2)                                  -- LockdownMode unknown
 }
 
 --
@@ -404,9 +420,14 @@ RacTypeEnum             ::= TEXTUAL-CONVENTION
     other(1),               -- the RAC type is not one of the following
     unknown(2),             -- the RAC type is unknown
     idrac7monolithic(16),   -- iDRAC7 Monolithic
-    idrac7modular(17),       -- iDRAC7 Modular
+    idrac7modular(17),      -- iDRAC7 Modular
+    idrac7DCS(21),          -- iDRAC7 DCS
     idrac8monolithic(32),   -- iDRAC8 Monolithic
-    idrac8modular(33)       -- iDRAC8 Modular
+    idrac8modular(33),      -- iDRAC8 Modular
+    idrac8DCS(34),         -- iDRAC8 DCS
+    idrac9Monolithic(48),   -- iDRAC9 Monolothic
+    idrac9Modular(49),      -- iDRAC9 Modular
+    idrac9DCS(50)           -- iDRAC9 DCS
 }
 
 SystemFormFactorEnum    ::= TEXTUAL-CONVENTION
@@ -598,7 +619,7 @@ systemInfoObjGroup OBJECT-GROUP
     OBJECTS { systemFQDN, systemServiceTag, systemExpressServiceCode, systemAssetTag, systemBladeSlotNumber, 
 	          systemOSName, systemFormFactor, systemDataCenterName, systemAisleName, systemRackName, 
 			  systemRackSlot, systemModelName, systemSystemID, systemOSVersion, systemRoomName,
-			  systemChassisSystemHeight, systemBladeGeometry, systemNodeID}
+			  systemChassisSystemHeight, systemBladeGeometry, systemNodeID,systemOEMOSVersion}
     STATUS  current
     DESCRIPTION
         "A collection of objects providing information about the System group."
@@ -756,7 +777,20 @@ systemNodeID OBJECT-TYPE
         provides a unique identifier for the system."
     ::= { systemInfoGroup 18 }
 
-
+systemOEMOSVersion OBJECT-TYPE
+    SYNTAX          StringType
+    MAX-ACCESS          read-only
+    STATUS          current
+    DESCRIPTION
+        "This attribute defines the OEM version of the operating system ."
+    ::= { systemInfoGroup 19 }
+systemLockdownMode OBJECT-TYPE
+    SYNTAX          SystemLockdownModeEnum
+    MAX-ACCESS          read-only
+    STATUS          current
+    DESCRIPTION
+        "This attribute defines the system Lockdown mode is enabled or disabled."
+    ::= { systemInfoGroup 20 }
 ------------------------------------------------------------------------------
 -- Status Group
 --
@@ -1007,7 +1041,7 @@ systemStateTableInfoObjGroup OBJECT-GROUP
 			  systemStateBatteryStatusCombined, systemStateBatteryStatusList, systemStateSDCardUnitStatusCombined, systemStateSDCardUnitStatusList,
 			  systemStateSDCardDeviceStatusCombined, systemStateSDCardDeviceStatusList, systemStateIDSDMCardUnitStatusCombined,
 			  systemStateIDSDMCardUnitStatusList, systemStateIDSDMCardDeviceStatusCombined, systemStateIDSDMCardDeviceStatusList,
-			  systemStateTemperatureStatisticsStateDetails, systemStateTemperatureStatisticsStatusCombined, systemStateTemperatureStatisticsStatusDetails
+			  systemStateTemperatureStatisticsStateDetails, systemStateTemperatureStatisticsStatusCombined, systemStateTemperatureStatisticsStatusDetails,systemStateCMCStatus
 			  }
     STATUS  current
     DESCRIPTION
@@ -1064,7 +1098,8 @@ SystemStateTableEntry                              ::= SEQUENCE {
     systemStateIDSDMCardDeviceStatusList           OCTET STRING,
     systemStateTemperatureStatisticsStateDetails   OCTET STRING,
     systemStateTemperatureStatisticsStatusCombined ObjectStatusEnum,
-    systemStateTemperatureStatisticsStatusDetails  OCTET STRING
+    systemStateTemperatureStatisticsStatusDetails  OCTET STRING,
+	systemStateCMCStatus       ObjectStatusEnum
 }
 
 systemStateTable                                OBJECT-TYPE
@@ -1637,7 +1672,13 @@ systemStateTemperatureStatisticsStatusDetails   OBJECT-TYPE
         The bytes have the same definition type as ObjectStatusEnum."
     ::= { systemStateTableEntry 64 }
 
-
+systemStateCMCStatus          OBJECT-TYPE
+    SYNTAX      ObjectStatusEnum
+    MAX-ACCESS      read-only
+    STATUS      current
+    DESCRIPTION
+        "0200.0010.0001.0065 This attribute defines the status of CMC."
+    ::= { systemStateTableEntry 65 }
 -------------------------------------------------------------------------------
 -- Chassis Information Group
 --
@@ -2586,7 +2627,8 @@ FirmwareType                                    ::= TEXTUAL-CONVENTION
     unknown(2),                                 -- type is unknown
     lifecycleController(20),                    -- type is Lifecycle Controller
     iDRAC7(21),                                 -- type is Integrated Dell Remote Access Controller 7
-    iDRAC8(22)                                  -- type is Integrated Dell Remote Access Controller 8
+    iDRAC8(22),                                  -- type is Integrated Dell Remote Access Controller 8
+	iDRAC9(23)                                  -- type is Integrated Dell Remote Access Controller 9
 }
 
 firmwareTableObjGroup OBJECT-GROUP
@@ -5208,6 +5250,7 @@ ProcessorDeviceFamily                           ::= TEXTUAL-CONVENTION
     deviceFamilyIs68010(99),                    -- family is 68010
     deviceFamilyIs68020(100),                   -- family is 68020
     deviceFamilyIs68030(101),                   -- family is 68030
+    deviceFamilyIsAMDZen(107),                  -- family is AMD Zen Processor Family
     deviceFamilyIsHobbit(112),                  -- family is Hobbit Family
     deviceFamilyIsCrusoeTM5000(120),            -- family is Crusoe TM5000 Family
     deviceFamilyIsCrusoeTM3000(121),            -- family is Crusoe TM3000 Family
@@ -5759,6 +5802,27 @@ processorDeviceStatusLocationName               OBJECT-TYPE
 --
 -- OID Format: 1.3.6.1.4.1.674.10892.5.4.1100.50.1.<a>.<i1>.<i2>
 -------------------------------------------------------------------------------
+MemoryTechnologyEnum            ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION
+        "Memory Technology Enum."
+    SYNTAX                                      INTEGER {
+    other(1),                       -- the memory technology is other than following values
+    unknown(2),                     -- the memory technology is not one of the following:
+    dram(3),                        -- the memory technology is DRAM
+    nvdimmn(4),                    -- the memory technology is NVDIMM-N
+    nvdimmf(5),                    -- the memory technology is NVDIMM-F
+    nvdimmp(6),                    -- the memory technology is NVDIMM-P
+	intelpersistentmemory(7)        -- the memory technology is intelpersistentmemory
+}
+
+MemoryPropertyEnum           ::= TEXTUAL-CONVENTION
+    STATUS current
+    DESCRIPTION
+        "Memory Property Enum."
+    SYNTAX                                      INTEGER {
+	notApplicable(255)				-- the memory property is NotApplicable for the device.
+}
 
 MemoryDeviceTypeEnum                            ::= TEXTUAL-CONVENTION
     STATUS current
@@ -5807,7 +5871,12 @@ memoryDeviceTableObjGroup OBJECT-GROUP
     memoryDevicePartNumberName,
     memoryDeviceSerialNumberName,
     memoryDeviceFQDD,
-    memoryDeviceCurrentOperatingSpeed
+    memoryDeviceCurrentOperatingSpeed,
+    memoryDeviceTechnology,
+    memoryDeviceVolatileSize,
+    memoryDeviceNonVolatilesSize,
+    memoryDeviceCacheSize,
+    memoryDeviceRemainingRatedWriteEndurance	
 	}
     STATUS  current
     DESCRIPTION
@@ -5829,7 +5898,12 @@ MemoryDeviceTableEntry                          ::= SEQUENCE {
     memoryDevicePartNumberName                  String64,
     memoryDeviceSerialNumberName                String64,
     memoryDeviceFQDD                            FQDDString,
-    memoryDeviceCurrentOperatingSpeed           Unsigned32BitRange
+    memoryDeviceCurrentOperatingSpeed           Unsigned32BitRange,
+    memoryDeviceTechnology                      MemoryTechnologyEnum,
+    memoryDeviceVolatileSize					Unsigned32BitRange,
+    memoryDeviceNonVolatilesSize				Unsigned32BitRange,
+    memoryDeviceCacheSize						Unsigned32BitRange,
+    memoryDeviceRemainingRatedWriteEndurance    MemoryPropertyEnum
 }
 
 memoryDeviceTable                               OBJECT-TYPE
@@ -5983,6 +6057,45 @@ memoryDeviceCurrentOperatingSpeed               OBJECT-TYPE
         in megahertz (MHz) of the memory device.  Zero indicates an unknown speed."
     ::= { memoryDeviceTableEntry 27 }
 
+memoryDeviceTechnology               OBJECT-TYPE
+    SYNTAX      MemoryTechnologyEnum
+    MAX-ACCESS      read-only
+    STATUS      current
+    DESCRIPTION
+        "1100.0050.0001.0028 This attribute defines the type or technology of the memory device."
+    ::= { memoryDeviceTableEntry 28 }
+
+memoryDeviceVolatileSize               OBJECT-TYPE
+    SYNTAX      Unsigned32BitRange
+    MAX-ACCESS      read-only
+    STATUS      current
+    DESCRIPTION
+        "1100.0050.0001.0029 This attribute defines the volatile size of the memory device in MBs."
+    ::= { memoryDeviceTableEntry 29 }
+
+memoryDeviceNonVolatilesSize               OBJECT-TYPE
+    SYNTAX      Unsigned32BitRange
+    MAX-ACCESS      read-only
+    STATUS      current
+    DESCRIPTION
+        "1100.0050.0001.0030 This attribute defines the Non Volatile size of the memory device in MBs."
+    ::= { memoryDeviceTableEntry 30 }
+
+memoryDeviceCacheSize               OBJECT-TYPE
+    SYNTAX      Unsigned32BitRange
+    MAX-ACCESS      read-only
+    STATUS      current
+    DESCRIPTION
+        "1100.0050.0001.0031 This attribute defines the Cache size of the memory device in MBs."
+    ::= { memoryDeviceTableEntry 31 }
+	
+memoryDeviceRemainingRatedWriteEndurance               OBJECT-TYPE
+    SYNTAX      MemoryPropertyEnum
+    MAX-ACCESS      read-only
+    STATUS      current
+    DESCRIPTION
+        "1100.0050.0001.0032 This attribute defines the percent of remaining life for the memory device"
+    ::= { memoryDeviceTableEntry 32 }
 
 -------------------------------------------------------------------------------
 -- PCI Device Table
@@ -11022,6 +11135,49 @@ alertPhysicalDiskFailure NOTIFICATION-TYPE
     ::= { systemAlertTrapGroup 0 2297 }
 
 ------------------------------------------------------------------------------
+-- System Performance Traps
+--
+-- Category: System/1
+-- Subcategory: PFM/75
+------------------------------------------------------------------------------
+
+systemPerformanceTrapsNotificationGroup NOTIFICATION-GROUP
+    NOTIFICATIONS { alertSystemPerformanceWarning}
+    STATUS        current
+    DESCRIPTION
+            "The two notifications which an SNMPv2 entity is required to
+            implement."
+    ::= { conformanceMIBnotificationGroup 35 }
+
+alertSystemPerformanceWarning NOTIFICATION-TYPE
+    OBJECTS { alertMessageID,
+              alertMessage,
+              alertCurrentStatus,
+              alertSystemServiceTag,
+              alertSystemFQDN,
+              alertFQDD,
+              alertDeviceDisplayName,
+              alertMessageArguments,
+              alertChassisServiceTag,
+              alertChassisName,
+              alertRacFQDN }
+    STATUS current
+    DESCRIPTION
+        "System Performance warning."
+    --#TYPE       "System: Performance Warning"
+    --#SEVERITY   MINOR
+    --#SUMMARY    "Message ID: %s, Device Display Name: %s, Message: %s,"
+    --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+    --#SUMMARY    "System Service Tag: %s, System Name: %s,"
+    --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+    --#SUMMARY    "RAC FQDN: %s"
+    --#ARGUMENTS  {0, 6, 1, 2, 5, 3, 4, 8, 9, 10}
+    --#CATEGORY   "Status Events"
+    --#STATE      DEGRADED
+    --#STATUS     current
+    ::= { systemAlertTrapGroup 0 2650 }
+
+------------------------------------------------------------------------------
 -- BIOS POST Trap
 --
 -- Category: System/1
@@ -11306,6 +11462,49 @@ alertPowerUsageFailure NOTIFICATION-TYPE
     --#STATE      DEGRADED
     --#STATUS     current
     ::= { systemAlertTrapGroup 0 2273 }
+
+------------------------------------------------------------------------------
+-- RAC Traps
+--
+-- Category: System/1
+-- Subcategory: RAC/60
+------------------------------------------------------------------------------
+
+racTrapsNotificationGroup NOTIFICATION-GROUP
+    NOTIFICATIONS { alertRACInformation}
+    STATUS        current
+    DESCRIPTION
+            "The two notifications which an SNMPv2 entity is required to
+            implement."
+    ::= { conformanceMIBnotificationGroup 34 }
+
+alertRACInformation NOTIFICATION-TYPE
+    OBJECTS { alertMessageID,
+              alertMessage,
+              alertCurrentStatus,
+              alertSystemServiceTag,
+              alertSystemFQDN,
+              alertFQDD,
+              alertDeviceDisplayName,
+              alertMessageArguments,
+              alertChassisServiceTag,
+              alertChassisName,
+              alertRacFQDN }
+    STATUS current
+    DESCRIPTION
+        "RAC information."
+    --#TYPE       "System: RAC Information"
+    --#SEVERITY   INFORMATIONAL
+    --#SUMMARY    "Message ID: %s, Device Display Name: %s, Message: %s,"
+    --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+    --#SUMMARY    "System Service Tag: %s, System Name: %s,"
+    --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+    --#SUMMARY    "RAC FQDN: %s"
+    --#ARGUMENTS  {0, 6, 1, 2, 5, 3, 4, 8, 9, 10}
+    --#CATEGORY   "Status Events"
+    --#STATE      OPERATIONAL
+    --#STATUS     current
+    ::= { systemAlertTrapGroup 0 2531 }
 
 ------------------------------------------------------------------------------
 -- Redundancy Traps
@@ -11945,6 +12144,50 @@ alertSoftwareConfigurationFailure NOTIFICATION-TYPE
     ::= { systemAlertTrapGroup 0 2337 }
 
 ------------------------------------------------------------------------------
+-- iDRAC Memory Unresponsive Trap
+--
+-- Category: System/1
+-- Subcategory: SYS/48
+------------------------------------------------------------------------------
+
+alertInternaliDRACMemoryUnresponsiveTrapNotificationGroup NOTIFICATION-GROUP
+    NOTIFICATIONS { alertInternaliDRACMemoryUnresponsive }
+    STATUS        current
+    DESCRIPTION
+            "The two notifications which an SNMPv2 entity is required to
+            implement."
+    ::= { conformanceMIBnotificationGroup 65 }
+
+
+alertInternaliDRACMemoryUnresponsive NOTIFICATION-TYPE
+    OBJECTS { alertMessageID,
+              alertMessage,
+              alertCurrentStatus,
+              alertSystemServiceTag,
+              alertSystemFQDN,
+              alertFQDD,
+              alertDeviceDisplayName,
+              alertMessageArguments,
+              alertChassisServiceTag,
+              alertChassisName,
+              alertRacFQDN }
+    STATUS current
+    DESCRIPTION
+        "Unable to communicate with internal iDRAC memory"
+    --#TYPE       "System: Internal iDRAC Memory Unresponsive"
+    --#SEVERITY   CRITICAL
+    --#SUMMARY    "Message ID: %s, Device Display Name: %s, Message: %s,"
+    --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+    --#SUMMARY    "System Service Tag: %s, System Name: %s,"
+    --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+    --#SUMMARY    "RAC FQDN: %s"
+    --#ARGUMENTS  {0, 6, 1, 2, 5, 3, 4, 8, 9, 10}
+    --#CATEGORY   "Error Events"
+    --#STATE      OPERATIONAL
+    --#STATUS     current
+    ::= { systemAlertTrapGroup 0 2433 }
+
+------------------------------------------------------------------------------
 -- Temperature Probe Traps
 --
 -- Category: System/1
@@ -12356,93 +12599,6 @@ alertVoltageProbeFailure NOTIFICATION-TYPE
     --#STATE      DEGRADED
     --#STATUS     current
     ::= { systemAlertTrapGroup 0 2169 }
-
-------------------------------------------------------------------------------
--- RAC Traps
---
--- Category: System/1
--- Subcategory: RAC/60
-------------------------------------------------------------------------------
-
-racTrapsNotificationGroup NOTIFICATION-GROUP
-    NOTIFICATIONS { alertRACInformation}
-    STATUS        current
-    DESCRIPTION
-            "The two notifications which an SNMPv2 entity is required to
-            implement."
-    ::= { conformanceMIBnotificationGroup 34 }
-
-alertRACInformation NOTIFICATION-TYPE
-    OBJECTS { alertMessageID,
-              alertMessage,
-              alertCurrentStatus,
-              alertSystemServiceTag,
-              alertSystemFQDN,
-              alertFQDD,
-              alertDeviceDisplayName,
-              alertMessageArguments,
-              alertChassisServiceTag,
-              alertChassisName,
-              alertRacFQDN }
-    STATUS current
-    DESCRIPTION
-        "RAC information."
-    --#TYPE       "System: RAC Information"
-    --#SEVERITY   INFORMATIONAL
-    --#SUMMARY    "Message ID: %s, Device Display Name: %s, Message: %s,"
-    --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
-    --#SUMMARY    "System Service Tag: %s, System Name: %s,"
-    --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
-    --#SUMMARY    "RAC FQDN: %s"
-    --#ARGUMENTS  {0, 6, 1, 2, 5, 3, 4, 8, 9, 10}
-    --#CATEGORY   "Status Events"
-    --#STATE      OPERATIONAL
-    --#STATUS     current
-    ::= { systemAlertTrapGroup 0 2531 }
-
-------------------------------------------------------------------------------
--- System Performance Traps
---
--- Category: System/1
--- Subcategory: PFM/75
-------------------------------------------------------------------------------
-
-systemPerformanceTrapsNotificationGroup NOTIFICATION-GROUP
-    NOTIFICATIONS { alertSystemPerformanceWarning}
-    STATUS        current
-    DESCRIPTION
-            "The two notifications which an SNMPv2 entity is required to
-            implement."
-    ::= { conformanceMIBnotificationGroup 35 }
-
-alertSystemPerformanceWarning NOTIFICATION-TYPE
-    OBJECTS { alertMessageID,
-              alertMessage,
-              alertCurrentStatus,
-              alertSystemServiceTag,
-              alertSystemFQDN,
-              alertFQDD,
-              alertDeviceDisplayName,
-              alertMessageArguments,
-              alertChassisServiceTag,
-              alertChassisName,
-              alertRacFQDN }
-    STATUS current
-    DESCRIPTION
-        "System Performance warning."
-    --#TYPE       "System: Performance Warning"
-    --#SEVERITY   MINOR
-    --#SUMMARY    "Message ID: %s, Device Display Name: %s, Message: %s,"
-    --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
-    --#SUMMARY    "System Service Tag: %s, System Name: %s,"
-    --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
-    --#SUMMARY    "RAC FQDN: %s"
-    --#ARGUMENTS  {0, 6, 1, 2, 5, 3, 4, 8, 9, 10}
-    --#CATEGORY   "Status Events"
-    --#STATE      DEGRADED
-    --#STATUS     current
-    ::= { systemAlertTrapGroup 0 2650 }
-
 
 ------------------------------------------------------------------------------
 -- Storage Alert Trap Group
@@ -13144,6 +13300,49 @@ alertStorageSecurityFailure NOTIFICATION-TYPE
     --#STATE      OPERATIONAL
     --#STATUS     current
     ::= { storageAlertTrapGroup 0 4433 }
+
+------------------------------------------------------------------------------
+-- Solid State Drive
+--
+-- Category: storage/2
+-- Subcategory: SSD/34
+------------------------------------------------------------------------------
+
+storageSolidstateDriveTrapsNotificationGroup NOTIFICATION-GROUP
+    NOTIFICATIONS { alertStorageBatteryInformation }
+    STATUS        current
+    DESCRIPTION
+            "The two notifications which an SNMPv2 entity is required to
+            implement."
+    ::= { conformanceMIBnotificationGroup 66 }
+	
+alertStorageSolidstateDrive NOTIFICATION-TYPE
+    OBJECTS { alertMessageID,
+              alertMessage,
+              alertCurrentStatus,
+              alertSystemServiceTag,
+              alertSystemFQDN,
+              alertFQDD,
+              alertDeviceDisplayName,
+              alertMessageArguments,
+              alertChassisServiceTag,
+              alertChassisName,
+              alertRacFQDN }
+    STATUS current
+    DESCRIPTION
+        "SSD is less than the threshold value."
+    --#TYPE       "Storage: SSD Warning"
+    --#SEVERITY   MINOR
+    --#SUMMARY    "Message ID: %s, Device Display Name: %s, Message: %s,"
+    --#SUMMARY    "Device Status: %d, Device FQDD: %s,"
+    --#SUMMARY    "System Service Tag: %s, System Name: %s,"
+    --#SUMMARY    "Chassis Service Tag: %s, Chassis Name: %s,"
+    --#SUMMARY    "RAC FQDN: %s"
+    --#ARGUMENTS  {0, 6, 1, 2, 5, 3, 4, 8, 9, 10}
+    --#CATEGORY   "Error Events"
+    --#STATE      OPERATIONAL
+    --#STATUS     current
+    ::= { storageAlertTrapGroup 0 4370 }
 
 ------------------------------------------------------------------------------
 -- Storage Management Status Traps
@@ -14572,8 +14771,8 @@ alertTestTrapEvent NOTIFICATION-TYPE
     --#STATUS     current
     ::= { configurationAlertTrapGroup 0 10395 }
 
-END
 
+END
 ------------------------------------------------------------------------------
 -- End MIB
 ------------------------------------------------------------------------------

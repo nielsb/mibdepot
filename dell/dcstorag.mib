@@ -6587,6 +6587,8 @@
 			SYNTAX SEQUENCE OF FluidCacheDiskEntry
 			ACCESS not-accessible
 			STATUS mandatory
+			DESCRIPTION
+				"Indicates the Disk Table of the fludicache component"
 			::= { logicalDevices 5 }
 
 		
@@ -6595,6 +6597,8 @@
 			SYNTAX FluidCacheDiskEntry
 			ACCESS not-accessible
 			STATUS mandatory
+			DESCRIPTION
+				"Indicates the Disk Number of the fludicache component"
 			INDEX { fluidCacheDiskNumber }
 			::= { fluidCacheDiskTable 1 }
 
@@ -6751,6 +6755,8 @@
 			SYNTAX SEQUENCE OF FluidCachePoolEntry
 			ACCESS not-accessible
 			STATUS mandatory
+			DESCRIPTION
+				"Indicates the Pool Table of the fludicache component"
 			::= { logicalDevices 6 }
 
 		
@@ -6759,6 +6765,8 @@
 			SYNTAX FluidCachePoolEntry
 			ACCESS not-accessible
 			STATUS mandatory
+			DESCRIPTION
+				"Indicates the Pool Number of the fludicache component"
 			INDEX { fluidCachePoolNumber }
 			::= { fluidCachePoolTable 1 }
 
