@@ -6,7 +6,7 @@ IMPORTS
     TEXTUAL-CONVENTION                FROM SNMPv2-TC;
 
 eaton MODULE-IDENTITY
-    LAST-UPDATED "200906180000Z"
+    LAST-UPDATED "201402190000Z"
     ORGANIZATION "Eaton Corporation"
     CONTACT-INFO
         "Eaton Power Quality Technical Support (PQTS) group
@@ -22,6 +22,14 @@ eaton MODULE-IDENTITY
             Copyright (C) Exide Electronics 1992-98
             Copyright (C) Powerware Corporation 1999-2004
             Copyright (C) Eaton Corporation (2005-)."
+
+    REVISION        "201402190000Z"
+    DESCRIPTION
+            "Added assignments for stsMIB."
+
+    REVISION        "201001240000Z"
+    DESCRIPTION
+            "Added assignments for eatonEpdu and eatonEpduMa."
 
     REVISION        "200906180000Z"
     DESCRIPTION
@@ -102,9 +110,13 @@ products OBJECT IDENTIFIER    ::= {eaton  6}
         -- Defined in EATON-PDU-MIB.txt
         eatonPdu OBJECT IDENTIFIER ::= {pduAgent  4}
 
+        -- MIB for Eaton Powerware first-generation Managed ePDUs
+        -- Defined in EATON-EPDU-MA-MIB.txt
+        -- eatonEpduMa OBJECT IDENTIFIER ::= {pduAgent  6}
+
         -- MIB for Eaton Powerware ePDUs
         -- Defined in EATON-EPDU-MIB.txt
-        -- eatonEpdu OBJECT IDENTIFIER ::= {pduAgent  6}
+        -- eatonEpdu OBJECT IDENTIFIER ::= {pduAgent  7}
 
 
     dataCenter OBJECT IDENTIFIER    ::= {products  7}
@@ -140,6 +152,14 @@ powerCmnd OBJECT IDENTIFIER    ::= {eaton  9}
     -- MIB to support the OSDCII controller
     -- Defined in file EATON-OSDCII-MIB.txt
     -- osdcMIB OBJECT IDENTIFIER    ::= {powerCmnd  1}
+
+-- A branch for Eaton STS devices MIBs
+sts OBJECT IDENTIFIER    ::= {eaton  10}
+
+    -- Product assignments
+    -- MIB to support the data in STS devices
+    -- Defined in file Eaton-STS.MIB
+    -- stsMIB OBJECT IDENTIFIER    ::= {ats  1}
 
 -- Define some common Textual Conventions
 -- PositiveInteger and NonNegativeInteger are borrowed from RFC1628

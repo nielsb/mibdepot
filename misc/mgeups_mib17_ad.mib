@@ -17,6 +17,10 @@ MG-SNMP-UPS-MIB DEFINITIONS ::= BEGIN
 -- Author:      MGE UPS SYSTEMS
 -- Release:     V1.7 AD - Add traps 65 and 66 about Redundancy
 
+-- Date:        August 21, 2012
+-- Author:      EATON POWER QUALITY
+-- Release:     V1.7 AE - Add traps 67 and 68 about Protection Lost
+
 IMPORTS
         enterprises,IpAddress,TimeTicks
                 FROM RFC1155-SMI
@@ -2755,6 +2759,22 @@ upsRedundancyOK TRAP-TYPE
                 "Redundancy Recovered."
        --#SEVERITY INFORMATIONAL
 ::= 66
+
+-- AE Release on 2012/08/21 : Traps 67 and 68 added about protection lost.
+
+upsProtectionLost TRAP-TYPE
+        ENTERPRISE upsmgTraps
+        DESCRIPTION
+                "Protection Lost." 
+       --#SEVERITY MAJOR
+::= 67
+
+upsProtectionOK TRAP-TYPE
+        ENTERPRISE upsmgTraps
+        DESCRIPTION
+                "Protection Recovered."
+       --#SEVERITY INFORMATIONAL
+::= 68
 
 
 
