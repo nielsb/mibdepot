@@ -7,7 +7,7 @@
 --
 -- August 1997, Ramanathan R. Kavasseri
 --
--- Copyright (c) 1997-2019 by cisco Systems, Inc.
+-- Copyright (c) 1997-2020 by cisco Systems, Inc.
 -- All rights reserved.
 -- *****************************************************************
 -- $Log$
@@ -1134,6 +1134,7 @@ cevChassisN2kB22DELLP           OBJECT IDENTIFIER ::= { cevChassis 1211 } -- N2K
 cevChassiscat385048P            OBJECT IDENTIFIER ::= { cevChassis 1212 } -- Catalyst 3850 48 10/100/1000 PoE+ Ports Layer 2/Layer 3 Ethernet Stackable Switch
 cevChassisASR9922Dc             OBJECT IDENTIFIER ::= { cevChassis 1225 } -- ASR 9922 20 Line Card Slot DC Chassis w/ PEM V2
 cevChassisASR9922Ac             OBJECT IDENTIFIER ::= { cevChassis 1226 } -- ASR 9922 20 Line Card Slot AC Chassis w/ PEM V2
+cevChassis385024P               OBJECT IDENTIFIER ::= { cevChassis 1234 } -- Catalyst 3850 24P  10/100/1000 PoE+ Ports Layer 2/Layer 3 Ethernet Stackable Switch
 cevChassisN6kC600496Q           OBJECT IDENTIFIER ::= { cevChassis 1237 } -- Nexus 6004 Switch with 2 Power Supplies, 4 Fan Modules and 48Q 40GE Ethernet/FCoE ports
 cevChassisN3kC3548P10G          OBJECT IDENTIFIER ::= { cevChassis 1238 } -- Nexus 3500 Series 1 RU fixed chassis with 48 SFPs, 2 Power Supplies, 4 Individual Fans
 cevChassisN3kC3064TQ10GT        OBJECT IDENTIFIER ::= { cevChassis 1239 } -- Nexus 3000 Series 1 RU fixed chassis (Trident+) with  48 SFP+ and 4 QSFP ports, no power supply, no fan
@@ -1879,6 +1880,7 @@ cevChassisWSC2960LSM24TQ                OBJECT IDENTIFIER ::= { cevChassis 2202 
 cevChassisWSC2960LSM48TQ                OBJECT IDENTIFIER ::= { cevChassis 2203 } -- Catalyst 2960L-SM 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks
 cevChassisWSC2960LSM24PQ                OBJECT IDENTIFIER ::= { cevChassis 2204 } -- Catalyst 2960L-SM 24 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support
 cevChassisWSC2960LSM48PQ                OBJECT IDENTIFIER ::= { cevChassis 2205 } -- Catalyst 2960L-SM 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support
+cevChassisN3KC3408S                     OBJECT IDENTIFIER ::= { cevChassis 2206 } -- Nexus 3000 chassis
 cevChassisN3KC3432DS                    OBJECT IDENTIFIER ::= { cevChassis 2207 } -- Nexus 3000 Series fixed chassis with 32x400G + 2x10G SFP+ module
 cevChassisCat930024UBX                  OBJECT IDENTIFIER ::= { cevChassis 2216 } -- Catalyst 9300 24-port mGig and UPOE switch with support of deepbuffer feature for all interfaces
 cevChassisCat930048UB                   OBJECT IDENTIFIER ::= { cevChassis 2217 } -- Catalyst 9300 48-port UPOE switch with support of deepbuffer feature for all interfaces
@@ -1924,22 +1926,52 @@ cevChassisIE3400H24T                    OBJECT IDENTIFIER ::= { cevChassis 2266 
 cevChassisN3KC34200YCSM                 OBJECT IDENTIFIER ::= { cevChassis 2267 } -- Nexus 3000 Series chassis with 48x10/25G + 8x100G Ethernet Module
 cevChassisRAIE1783MMS10A                OBJECT IDENTIFIER ::= { cevChassis 2269 } -- Cisco-Rockwell Stratix 5800 Industrial Ethernet Switch, Network Essentials, Expandable System : 2 Port SFP + 8 Port GE Copper Advanced
 cevChassisRAIE1783MMS10AR               OBJECT IDENTIFIER ::= { cevChassis 2270 } -- Cisco-Rockwell Stratix 5800 Industrial Ethernet Switch, Network Advantage, Expandable System : 2 Port SFP + 8 Port GE Copper Advanced
+cevChassisC10008T2GL                    OBJECT IDENTIFIER ::= { cevChassis 2271 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo)
 cevChassisN9KC9364CGX                   OBJECT IDENTIFIER ::= { cevChassis 2272 } --  2RU TOR fixed chassis with 64x100GE QSFP28 Ports
 cevChassisCSP5228                       OBJECT IDENTIFIER ::= { cevChassis 2273 } -- Cloud Services Platform Model CSP-5228
 cevChassisCSP5400                       OBJECT IDENTIFIER ::= { cevChassis 2274 } -- Cloud Services Platform Model CSP-5400
 cevChassisCSP5436                       OBJECT IDENTIFIER ::= { cevChassis 2275 } -- Cloud Services Platform Model CSP-5436
 cevChassisCSP5444                       OBJECT IDENTIFIER ::= { cevChassis 2276 } -- Cloud Services Platform Model CSP-5444
 cevChassisCSP5456                       OBJECT IDENTIFIER ::= { cevChassis 2277 } -- Cloud Services Platform Model CSP-5456
+cevChassisC10008TE2GL                   OBJECT IDENTIFIER ::= { cevChassis 2281 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + External Adapter
+cevChassisC10008P2GL                    OBJECT IDENTIFIER ::= { cevChassis 2282 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 67W PoE budget
+cevChassisC10008PE2GL                   OBJECT IDENTIFIER ::= { cevChassis 2283 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 60W PoE budget + External Adapter
+cevChassisC10008FP2GL                   OBJECT IDENTIFIER ::= { cevChassis 2284 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + PoE with 120W PoE budget
+cevChassisC10008FPE2GL                  OBJECT IDENTIFIER ::= { cevChassis 2285 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + PoE with 120W PoE budgetS + External Adapter
+cevChassisC100016T2GL                   OBJECT IDENTIFIER ::= { cevChassis 2286 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP)
+cevChassisC100016TE2GL                  OBJECT IDENTIFIER ::= { cevChassis 2287 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + External Adapter
+cevChassisC100016P2GL                   OBJECT IDENTIFIER ::= { cevChassis 2288 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + Partial PoE with 120W PoE budget
+cevChassisC100016PE2GL                  OBJECT IDENTIFIER ::= { cevChassis 2289 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + Partial PoE with 120W PoE budget + External Adapter
+cevChassisC100016FP2GL                  OBJECT IDENTIFIER ::= { cevChassis 2290 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + PoE with 240W PoE budget
+cevChassisC100024T4GL                   OBJECT IDENTIFIER ::= { cevChassis 2291 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP)
+cevChassisC100024PP4GL                  OBJECT IDENTIFIER ::= { cevChassis 2292 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 195W PoE budget, First 8 ports with PoE
+cevChassisC100024FP4GL                  OBJECT IDENTIFIER ::= { cevChassis 2293 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + PoE with 370W PoE budget
+cevChassisC100048T4GL                   OBJECT IDENTIFIER ::= { cevChassis 2294 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP)
+cevChassisC100048PP4GL                  OBJECT IDENTIFIER ::= { cevChassis 2295 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + Partial PoE w ith 180W PoE budget, First 12 ports with PoE
+cevChassisC100048P4GL                   OBJECT IDENTIFIER ::= { cevChassis 2296 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 370W PoE budget
+cevChassisC100048FP4GL                  OBJECT IDENTIFIER ::= { cevChassis 2297 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + PoE with 740W PoE budget
+cevChassisC100024T4XL                   OBJECT IDENTIFIER ::= { cevChassis 2298 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+)
+cevChassisC100024P4XL                   OBJECT IDENTIFIER ::= { cevChassis 2299 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+) + Partial PoE with 195W PoE budget
+cevChassisC100024FP4XL                  OBJECT IDENTIFIER ::= { cevChassis 2300 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+) + PoE with 370W PoE budget
+cevChassisC100048T4XL                   OBJECT IDENTIFIER ::= { cevChassis 2301 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+)
+cevChassisC100048P4XL                   OBJECT IDENTIFIER ::= { cevChassis 2302 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + Partial PoE with 370W PoE budget
+cevChassisC100048FP4XL                  OBJECT IDENTIFIER ::= { cevChassis 2303 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + PoE with 740W PoE budget
 cevChassisCSP5200                       OBJECT IDENTIFIER ::= { cevChassis 2331 } -- Cloud Services Platform Model CSP-5200
 cevChassisCSP5216                       OBJECT IDENTIFIER ::= { cevChassis 2332 } -- Cloud Services Platform Model CSP-5216
+cevChassisC100024P4GL                   OBJECT IDENTIFIER ::= { cevChassis 2334 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 195W PoE budget
+cevChassisN9KC93180YC2FX                OBJECT IDENTIFIER ::= { cevChassis 2348 } -- Nexus 9300 series chassis 48x10/25G (SFP28) and 6x40/100G (QSFP28)
+cevChassisN9KC9348GC2FXP                OBJECT IDENTIFIER ::= { cevChassis 2349 } -- Nexus 9300 series 1RU TOR chassis with 48x100/1000Mbps (PoE) + 4x10G/25G SFP28 + 2x40G/100G QSFP28
+cevChassisN9KC93108TC2FX                OBJECT IDENTIFIER ::= { cevChassis 2352 } -- Nexus 9300 series 1RU chassis TOR with 48 x 10GBASE-T + 6 x QSFP28 (40/100G)
+cevChassisN9KC93180YCFX24               OBJECT IDENTIFIER ::= { cevChassis 2353 } -- Nexus 9300 series 1RU TOR chassis 24 x 1/10/25 Gbps SFP+ + 6 x 40/100 Gbps QSFP+
+cevChassisN9KC93108TCFX24               OBJECT IDENTIFIER ::= { cevChassis 2354 } -- Nexus 9300 series 1RU chassis TOR 24 x 10GBase-T, 6 x 40/100 Gbps
+cevChassisN9KC93108TCEX24               OBJECT IDENTIFIER ::= { cevChassis 2355 } -- Nexus 9300 series 1RU chassis TOR 24 x 1/10GBase-T + 6 x 40/100 Gbps QSFP+
+cevChassisN9KC93180YCEX24               OBJECT IDENTIFIER ::= { cevChassis 2356 } -- Nexus 9300 series 1RU chassis TOR 24 x 1/10/25 Gigabit SFP+ + 6 x 40/100 Gigabit QSFP28
 cevChassisNCS540LFHCSRSys               OBJECT IDENTIFIER ::= { cevChassis 2360 } -- NCS540L series - N540-FH-CSR-SYS
 cevChassisNCS540LFHAGGSys               OBJECT IDENTIFIER ::= { cevChassis 2361 } -- NCS540L series - N540-FH-AGG-SYS
 cevChassisNCS540LFHIP65Sys              OBJECT IDENTIFIER ::= { cevChassis 2362 } -- NCS540L series - N540-FH-IP65-SYS
 cevChassisN9KC9500v                     OBJECT IDENTIFIER ::= { cevChassis 2364 } -- Nexus9000 C9500v Chassis
 cevChassisIE33008T2X                    OBJECT IDENTIFIER ::= { cevChassis 2366 } -- Cisco Catalyst IE3300 Rugged Series Expandable System with 8 GE Copper & 2 10G SFP
 cevChassisNCS55A124Q6HSSCHASSIS         OBJECT IDENTIFIER ::= { cevChassis 2375 } -- NCS55A1 24Q6H_SS 1RU Chassis
-
-
 
 
 cevBackplane				OBJECT IDENTIFIER ::= { cevMIBObjects 4 }
@@ -4014,12 +4046,15 @@ cevNCS1K4OTNXP                          OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleA900IMA8S1ZCC                  OBJECT IDENTIFIER ::= { cevModuleCommonCards 696 } -- 8-port Gigabit Ethernet & 1-port Ten Gigabit Ethernet SFP Interface Module, Conformal Coated
 cevModuleA900IMA8T1ZCC                  OBJECT IDENTIFIER ::= { cevModuleCommonCards 697 } -- 8-port Gigabit Ethernet & 1-port Ten Gigabit Ethernet CU Interface Module, Conformal Coated
 cevModuleA900IMA2ZCC                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 698 } -- 2-port Ten Gigabit Ethernet XFP/SFP+ Interface Module, Conformal Coated
+cevModuleNC55RP2E                       OBJECT IDENTIFIER ::= { cevModuleCommonCards 699 } -- NCS 5500 Route Processor with SyncE, enhanced timing
+cevModuleNC5532T16Q4HA                  OBJECT IDENTIFIER ::= { cevModuleCommonCards 700 } -- NCS 5500 32x10, 16x25 & 4x100 Line Card Base
 cevModuleA900IMA8ZCC                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 701 } -- ASR 900 8 port 10GE SFP+ Interface Module, Conformal Coated
 cevN560IMA2CCC                          OBJECT IDENTIFIER ::= { cevModuleCommonCards 702 } -- Cisco NCS 560 2-port 100GE Interface Module, Conformal Coated
 cevModuleASR900IMA8CS1ZMCC              OBJECT IDENTIFIER ::= { cevModuleCommonCards 703 } -- ASR 900 16 port GE C-SFP + 1 port SFP+ IM with MACsec, Conformal Coated
 cevModuleNCS42002HPQ                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 710 } -- NCS4200 2 port 100 GE QSFP28 port IM
 cevModuleA900IMA2C                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 711 } -- ASR 900 2 port 100 GE QSFP28 port IM
 cevModuleNC5504FC2                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 712 } --  NCS 5504 Fabric Card 2(NC55-5504-FC2) NCS: Network Convergence System Fretta Fabric Card version 2
+cevModuleNC5532T16Q4HAT                 OBJECT IDENTIFIER ::= { cevModuleCommonCards 716 } -- NCS 5500 32x10, 16x25 & 4x100 Line Card Base
 cevModuleNC55A124Q6HSSRPFIXED           OBJECT IDENTIFIER ::= { cevModuleCommonCards 717 } -- NC55A1 24Q6H SS Route Processor Card
 cevCVRQSFP28SFP28                       OBJECT IDENTIFIER ::= { cevModuleCommonCards 718 } -- SFP28 to QSFP28 pluggable adapter module
 
@@ -8143,7 +8178,10 @@ cevN3KC3264CE                 OBJECT IDENTIFIER ::= { cevModuleN3KType 30 } -- N
 cevN3KC3132CZ                 OBJECT IDENTIFIER ::= { cevModuleN3KType 33 } -- Nexus 3000 series 1 RU fixed chassis with 32x40/100G QSFP and 2x10G SFP+
 cevN3KC3464CFixedModule       OBJECT IDENTIFIER ::= { cevModuleN3KType 34 } -- Nexus 3000 Series 1 RU fixed chassis with  64x100G QSFP28 +  2x10G SFP module
 cevN3KC34180YCFixedModule     OBJECT IDENTIFIER ::= { cevModuleN3KType 35 } -- Nexus 3000 Series 2 RU fixed chassis with  48x10/25G +  6x40/100G Ethernet module
+cevN3KC3408S                  OBJECT IDENTIFIER ::= { cevModuleN3KType 36 } -- N3K-C3408-I Supervisor module
+cevN3KNXMX16C                 OBJECT IDENTIFIER ::= { cevModuleN3KType 37 } -- N3K 100G Line Expansion Module with 16 QSFP28
 cevN3KC3432DS                 OBJECT IDENTIFIER ::= { cevModuleN3KType 38 } -- Nexus 3000 Series fixed module with  32x400G + 2x10G SFP+ Ethernet
+cevN3NXMX4D                   OBJECT IDENTIFIER ::= { cevModuleN3KType 39 }  -- N3K 400G Line Expansion Module with 4 QSFP-DD
 cevN3KC34200YCSMFixedModule   OBJECT IDENTIFIER ::= { cevModuleN3KType 40} --  Nexus 3000 Series 1 RU fixed module with 48x10/25G + 8x100G port
 
 
@@ -8587,6 +8625,7 @@ cevN9KC9508FME2              OBJECT IDENTIFIER ::= { cevModuleN95KType 43 } -- N
 cevN9KX9788TCFX              OBJECT IDENTIFIER ::= { cevModuleN95KType 44 } -- N9K-X9788TC-FX 48x10G + 4x40/100G Ethernet Module for Nexus 9500 series chassis
 cevN9KX9732CFX               OBJECT IDENTIFIER ::= { cevModuleN95KType 45 } -- N9K-X9732C-FX 32x40/100G Ethernet Module for Nexus 9500 series chassis
 cevN9KX9736QFX               OBJECT IDENTIFIER ::= { cevModuleN95KType 46 } -- N9K-X9736Q-FX 36 port 40GEthernet Module with MAC-Sec for Nexus 9500 series chassis
+cevN9KX9788TC2FX             OBJECT IDENTIFIER ::= { cevModuleN95KType 47 } --  Nexus 9500 series line card with 48 x 10GBASE-T + 6 x QSFP28 (40/100G)
 cevN9KC9504FMG               OBJECT IDENTIFIER ::= { cevModuleN95KType 49 } --  N9K-C9504-FM-G Fabric Module for Nexus 9504 chassis
 cevN9KX9716DGX               OBJECT IDENTIFIER ::= { cevModuleN95KType 50 } --  N9K-X9716D-GX 16x400G Ethernet Module with MAC-Sec for Nexus 9500 series chassis
 cevN9KC9508FMG               OBJECT IDENTIFIER ::= { cevModuleN95KType 52 } -- N9K-C9508-FM-G Fabric Module for Nexus 9508 chassis
@@ -8604,6 +8643,7 @@ cevCPAK10X10GERL             OBJECT IDENTIFIER ::= { cevModuleCPAKType 9 } -- 10
 cevCPAK100GCWDM4             OBJECT IDENTIFIER ::= { cevModuleCPAKType 10 } -- CPAK 100G CWDM4 optics module 
 cevCPAK100GPSM4              OBJECT IDENTIFIER ::= { cevModuleCPAKType 11 } -- CPAK 100G PSM4 optics module
 cevCPAK100GLR4LANPHY         OBJECT IDENTIFIER ::= { cevModuleCPAKType 12 } -- CPAK 100G LR4 LANPHY optics module
+cevCPAK100GFR                OBJECT IDENTIFIER ::= { cevModuleCPAKType 13 } -- CPAK-100G-FR   100G FR CPAK modules
 cevCPAK100GER4F              OBJECT IDENTIFIER ::= { cevModuleCPAKType 14 } -- CPAK optical transceiver module, 40km SMF, duplex, LC
 
 cevDirectAttachCable40Gs     OBJECT IDENTIFIER ::= { cevModule 102 }              -- Group for DirectAttachCable40Gs Type of Cards 
@@ -8676,6 +8716,14 @@ cevN9KC93216TCFX2                 OBJECT IDENTIFIER ::= { cevModuleN93KType 36 }
 cevN9KC93360YCFX2FixedModule            OBJECT IDENTIFIER ::= { cevModuleN93KType 37 } -- TOR 96x10/25G SFP+ & 12x40/100G
 cevN9KC93216TCFX2FixedModule            OBJECT IDENTIFIER ::= { cevModuleN93KType 38 } -- TOR 96x1/10GT & 12x40/100G
 cevN9KC9364CGX                          OBJECT IDENTIFIER ::= { cevModuleN93KType 40 } -- 2RU TOR fixed module with 64x100GE QSFP28 Ports
+cevN9KC93180YC2FXFixedModule            OBJECT IDENTIFIER ::= { cevModuleN93KType 41 } -- Nexus 9300 series card type 48x10/25G (SFP28) and 6x40/100G (QSFP28)
+cevN9KC9348GC2FXPFixedModule            OBJECT IDENTIFIER ::= { cevModuleN93KType 42 } -- Nexus 9300  1RU TOR fixed module with 48x100/1000Mbps (PoE) + 4x25G SFP28 + 2x100G QSFP28
+cevN9KC93108TC2FXFixedModule            OBJECT IDENTIFIER  ::= { cevModuleN93KType 43 } --  Nexus 9300 series TOR with 48 x 10GBASE-T + 6 x QSFP28 (40/100G)
+cevN9KC9316DGXFixedModule               OBJECT IDENTIFIER ::= { cevModuleN93KType 44 } --  Nexus 9300 series TOR with 16 x 400/100/40 Gbps QSFP-DD
+cevN9KC93180YCFX24FixedModule           OBJECT IDENTIFIER ::= { cevModuleN93KType 45 } --  Nexus 9300 series TOR with 24 x 1/10/25 Gbps SFP+ + 6 x 40/100 Gbps QSFP+
+cevN9KC93108TCFX24FixedModule           OBJECT IDENTIFIER ::= { cevModuleN93KType 46 } --  Nexus 9300 series TOR with 24 x 10GBase-T, 6 x 40/100 Gbps
+cevN9KC93108TCEX24FixedModule           OBJECT IDENTIFIER ::= { cevModuleN93KType 47 } --  Nexus 9300 series TOR with 24 x 1/10GBase-T + 6 x 40/100 Gbps QSFP+
+cevN9KC93180YCEX24FixedModule           OBJECT IDENTIFIER ::= { cevModuleN93KType 48 } --  Nexus 9300 series TOR with 24 x 1/10/25 Gigabit SFP+ + 6 x 40/100 Gigabit QSFP28
 
 
 cevModuleISR4300Type                    OBJECT IDENTIFIER ::= { cevModule 104 } -- These are modules that are used in Cisco ISR 4300 Series Router
@@ -9106,6 +9154,31 @@ cevModuleNCS540L12Z16GSysD  OBJECT IDENTIFIER ::= { cevModuleNCS540LType 8 } -- 
 cevModule9300DType          OBJECT IDENTIFIER ::= { cevModule 141  } -- A stack of any Cisco Catalyst 9300D Fixed stack-able ethernet switches with unified identity (as a single unified switch),control and management
 
 cevModuleCat1000Type        OBJECT IDENTIFIER ::= { cevModule 142  } -- These are modules that are used in Catalyst 1000 series switches
+cevModuleCat10008T2GL       OBJECT IDENTIFIER ::= { cevModuleCat1000Type 1 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo)
+cevModuleCat10008TE2GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 2 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + External Adapter
+cevModuleCat10008P2GL       OBJECT IDENTIFIER ::= { cevModuleCat1000Type 3 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 67W PoE budget
+cevModuleCat10008PE2GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 4 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 60W PoE budget + External Adapter
+cevModuleCat10008FP2GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 5 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + PoE with 120W PoE budget
+cevModuleCat10008FPE2GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 6 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + PoE with 120W PoE budgetS + External Adapter
+cevModuleCat100016T2GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 7 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP)
+cevModuleCat100016TE2GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 8 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + External Adapter
+cevModuleCat100016P2GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 9 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + Partial PoE with 120W PoE budget
+cevModuleCat100016PE2GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 10 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + Partial PoE with 120W PoE budget + External Adapter
+cevModuleCat100016FP2GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 11 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + PoE with 240W PoE budget
+cevModuleCat100024T4GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 12 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP)
+cevModuleCat100024PP4GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 13 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 195W PoE budget, First 8 ports with PoE
+cevModuleCat100024P4GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 14 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 195W PoE budget
+cevModuleCat100024FP4GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 15 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + PoE with 370W PoE budget
+cevModuleCat100048T4GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 16 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP)
+cevModuleCat100048PP4GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 17 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 180W PoE budget, First 12 ports with PoE
+cevModuleCat100048P4GL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 18 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 370W PoE budget
+cevModuleCat100048FP4GL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 19 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + PoE with 740W PoE budget
+cevModuleCat100024T4XL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 20 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+)
+cevModuleCat100024P4XL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 21 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+) + Partial PoE with 195W PoE budget
+cevModuleCat100024FP4XL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 22 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+) + PoE with 370W PoE budget
+cevModuleCat100048T4XL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 23 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+)
+cevModuleCat100048P4XL      OBJECT IDENTIFIER ::= { cevModuleCat1000Type 24 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + Partial PoE with 370W PoE budget
+cevModuleCat100048FP4XL     OBJECT IDENTIFIER ::= { cevModuleCat1000Type 25 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + PoE with 740W PoE budget
 
 
 
@@ -9466,6 +9539,8 @@ cevC9500VirtualStack        OBJECT IDENTIFIER ::= { cevStack 25 } -- Cisco Catal
 cevC9200LFixedSwitchStack   OBJECT IDENTIFIER ::= { cevStack 26 } -- A stack of Cisco Catalyst 9200L Fixed switch modules
 cevC9200FixedSwitchStack    OBJECT IDENTIFIER ::= { cevStack 27 } -- A stack of Cisco Catalyst 9200 Fixed switch modules
 cevC9300LStack              OBJECT IDENTIFIER ::= { cevStack 30 } -- A stack of any catalyst9300L stack-able Ethernet switches with unified identity (as a single unified switch), control and management
+cevCat100010GbpsStack       OBJECT IDENTIFIER ::= { cevStack 34 } -- A 10 Gbps ethernet stack of cat1000 switch modules 
+cevCat10001GbpsStack        OBJECT IDENTIFIER ::= { cevStack 35 } -- A 1 Gbps ethernet stack of cat1000 switch modules
 
 cevMidplane                  OBJECT IDENTIFIER ::= { cevMIBObjects 12 }	-- Midplane of the chassis
 cevMidplaneUmg9820           OBJECT IDENTIFIER ::= { cevMidplane 1 } -- Midplane of umg9820

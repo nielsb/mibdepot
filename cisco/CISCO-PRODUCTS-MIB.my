@@ -4,7 +4,7 @@
 --
 -- January 1995, Jeffrey T. Johnson
 --
--- Copyright (c) 1995-2019 by cisco Systems, Inc.
+-- Copyright (c) 1995-2020 by cisco Systems, Inc.
 -- All rights reserved.
 -- 
 -- *****************************************************************
@@ -2549,6 +2549,8 @@ ciscoRAIE1783MMS10AR                OBJECT IDENTIFIER ::= { ciscoProducts 2892 }
 ciscoENCS510464                     OBJECT IDENTIFIER ::= { ciscoProducts 2893 } -- Cisco ENCS 5104, 4 core 3.4 GHz, 16G DRAM, 64G SATA M.2, Network Compute System
 ciscoENCS5104200                    OBJECT IDENTIFIER ::= { ciscoProducts 2894 } -- Cisco ENCS 5104, 4 core 3.4 GHz, 16G DRAM, 200G SATA M.2, Network Compute System
 ciscoENCS5104400                    OBJECT IDENTIFIER ::= { ciscoProducts 2895 } -- Cisco ENCS 5104, 4 core 3.4 GHz, 16G DRAM, 400G SATA M.2, Network Compute System
+ciscoC10008T2GL                     OBJECT IDENTIFIER ::= { ciscoProducts 2896 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo)
+ciscoCat100010GbpsStack                   OBJECT IDENTIFIER ::= { ciscoProducts 2897 } -- A 10 Gbps ethernet stack of any Catalyst 1000 stack-able ethernet switches with unified identity (as a single unified switch), control and management
 ciscoCSP5200                        OBJECT IDENTIFIER ::= { ciscoProducts 2900 } -- Cloud Services Platform Model CSP-5200
 ciscoCSP5216                        OBJECT IDENTIFIER ::= { ciscoProducts 2901 } -- Cloud Services Platform Model CSP-5216
 ciscoCSP5228                        OBJECT IDENTIFIER ::= { ciscoProducts 2902 } -- Cloud Services Platform Model CSP-5228
@@ -2556,7 +2558,32 @@ ciscoCSP5400                        OBJECT IDENTIFIER ::= { ciscoProducts 2903 }
 ciscoCSP5436                        OBJECT IDENTIFIER ::= { ciscoProducts 2904 } -- Cloud Services Platform Model CSP-5436
 ciscoCSP5444                        OBJECT IDENTIFIER ::= { ciscoProducts 2905 } -- Cloud Services Platform Model CSP-5444
 ciscoCSP5456                        OBJECT IDENTIFIER ::= { ciscoProducts 2906 } -- Cloud Services Platform Model CSP-5456
+ciscoC10008TE2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2909 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + External Adapter
+ciscoC10008P2GL                     OBJECT IDENTIFIER ::= { ciscoProducts 2910 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 67W PoE budget
+ciscoC10008PE2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2911 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 60W PoE budget + External Adapter
+ciscoC10008FP2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2912 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + PoE with 120W PoE budget
+ciscoC10008FPE2GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2913 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + PoE with 120W PoE budgetS + External Adapter
+ciscoC100016T2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2914 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP)
+ciscoC100016TE2GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2915 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + External Adapter
+ciscoC100016P2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2916 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + Partial PoE with 120W PoE budget
+ciscoC100016PE2GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2917 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + Partial PoE with 120W PoE budget + External Adapter
+ciscoC100016FP2GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2918 } -- Catalyst 1000, 16x 1G downlink + 2x 1G uplink (SFP) + PoE with 240W PoE budget
+ciscoC100024T4GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2919 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP)
+ciscoC100024PP4GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2920 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 195W PoE budget, First 8 ports with PoE
+ciscoC100024P4GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2921 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 195W PoE budget
+ciscoC100024FP4GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2922 } -- Catalyst 1000, 24x 1G downlink + 4x 1G uplink (SFP) + PoE with 370W PoE budget
+ciscoC100048T4GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2923 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP)
+ciscoC100048PP4GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2924 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 180W PoE budget, First 12 ports with PoE
+ciscoC100048P4GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2925 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + Partial PoE with 370W PoE budget
+ciscoC100048FP4GL                   OBJECT IDENTIFIER ::= { ciscoProducts 2926 } -- Catalyst 1000, 48x 1G downlink + 4x 1G uplink (SFP) + PoE with 740W PoE budget
+ciscoC100024T4XL                    OBJECT IDENTIFIER ::= { ciscoProducts 2927 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+)
+ciscoC100024P4XL                    OBJECT IDENTIFIER ::= { ciscoProducts 2928 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+) + Partial PoE with 195W PoE budget
+ciscoC100024FP4XL                   OBJECT IDENTIFIER ::= { ciscoProducts 2929 } -- Catalyst 1000, 24x 1G downlink + 4x 10G uplink (SFP+) + PoE with 370W PoE budget
+ciscoC100048T4XL                    OBJECT IDENTIFIER ::= { ciscoProducts 2930 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+)
+ciscoC100048P4XL                    OBJECT IDENTIFIER ::= { ciscoProducts 2931 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + Partial PoE with 370W PoE budget
+ciscoC100048FP4XL                   OBJECT IDENTIFIER ::= { ciscoProducts 2932 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + PoE with 740W PoE budget
 ciscoMobilityExpress                OBJECT IDENTIFIER ::= { ciscoProducts 2958 } -- Mobility Express on Axel platform
+ciscoCat10001GbpsStack              OBJECT IDENTIFIER ::= { ciscoProducts 2959 } -- A 1 Gbps ethernet stack of any Catalyst 1000 stack-able ethernet switches with unified identity (as a single unified switch), control and management
 ciscoNCS540L28Z4SysA                OBJECT IDENTIFIER ::= { ciscoProducts 2981 } -- NCS540L Router - NCS540-28Z4-SYS-A
 ciscoNCS540L28Z4SysD                OBJECT IDENTIFIER ::= { ciscoProducts 2982 } -- NCS540L Router - NCS540-28Z4-SYS-D
 ciscoNCS540L16Z4G8Q2CA              OBJECT IDENTIFIER ::= { ciscoProducts 2983 } -- NCS540L Router - N540X-16Z4G8Q2C-A
@@ -2573,8 +2600,6 @@ ciscoNCS540LFHIP65Sys               OBJECT IDENTIFIER ::= { ciscoProducts 3003 }
 ciscoIE33008T2X                     OBJECT IDENTIFIER ::= { ciscoProducts 3007 } --  Cisco Catalyst IE3300 Rugged Series Expandable System with 8 GE Copper & 2 10G SFP 
 ciscoNCS54016G                      OBJECT IDENTIFIER ::= { ciscoProducts 3009 } --  16G variant of NCS540 (32G)
 ciscoNCS540X16G                     OBJECT IDENTIFIER ::= { ciscoProducts 3010 } --  16G variant of ncs540(32G) with Conformal coating
-
-
 
 
 END 
