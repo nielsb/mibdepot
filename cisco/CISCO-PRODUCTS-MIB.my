@@ -1,4 +1,4 @@
-
+os.sys1/sys/MIBS/OLD-CISCO-CHASSIS-MIB.my
 -- *****************************************************************
 -- CISCO-PRODUCTS-MIB.my:  Cisco Product Object Identifier Assignments
 --
@@ -2535,6 +2535,7 @@ ciscoESR6300CONK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2864 }
 ciscoESR6300NCPK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2865 } --  Next-generation Embedded Services Router with 2 Gigabit Ethernet routed ports, 4 Gigabit Ethernet switched ports, no cooling plate
 ciscoNCS55A148Q6H                   OBJECT IDENTIFIER ::= { ciscoProducts 2866 } --  NCS 55A1 48x25G + 6 x 100G Fixed Chassis, Spare
 ciscoNCS55A148T6H                   OBJECT IDENTIFIER ::= { ciscoProducts 2867 } --  Network Convergence Services 55A1 24x25G 24x10G 6x100G Fixed
+ciscoFpr1150td                      OBJECT IDENTIFIER ::= { ciscoProducts 2870 } --   Cisco Firepower 1150 Security Appliance
 ciscoC9606RVirtualStack             OBJECT IDENTIFIER ::= { ciscoProducts 2871 } --   Virtual Stack of Cisco Catalyst 9606R
 ciscoIE34008T2S                     OBJECT IDENTIFIER ::= { ciscoProducts 2872 } --   Cisco Industrial Ethernet 3400 Switch, Petra Expandable System 2 Port SFP + 8 Port GE Copper Adv
 ciscoIE3400H8FT                     OBJECT IDENTIFIER ::= { ciscoProducts 2881 } -- Cisco Catalyst IE3400 Heavy duty Series, 8 FE M12 interfaces
@@ -2558,6 +2559,8 @@ ciscoCSP5400                        OBJECT IDENTIFIER ::= { ciscoProducts 2903 }
 ciscoCSP5436                        OBJECT IDENTIFIER ::= { ciscoProducts 2904 } -- Cloud Services Platform Model CSP-5436
 ciscoCSP5444                        OBJECT IDENTIFIER ::= { ciscoProducts 2905 } -- Cloud Services Platform Model CSP-5444
 ciscoCSP5456                        OBJECT IDENTIFIER ::= { ciscoProducts 2906 } -- Cloud Services Platform Model CSP-5456
+ciscoCat920024PB                    OBJECT IDENTIFIER ::= { ciscoProducts 2907 } -- Catalyst 9200 24 Gig downlinks. PoE support for 740W
+ciscoCat920048PB                    OBJECT IDENTIFIER ::= { ciscoProducts 2908 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1480W
 ciscoC10008TE2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2909 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + External Adapter
 ciscoC10008P2GL                     OBJECT IDENTIFIER ::= { ciscoProducts 2910 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 67W PoE budget
 ciscoC10008PE2GL                    OBJECT IDENTIFIER ::= { ciscoProducts 2911 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo) + Partial PoE with 60W PoE budget + External Adapter
@@ -2584,6 +2587,10 @@ ciscoC100048P4XL                    OBJECT IDENTIFIER ::= { ciscoProducts 2931 }
 ciscoC100048FP4XL                   OBJECT IDENTIFIER ::= { ciscoProducts 2932 } -- Catalyst 1000, 48x 1G downlink + 4x 10G uplink (SFP+) + PoE with 740W PoE budget
 ciscoMobilityExpress                OBJECT IDENTIFIER ::= { ciscoProducts 2958 } -- Mobility Express on Axel platform
 ciscoCat10001GbpsStack              OBJECT IDENTIFIER ::= { ciscoProducts 2959 } -- A 1 Gbps ethernet stack of any Catalyst 1000 stack-able ethernet switches with unified identity (as a single unified switch), control and management
+ciscoCat9200BFixedSwitchStack       OBJECT IDENTIFIER ::= { ciscoProducts 2965 } -- A stack of any Cisco Catalyst 9200 Fixed stack-able ethernet switches with unified identity (as a single unified switch), control and management
+ciscoC1100TG1N32A                   OBJECT IDENTIFIER ::= { ciscoProducts 2971 } -- Cisco C1100TG-1N32A terminal server (2xGE, 1 NIM, 32ASYNC, 4Core, 4G FLASH, 2G DRAM)
+ciscoC1100TG1N24P32A                OBJECT IDENTIFIER ::= { ciscoProducts 2972 } -- Cisco C1100TG-1N24P32A terminal server (2xGE, 1 NIM, 24 L2port, 32ASYNC, 4Core, 4G FLASH, 4G DRAM)
+ciscoC1100TGX1N24P32A               OBJECT IDENTIFIER ::= { ciscoProducts 2973 } -- Cisco C1100TGX-1N24P32A terminal server (2xGE, 1 NIM, 24 L2port, 32ASYNC, 4Core, 8G FLASH, 8G DRAM)
 ciscoNCS540L28Z4SysA                OBJECT IDENTIFIER ::= { ciscoProducts 2981 } -- NCS540L Router - NCS540-28Z4-SYS-A
 ciscoNCS540L28Z4SysD                OBJECT IDENTIFIER ::= { ciscoProducts 2982 } -- NCS540L Router - NCS540-28Z4-SYS-D
 ciscoNCS540L16Z4G8Q2CA              OBJECT IDENTIFIER ::= { ciscoProducts 2983 } -- NCS540L Router - N540X-16Z4G8Q2C-A
@@ -2598,8 +2605,8 @@ ciscoNCS540LFHCSRSys                OBJECT IDENTIFIER ::= { ciscoProducts 3001 }
 ciscoNCS540LFHAGGSys                OBJECT IDENTIFIER ::= { ciscoProducts 3002 } -- NCS540L Router - N540-FH-AGG-SYS
 ciscoNCS540LFHIP65Sys               OBJECT IDENTIFIER ::= { ciscoProducts 3003 } -- NCS540L Router - N540-FH-IP65-SYS
 ciscoIE33008T2X                     OBJECT IDENTIFIER ::= { ciscoProducts 3007 } --  Cisco Catalyst IE3300 Rugged Series Expandable System with 8 GE Copper & 2 10G SFP 
+ciscoIE33008U2X                     OBJECT IDENTIFIER ::= { ciscoProducts 3008 } --  Cisco Catalyst IE3300 Rugged Series Expandable System with 8GE Copper (4PPoE) & 2 10G SFP
 ciscoNCS54016G                      OBJECT IDENTIFIER ::= { ciscoProducts 3009 } --  16G variant of NCS540 (32G)
 ciscoNCS540X16G                     OBJECT IDENTIFIER ::= { ciscoProducts 3010 } --  16G variant of ncs540(32G) with Conformal coating
-
 
 END 
