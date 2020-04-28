@@ -2932,8 +2932,7 @@
                        ,wim-lte-al(5185)                     -- WIM-4G, Single SIM, Global (SEAsia) Multimode LTE WAN Interface Module
                        ,cpu-931j-4p(5186)                    -- C931J-4P Router with External Power Supply , 4 GE LAN interface, 2GE WAN interface, 1 USB 3.0, 1GB DDR4 DRAM(x32) with ECC, 2GB eMMC pSLC, Dual 16MB NOR Boot flash
                        ,grwic-4g-lte-la(5187)                -- 4G WWAN GRWIC - Latin America and Asia Pacific Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
-                       ,grwic-4g-lte-ea(5188)                -- 4G WWAN GRWIC - North America and Europe Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS 
-                                               
+                       ,grwic-4g-lte-ea(5188)                -- 4G WWAN GRWIC - North America and Europe Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
                         }
                    ACCESS  read-only
                    STATUS  deprecated

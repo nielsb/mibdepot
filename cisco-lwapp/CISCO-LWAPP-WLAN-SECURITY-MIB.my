@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-WLAN-SECURITY-MIB.my
 -- December 2005, Bharat Biswal, Prasanna Viswakumar
 --   
--- Copyright (c) 2005-2006, 2015-2019 by Cisco Systems, Inc.
+-- Copyright (c) 2005-2006, 2015-2020 by Cisco Systems Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -30,7 +30,7 @@ IMPORTS
 
 
 ciscoLwappWlanSecurityMIB MODULE-IDENTITY
-    LAST-UPDATED    "201907160000Z"
+    LAST-UPDATED    "202003240000Z"
     ORGANIZATION    "Cisco Systems, Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -285,6 +285,9 @@ ciscoLwappWlanSecurityMIB MODULE-IDENTITY
 
         [2] draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol"
+    REVISION        "202003240000Z"
+    DESCRIPTION
+        "Added OSEN object ID"
     REVISION        "201907160000Z"
     DESCRIPTION
         "Added WPA3 Support"
@@ -386,6 +389,7 @@ CLWSecDot11EssCckmEntry ::= SEQUENCE {
         cLWSecDot11EssSaeAntiClogThreshold Unsigned32,
         cLWSecDot11EssSaeRetransTimeout    Unsigned32,
         cLWSecDot11EssSaeMaxRetry          Integer32,
+        cLWSecDot11OsenEnable              TruthValue,
         cLWSecDot11TMWlanId                Unsigned32,
         cLWSecDot11EssWpa3EncType          CLSecEncryptType
 }
@@ -701,6 +705,19 @@ cLWSecDot11EssSaeMaxRetry OBJECT-TYPE
         retry count"
     DEFVAL          { 5 } 
     ::= { cLWSecDot11EssCckmEntry 21 }
+
+cLWSecDot11OsenEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies whether Hotspot 2.0
+        OSEN security feature is enabled or not.
+        True: indicates OSEN security feature
+              is enabled.
+        False: indicates OSEN security feature is
+               disabled." 
+    ::= { cLWSecDot11EssCckmEntry 22 }
 
 cLWSecDot11TMWlanId OBJECT-TYPE
     SYNTAX          Unsigned32
@@ -1637,7 +1654,8 @@ ciscoLwappWlanSecurityWPA3ConfigGroup OBJECT-GROUP
                         cLWSecDot11EssSaeRetransTimeout,
                         cLWSecDot11EssSaeMaxRetry,
                         cLWSecDot11TMWlanId,
-                        cLWSecDot11EssWpa3EncType
+                        cLWSecDot11EssWpa3EncType,
+                        cLWSecDot11OsenEnable
                     }
     STATUS          current
     DESCRIPTION
