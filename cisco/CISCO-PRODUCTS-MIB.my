@@ -2664,7 +2664,7 @@ ciscoIE33008U2X                     OBJECT IDENTIFIER ::= { ciscoProducts 3008 }
 ciscoNCS54016G                      OBJECT IDENTIFIER ::= { ciscoProducts 3009 } --  16G variant of NCS540 (32G)
 ciscoNCS540X16G                     OBJECT IDENTIFIER ::= { ciscoProducts 3010 } --  16G variant of ncs540(32G) with Conformal coating
 ciscoDNAPLTTA1X                     OBJECT IDENTIFIER ::= { ciscoProducts 3025 } -- Cisco DNA Traffic Telemetry Appliance - Model 1X
-
-
+ciscoC9115AXEME                     OBJECT IDENTIFIER ::= { ciscoProducts 3050 } -- 4x4 11ax Access Point - Mobility Express edition
+ciscoC9120AXPME                     OBJECT IDENTIFIER ::= { ciscoProducts 3051 } -- 4x4 Wi-fi 6 Catalyst 9120AX Series Access Points- Mobility Express edition
 
 END 
