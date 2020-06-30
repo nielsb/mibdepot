@@ -65,7 +65,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappApMIB MODULE-IDENTITY
-    LAST-UPDATED    "202003310000Z"
+    LAST-UPDATED    "202004280000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -314,6 +314,15 @@ ciscoLwappApMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol."
+    REVISION        "202004280000Z"
+    DESCRIPTION
+        "Added following scalar object
+        - cLApGlobalAPAuditReport
+        - cLApGlobalAPAuditReportInterval
+        Added following objects to the cLApProfileEntry table
+        - cLApProfilePersistentSsidBroadcastEnable
+        - cLApProfileDhcpFallback
+        Added few values to cLApLastRebootReason"
     REVISION        "202003310000Z"
     DESCRIPTION
         "Added following objects to the cLApDot11IfEntry table
@@ -963,7 +972,21 @@ cLApLastRebootReason OBJECT-TYPE
                         lagCfg(70),
                         fipsModeChange(71),
                         diminishedPowerChange(72),
-                        slubDebug(73)
+                        slubDebug(73),
+                        lscModeCapwap(74),
+                        lscModeDot1x(75),
+                        lscModeAll(76),
+                        apTypeCloud(77),
+                        dtlsInitFailure(78),
+                        pnpNoCapwapBackOff(79),
+                        day0CfgFail(80),
+                        day1CfgFail(81),
+                        pnpTriggeredReload(82),
+                        triRadioSupport(83),
+                        indoorDeployment(84),
+                        apTypeWgbToCapwap(85),
+                        apTypeCloudToCapwap(86),
+                        apTypeWgb(87)
                     }
     MAX-ACCESS      read-only
     STATUS          current
@@ -1091,7 +1114,21 @@ cLApLastRebootReason OBJECT-TYPE
                          Information Processing Standards) mode change
                  diminishedPowerChange - rebooted due to change in 
                                         diminished power
-                 slubDebug - rebooted due to slub debug" 
+                 slubDebug - rebooted due to slub debug
+                 lscModeCapwap - LSC for CAPWAP
+                 lscModeDot1x - LSC for Dot1x
+                 lscModeAll - LSC for all
+                 apTypeCloud - AP type changed to cloud
+                 dtlsInitFailure - DTLS init failure
+                 pnpNoCapwapBackOff - In PNP, no CAPWAP backoff for more than 24hrs
+                 day0CfgFail - Day 0 config failure
+                 day1CfgFail - Day 1 config failure
+                 pnpTriggeredReload - Reboot triggered by PnP server
+                 triRadioSupport - Tri-radio support change
+                 indoorDeployment - Indoor Deployment
+                 apTypeWgbToCapwap - AP type changed from WGB to CAPWAP
+                 apTypeCloudToCapwap - AP type changed from cloud to CAPWAP
+                 apTypeWgb - AP type changed from CAPWAP to WGB" 
     ::= { cLApEntry 16 }
 
 cLApEncryptionEnable OBJECT-TYPE
@@ -5157,6 +5194,25 @@ cLApAuthorizeApMethodList OBJECT-TYPE
         authorization when enabled.
         The default method list is default" 
     ::= { ciscoLwappApGlobal 32 }
+
+cLApGlobalAPAuditReport OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object is used to enable/disable AP audit reporting.
+        It is disabled by default" 
+    ::= { ciscoLwappApGlobal 33 }
+
+cLApGlobalAPAuditReportInterval OBJECT-TYPE
+    SYNTAX          Unsigned32 (10..43200)
+    UNITS           "Minutes"
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the audit report interval in minutes.
+        The default interval is 1440 minutes" 
+    ::= { ciscoLwappApGlobal 34 }
 -- ********************************************************************
 -- *  AP Dot11 Interface Antenna Information
 -- ********************************************************************
@@ -7003,7 +7059,9 @@ CLApProfileEntry ::= SEQUENCE {
         cLApProfileCredentialGlobalPasswordType         INTEGER,
         cLApProfile802dot1xSupplicantPasswordType       INTEGER,
         cLApProfileBssidEnableStats                     TruthValue,
-        cLApProfileBssidStatsFrequency                  INTEGER
+        cLApProfileBssidStatsFrequency                  INTEGER,
+        cLApProfilePersistentSsidBroadcastEnable        TruthValue,
+        cLApProfileDhcpFallback                         TruthValue
 }
 
 cLApProfileName OBJECT-TYPE
@@ -8077,6 +8135,28 @@ cLApProfileBssidStatsFrequency OBJECT-TYPE
         "This object specifies the BSSID stats frequency set on the AP for
         sending the stats in the current AP profile" 
     ::= { cLApProfileEntry 96 }
+
+cLApProfilePersistentSsidBroadcastEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies whether persistent SSID broadcast
+        is enabled or disabled per ap config profile
+        - A value of 'true' represents persistent SSID broadcast is enabled.
+        - A Value of 'false' represents persistent SSID broadcast is disabled." 
+    ::= { cLApProfileEntry 97 }
+
+cLApProfileDhcpFallback OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies whether the AP fallback to DHCP
+        is enabled or disabled per ap config profile
+        - A value of 'true' represents that AP moves to DHCP if it fails to join controller via static IP.
+        - A Value of 'false' represents that AP will not to DHCP if it fails to join controller via static IP." 
+    ::= { cLApProfileEntry 98 }
  
 
 -- *********************************************************************
@@ -13229,7 +13309,9 @@ ciscoLwappApGroupSup8 OBJECT-GROUP
                         cLApGlobalMaxApsSupported,
                         cLApAuthorizeApMacAuth,
                         cLApAuthorizeApSerialNumAuth,
-                        cLApAuthorizeApMethodList
+                        cLApAuthorizeApMethodList,
+                        cLApGlobalAPAuditReport,
+                        cLApGlobalAPAuditReportInterval
                     }
     STATUS          current
     DESCRIPTION
@@ -14345,7 +14427,9 @@ ciscoLwappApProfileGroupSup4 OBJECT-GROUP
                         cLApProfileCredentialGlobalPasswordType,
                         cLApProfile802dot1xSupplicantPasswordType,
                         cLApProfileBssidEnableStats,
-                        cLApProfileBssidStatsFrequency
+                        cLApProfileBssidStatsFrequency,
+                        cLApProfilePersistentSsidBroadcastEnable,
+                        cLApProfileDhcpFallback
                     }
     STATUS          current
     DESCRIPTION

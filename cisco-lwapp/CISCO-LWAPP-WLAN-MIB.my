@@ -39,7 +39,7 @@ IMPORTS
 
 
 ciscoLwappWlanMIB MODULE-IDENTITY
-    LAST-UPDATED    "202004010000Z"
+    LAST-UPDATED    "202004280000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -286,6 +286,10 @@ ciscoLwappWlanMIB MODULE-IDENTITY
 
         [3] IEEE 802.11 - The original 1 Mbit/s and 2 Mbit/s, 
         2.4 GHz RF and IR standard."
+    REVISION        "202004280000Z"
+    DESCRIPTION
+        "Added following policy value to cLWlanWifiDirectPolicyStatus
+        - xconnectNotAllow."
     REVISION        "202004010000Z"
     DESCRIPTION
         "Added following entries to CLWlanConfigEntry
@@ -1084,7 +1088,8 @@ cLWlanWifiDirectPolicyStatus OBJECT-TYPE
     SYNTAX          INTEGER  {
                         disable(1),
                         allow(2),
-                        notAllow(3)
+                        notAllow(3),
+                        xconnectNotAllow(4)
                     }
     MAX-ACCESS      read-create
     STATUS          current
@@ -1094,8 +1099,10 @@ cLWlanWifiDirectPolicyStatus OBJECT-TYPE
         network.
         disable(1) - WFD is completely disabled.
         allow(2)  -  allow WFD clients
-        disallow(3) - controller rejects association request from WFD
-        clients only if it has P2P IE with concurrency enabled." 
+        notAllow(3) - controller rejects association request from WFD
+        clients only if it has P2P IE with concurrency enabled.
+        xconnectNotAllow(4) - controller rejects association request from WFD
+        clients only if it has P2P IE with cross-connection enabled" 
     ::= { cLWlanConfigEntry 29 }
 
 cLWlanWebAuthIPv6AclName OBJECT-TYPE

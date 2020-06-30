@@ -2358,6 +2358,9 @@ ciscoISA30004Ctd                    OBJECT IDENTIFIER ::= { ciscoProducts 2611 }
 ciscoISA30002C2Ftd                  OBJECT IDENTIFIER ::= { ciscoProducts 2612 } -- ISA 30002C2F Industrial Security Appliance, Threat Defense
 ciscoRA1783SAD4T0Std                OBJECT IDENTIFIER ::= { ciscoProducts 2613 } -- Rockwell 1783SAD4T0S Industrial Security Appliance, Threat Defense
 ciscoRA1783SAD2T2Std                OBJECT IDENTIFIER ::= { ciscoProducts 2614 } -- Rockwell 1783SAD2T2S Industrial Security Appliance, Threat Defense
+cisco8818                           OBJECT IDENTIFIER ::= { ciscoProducts 2615 } -- Cisco 8818 18 LC Slot Chassis
+cisco8812                           OBJECT IDENTIFIER ::= { ciscoProducts 2616 } -- Cisco 8812 12 LC Slot Chassis
+cisco8808                           OBJECT IDENTIFIER ::= { ciscoProducts 2617 } -- Cisco 8808 8 LC Slot Chassis 
 ciscoC11092PLteGB                   OBJECT IDENTIFIER ::= { ciscoProducts 2619 } -- Cisco C1109-2PLTEGB 2 ports GE LAN M2M Router with Multimode LTE WWAN Global (non-US), 1 GE WAN and USB 3.0/Micro USB Console
 ciscoC11092PLteUS                   OBJECT IDENTIFIER ::= { ciscoProducts 2620 } -- Cisco C1109-2PLTEUS 2 ports GE LAN M2M Router with Multimode LTE WWAN US, 1 GE WAN and USB 3.0/Micro USB Console
 ciscoC11092PLteVZ                   OBJECT IDENTIFIER ::= { ciscoProducts 2621 } -- Cisco C1109-2PLTEVZ 2 ports GE LAN M2M Router with Multimode LTE WWAN Verizon, 1 GE WAN and USB 3.0/Micro USB Console
@@ -2388,6 +2391,8 @@ ciscoC11094PLte2PWN                 OBJECT IDENTIFIER ::= { ciscoProducts 2645 }
 ciscoC11094PLte2PWR                 OBJECT IDENTIFIER ::= { ciscoProducts 2646 } -- Cisco C1109-4PLTE2P 4 Ports GE LAN M2M Router, Dual Pluggables LTE (Advanced) or Pluggable High Speed Serial WAN,  802.11ac WLAN -R Domain, 1 GE WAN and USB 3.0/Micro USB Console
 ciscoC11094PLte2PWF                 OBJECT IDENTIFIER ::= { ciscoProducts 2647 } -- Cisco C1109-4PLTE2P 4 Ports GE LAN M2M Router, Dual Pluggables LTE (Advanced) or Pluggable High Speed Serial WAN,  802.11ac WLAN -F Domain, 1 GE WAN and USB 3.0/Micro USB Console
 ciscoC9606R                         OBJECT IDENTIFIER ::= { ciscoProducts 2648 } -- Cisco Catalyst 9600 Series 6 Slot
+cisco8201                           OBJECT IDENTIFIER ::= { ciscoProducts 2649 } -- Cisco 8201 1RU Chassis with 24x400GE QSFP56-DD & 12x100G QSFP28 
+cisco8202                           OBJECT IDENTIFIER ::= { ciscoProducts 2650 } -- Cisco 8202 2RU Chassis with 12x400GE QSFP56-DD & 60x100GE QSFP28 
 ciscoC11128PWE                      OBJECT IDENTIFIER ::= { ciscoProducts 2652 } -- Cisco C1112-8PWE Router with WLAN E domain
 ciscoC11128PLteEAWE                 OBJECT IDENTIFIER ::= { ciscoProducts 2653 } -- Cisco C1112-8PLTEEAWE Router
 ciscoC11138PWB                      OBJECT IDENTIFIER ::= { ciscoProducts 2654 } -- Cisco C1113-8PWB Router with WLAN B domain
@@ -2599,6 +2604,7 @@ ciscoENCS5104400                    OBJECT IDENTIFIER ::= { ciscoProducts 2895 }
 ciscoC10008T2GL                     OBJECT IDENTIFIER ::= { ciscoProducts 2896 } -- Catalyst 1000, 8x 1G downlink + 2x 1G uplink (Combo)
 ciscoCat100010GbpsStack                   OBJECT IDENTIFIER ::= { ciscoProducts 2897 } -- A 10 Gbps ethernet stack of any Catalyst 1000 stack-able ethernet switches with unified identity (as a single unified switch), control and management
 ciscoAIRIW6300ME                    OBJECT IDENTIFIER ::= { ciscoProducts 2898 } -- 802.11ac Wave 2, Cisco Industrial Wireless 6300 series Heavy Duty Access Points – Mobility Express
+ciscoFpr4112K9                      OBJECT IDENTIFIER ::= { ciscoProducts 2899 } -- Cisco FirePOWER 4112 Security Appliance, 1U with embedded security module 12 
 ciscoCSP5200                        OBJECT IDENTIFIER ::= { ciscoProducts 2900 } -- Cloud Services Platform Model CSP-5200
 ciscoCSP5216                        OBJECT IDENTIFIER ::= { ciscoProducts 2901 } -- Cloud Services Platform Model CSP-5216
 ciscoCSP5228                        OBJECT IDENTIFIER ::= { ciscoProducts 2902 } -- Cloud Services Platform Model CSP-5228
@@ -2654,6 +2660,7 @@ ciscoNCS540L12Z16GSysD              OBJECT IDENTIFIER ::= { ciscoProducts 2988 }
 ciscoC83001N1S6T                    OBJECT IDENTIFIER ::= { ciscoProducts 2989 } -- Cisco C8300-1N1S-6T  (6xGE, 1 NIM, 1 SM, 1PIM, 8Core, 8G FLASH, 8G DRAM)
 ciscoC83001N1S4T2X                  OBJECT IDENTIFIER ::= { ciscoProducts 2990 } -- Cisco C8300-1N1S-4T2X (2x10GE, 4xGE, 1 NIM, 1 SM, 1PIM, 8Core, 8G FLASH, 8G DRAM)
 
+ciscoFpr4112SM12                    OBJECT IDENTIFIER ::= { ciscoProducts 2991 } -- Cisco FirePOWER 4112 Security Module 12
 ciscoCat9300L48PF4X                 OBJECT IDENTIFIER ::= { ciscoProducts 2992 } -- Catalyst 9300L 48 x 10/100/1000M, PoE+, 4 x 10G SFP+ Uplink, Stackable Data, 1RU, 1100 FEP
 ciscoCat9300L48PF4G                 OBJECT IDENTIFIER ::= { ciscoProducts 2993 } -- Catalyst 9300L 48 x 10/100/1000M, PoE+, 4 x 1G SFP Uplink, Stackable Data, 1RU, 1100 FEP
 ciscoNCS540LFHCSRSys                OBJECT IDENTIFIER ::= { ciscoProducts 3001 } -- NCS540L Router - N540-FH-CSR-SYS
@@ -2666,5 +2673,9 @@ ciscoNCS540X16G                     OBJECT IDENTIFIER ::= { ciscoProducts 3010 }
 ciscoDNAPLTTA1X                     OBJECT IDENTIFIER ::= { ciscoProducts 3025 } -- Cisco DNA Traffic Telemetry Appliance - Model 1X
 ciscoC9115AXEME                     OBJECT IDENTIFIER ::= { ciscoProducts 3050 } -- 4x4 11ax Access Point - Mobility Express edition
 ciscoC9120AXPME                     OBJECT IDENTIFIER ::= { ciscoProducts 3051 } -- 4x4 Wi-fi 6 Catalyst 9120AX Series Access Points- Mobility Express edition
+ciscoC9KF1SSD960G                   OBJECT IDENTIFIER ::= { ciscoProducts 3062 } -- this is 960GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
+ciscoC9KF1SSD480G                   OBJECT IDENTIFIER ::= { ciscoProducts 3063 } -- this is 480GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
+ciscoC9KF1SSD240G                   OBJECT IDENTIFIER ::= { ciscoProducts 3064 } -- this is 240GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
 
-END 
+END
+
