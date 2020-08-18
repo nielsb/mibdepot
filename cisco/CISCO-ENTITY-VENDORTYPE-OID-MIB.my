@@ -1733,6 +1733,8 @@ cevChassisC920024T                      OBJECT IDENTIFIER ::= { cevChassis 1993 
 cevChassisC920048T                      OBJECT IDENTIFIER ::= { cevChassis 1994 } -- Catalyst 9200 48 Gig downlinks 
 cevChassisC920024P                      OBJECT IDENTIFIER ::= { cevChassis 1995 } -- Catalyst 9200 24 Gig downlinks. PoE support for 740W 
 cevChassisC920048P                      OBJECT IDENTIFIER ::= { cevChassis 1996 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1440W 
+cevChassisC920024PXG                    OBJECT IDENTIFIER ::= { cevChassis 1997 } -- Catalyst 9200 16 Gig + 8 mGig downlinks. PoE support for 1440W 
+cevChassisC920048PXG                    OBJECT IDENTIFIER ::= { cevChassis 1998 } -- Catalyst 9200 40 Gig + 8 mGig downlinks. PoE support for 1440W 
 cevChassisWedge10012VF                  OBJECT IDENTIFIER ::= { cevChassis 1999 } -- Facebook fixed chassis with with 32 100G Ethernet Module
 cevChassisS4048TON                      OBJECT IDENTIFIER ::= { cevChassis 2006 } -- Dell fixed chassis with  48x10G and 6x40G  Ethernet module
 cevChassisZ9100ON                       OBJECT IDENTIFIER ::= { cevChassis 2007 } -- Dell fixed chassis with 32x40/100G QSFP28 and 2x10G SFP+ Ethernet module
@@ -2040,7 +2042,6 @@ cevChassisN9KC9364DGX2A                OBJECT IDENTIFIER ::= { cevChassis 2400 }
 cevChassisDSC9220IK9                   OBJECT IDENTIFIER ::= { cevChassis 2402 } -- DS-C9220I-K9, Chassis for MDS 9220i Intelligent Fabric Switch, 12FC+6IPS 
 cevChassisN9KC9332DGX2B                OBJECT IDENTIFIER ::= { cevChassis 2403 } -- 1RU TOR fixed chassis with 32x400G+2x10G, QuadPeaks 25.6T 
 cevChassisASR9903                      OBJECT IDENTIFIER ::= { cevChassis 2404 } -- ASR 9903 Chassis
-
 
 
 cevBackplane				OBJECT IDENTIFIER ::= { cevMIBObjects 4 }
@@ -3463,6 +3464,7 @@ cevFanNXASFAN300CFMPE           OBJECT IDENTIFIER ::= { cevFan 421 } -- Smart fa
 cevFanASR9903FanTray            OBJECT IDENTIFIER ::= { cevFan 422 } -- ASR 9903 Fan Tray
 
 
+
 cevSensor			OBJECT IDENTIFIER ::= { cevMIBObjects 8 }
 cevSensorMGX8800Temp			OBJECT IDENTIFIER ::= { cevSensor 11 }		-- Cabinet Temperature sensor device in MGX8800 Universal Chassis
 cevSensorMGX8800PSVoltage		OBJECT IDENTIFIER ::= { cevSensor 12 }		-- Power Supply Voltage Monitoring device in MGX8800 Universal Chassis
@@ -4192,7 +4194,10 @@ cevModuleA900IMA8ZL                     OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleNC5532T16Q4HAT                 OBJECT IDENTIFIER ::= { cevModuleCommonCards 716 } -- NCS 5500 32x10, 16x25 & 4x100 Line Card Base
 cevModuleNC55A124Q6HSSRPFIXED           OBJECT IDENTIFIER ::= { cevModuleCommonCards 717 } -- NC55A1 24Q6H SS Route Processor Card
 cevCVRQSFP28SFP28                       OBJECT IDENTIFIER ::= { cevModuleCommonCards 718 } -- SFP28 to QSFP28 pluggable adapter module
-cevModuleN560IMA8Q4L                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 729 } -- Introducing new multirate 10G/25G IM for NCS560
+cevModuleN560IMA8Q4L                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 729 } -- Introducing new multirate 10G/25G IM for NCS560
+cevModuleC9KF1SSD960G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 731 } -- This is 960GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
+cevModuleC9KF1SSD480G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 732 } -- This is 480GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
+cevModuleC9KF1SSD240G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 733 } -- This is 240GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
 
 
 
@@ -7458,6 +7463,9 @@ cevModuleC8500L8G4XRP          OBJECT IDENTIFIER ::= { cevModuleASR1000Type 107 
 cevModuleC8500L8G4XESP         OBJECT IDENTIFIER ::= { cevModuleASR1000Type 108 } -- C8500L-8G4X Embedded Services Processor Module
 cevModuleC8500L8G4XSIP         OBJECT IDENTIFIER ::= { cevModuleASR1000Type 109 } -- C8500L-8G4X SPA Interface Processor Module
 
+
+
+
 cevModuleCatRfgwType    OBJECT IDENTIFIER ::= { cevModule 69 }                  -- Cards that go into Rfgw chassis
 cevRfgwDtcc             OBJECT IDENTIFIER ::= { cevModuleCatRfgwType 1 }        -- DOCSIS Timing, Communication, and Control Plus Card for RF gateway
 cevRfgwQam48ABC         OBJECT IDENTIFIER ::= { cevModuleCatRfgwType 2 }        -- Card with 12 ports, each having 4 QAM (Quadrature Amplitude Modulation)channels, based on ITU-T J.83 Annex A, B & C
@@ -8199,6 +8207,8 @@ cevSFP10GERI                            OBJECT IDENTIFIER ::= { cevModuleSFPPlus
 cevSFP10GZRI                            OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 348 } -- 10GBASE-ZR SFP+ Module, I-Temp
 cevSFP10GLR10I                          OBJECT IDENTIFIER ::= { cevModuleSFPPlusS 349 } -- 10GBASE-LR10 SFP+ Module, I-Temp
 
+
+
 cevDirectAttachCable10Gs   OBJECT IDENTIFIER ::= { cevModule 77 }               -- Group for DirectAttachCable10Gs Type of Cards
 cevSFPH10GBCU1M            OBJECT IDENTIFIER ::= { cevDirectAttachCable10Gs 1 } -- 10GBASE-CU SFP+ Cable 1 Meter
 cevSFPH10GBCU5M            OBJECT IDENTIFIER ::= { cevDirectAttachCable10Gs 2 } -- 10GBASE-CU SFP+ Cable 5 Meter
@@ -8871,6 +8881,8 @@ cevN9KX9788TC2FX             OBJECT IDENTIFIER ::= { cevModuleN95KType 47 } --  
 cevN9KC9504FMG               OBJECT IDENTIFIER ::= { cevModuleN95KType 49 } --  N9K-C9504-FM-G Fabric Module for Nexus 9504 chassis
 cevN9KX9716DGX               OBJECT IDENTIFIER ::= { cevModuleN95KType 50 } --  N9K-X9716D-GX 16x400G Ethernet Module with MAC-Sec for Nexus 9500 series chassis
 cevN9KC9508FMG               OBJECT IDENTIFIER ::= { cevModuleN95KType 52 } -- N9K-C9508-FM-G Fabric Module for Nexus 9508 chassis
+cevN9KC9508FANPWR            OBJECT IDENTIFIER ::= { cevModuleN95KType 53 } -- Spinner card for Nexus 9508 chassis
+cevN9KC9504FANPWR            OBJECT IDENTIFIER ::= { cevModuleN95KType 54 } -- Spinner card for Nexus 9504 chassis
 
 cevModuleCPAKType            OBJECT IDENTIFIER ::= { cevModule 101 }       -- Group for 100G CPAK modules
 cevCPAK100GLR4               OBJECT IDENTIFIER ::= { cevModuleCPAKType 1 } -- 100G LR4 CPAK modules 
@@ -9320,6 +9332,8 @@ cevModuleC920024T                       OBJECT IDENTIFIER ::= { cevModuleCat92xx
 cevModuleC920048T                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 14 } -- Catalyst 9200 48 Gig downlinks 
 cevModuleC920024P                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 15 } -- Catalyst 9200 24 Gig downlinks. PoE support for 740W 
 cevModuleC920048P                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 16 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1440W 
+cevModuleC920024PXG                     OBJECT IDENTIFIER ::= { cevModuleCat92xxType 17 } -- Catalyst 9200 16 Gig + 8 mGig downlinks. PoE support for 740W 
+cevModuleC920048PXG                     OBJECT IDENTIFIER ::= { cevModuleCat92xxType 18 } -- Catalyst 9200 40 Gig + 8 mGig downlinks. PoE support for 1480W
 
 
 
