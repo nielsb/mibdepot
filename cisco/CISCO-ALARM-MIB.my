@@ -36,7 +36,7 @@ IMPORTS
 
 
 ciscoAlarmMIB MODULE-IDENTITY
-    LAST-UPDATED    "201908280000Z"
+    LAST-UPDATED    "202008310000Z"
     ORGANIZATION    "Cisco Systems, Inc."
     CONTACT-INFO
             "Cisco Systems
@@ -49,6 +49,9 @@ ciscoAlarmMIB MODULE-IDENTITY
     DESCRIPTION
         "The MIB module describes a generic solution to model alarms
         and to store the current list of active alarms."
+    REVISION        "202008310000Z"
+    DESCRIPTION
+        "MIB changes for trap"
     REVISION        "201908280000Z"
     DESCRIPTION
         "Initial version of the MIB module."
@@ -304,6 +307,31 @@ coiAlarmDescription OBJECT-TYPE
     ::= { coiAlarmActiveEntry 11 }
  
 
+
+-- definitions realted to alarm traps
+
+coiAlarmStatusChange NOTIFICATION-TYPE
+    OBJECTS         {
+                        coiAlarmIndex,
+                        coiAlarmObjectIfIndex,
+                        coiAlarmObjectEntPhyIndex,
+                        coiAlarmObjectName,
+                        coiAlarmType,
+                        coiAlarmSeverity,
+                        coiAlarmStatus,
+                        coiAlarmDescription
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This Notification is generated when ever an alarm is updated
+        in the alarm mib.
+        varbind coiAlarmIndex,coiAlarmObjectIFINdex and 
+        coiAlarmObjectEntPhyIndex indicates the index of the alarm 
+        i.e fow sw, interface and hw alarms will have the respective index
+        varbind coiObjectName indicates the alarms name.
+        varbind coiAlarmSeverity indicates the severity of the alarm.
+        varbind coiAlarmStatus indicates the status of the alarm"
+   ::= { ciscoAlarmMIBNotifs 1 }
 
 END
 
