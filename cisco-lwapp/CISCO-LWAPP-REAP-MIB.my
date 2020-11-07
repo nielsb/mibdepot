@@ -38,7 +38,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappReapMIB MODULE-IDENTITY
-    LAST-UPDATED    "202006110000Z"
+    LAST-UPDATED    "202009220000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -181,6 +181,10 @@ ciscoLwappReapMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol"
+    REVISION        "202009220000Z"
+    DESCRIPTION
+        "Added following objects to the cLReapGroupConfigTable
+        - cLReapGroupDhcpBroadcastEnable"
     REVISION        "202006110000Z"
     DESCRIPTION
         "Addition of following new tables
@@ -1359,7 +1363,8 @@ CLReapGroupConfigEntry ::= SEQUENCE {
         cLReapGroupAccountingRadiusServerGroupName SnmpAdminString,
         cLReapLocalRoaming                         TruthValue,
         cLReapGroupMdnsFlexProfileName             SnmpAdminString,
-        cLReapIpOverlap                            TruthValue
+        cLReapIpOverlap                            TruthValue,
+        cLReapGroupDhcpBroadcastEnable             TruthValue
 }
 
 cLReapGroupName OBJECT-TYPE
@@ -1989,7 +1994,19 @@ cLReapIpOverlap OBJECT-TYPE
         A Value of 'false' specifies that IP overlap is disabled."
     DEFVAL          { false } 
     ::= { cLReapGroupConfigEntry 55 }
- 
+
+cLReapGroupDhcpBroadcastEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies whether DHCP broadcast for locally
+        switched clients is enabled or disabled.
+        A Value of 'true' specifies that DHCP broadcast is enabled.
+        A Value of 'false' specifies that DHCP broadcast is disabled."
+    DEFVAL          { false } 
+    ::= { cLReapGroupConfigEntry 56 }
+    
 
 -- ********************************************************************
 -- Hybrid REAP Group AP configuration
@@ -5046,7 +5063,8 @@ ciscoLwappReapGroupConfigGroupRev2 OBJECT-GROUP
                         cLReapGroupAccountingRadiusServerGroupName,
                         cLReapLocalRoaming,
                         cLReapGroupMdnsFlexProfileName,
-                        cLReapIpOverlap
+                        cLReapIpOverlap,
+                        cLReapGroupDhcpBroadcastEnable
                     }
     STATUS          current
     DESCRIPTION

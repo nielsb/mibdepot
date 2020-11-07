@@ -4226,6 +4226,8 @@ cevModuleNC5532T16Q4HA                  OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleA900IMA8ZCC                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 701 } -- ASR 900 8 port 10GE SFP+ Interface Module, Conformal Coated
 cevN560IMA2CCC                          OBJECT IDENTIFIER ::= { cevModuleCommonCards 702 } -- Cisco NCS 560 2-port 100GE Interface Module, Conformal Coated
 cevModuleASR900IMA8CS1ZMCC              OBJECT IDENTIFIER ::= { cevModuleCommonCards 703 } -- ASR 900 16 port GE C-SFP + 1 port SFP+ IM with MACsec, Conformal Coated
+cevModuleNC5536H3DBSSE                  OBJECT IDENTIFIER ::= { cevModuleCommonCards 707 } -- Vigor100-SE - NC55-36H3D-B-S-SE (36 port combo scale line card with 24x100 + 12 flex ports (3x400G or 12x100G)
+cevModuleNC5536H6DBS                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 708 } -- Vigor100 Base: NC55-36H6D-B-S  (36 port combo base line card with 24x100 + 12 flex ports (6x400G or 12x100G)
 cevModuleNCS42002HPQ                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 710 } -- NCS4200 2 port 100 GE QSFP28 port IM
 cevModuleA900IMA2C                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 711 } -- ASR 900 2 port 100 GE QSFP28 port IM
 cevModuleNC5504FC2                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 712 } --  NCS 5504 Fabric Card 2(NC55-5504-FC2) NCS: Network Convergence System Fretta Fabric Card version 2
@@ -4241,7 +4243,6 @@ cevModuleC9KF1SSD480G                   OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModuleC9KF1SSD240G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 733 } -- This is 240GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
 cevModuleNCS1K4OTNXP                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 734 } -- NCS1K4 4xDD,8xQSFP28,2xCFP2 DCO OTNXponder  
 cevModuleNCS1K4OTNXPL                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 735 } -- NCS1K4 4xDD,8xQSFP28,2xCFP2 DCO OTNXponder Licensed card 
-
 
 
 --cevModuleC36xxType cards are slot-cards specific to the c36xx platforms
@@ -8839,6 +8840,7 @@ cevModuleISRPLteMNA         OBJECT IDENTIFIER ::= { cevModuleISRType 219 } -- WP
 cevModuleISRDLteGB          OBJECT IDENTIFIER ::= { cevModuleISRType 220 } -- Cisco LTE Dongle - Global Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
 cevModuleISRDLteAS          OBJECT IDENTIFIER ::= { cevModuleISRType 221 } -- Cisco LTE Dongle - Asia Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS/EDGE/GPRS
 cevModuleISRDLteNA          OBJECT IDENTIFIER ::= { cevModuleISRType 222 } -- Cisco LTE Dongle - North America Multimode LTE/DC-HSPA+/HSPA+/HSPA/UMTS
+cevModuleCSMNIMADPT         OBJECT IDENTIFIER ::= { cevModuleISRType 223 } -- Cisco SM to NIM Module Adaptor, support on Catalyst 8300 Edge Series platforms
 cevModuleISR11004GRP        OBJECT IDENTIFIER ::= { cevModuleISRType 224 } -- Cisco ISR1100-4G Series Routing Processor Module 
 cevModuleISR11004GFP        OBJECT IDENTIFIER ::= { cevModuleISRType 225 } -- Cisco ISR1100-4G Series Forwarding Processor Module  
 cevModuleISR11006GRP        OBJECT IDENTIFIER ::= { cevModuleISRType 226 } -- Cisco ISR1100-6G Series Routing Processor Module 
@@ -8861,7 +8863,6 @@ cevModuleISR1100X6GFP       OBJECT IDENTIFIER ::= { cevModuleISRType 257 } -- Ci
 cevModuleISR1100X6GSIP      OBJECT IDENTIFIER ::= { cevModuleISRType 258 } -- Cisco ISR1100X-6G SPA Interface Processor Module 
 cevModuleISRFLteNA          OBJECT IDENTIFIER ::= { cevModuleISRType 259 } -- WP7610 based fixed module for  Cisco ISR1100-4GLTE-NA 
 cevModuleISRFLteGB          OBJECT IDENTIFIER ::= { cevModuleISRType 260 } -- WP7607 based fixed module for  Cisco ISR1100-4GLTE-GB 
-
 
 
 cevModuleN77Type             OBJECT IDENTIFIER ::= { cevModule 97 }       -- Group for the Nexus7700 type of cards 
@@ -9919,7 +9920,7 @@ cevPortOts                              OBJECT IDENTIFIER ::= { cevPort 370 } --
 cevPortNIM4ShdslEA                      OBJECT IDENTIFIER ::= { cevPort 371 } -- 4-Port G.SHDSL interface on NIM-SHDSL-EA in ISR4400 series router
 cevPortTwoGigEthernet                   OBJECT IDENTIFIER ::= { cevPort 373 }   -- TwoGigabitEthernet 100/1000/2.5GBaseTX port
 cevPort400GigEthernet                   OBJECT IDENTIFIER ::= { cevPort 374 } -- 400 Gig Ethernet port
-
+cevPortAlarmExt                         OBJECT IDENTIFIER ::= { cevPort 403 } -- External Alarm Port
 
 
 cevStack                OBJECT IDENTIFIER ::= { cevMIBObjects 11 }

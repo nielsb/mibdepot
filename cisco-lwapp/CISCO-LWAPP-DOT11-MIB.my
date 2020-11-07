@@ -38,7 +38,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappDot11MIB MODULE-IDENTITY
-    LAST-UPDATED    "202005250000Z"
+    LAST-UPDATED    "202010060000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -250,6 +250,9 @@ ciscoLwappDot11MIB MODULE-IDENTITY
 
         [4] Enhanced Wireless Consortium PHY Specification,
             v1.27."
+    REVISION        "202010060000Z"
+    DESCRIPTION
+        "Added cld11axObssPdConfigTable to cldConfig."
     REVISION        "202005250000Z"
     DESCRIPTION
         "Added following in cldConfig:
@@ -1499,6 +1502,54 @@ cld11axBssColorConfigType OBJECT-TYPE
     ::= { cld11axBssColorRadioEntry 3 }
  
 
+
+cld11axObssPdConfigTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF Cld11axObssPdConfigEntry 
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "This table represents the configuration of network
+        802.11ax OBSS PD settings on a controller."
+    ::= { cldConfig 20 }
+
+cld11axObssPdConfigEntry OBJECT-TYPE
+    SYNTAX          Cld11axObssPdConfigEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+        "An entry in this table represents the 802.11ax
+        OBSS PD network parameters on a controller."
+    INDEX           { cldBand } 
+    ::= { cld11axObssPdConfigTable 1 }
+
+Cld11axObssPdConfigEntry ::= SEQUENCE {
+        cld11axObssPdEnable    TruthValue,
+        cld11axNonSrgObssPdMax Integer32
+}
+
+cld11axObssPdEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the state of the OBSS PD spatial reuse
+        support on 802.11ax networks. A value of 'true' means OBSS PD
+        in the network is enabled. A value of 'false' means OBSS PD in
+        the network is disabled."
+    DEFVAL          { false } 
+    ::= { cld11axObssPdConfigEntry 1 }
+
+cld11axNonSrgObssPdMax OBJECT-TYPE
+    SYNTAX          Integer32 (-82..-62)
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the non-SRG OBSS PD max threshold in dBm on
+        802.11ax networks."
+    DEFVAL          { -62 } 
+    ::= { cld11axObssPdConfigEntry 2 }
+ 
+
 -- *****************************
 -- RXSOP THRESHOLD CONFIGURATION
 -- *****************************
@@ -1803,7 +1854,9 @@ ciscoLwappDot11MIBConfigGroup OBJECT-GROUP
                         cld11axMbssidCap,
                         cld11axBssColorState,
                         cldConfiguredCountryCode,
-                        cldConfiguredCountryRowStatus
+                        cldConfiguredCountryRowStatus,
+                        cld11axObssPdEnable,
+                        cld11axNonSrgObssPdMax
                     }
     STATUS          current
     DESCRIPTION
