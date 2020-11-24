@@ -4,7 +4,7 @@
 -- MIB
 -- December 2005, Devesh Pujari, Bharat Biswal, Prasanna Viswakumar
 --
--- Copyright (c) 2005-2006, 2012, 2017 by Cisco Systems, Inc.
+-- Copyright (c) 2005-2006, 2017 by Cisco Systems, Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -38,7 +38,7 @@ IMPORTS
 --**********************************************************************
 
 ciscoLwappCcxRmMIB     MODULE-IDENTITY
-        LAST-UPDATED   "201202220000Z"
+        LAST-UPDATED   "201704180000Z"
         ORGANIZATION   "Cisco Systems Inc."
         CONTACT-INFO  
                 "       Cisco Systems,
@@ -169,6 +169,10 @@ ciscoLwappCcxRmMIB     MODULE-IDENTITY
   
                 [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
                 Weight Access Point Protocol " 
+        REVISION      "201704180000Z"
+        DESCRIPTION
+                "Updated description for the existing 
+                objects in accordance with MIB standard"
 
         REVISION      "201202210000Z"
         DESCRIPTION
@@ -213,14 +217,21 @@ clcrdot11aBeaconEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "When set to 'true', LWAPP APs broadcast radio
-                measurement request messages that include a
-                beacon measurement request information element
-                on 802.11a radio to clients compatible to
-                CCX versions 2 and above.  This configuration
-                takes higher precedence than that on the radio
-                interface of the particular AP when 
-                clcrAPIfOverrideGlobal is set to 'false'. "
+                "This object specifies that LWAPP APs would
+                broadcast radio measurement request messages
+                that include a beacon measurement request
+                information element on 802.11a radio to 
+                clients compatible to CCX versions 2 and above.
+                This configuration takes higher precedence 
+                than that on the radio interface of the 
+                particular AP when clcrAPIfOverrideGlobal 
+                is set to 'false'.
+                A value of 'true' indicates that the radio 
+                measurement request on 802.11a would include a 
+                beacon measurement requesst Information Element.
+                A value of 'False' indicates that the radio
+                measurement request on 802.11a would not include a 
+                beacon measurement request Information Element."
         DEFVAL { false }
         ::= {clcrDot11aConfigGlobal 1} 
    
@@ -230,9 +241,10 @@ clcrdot11aBeaconInterval OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     deprecated
         DESCRIPTION
-                "The interval in hundredths of a second, in 
-                which the AP issues radio measurement request 
-                message to client periodically for every SSID. 
+                "This object specifies the interval in 
+                hundredths of a second, in  which the AP issues
+                radio measurement request message to client
+                periodically for every SSID. 
 
                 This configuration takes higher precedence than
                 that on the radio interface of the particular AP
@@ -248,7 +260,8 @@ clcrdot11aBeaconIntvl OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The interval in hundredths of a second, in 
+                "This object specifies the interval in
+                hundredths of a second, in 
                 which the AP issues radio measurement request 
                 message to client periodically for every SSID. 
 
@@ -266,14 +279,23 @@ clcrdot11bBeaconEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "When set to 'true', LWAPP APs broadcast radio
+                "This object specifies that LWAPP APs broadcast radio
                 measurement request messages that include a
                 beacon measurement request information element,
                 on 802.11b/802.11g radio to clients compatible to
                 CCX versions 2 and above.  This configuration
                 takes higher precedence than that on the radio
                 interface of the particular AP when 
-                clcrAPIfOverrideGlobal is set to 'false'. "
+                clcrAPIfOverrideGlobal is set to 'false'.
+                
+                A value of 'true' indicates that radio measurement
+                requests on 802.11b/g will have a beacon 
+                measurement request Information Element.
+                
+                A value of 'false' indicates that radio measurement
+                requests on 802.11b/g will not have a beacon 
+                measurement request Information Element."
+              
         DEFVAL { false }
         ::= {clcrDot11bConfigGlobal 1} 
    
@@ -283,9 +305,10 @@ clcrdot11bBeaconInterval OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     deprecated
         DESCRIPTION
-                "The interval in hundredths of a second, at 
-                which the AP issues radio measurement request 
-                message to client periodically for every SSID.
+                "This object specifies interval in hundredths
+                of a second, at which the AP issues radio 
+                measurement request message to client 
+                periodically for every SSID.
  
                 This configuration takes higher precedence than
                 that on the radio interface of the particular AP
@@ -301,8 +324,9 @@ clcrdot11bBeaconIntvl OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The interval in hundredths of a second, at 
-                which the AP issues radio measurement request 
+                "This object specifies the interval 
+                in hundredths of a second, at which the 
+                AP issues radio measurement request 
                 message to client periodically for every SSID.
  
                 This configuration takes higher precedence than
@@ -362,12 +386,14 @@ clcrAPIfOverrideGlobal OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "If this object is set to 'true', values populated
+                " This object specifies the Global override option for
+                beacon measurement requests.
+                - A value of 'true' indicates that  values populated
                 through clcrAPIfBeaconEnabled and
                 clcrAPIfBeaconInterval are considered for sending
                 beacon measurement requests.
 
-                If this object is set to 'false', the values 
+                - A value of 'false' indicates that the values 
                 configured through the objects 
                 clcrdot11bBeaconEnabled, clcrdot11aBeaconEnabled,
                 clcrdot11bBeaconInterval and clcrdot11aBeaconInterval
@@ -381,13 +407,17 @@ clcrAPIfBeaconEnabled OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current    
         DESCRIPTION
-                "When set to 'true', LWAPP APs broadcast radio
-                measurement request messages that include a
-                beacon measurement request information element
-                to clients compatible with CCX versions 2 and
+                "This object specifies the option to enable or disable
+                the beacon measurement request info IE.
+                - A value of 'true' indicate that the 
+                LWAPP APs broadcast radio measurement request
+                messages that include a beacon measurement 
+                request information element to clients 
+                compatible with CCX versions 2 and
                 above.
 
-                Global configuration at network level takes
+                - A value of false indicates that the global
+                configuration at network level takes
                 higher precedence if clcrAPIfOverrideGlobal is
                 set to 'false'.  Radio measurement frames include 
                 a beacon request information element for every
@@ -404,7 +434,8 @@ clcrAPIfBeaconInterval OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     deprecated
         DESCRIPTION
-                "The interval at which the AP sends radio measurement
+                "This object specifies the interval at which 
+                the AP sends radio measurement
                 request messages to the clients associated through
                 each and every SSID. 
                 clcrAPIfBeaconInterval object is superseded by 
@@ -418,8 +449,9 @@ clcrAPIfBeaconIntvl OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS     current
         DESCRIPTION
-                "The interval at which the AP sends radio measurement
-                request messages to the clients associated through
+                "This object specifies the interval at which 
+                the AP sends radio measurement request messages 
+                to the clients associated through
                 each and every SSID. "
         ::= { clcrAPIfEntry 4 }
    
@@ -432,7 +464,7 @@ clcrClientBeaconReportTable OBJECT-TYPE
         MAX-ACCESS not-accessible
         STATUS     current
         DESCRIPTION
-                "This table reports the received signal power as seen 
+                "This table represents the received signal power as seen 
                 by a wireless client when conducting radio
                 measurements.  Clients measure the received signal
                 power by observing the beacon requests and probe
@@ -477,7 +509,7 @@ clcrClientMacAddress OBJECT-TYPE
         MAX-ACCESS not-accessible
         STATUS     current
         DESCRIPTION
-                 "This object identifies the MAC address of a 
+                 "This object represents MAC address of a 
                  client that has sent a beacon report to the
                  AP. "
         ::= { clcrClientBeaconReportEntry 1 }
@@ -553,8 +585,9 @@ clcrVersionIESupport OBJECT-TYPE
                 on this WLAN.
 
                 A value of 'true' indicates the presence of the
-                support and 'false' indicates the absence of the
-                same. "
+                support.
+                A value of  'false' indicates the absence of the
+                same."
         ::= { clcrWlanEntry 1 }
 
 clcrAironetIESupport OBJECT-TYPE
@@ -565,9 +598,12 @@ clcrAironetIESupport OBJECT-TYPE
                  "This object indicates the support for the Cisco
                  Compatible Extensions Aironet information element
                  on this WLAN. 
-
-                 The support is enabled or disabled by setting 
-                 this object to 'true' or 'false' respectively. "
+                 - A value of 'true' indicates that Cisco
+                   Compatible Extensions Aironet information element
+                   is supported on the WLAN.
+                 - A value of 'false' indicates that  Cisco
+                   Compatible Extensions Aironet information element
+                   is not supported on the WLAN."
          DEFVAL { false }
          ::= { clcrWlanEntry 2 }
 

@@ -22,7 +22,6 @@ IMPORTS
         OBJECT-GROUP
                 FROM SNMPv2-CONF
         MacAddress,
-        DisplayString,
         TruthValue,
         StorageType,
         RowStatus,
@@ -363,7 +362,7 @@ ClaTacacsServerEntry ::=
                 claTacacsServerPortNum           InetPortNumber,
                 claTacacsServerEnabled           TruthValue,
                 claTacacsServerSecretType        CLSecKeyFormat,
-                claTacacsServerSecret            DisplayString,
+                claTacacsServerSecret            SnmpAdminString,
                 claTacacsServerTimeout           Unsigned32,
                 claTacacsServerStorageType       StorageType,
                 claTacacsServerRowStatus         RowStatus
@@ -456,7 +455,7 @@ claTacacsServerSecretType OBJECT-TYPE
         ::= { claTacacsServerEntry 7 }
 
 claTacacsServerSecret OBJECT-TYPE
-        SYNTAX     DisplayString 
+        SYNTAX SnmpAdminString 
         MAX-ACCESS read-create
         STATUS     current
         DESCRIPTION
@@ -764,7 +763,7 @@ claSscHashValidationEnabled  OBJECT-TYPE
     ::= { claConfigObjects 19 }
 
 claSscCertificateSubject    OBJECT-TYPE
-         SYNTAX      DisplayString (SIZE(0..512))
+         SYNTAX      SnmpAdminString (SIZE(0..512))
          MAX-ACCESS  read-only
          STATUS      current
          DESCRIPTION
@@ -773,7 +772,7 @@ claSscCertificateSubject    OBJECT-TYPE
     ::= { claConfigObjects 20 }
 
 claSscCertificateValidity    OBJECT-TYPE
-         SYNTAX      DisplayString (SIZE(0..512))
+         SYNTAX      SnmpAdminString (SIZE(0..512))
          MAX-ACCESS  read-only
          STATUS      current
          DESCRIPTION
@@ -782,7 +781,7 @@ claSscCertificateValidity    OBJECT-TYPE
     ::= { claConfigObjects 21 }
 
 claSscCertificateHashKey    OBJECT-TYPE
-         SYNTAX      DisplayString (SIZE(0..512))
+         SYNTAX      SnmpAdminString (SIZE(0..512))
          MAX-ACCESS  read-only
          STATUS      current
          DESCRIPTION
@@ -1175,7 +1174,7 @@ ClaRadiusServerEntry ::=
                 claRadiusPortNum                  InetPortNumber,
                 claRadiusWlanIdx                  Unsigned32,
                 claRadiusClientMacAddress         MacAddress,
-                claRadiusUserName                 DisplayString
+                claRadiusUserName                 SnmpAdminString
         }
 
 claRadiusReqId OBJECT-TYPE
@@ -1231,7 +1230,7 @@ claRadiusClientMacAddress OBJECT-TYPE
         ::= { claRadiusServerEntry 6 }
 
 claRadiusUserName OBJECT-TYPE
-        SYNTAX     DisplayString
+        SYNTAX     SnmpAdminString
         MAX-ACCESS read-only
         STATUS     current
         DESCRIPTION
@@ -1320,7 +1319,7 @@ ClaRadiusServerAvpEntry ::=
                 claAvpVendorId                    Unsigned32,
                 claAvpAttribute                   Unsigned32,
                 claAvpType                        INTEGER,
-                claAvpValue                       DisplayString
+                claAvpValue                       SnmpAdminString
         }
 
 claWlanId OBJECT-TYPE
@@ -1381,7 +1380,7 @@ claAvpType  OBJECT-TYPE
         ::= { claRadiusServerAvpEntry 6 }
 
 claAvpValue OBJECT-TYPE
-        SYNTAX     DisplayString
+        SYNTAX     SnmpAdminString
         MAX-ACCESS read-only
         STATUS     current
         DESCRIPTION
@@ -1441,7 +1440,7 @@ claTacacsDnsServerSecretType OBJECT-TYPE
       ::= { claGlobalObjects 5 }
 
 claTacacsDnsServerSecret OBJECT-TYPE
-      SYNTAX      DisplayString 
+      SYNTAX      SnmpAdminString 
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION
@@ -1518,7 +1517,7 @@ claRadiusDnsServerSecretType OBJECT-TYPE
       ::= { claGlobalObjects 13 }
 
 claRadiusDnsServerSecret OBJECT-TYPE
-      SYNTAX      DisplayString 
+      SYNTAX      SnmpAdminString 
       MAX-ACCESS  read-write
       STATUS      current
       DESCRIPTION

@@ -137,6 +137,26 @@ RttMonScheduleStartType ::= TEXTUAL-CONVENTION
                         specific(5)
                     }
 
+RttMonScheduleStartType ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+	"This object specifies the start-time option to be used for
+	scheduling the start time of RTT operation.
+	The following list defines the start-time options
+	that can be configured for the probe:
+	    pending(1)      pending state.
+	    now(2)          schedule to immediately start the probe.
+	    random(3)       schedule start time of probe at random time over a range.
+	    after(4)        schedule start time of probe after a certain amount of time from now.
+	    specific(5)     schedule start time of probe at a given specific time interval"
+    SYNTAX          INTEGER  {
+			pending(1),
+			now(2),
+			random(3),
+			after(4),
+			specific(5)
+		    }
+
 RttReset ::= TEXTUAL-CONVENTION
     STATUS          current
     DESCRIPTION
