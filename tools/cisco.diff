@@ -156,3 +156,14 @@ index 28b1b63..ddc51f1 100644
                      }
      MAX-ACCESS      not-accessible
      STATUS          current
+--- a/cisco/XXX-NAT-MIB.my    2015-03-26 00:00:00.000000000 +0100
++++ b/cisco/XXX-NAT-MIB.my    2020-11-25 14:54:12.939062699 +0100
+@@ -1,6 +1,6 @@
+
+
+-   NAT-MIB DEFINITIONS ::= BEGIN
++   XXX-NAT-MIB DEFINITIONS ::= BEGIN
+
+    IMPORTS
+         MODULE-IDENTITY,
+

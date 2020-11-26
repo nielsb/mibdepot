@@ -10,21 +10,23 @@ TMPDL=$TMPDIR/cisco-ftp
 rm -fr $TMPDL
 mkdir -p $TMPDL
 ( cd $TMPDL
-  wget ftp://ftp.cisco.com/pub/mibs/v2/v2.tar.gz
-  tar zxf v2.tar.gz
+  wget --mirror --no-directories --no-host-directories --no-verbose ftp://ftp.cisco.com/pub/mibs/v2/
 )
 
-rm -fr $NEWDIR/cisco $NEWDIR/altiga $NEWDIR/docsis $NEWDIR/lanoptics $NEWDIR/clab
+rm -fr $NEWDIR/cisco $NEWDIR/cisco-lwapp $NEWDIR/cisco-ucs $NEWDIR/altiga $NEWDIR/docsis $NEWDIR/lanoptics $NEWDIR/clab
 mkdir -p $NEWDIR
 
-mkdir $TMPDL/non-cisco
-cp -p $TMPDL/auto/mibs/v2/* $TMPDL/non-cisco
-rm $TMPDL/non-cisco/CISCO*
+rm -fr $TMPDIR/non-cisco
+mkdir -p $TMPDIR/non-cisco
+cp -p $TMPDL/* $TMPDIR/non-cisco
+rm $TMPDIR/non-cisco/CISCO*
 
-mkdir $NEWDIR/cisco
-cp -p $TMPDL/auto/mibs/v2/CISCO* $NEWDIR/cisco
+mkdir $NEWDIR/cisco $NEWDIR/cisco-lwapp $NEWDIR/cisco-ucs
+cp -p $TMPDL/CISCO* $NEWDIR/cisco
 rm $NEWDIR/cisco/*CAPABILITY*
-rm $NEWDIR/cisco/CISCO-LWAPP*
+mv $NEWDIR/cisco/CISCO-LWAPP* $NEWDIR/cisco-lwapp
+mv $TMPDIR/non-cisco/AIRESPACE* $NEWDIR/cisco-lwapp
+mv $NEWDIR/cisco/CISCO-UNIFIED-COMPUTING* $NEWDIR/cisco-ucs
 for m in BASIS-GENERIC-MIB.my \
     BASIS-MIB.my \
     BASIS-ONLINE-DIAG-MIB.my \
@@ -37,21 +39,24 @@ for m in BASIS-GENERIC-MIB.my \
     MPLS-VPN-MIB.my \
     RTM-MIB.my \
     OLD-CISCO-CHASSIS-MIB.my
-do mv $TMPDL/non-cisco/$m $NEWDIR/cisco
+do mv $TMPDIR/non-cisco/$m $NEWDIR/cisco
 done
+mv $TMPDIR/non-cisco/NAT-MIB.my $NEWDIR/cisco/XXX-NAT-MIB.my
 
 patch -d $NEWDIR/cisco <cisco.diff
+patch -d $NEWDIR/cisco-lwapp <cisco-lwapp.diff
 
 mkdir $NEWDIR/altiga
-mv $TMPDL/non-cisco/ALTIGA* $TMPDL/non-cisco/ADMIN-AUTH-STATS-MIB.my $NEWDIR/altiga
+mv $TMPDIR/non-cisco/ALTIGA* $TMPDIR/non-cisco/ADMIN-AUTH-STATS-MIB.my $NEWDIR/altiga
 
 mkdir $NEWDIR/docsis
-mv $TMPDL/non-cisco/DOCS-* $NEWDIR/docsis
+mv $TMPDIR/non-cisco/DOCS-* $NEWDIR/docsis
+rm $NEWDIR/docsis/DOCS-IETF* $NEWDIR/docsis/DOCS-BPI-MIB.my $NEWDIR/docsis/DOCS-IF-MIB.my $NEWDIR/docsis/DOCS-CABLE-DEVICE-MIB.my
 
 patch -d $NEWDIR/docsis <docsis.diff
 
 mkdir $NEWDIR/lanoptics
-mv $TMPDL/non-cisco/LANOPT* $NEWDIR/lanoptics
+mv $TMPDIR/non-cisco/LANOPT* $NEWDIR/lanoptics
 
 mkdir $NEWDIR/clab
-mv $TMPDL/non-cisco/CLAB* $TMPDL/non-cisco/DTI-MIB.my $TMPDL/non-cisco/DSG-IF-MIB.my $NEWDIR/clab
+mv $TMPDIR/non-cisco/CLAB* $TMPDIR/non-cisco/DTI-MIB.my $TMPDIR/non-cisco/DSG-IF-MIB.my $NEWDIR/clab

@@ -10,4 +10,3 @@ diff -u new/docsis/DOCS-CABLE-DEVICE-TRAP-MIB.my ../docsis/DOCS-CABLE-DEVICE-TRA
              DESCRIPTION
                  "The CABLE DEVICE TRAP MIB is an extension of the
                   CABLE DEVICE MIB defined in RFC2669. It defines various
-Kun i new/docsis/: DOCS-IETF-BPI2-MIB.my
