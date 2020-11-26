@@ -14,7 +14,7 @@ mkdir -p $DIR
 for f in $TMP/*
 do
     g=$(echo $f | sed -e 's/[-0-9Z]*.txt/.txt/' -e s%$TMP/%%)
-    sed -e 's/\r//' $f | awk '{if(NR==1)sub(/^[\xef\xbb\xbf]*/,"");print}' >$DIR/$g
+    sed -e 's/\r//' $f | tr '\r' '\n' | awk '{if(NR==1)sub(/^[\xef\xbb\xbf]*/,"");print}' >$DIR/$g
 done
 
 patch -d $DIR <docsis.diff
