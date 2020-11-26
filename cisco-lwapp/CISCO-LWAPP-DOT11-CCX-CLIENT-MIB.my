@@ -20,10 +20,10 @@ IMPORTS
         TruthValue,
         RowStatus,
         TimeStamp,
-	TEXTUAL-CONVENTION
+	    TEXTUAL-CONVENTION
                 FROM SNMPv2-TC
-	CiscoMilliSeconds
-	        FROM CISCO-TC
+	    CiscoMilliSeconds
+	            FROM CISCO-TC
         cldcClientMacAddress,
         ciscoLwappDot11ClientCcxMIBObjects,
         ciscoLwappDot11CCXClientMIBConform
@@ -427,7 +427,7 @@ cldccSysLogsTimeStamp OBJECT-TYPE
                     "This object indicates the time stamp when the 
 		             syslog messages were generated."
 
-::= { cldccSysLogsEntry 3 }
+::= { cldccSysLogsEntry 2 }
 
 cldccSysLogsBuffer OBJECT-TYPE
 
@@ -438,7 +438,7 @@ cldccSysLogsBuffer OBJECT-TYPE
                     "This object indicates the syslog messages generated on
 		            the client side."
 
-::= { cldccSysLogsEntry 4 }
+::= { cldccSysLogsEntry 3 }
 
 
 cldccRoamingLogsTable OBJECT-TYPE
@@ -1481,3 +1481,6 @@ ciscoLwappDot11CCXClientMIBStatsGroup OBJECT-GROUP
                 clients."
         ::= { ciscoLwappDot11CCXClientMIBGroups 4 }
 END
+
+
+

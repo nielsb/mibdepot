@@ -65,7 +65,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappApMIB MODULE-IDENTITY
-    LAST-UPDATED    "202004280000Z"
+    LAST-UPDATED    "202010260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -314,6 +314,41 @@ ciscoLwappApMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol."
+    REVISION        "202010260000Z"
+    DESCRIPTION
+        "Added below notification objects
+        - cLApBrokenAntApName
+        - cLApBrokenAntInfo
+        Added below notification
+        - ciscoLwappBrokenAntennaDetails"
+    REVISION        "202010080000Z"
+    DESCRIPTION
+        "Deprecated below objects from cLApDot11IfTable
+        - cLApDot11IfDualRadioOperation      
+        - cLApDot11IfRadioRoleOperation        
+        - cLApDot11IfRadioRole                 
+        - cLApDot11IfDualRadioMode             
+        - cLApDot11IfDualRadioCapable          
+        - cLApDot11IfRadioFRACapable
+        Deprecated compliance group ciscoLwappApMIBComplianceRev13
+        Deprecated conformance group ciscoLwappApXorRadioGroupSup1        
+        Added compliance group ciscoLwappApMIBComplianceRev14
+        Added conformance group ciscoLwappApXorRadioGroupSup2
+        Added few values to cLApDot11RadioMode
+        Added slave enum to cLApDot11RadioSubType
+        Added cLAp11axObssPdCapable in cLAp11axRadioConfigTable"
+    REVISION        "202009290000Z"
+    DESCRIPTION
+        "Added following scalar object
+        - cLApGlobalAPConnectCount
+        Depecated following object in the cLApEntry table
+        - cLApConnectCount
+        Deprecated the following compliance groups
+        - ciscoLwappApProfileGroupSup12                               
+        - ciscoLwappApMIBComplianceRev12                                         
+        Added following compliance groups
+        - ciscoLwappApProfileGroupSup14                                        
+        - ciscoLwappApMIBComplianceRev13"
     REVISION        "202004280000Z"
     DESCRIPTION
         "Added following scalar object
@@ -1914,7 +1949,7 @@ cLApFloorLabel OBJECT-TYPE
 cLApConnectCount OBJECT-TYPE
     SYNTAX          Unsigned32
     MAX-ACCESS      read-only
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents the Count of AP's that are connected
         to the Controller." 
@@ -2885,7 +2920,7 @@ cLApDot11IfDualRadioMode OBJECT-TYPE
                         disabled(3)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents dual radio mode status of radio
         enabled - Dual radio mode is enabled.
@@ -2899,7 +2934,7 @@ cLApDot11IfDualRadioCapable OBJECT-TYPE
                         dualmodecapable(1)
                     }
     MAX-ACCESS      read-only
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents whether radio is dual radio capable or
         not" 
@@ -2911,7 +2946,7 @@ cLApDot11IfRadioFRACapable OBJECT-TYPE
                         capable(1)
                     }
     MAX-ACCESS      read-only
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents whether radio is FRA capable or not." 
     ::= { cLApDot11IfEntry 36 }
@@ -2946,7 +2981,7 @@ cLApDot11IfDualRadioOperation OBJECT-TYPE
                         manual(3)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents dual radio mode operation of
         the slot.
@@ -2962,7 +2997,7 @@ cLApDot11IfRadioRoleOperation OBJECT-TYPE
                         manual(3)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents the radio role operation
         of the slot.
@@ -2977,7 +3012,7 @@ cLApDot11IfRadioRole OBJECT-TYPE
                         monitor(3)
                     }
     MAX-ACCESS      read-write
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This object represents the role for the slot.
         local - The means the slot is capable of serving clients.
@@ -3568,7 +3603,9 @@ cLApDot11RadioMode OBJECT-TYPE
                         sniffer(5),
                         bridge(6),
                         seConnect(7),
-                        hybridRemote(8)
+                        remoteBridge(8),
+                        hybridRemote(9),
+                        sensor(10)
                     }
     MAX-ACCESS      read-only
     STATUS          current
@@ -3591,8 +3628,12 @@ cLApDot11RadioMode OBJECT-TYPE
         seConnect(7)     : AP is connected to spectrum expert. 
                            The AP is able to perform spectrum 
                            intelligence.  
-        hybridRemote(8)  : A mode for branch office and 
-                           remote office deployment." 
+        remoteBridge(8)  : This mode indicates that AP is a remote
+                           lightweight access point with root AP 
+                           connected.
+        hybridRemote(9)  : A mode for branch office and 
+                           remote office deployment.
+        sensor(10)       : A sensor mode AP." 
     ::= { cLApDot11RadioEntry 6 }
 
 cLApDot11RadioSubType OBJECT-TYPE
@@ -3603,7 +3644,8 @@ cLApDot11RadioSubType OBJECT-TYPE
                         remoteLan(4),
                         xorTxRx(5),
                         bleTxRx(6),
-                        bleRxOnly(7)
+                        bleRxOnly(7),
+                        slave(8)
                     }
     MAX-ACCESS      read-only
     STATUS          current
@@ -3616,7 +3658,8 @@ cLApDot11RadioSubType OBJECT-TYPE
         remoteLan(4) :Remote-LAN supported Slot.
         xorTxRx(5)   :Xor radio capable of both TX and RX.
         bleTxRx(6)   :radio operating normally and BLE is enabled for the AP.
-        bleRxOnly(7) :radio is explicitly used for monitor mode operation and BLE is enabled for the AP." 
+        bleRxOnly(7) :radio is explicitly used for monitor mode operation and BLE is enabled for the AP. 
+        slave(8)     :radio operating as slave." 
     ::= { cLApDot11RadioEntry 7 }
  
 
@@ -5213,6 +5256,15 @@ cLApGlobalAPAuditReportInterval OBJECT-TYPE
         "This object specifies the audit report interval in minutes.
         The default interval is 1440 minutes" 
     ::= { ciscoLwappApGlobal 34 }
+
+cLApGlobalAPConnectCount OBJECT-TYPE
+    SYNTAX          Unsigned32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents the Count of AP's that are connected
+        to the Controller." 
+    ::= { ciscoLwappApGlobal 35 }
 -- ********************************************************************
 -- *  AP Dot11 Interface Antenna Information
 -- ********************************************************************
@@ -8940,7 +8992,8 @@ CLAp11axRadioConfigEntry ::= SEQUENCE {
         cLAp11axDualRadioOperation INTEGER,
         cLAp11axDualRadioMode      INTEGER,
         cLAp11axRadioRoleOperation INTEGER,
-        cLAp11axRadioRole          INTEGER
+        cLAp11axRadioRole          INTEGER,
+        cLAp11axObssPdCapable      TruthValue
 }
 
 cLAp11axDualRadioCapable OBJECT-TYPE
@@ -9025,6 +9078,17 @@ cLAp11axRadioRole OBJECT-TYPE
         monitor - The slot does not serves client, only monitors.
         none - The slot is neither client serving nor monitor." 
     ::= { cLAp11axRadioConfigEntry 6 }
+
+cLAp11axObssPdCapable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "This object represents whether the radio is 802.11ax OBSS PD capable
+        or not.
+        A value of 'true' indicates the radio is OBSS PD capable.
+        A value of 'false' indicates the radio is not OBSS PD capable." 
+    ::= { cLAp11axRadioConfigEntry 7 }
  
 
 
@@ -9450,6 +9514,27 @@ cLApDot11XorRadioBandChangeReason OBJECT-TYPE
         radio band change of XOR radio." 
     ::= { ciscoLwappApMIBNotifObjects 37 }
 
+cLApBrokenAntApName OBJECT-TYPE
+         SYNTAX OCTET STRING (SIZE(0..32))
+         MAX-ACCESS accessible-for-notify
+         STATUS     current
+         DESCRIPTION
+             "This object represents the AP name of
+              the trap with broken antenna info."
+         ::= {  ciscoLwappApMIBNotifObjects 38 }
+
+cLApBrokenAntInfo OBJECT-TYPE
+         SYNTAX OCTET STRING (SIZE(0..32))
+         MAX-ACCESS accessible-for-notify
+         STATUS     current
+         DESCRIPTION
+             "This object represents the condition of
+              antenna for a given AP. It denotes if
+              AP antenna are broken or not; if broken, then which
+              particular antenna (like ALL/A/B/C/D/AB/BC...) broken
+              will be mentioned."
+         ::= {  ciscoLwappApMIBNotifObjects 39 }
+         
 -- ********************************************************************
 -- *  Notifications
 -- ********************************************************************
@@ -9896,6 +9981,18 @@ ciscoLwappRadioBandChangeNotify NOTIFICATION-TYPE
         "This notification is generated whenever XOR radio of AP has
         changed its Band"
    ::= { ciscoLwappApMIBNotifs 31 }
+   
+ciscoLwappBrokenAntennaDetails NOTIFICATION-TYPE
+     OBJECTS {
+                 cLApBrokenAntApName,
+                 cLApBrokenAntInfo
+             }
+     STATUS     current
+     DESCRIPTION
+             "This notification is generated whenever this AP sends the
+              antenna details, if any got broken or not"
+     ::= { ciscoLwappApMIBNotifs 33 }
+
 -- **********************************************************************************
 -- cLAPNtpInfoTable - NTP status for AP
 -- **********************************************************************************
@@ -12485,7 +12582,7 @@ ciscoLwappApMIBComplianceRev11 MODULE-COMPLIANCE
     ::= { ciscoLwappApMIBCompliances 12 }
 
 ciscoLwappApMIBComplianceRev12 MODULE-COMPLIANCE
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "The compliance statement for the SNMP entities that
         implement the ciscoLwappApMIB module."
@@ -12967,6 +13064,970 @@ ciscoLwappApMIBComplianceRev12 MODULE-COMPLIANCE
         "Write access is not required."
     ::= { ciscoLwappApMIBCompliances 13 }
 
+ciscoLwappApMIBComplianceRev13 MODULE-COMPLIANCE
+    STATUS          deprecated
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappApMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        ciscoLwappApGroup,
+                        ciscoLwappApIfGroup,
+                        ciscoLwappApGroupSup1,
+                        ciscoLwappApGroupSup2,
+                        ciscoLwappApGroupSup3,
+                        ciscoLwappApNotifObjsGroup,
+                        ciscoLwappApNotifsGroupVer1,
+                        ciscoLwappApGroupSup6,
+                        ciscoLwappApGroupSup7,
+                        ciscoLwappApEthernetIfGroup,
+                        ciscoLwappApRadioGroup,
+                        ciscoLwappApGroupSup5,
+                        ciscoLwappSeClientSup,
+                        ciscoLwappDot11IfAntennaGroup,
+                        ciscoLwappRetransmitGroup,
+                        ciscoLwappApNotifsGroupVer2,
+                        ciscoLwappApGroupSup8,
+                        ciscoLwappApGroupSup9,
+                        ciscoLwappApRadioGroupSup1,
+                        ciscoLwappHaloBleGroup,
+                        ciscoLwappApBleBeaconGroup,
+                        ciscoLwappApLanStatsGroup,
+                        ciscoLwappApGroupSup11,
+                        ciscoLwappApGroupSup14,
+                        ciscoLwappApXorRadioGroup,
+                        ciscoLwappApNotifsXorGroup,
+                        ciscoLwappApProfileHaloBleGroup,
+                        ciscoLwappApProfileGroupSup2,
+                        ciscoLwappApPacketCaptureProfileGroup,
+                        ciscoLwappApPacketCaptureClientProfileGroup,
+                        ciscoLwappApProfileQosMapGroup,
+                        ciscoLwappApGroupSup13,
+                        ciscoLwappAp11axGroup,
+                        ciscoLwappApProfileHaloBleGroupSup1,
+                        ciscoLwappApProfileGroupSup3,
+                        ciscoLwappApLanStatsGroupSup1,
+                        ciscoLwappApXorRadioGroupSup1,
+                        ciscoLwappApProfileGroupSup4
+                    }
+
+    OBJECT          cLApDot11IfAntennaEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApRetransmitCount
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApRetransmitTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalRetransmitCount
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalRetransmitTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPrimaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSecondaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTertiaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEncryptionEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApFailoverPriority
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTelnetEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSshEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPreStdStateEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPwrInjectorStateEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPwrInjectorSelection
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPwrInjectorSwMacAddr
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApMonitorModeOptimization
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApDomainName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApNameServerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApAMSDUEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEncryptionSupported
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApRogueDetectionEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTcpMss
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApAdminStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp11nChannelBandwidth
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomFirstChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomSecondChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomThirdChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomFourthChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLegacyBeamForming
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCdpOverAirEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApDot11IfAdminStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEthernetIfAdminStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEthernetIfCdpEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialGlobalUserName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialGlobalPassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialGlobalSecret
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLinkLatencyEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLinkLatencyReset
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCountryCode
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApIfRegulatoryDomainMismatchNotifEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApCrashEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApUnsupportedEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApAssociatedEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPrimaryDiscoveryTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApFastHbTimerTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApFastHbTimerEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalPrimaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalSecondaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalPrimaryControllerName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalSecondaryControllerName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalPrimaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalSecondaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalFailoverPriority
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalTcpMss
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalDot11IfCdpEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalEthernetIfCdpEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanIfMode
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanIfEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanIfNativeVlanId
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPrimaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSecondaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTertiaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobal802dot1xAuthenticationEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobal802dot1xSupplicantPassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobal802dot1xSupplicantUsername
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp802dot1xSupplicantOverrideEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp802dot1xSupplicantOverrideUsername
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp802dot1xSupplicantOverridePassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApNwTxPowerThreshold
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialUserName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialPassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialSecret
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialEnableGlobalCredentials
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanListRowStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp11ChannelBandwidth
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSecureCipher
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApAntennaBandMode
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconMajorField
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconMinorField
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconTxPower
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconUuid
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconInterval
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconApplyGlobal
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconAdvTxPower
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+    ::= { ciscoLwappApMIBCompliances 14 }
+
+ciscoLwappApMIBComplianceRev14 MODULE-COMPLIANCE
+    STATUS          current
+    DESCRIPTION
+        "The compliance statement for the SNMP entities that
+        implement the ciscoLwappApMIB module."
+    MODULE          -- this module
+    MANDATORY-GROUPS {
+                        ciscoLwappApGroup,
+                        ciscoLwappApIfGroup,
+                        ciscoLwappApGroupSup1,
+                        ciscoLwappApGroupSup2,
+                        ciscoLwappApGroupSup3,
+                        ciscoLwappApNotifObjsGroup,
+                        ciscoLwappApNotifsGroupVer1,
+                        ciscoLwappApGroupSup6,
+                        ciscoLwappApGroupSup7,
+                        ciscoLwappApEthernetIfGroup,
+                        ciscoLwappApRadioGroup,
+                        ciscoLwappApGroupSup5,
+                        ciscoLwappSeClientSup,
+                        ciscoLwappDot11IfAntennaGroup,
+                        ciscoLwappRetransmitGroup,
+                        ciscoLwappApNotifsGroupVer2,
+                        ciscoLwappApGroupSup8,
+                        ciscoLwappApGroupSup9,
+                        ciscoLwappApRadioGroupSup1,
+                        ciscoLwappHaloBleGroup,
+                        ciscoLwappApBleBeaconGroup,
+                        ciscoLwappApLanStatsGroup,
+                        ciscoLwappApGroupSup11,
+                        ciscoLwappApGroupSup14,
+                        ciscoLwappApNotifsXorGroup,
+                        ciscoLwappApProfileHaloBleGroup,
+                        ciscoLwappApProfileGroupSup2,
+                        ciscoLwappApPacketCaptureProfileGroup,
+                        ciscoLwappApPacketCaptureClientProfileGroup,
+                        ciscoLwappApProfileQosMapGroup,
+                        ciscoLwappApGroupSup13,
+                        ciscoLwappAp11axGroup,
+                        ciscoLwappApProfileHaloBleGroupSup1,
+                        ciscoLwappApLanStatsGroupSup1,
+                        ciscoLwappApXorRadioGroupSup2,
+                        ciscoLwappApProfileGroupSup4
+                    }
+
+    OBJECT          cLApDot11IfAntennaEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApRetransmitCount
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApRetransmitTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalRetransmitCount
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalRetransmitTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPrimaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSecondaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTertiaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEncryptionEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApFailoverPriority
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTelnetEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSshEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPreStdStateEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPwrInjectorStateEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPwrInjectorSelection
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPwrInjectorSwMacAddr
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApMonitorModeOptimization
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApDomainName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApNameServerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApAMSDUEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEncryptionSupported
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApRogueDetectionEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTcpMss
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApAdminStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp11nChannelBandwidth
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomFirstChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomSecondChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomThirdChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLomFourthChannel
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLegacyBeamForming
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCdpOverAirEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApDot11IfAdminStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEthernetIfAdminStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApEthernetIfCdpEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialGlobalUserName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialGlobalPassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialGlobalSecret
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLinkLatencyEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApLinkLatencyReset
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCountryCode
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApIfRegulatoryDomainMismatchNotifEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApCrashEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApUnsupportedEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          ciscoLwappApAssociatedEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPrimaryDiscoveryTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApFastHbTimerTimeout
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApFastHbTimerEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalPrimaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalSecondaryControllerAddress
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalPrimaryControllerName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalSecondaryControllerName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalPrimaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalSecondaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalFailoverPriority
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalTcpMss
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalDot11IfCdpEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobalEthernetIfCdpEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanIfMode
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanIfEnable
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanIfNativeVlanId
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApPrimaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSecondaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApTertiaryControllerAddressType
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobal802dot1xAuthenticationEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobal802dot1xSupplicantPassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApGlobal802dot1xSupplicantUsername
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp802dot1xSupplicantOverrideEnabled
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp802dot1xSupplicantOverrideUsername
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp802dot1xSupplicantOverridePassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApNwTxPowerThreshold
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialUserName
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialPassword
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialSecret
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApCredentialEnableGlobalCredentials
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApVlanListRowStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLAp11ChannelBandwidth
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApSecureCipher
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApAntennaBandMode
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconMajorField
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconMinorField
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconTxPower
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconStatus
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconUuid
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconInterval
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconApplyGlobal
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+
+    OBJECT          cLApBleBeaconAdvTxPower
+    MIN-ACCESS      read-only
+    DESCRIPTION
+        "Write access is not required."
+    ::= { ciscoLwappApMIBCompliances 15 }
+
 -- ********************************************************************
 -- *    Units of conformance
 -- ********************************************************************
@@ -13311,7 +14372,8 @@ ciscoLwappApGroupSup8 OBJECT-GROUP
                         cLApAuthorizeApSerialNumAuth,
                         cLApAuthorizeApMethodList,
                         cLApGlobalAPAuditReport,
-                        cLApGlobalAPAuditReportInterval
+                        cLApGlobalAPAuditReportInterval,
+                        cLApGlobalAPConnectCount
                     }
     STATUS          current
     DESCRIPTION
@@ -13348,7 +14410,8 @@ ciscoLwappApNotifsGroupVer2 NOTIFICATION-GROUP
                         ciscoLwappApMemoryUsageHigh,
                         ciscoLwappApCpuUsageHigh,
                         ciscoLwappApUpgradeFailureNotify,
-                        ciscoLwappApClientThresholdNotify
+                        ciscoLwappApClientThresholdNotify,
+                        ciscoLwappBrokenAntennaDetails
                     }
     STATUS          current
     DESCRIPTION
@@ -14327,7 +15390,7 @@ ciscoLwappApGroupSup12 OBJECT-GROUP
                         cLApDot11XorRadioRoleChangeReason,
                         cLApDot11XorRadioBandChangeReason
                     }
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This supplemental collection of objects represents the
         information about the general attributes and functional
@@ -14385,7 +15448,8 @@ ciscoLwappAp11axGroup OBJECT-GROUP
                         cLAp11axDualRadioOperation,
                         cLAp11axDualRadioMode,
                         cLAp11axRadioRoleOperation,
-                        cLAp11axRadioRole
+                        cLAp11axRadioRole,
+                        cLAp11axObssPdCapable
                     }
     STATUS          current
     DESCRIPTION
@@ -14411,7 +15475,7 @@ ciscoLwappApXorRadioGroupSup1 OBJECT-GROUP
                         cLApDot11IfRadioRoleOperation,
                         cLApDot11IfRadioRole
                     }
-    STATUS          current
+    STATUS          deprecated
     DESCRIPTION
         "This collection of objects represents the information
         about the Xor Radios of those APs that have
@@ -14437,6 +15501,288 @@ ciscoLwappApProfileGroupSup4 OBJECT-GROUP
         of the 802.11 LWAPP Access Point that have joined the 
         Controller"
     ::= { ciscoLwappApMIBGroups 43 }
+
+ciscoLwappApGroupSup14 OBJECT-GROUP
+    OBJECTS         {
+                        cLApPowerStatus,
+                        cLApNameServerAddressType,
+                        cLApDataEncryptionStatus,
+                        cLApNsiKey,
+                        cLApPortNumber,
+                        cLApVenueConfigVenueGroup,
+                        cLApVenueConfigVenueType,
+                        cLApVenueConfigVenueName,
+                        cLApVenueConfigLanguage,
+                        cLApLEDState,
+                        cLApRealTimeStatsModeEnabled,
+                        cLApTrunkVlan,
+                        cLApTrunkVlanStatus,
+                        cLApLocation,
+                        cLApSubMode,
+                        cLApAssocCount,
+                        cLApAssocFailResourceCount,
+                        cLApAssociatedClientCount,
+                        cLApMemoryCurrentUsage,
+                        cLApMemoryAverageUsage,
+                        cLApCpuCurrentUsage,
+                        cLApCpuAverageUsage,
+                        cLApUpgradeFromVersion,
+                        cLApUpgradeToVersion,
+                        cLApUpgradeFailureCause,
+                        cLApMaxClientLimitNumberTrap,
+                        cLApMaxClientLimitCause,
+                        cLApMaxClientLimitSet,
+                        cLApFloorLabel,
+                        cLApReassocSuccCount,
+                        cLApReassocFailCount,
+                        cLApAssocFailCountByRate,
+                        cLApAbnormalOfflineCount,
+                        cLApActiveClientCount,
+                        cLApAssocFailCountForRssiLow,
+                        cLApSysNetId,
+                        cLApAssocFailTimes,
+                        cLApHeartBeatRspAvgTime,
+                        cLApEchoRequestCount,
+                        cLApEchoResponseLossCount,
+                        cLApModuleInserted,
+                        cLApEnableModule,
+                        cLApIsUniversal,
+                        cLApUniversalPrimeStatus,
+                        cLApIsMaster,
+                        cLApBleFWDownloadStatus,
+                        cLApDot11XorDartConnectorStatus,
+                        cLApDot11IfAntennaTxEnable,
+                        cLApDot11IfAntennaRxEnable,
+                        cLApEthernetIfDuplex,
+                        cLApEthernetIfLinkSpeed,
+                        cLApEthernetIfPOEPower,
+                        cLApEthernetIfRxTotalBytes,
+                        cLApEthernetIfTxTotalBytes,
+                        cLApEthernetIfInputCrc,
+                        cLApEthernetIfInputAborts,
+                        cLApEthernetIfInputErrors,
+                        cLApEthernetIfInputFrames,
+                        cLApEthernetIfInputOverrun,
+                        cLApEthernetIfInputDrops,
+                        cLApEthernetIfInputResource,
+                        cLApEthernetIfUnknownProtocol,
+                        cLApEthernetIfRunts,
+                        cLApEthernetIfGiants,
+                        cLApEthernetIfThrottle,
+                        cLApEthernetIfResets,
+                        cLApEthernetIfOutputCollision,
+                        cLApEthernetIfOutputNoBuffer,
+                        cLApEthernetIfOutputResource,
+                        cLApEthernetIfOutputUnderrun,
+                        cLApEthernetIfOutputErrors,
+                        cLApEthernetIfOutputTotalDrops,
+                        cLApDataLinkLatencyStatsCurrent,
+                        cLApDataLinkLatencyStatsMin,
+                        cLApDataLinkLatencyStatsMax,
+                        cLApDataLinkLatencyTimeStamp,
+                        cLApCtsSxpDefaultPassword,
+                        cLApCtsSxpState,
+                        cLApCtsSxpMode,
+                        cLApCtsSxpListenerMinHoldtime,
+                        cLApCtsSxpListenerMaxHoldtime,
+                        cLApCtsSxpReconcilePeriod,
+                        cLApCtsSxpRetryPeriod,
+                        cLApCtsSxpSpeakerHoldTime,
+                        cLApCtsSxpSpeakerKeepAlive,
+                        cLApCtsInlineTagStatus,
+                        cLApCtsSgaclStatus,
+                        cLApCtsOverrideStatus,
+                        cLApModeClear,
+                        cLApSiteTagName,
+                        cLApRfTagName,
+                        cLApPolicyTagName,
+                        cLApTagSource,
+                        cLApUsbModuleName,
+                        cLApUsbModuleState,
+                        cLApUsbModuleProductId,
+                        cLApUsbDescription,
+                        cLApUsbStateInfo,
+                        cLApUsbOverride,
+                        cLApUsbSerialNumber,
+                        cLApUsbMaxPower,
+                        cLApLagConfigStatus,
+                        cLApMonitorModeOptStatus,
+                        cLApLegacyBeamForming,
+                        cLApDot11IfLinkChangeCount,
+                        cLApDot11MaxClients,
+                        cLApPromiscuousModeDwelling,
+                        cLApDot11IfStaKeepingTime,
+                        cLApDot11IfLinkSpeed,
+                        cLApDot11IfMtu,
+                        cLApDot11IfDesc,
+                        cLAPDot11IfMinTxPowerStep,
+                        cLApDot11IfMaxDataRate,
+                        cLApEthernetIfMtu,
+                        cLApEthernetIfType,
+                        cLApEthernetIfLinkChangeCount,
+                        cLApWlanStatsTxPktNum,
+                        cLApWlanStatsTxOctetNum,
+                        cLApWlanStatsRxPktNum,
+                        cLApWlanStatsRxOctetNum,
+                        cLApWlanStatsRetransmitNum,
+                        cLApWlanStatsAssocClientNum,
+                        cLApWlanStatsOnlineUserNum,
+                        cLApHyperlocationAdminState,
+                        cLApHyperlocationUnsetFlag,
+                        cLApOeapDisableLocalAccess,
+                        cLApGlobalLEDState,
+                        cLApRadioInterfaceShutdownEnabled,
+                        cLApEthernetInterfaceDowntime,
+                        cLAPMulticastGroupAddressType,
+                        cLAPMulticastGroupAddress,
+                        cLAPMulticastMode,
+                        cLApGlobalAPLagCapability,
+                        cLApGlobalAPDtlsVersion,
+                        cLApGlobalAPDtlsCipherSuite,
+                        cLApWlanInfoMaxClients,
+                        cLApRadioWlanSsid,
+                        cLApRadioWlanBssid,
+                        cLApNwTxPowerThresholdVer2,
+                        cLApDot11RadioStatsRxErrorFrameCount,
+                        cLApDot11RadioStatsMacMicErrFrameCount,
+                        cLApDot11RadioStatsMacDecryptErrFrameCount,
+                        cLApDot11RadioStatsRxMgmtFrameCount,
+                        cLApDot11RadioStatsRxCtrlFrameCount,
+                        cLApDot11RadioStatsRxDataFrameCount,
+                        cLApDot11RadioStatsTxMgmtFrameCount,
+                        cLApDot11RadioStatsTxCtrlFrameCount,
+                        cLApDot11RadioStatsTxDataFrameCount,
+                        cLApDot11RadioStatsRxDataPacketCount,
+                        cLApDot11RadioStatsTxDataPacketCount,
+                        cLApDot11RadioStatsTxDataPacketCount,
+                        cLApDot11RadioStatsRetryFrameCount,
+                        cLApDot11RadioStatsRetryPacketCount,
+                        cLApDot11RadioRssiHighest,
+                        cLApDot11RadioRssiLowest,
+                        cLApDot11RadioRssiAverage,
+                        cLApCrashFileName,
+                        cLApCrashFileSize,
+                        cLApCrashFileTimeStamp,
+                        cLApLEDFlashStatus,
+                        cLApLEDFlashDuration,
+                        cLApInetAddressType,
+                        cLApInetAddress,
+                        cLApStaticIpv6AddressEnabled,
+                        cLApStaticIpv6InetAddressType,
+                        cLApStaticIpv6InetAddress,
+                        cLApStaticIpv6PrefixLength,
+                        cLApStaticIpv6GatewayInetAddressType,
+                        cLApStaticIpv6GatewayInetAddress,
+                        cLApStaticIpNetmaskType,
+                        cLApStaticIpNetmask,
+                        cLApPreferMode,
+                        cLApPreferModeApplied,
+                        cLApSysMemType,
+                        cLApSysMemSize,
+                        cLApSysFlashSize,
+                        cLApSysCpuType,
+                        cLApSysFlashType,
+                        cLApDot11RadioRateStatsRxPackets,
+                        cLApDot11RadioRateStatsRxBytes,
+                        cLApDot11RadioRateStatsTxPackets,
+                        cLApDot11RadioRateStatsTxBytes,
+                        cLApDot11RadioRateString,
+                        cLApPacketDumpFtpServerAddressType,
+                        cLApPacketDumpFtpServerAddress,
+                        cLApPacketDumpFtpServerPath,
+                        cLApPacketDumpFtpUsername,
+                        cLApPacketDumpFtpPassword,
+                        cLApPacketDumpClassifier,
+                        cLApPacketDumpBufferSize,
+                        cLApPacketDumpCaptureTime,
+                        cLApPacketDumpTruncation,
+                        cLApPacketDumpApName,
+                        cLApPacketDumpDeviceMacAddress,
+                        cLApPacketDumpStartStop,
+                        cLApDot11RadioSsidName,
+                        cLApCmMacAddress,
+                        cLApCmApMacAddress,
+                        cLApCmSwVersion,
+                        cLApEthernetSpeed,
+                        cLApEthernetStatus,
+                        cLApCmStatus,
+                        cLApCmSerialNumber,
+                        cLApCmUsChannelStatus,
+                        cLApCmDsChannelStatus,
+                        cLApCmMaskBit,
+                        cLApEnvTemperatureDegree,
+                        cLApEnvTemperatureState,
+                        cLApEnvOrientation,
+                        cLApEnvPoeOutStatus,
+                        cLApGpsLocationPresent,
+                        cLApGpsLocationValid,
+                        cLApGpsLatitude,
+                        cLApGpsLongitude,
+                        cLApGpsAltitude,
+                        cLApGpsCollectionTime,
+                        cLApRogueApMacAddress,
+                        cLApDot11RadioChannelNumber,
+                        cLApRogueApSsid,
+                        cLApRogueType,
+                        cLApWipsReason,
+                        cLApWipsClear,
+                        cLApIfUpDownFailureType,
+                        cLApIfUpDownCause,
+                        cLApIfUpDownFailureCode,
+                        cLApAlarmSet,
+                        cLApRogueClassType,
+                        cLApRogueDetectedChannel,
+                        cLApRSSI,
+                        cLApSNR,
+                        cLApDot11RadioCurrentChannel,
+                        cLApAdhocRogue,
+                        cLApRogueAPOnWiredNetwork,
+                        cLApRogueMode,
+                        cLApRogueIsClassifiedByRule,
+                        cLApRogueClassifiedApMacAddress,
+                        cLApRogueClassifiedRSSI,
+                        cLAPPreviousMonitorMode,
+                        cLAPCurrentMonitorMode,
+                        cLApSsidKeyConfSsidA,
+                        cLApSsidKeyConfKeyIdxA,
+                        cLApSsidKeyConfSsidB,
+                        cLApSsidKeyConfKeyIdxB,
+                        cLApPreviousChannel,
+                        cLApCurrentChannel,
+                        cLApChannelCustomize,
+                        cLApIfLoadChannelUtilization,
+                        cLAPGroupVlanName,
+                        cLApRuleName,
+                        cLApSeverityScore,
+                        cLApDot11XorRadioRoleChangeReason,
+                        cLApDot11XorRadioBandChangeReason,
+                        cLApBrokenAntApName,
+                        cLApBrokenAntInfo
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This supplemental collection of objects represents the
+        information about the general attributes and functional
+        parameters of those APs that have joined the
+        controller."
+    ::= { ciscoLwappApMIBGroups 44 }
+
+ciscoLwappApXorRadioGroupSup2 OBJECT-GROUP
+    OBJECTS         {
+                        cLApDot11XorRadioMode,
+                        cLApDot11XorRadioBand,
+                        cLApDot11XorRadioRoleAssignment,
+                        ciscoLwappXorRadioRoleChangeEnabled,
+                        cLApDot11IfSensorReachability,
+                        cLApFraCoverageOverlapFactor,
+                        cLApFraSuggestedMode
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This collection of objects represents the information
+        about the Xor Radios of those APs that have
+        joined the controller."
+    ::= { ciscoLwappApMIBGroups 45 }
 
 END
 
