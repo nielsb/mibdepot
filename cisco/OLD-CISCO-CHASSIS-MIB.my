@@ -530,6 +530,8 @@
                         ,c1861-srst-2b-cue-k9(642)              -- C1861 SRST with support for 2 BRI ports and CUE
                         ,c1861-srst-4f-cue-k9(643)              -- C1861 SRST with support for 4 FXO ports and CUE
                         ,cvgd-1t3(644)                          -- VGD Voice Gateway with 1xCT3 supporting CCM and MGCP 
+                        ,ws-cbs3130g-s(648)                     -- Cisco Catalyst Blade Switch 3130G for Dell %DNP until Mar 2008, contact unknown /* Earlier contact was alexv */
+                        ,ws-cbs3130x-s(649)                     -- Cisco Catalyst Blade Switch 3130X for Dell %DNP until Mar 2008, contact unknown /* Earlier contact was alexv */
                         ,cat3560e-12-sd(650)                    -- Catalyst 3560E, 12 SFP Gigabit Ethernet ports + 2 TenGigabit Ethernet (X2) ports
                         ,ccisco-optimization-engine-674(651)    -- Cisco Optimization Engine 674              
                         ,cie3000-4tc(652)                       -- Cisco Industrial Ethernet 3000 Switch, 4 10/100 + 2 T/SFP
@@ -706,6 +708,8 @@
                         ,c5915(908)                              -- Chassis Type for 5915 Embedded Services Router
                         ,cn7k-c7006(909)                         -- Nexus7000 6slot elsie n7k chassis N7K-C7006
                         ,c86xvae(910)                            -- Chassis for Cisco 86xVAE series products
+                        ,cap802-agn(911)                         -- Cisco AP802 Access Point with dual IEEE 802.11a/g/n radio ports %DNP until Jun 2011, contact vnanduri
+                        ,cap802-gn(912)                          -- Cisco AP802 Access Point with single IEEE 802.11g/n radio port %DNP until Jun 2011, contact vnanduri
                         ,c2811ve(913)                            -- Cisco 2811ve router with two integrated fast ethernets and integrated VPN
                         ,c1841ve(914)                            -- Cisco 1841ve data only router with 2 HWIC slots
                         ,c2960c-8tc-s(915)                       -- Catalyst 2960C 8 10/100 FE ports + 2 Gig Dual Media Uplinks fixed configuration Layer 2 Ethernet switch, lanlite only Chassis
@@ -778,6 +782,8 @@
                         ,ca901-4c-f-d(1010)                      -- A new Chassis PID for Ethernet only chassis (with Port based feature)
                         ,ca901-4c-ft-d(1011)                     -- A new Chassis PID  for Ethernet + TDM chassis( with Port based Feature)
                         ,cmde10xvb(1012)                         -- Cisco Enterprise Content Delivery System Model MDE10XVB
+                        ,cap802h-agn(1023)                       -- Cisco AP802 Hardened Access Point with dual IEEE 802.11a/g/n radio ports for M2M environments %DNP until August 2012, contact vnanduri 
+                        ,cairap802-agn(1024)                     -- Cisco AP802 Smart Access Point with dual IEEE 802.11a/g/n radio ports %DNP until August 2012, contact vnanduri 
                         ,casr1002xc(1032)                        -- Cisco Aggregation Services Router 1000 Series, ASR1002-XC Chassis
                         ,c86xvaew(1033)                          -- Chassis for Cisco 86xVAEW series products
                         ,cairap1553(1034)                        -- Cisco Aironet 1550 Series Outdoor Mesh Access Points with three IEEE 802.11n radio port
@@ -890,6 +896,10 @@
                         ,cws-c2960l-sm-48tq(1224)                --  Catalyst 2960L-SM 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks
                         ,cws-c2960l-sm-24pq(1225)                -- Catalyst 2960L-SM 24 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support
                         ,cws-c2960l-sm-48pq(1226)                -- Catalyst 2960L-SM 48 x GE downlink, 4 x 10GE (4 SFP+) uplinks, POE support
+                       ,cws-c1000-24fet-4g-l(1231)           -- Catalyst 1000, 24x 1FE downlinks + 2x 1G uplink (Combo) + 2x 1G uplink (SFP) 
+                       ,cws-c1000-24fep-4g-l(1232)           -- Catalyst 1000, 24x 1FE downlinks + 2x 1G uplink (Combo) + 2x 1G uplink (SFP) + Partial PoE
+                       ,cws-c1000-48fet-4g-l(1233)           -- Catalyst 1000, 48x 1FE downlinks + 2x 1G uplink (Combo) + 2x 1G uplink (SFP)
+                       ,cws-c1000-48fep-4g-l(1234)            -- Catalyst 1000, 48x 1FE downlinks + 2x 1G uplink (Combo) + 2x 1G uplink (SFP) + Partial PoE
                    }
                    ACCESS  read-only
                    STATUS  deprecated
