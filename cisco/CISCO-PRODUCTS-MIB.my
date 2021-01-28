@@ -4,7 +4,7 @@
 --
 -- January 1995, Jeffrey T. Johnson
 --
--- Copyright (c) 1995-2020 by cisco Systems, Inc.
+-- Copyright (c) 1995-2021 by cisco Systems, Inc.
 -- All rights reserved.
 -- 
 -- *****************************************************************
@@ -2700,6 +2700,6 @@ ciscoC9KF1SSD240G                   OBJECT IDENTIFIER ::= { ciscoProducts 3064 }
 ciscoC8500L8S4X                     OBJECT IDENTIFIER ::= { ciscoProducts 3069 } -- Cisco C8500L-8S4X Router
 ciscoC11138PLteEAWA                 OBJECT IDENTIFIER ::= { ciscoProducts 3070 } -- Cisco C1113-8PLTEEAWA Router
 ciscoASR9903                        OBJECT IDENTIFIER ::= { ciscoProducts 3075 } -- Cisco Aggregation Services Router (ASR) 9903 Chassis
-
+ciscoASR9902                        OBJECT IDENTIFIER ::= { ciscoProducts 3090 } -- Cisco Aggregation Services Router (ASR) 9902 Chassis
 END
 

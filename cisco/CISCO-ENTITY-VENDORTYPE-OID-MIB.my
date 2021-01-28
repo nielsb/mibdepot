@@ -7,7 +7,7 @@
 --
 -- August 1997, Ramanathan R. Kavasseri
 --
--- Copyright (c) 1997-2020 by cisco Systems, Inc.
+-- Copyright (c) 1997-2021 by cisco Systems, Inc.
 -- All rights reserved.
 -- *****************************************************************
 -- $Log$
@@ -1732,9 +1732,9 @@ cevChassisC9200L48PXG2Y                 OBJECT IDENTIFIER ::= { cevChassis 1992 
 cevChassisC920024T                      OBJECT IDENTIFIER ::= { cevChassis 1993 } -- Catalyst 9200 24 Gig downlinks 
 cevChassisC920048T                      OBJECT IDENTIFIER ::= { cevChassis 1994 } -- Catalyst 9200 48 Gig downlinks 
 cevChassisC920024P                      OBJECT IDENTIFIER ::= { cevChassis 1995 } -- Catalyst 9200 24 Gig downlinks. PoE support for 740W 
-cevChassisC920048P                      OBJECT IDENTIFIER ::= { cevChassis 1996 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1440W 
-cevChassisC920024PXG                    OBJECT IDENTIFIER ::= { cevChassis 1997 } -- Catalyst 9200 16 Gig + 8 mGig downlinks. PoE support for 1440W 
-cevChassisC920048PXG                    OBJECT IDENTIFIER ::= { cevChassis 1998 } -- Catalyst 9200 40 Gig + 8 mGig downlinks. PoE support for 1440W 
+cevChassisC920048P                      OBJECT IDENTIFIER ::= { cevChassis 1996 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1480W 
+cevChassisC920024PXG                    OBJECT IDENTIFIER ::= { cevChassis 1997 } -- Catalyst 9200 16 Gig + 8 mGig downlinks. PoE support for 740W 
+cevChassisC920048PXG                    OBJECT IDENTIFIER ::= { cevChassis 1998 } -- Catalyst 9200 40 Gig + 8 mGig downlinks. PoE support for 1480W 
 cevChassisWedge10012VF                  OBJECT IDENTIFIER ::= { cevChassis 1999 } -- Facebook fixed chassis with with 32 100G Ethernet Module
 cevChassisS4048TON                      OBJECT IDENTIFIER ::= { cevChassis 2006 } -- Dell fixed chassis with  48x10G and 6x40G  Ethernet module
 cevChassisZ9100ON                       OBJECT IDENTIFIER ::= { cevChassis 2007 } -- Dell fixed chassis with 32x40/100G QSFP28 and 2x10G SFP+ Ethernet module
@@ -2059,6 +2059,7 @@ cevChassisC8500L8S4X                   OBJECT IDENTIFIER ::= { cevChassis 2408 }
 cevChassisC11138PLteEAWA               OBJECT IDENTIFIER ::= { cevChassis 2412 } -- Cisco C1113-8PLTEEAWA Router Chassis
 cevChassisN9KC9336CFX2E                OBJECT IDENTIFIER ::= { cevChassis 2413 } -- 1RU TOR fixed chassis with 36x40G/100G QSFP28 ports
 cevChassis8608                        OBJECT IDENTIFIER ::= { cevChassis 2424 } -- Cisco 8600 - 8 Slot Centralized Chassis
+cevChassisASR9902                     OBJECT IDENTIFIER ::= { cevChassis 2432 } -- ASR 9902 Chassis
 
 
 cevBackplane				OBJECT IDENTIFIER ::= { cevMIBObjects 4 }
@@ -8874,6 +8875,8 @@ cevModuleISR1100X6GSIP      OBJECT IDENTIFIER ::= { cevModuleISRType 258 } -- Ci
 cevModuleISRFLteNA          OBJECT IDENTIFIER ::= { cevModuleISRType 259 } -- WP7610 based fixed module for  Cisco ISR1100-4GLTE-NA 
 cevModuleISRFLteGB          OBJECT IDENTIFIER ::= { cevModuleISRType 260 } -- WP7607 based fixed module for  Cisco ISR1100-4GLTE-GB 
 
+
+
 cevModuleN77Type             OBJECT IDENTIFIER ::= { cevModule 97 }       -- Group for the Nexus7700 type of cards 
 cevN77c7718Fab2              OBJECT IDENTIFIER ::= { cevModuleN77Type 1 } -- Fabric for Nexus7700 18-slot chassis 
 cevN77c7710Fab2              OBJECT IDENTIFIER ::= { cevModuleN77Type 2 } -- Fabric for Nexus7700 10-slot chassis 
@@ -9374,7 +9377,6 @@ cevModuleC930024H                        OBJECT IDENTIFIER ::= { cevModule93xxTy
 cevModuleC930048H                        OBJECT IDENTIFIER ::= { cevModule93xxType 16 } -- Catalyst 9300 48-port UPOE+ switch
 
 
-
  
 
 cevModule94xxType                       OBJECT IDENTIFIER ::= { cevModule 128 } -- Module for 94xx Types 
@@ -9419,7 +9421,7 @@ cevModuleC9200L48PXG2Y                  OBJECT IDENTIFIER ::= { cevModuleCat92xx
 cevModuleC920024T                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 13 } -- Catalyst 9200 24 Gig downlinks 
 cevModuleC920048T                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 14 } -- Catalyst 9200 48 Gig downlinks 
 cevModuleC920024P                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 15 } -- Catalyst 9200 24 Gig downlinks. PoE support for 740W 
-cevModuleC920048P                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 16 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1440W 
+cevModuleC920048P                       OBJECT IDENTIFIER ::= { cevModuleCat92xxType 16 } -- Catalyst 9200 48 Gig downlinks. PoE support for 1480W 
 cevModuleC920024PXG                     OBJECT IDENTIFIER ::= { cevModuleCat92xxType 17 } -- Catalyst 9200 16 Gig + 8 mGig downlinks. PoE support for 740W 
 cevModuleC920048PXG                     OBJECT IDENTIFIER ::= { cevModuleCat92xxType 18 } -- Catalyst 9200 40 Gig + 8 mGig downlinks. PoE support for 1480W
 cevModuleC9200L48PL4X                   OBJECT IDENTIFIER ::= { cevModuleCat92xxType 21 } -- Catalyst 9200L 48 Gig Downlinks, 4 SFP+uplinks. PoE support for 740W
