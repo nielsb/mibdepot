@@ -2690,8 +2690,13 @@ ciscoC1000FE24P4GL                  OBJECT IDENTIFIER ::= { ciscoProducts 3022 }
 ciscoC1000FE48T4GL                  OBJECT IDENTIFIER ::= { ciscoProducts 3023 } -- Catalyst 1000, 48x 1FE downlinks + 2x 1G uplink (Combo) + 2x 1G uplink (SFP)
 ciscoC1000FE48P4GL                  OBJECT IDENTIFIER ::= { ciscoProducts 3024 } -- Catalyst 1000, 48x 1FE downlinks + 2x 1G uplink (Combo) + 2x 1G uplink (SFP) + Partial PoE
 ciscoDNAPLTTA1X                     OBJECT IDENTIFIER ::= { ciscoProducts 3025 } -- Cisco DNA Traffic Telemetry Appliance - Model 1X
+ciscoIR1821K9                       OBJECT IDENTIFIER ::= { ciscoProducts 3026 } -- Cisco Catalyst IR1821 Rugged Series Router
+ciscoIR1831K9                       OBJECT IDENTIFIER ::= { ciscoProducts 3027 } -- Cisco Catalyst IR1831 Rugged Series Router
+ciscoIR1833K9                       OBJECT IDENTIFIER ::= { ciscoProducts 3028 } -- Cisco Catalyst IR1833 Rugged Series Router
+ciscoIR1835K9                       OBJECT IDENTIFIER ::= { ciscoProducts 3029 } -- Cisco Catalyst IR1835 Rugged Series Router
 ciscoISR1100X4G                     OBJECT IDENTIFIER ::= { ciscoProducts 3045 } -- Cisco ISR1100X-4G ( 4xGE, Flexible Core, 8G FLASH, 8G DRAM)
 ciscoISR1100X6G                     OBJECT IDENTIFIER ::= { ciscoProducts 3046 } -- Cisco ISR1100X-6G ( 4xGE, 2xSFP, Flexible Core, 8G FLASH, 8G DRAM)
+ciscoESS930010XE                    OBJECT IDENTIFIER ::= { ciscoProducts 3047 } -- Catalyst ESS9300 Embedded Series switch - 10p 10G, NE
 ciscoC9115AXEME                     OBJECT IDENTIFIER ::= { ciscoProducts 3050 } -- 4x4 11ax Access Point - Mobility Express edition
 ciscoC9120AXPME                     OBJECT IDENTIFIER ::= { ciscoProducts 3051 } -- 4x4 Wi-fi 6 Catalyst 9120AX Series Access Points- Mobility Express edition
 ciscoC9KF1SSD960G                   OBJECT IDENTIFIER ::= { ciscoProducts 3062 } -- this is 960GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
@@ -2701,5 +2706,7 @@ ciscoC8500L8S4X                     OBJECT IDENTIFIER ::= { ciscoProducts 3069 }
 ciscoC11138PLteEAWA                 OBJECT IDENTIFIER ::= { ciscoProducts 3070 } -- Cisco C1113-8PLTEEAWA Router
 ciscoASR9903                        OBJECT IDENTIFIER ::= { ciscoProducts 3075 } -- Cisco Aggregation Services Router (ASR) 9903 Chassis
 ciscoASR9902                        OBJECT IDENTIFIER ::= { ciscoProducts 3090 } -- Cisco Aggregation Services Router (ASR) 9902 Chassis
+ciscoUCSB200M5                      OBJECT IDENTIFIER ::= { ciscoProducts 3103 } -- Cisco UCS B200 M5 Blade Server      
+ciscoUCSB480M5                      OBJECT IDENTIFIER ::= { ciscoProducts 3104 } -- Cisco UCS B480 M5 Blade Server        
 END
 
