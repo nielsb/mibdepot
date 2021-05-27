@@ -2724,6 +2724,9 @@ ciscoCat9500X28C8D                  OBJECT IDENTIFIER ::= { ciscoProducts 3084 }
 ciscoASR9902                        OBJECT IDENTIFIER ::= { ciscoProducts 3090 } -- Cisco Aggregation Services Router (ASR) 9902 Chassis
 ciscoUCSB200M5                      OBJECT IDENTIFIER ::= { ciscoProducts 3103 } -- Cisco UCS B200 M5 Blade Server      
 ciscoUCSB480M5                      OBJECT IDENTIFIER ::= { ciscoProducts 3104 } -- Cisco UCS B480 M5 Blade Server        
-
+ciscoUCSIOM2208                     OBJECT IDENTIFIER ::= { ciscoProducts 3138 } -- Cisco UCS-IOM-2208 IOM
+ciscoUCSIOM2304                     OBJECT IDENTIFIER ::= { ciscoProducts 3139 } -- Cisco UCS-IOM-2304 IOM
+ciscoUCSIOM2408                     OBJECT IDENTIFIER ::= { ciscoProducts 3140 } -- Cisco UCS-IOM-2408 IOM
+ciscoNCS55A124Q6HSS                 OBJECT IDENTIFIER ::= { ciscoProducts 3146 } -- Network Convergence Services NCS55A1 24Q6H_SS 1RU Chassis 
 END
 

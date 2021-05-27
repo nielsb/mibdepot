@@ -2083,7 +2083,7 @@ cevChassisASR9902                     OBJECT IDENTIFIER ::= { cevChassis 2432 } 
 cevChassis03FR027R16                  OBJECT IDENTIFIER ::= { cevChassis 2433 } -- IBM SAN16C-R 8977-R16 16 Port PSI 32G SAN Extension Switch    
 cevChassis03FR026R16                  OBJECT IDENTIFIER ::= { cevChassis 2434 } -- IBM SAN16C-R 8977-R16 16 Port PSE 32G SAN Extension Switch    
 cevChassis810132FH                    OBJECT IDENTIFIER ::= { cevChassis 2472 } -- Cisco 8100 32x400G QSFPDD 1RU Fixed System w/o HBM
-
+cevChassisN3KT48X                     OBJECT IDENTIFIER ::= { cevChassis 2474 } -- Nexus 3000 Series 1 RU fixed chassis with 48x10G Ethernet Module
 
 cevBackplane				OBJECT IDENTIFIER ::= { cevMIBObjects 4 }
 cevBackplaneAtm			        OBJECT IDENTIFIER ::= { cevBackplane 4 }	-- LS1010 Chassis
@@ -8501,6 +8501,7 @@ cevN3KNXMX16C                 OBJECT IDENTIFIER ::= { cevModuleN3KType 37 } -- N
 cevN3KC3432DS                 OBJECT IDENTIFIER ::= { cevModuleN3KType 38 } -- Nexus 3000 Series fixed module with  32x400G + 2x10G SFP+ Ethernet
 cevN3NXMX4D                   OBJECT IDENTIFIER ::= { cevModuleN3KType 39 }  -- N3K 400G Line Expansion Module with 4 QSFP-DD
 cevN3KC34200YCSMFixedModule   OBJECT IDENTIFIER ::= { cevModuleN3KType 40 } --  Nexus 3000 Series 1 RU fixed module with 48x10/25G + 8x100G port
+cevN3KT48X                    OBJECT IDENTIFIER ::= { cevModuleN3KType 43 } -- Nexus 3000 Series 1 RU fixed chassis with Nexus 48x10G sfp ports, 2 Power Supplies and 2 FANs
 
 
 
@@ -9375,6 +9376,9 @@ cevQSFP40100GSR4                        OBJECT IDENTIFIER ::= { cevModuleQSFP28S
 cevQSFP100GLR4I                         OBJECT IDENTIFIER ::= { cevModuleQSFP28S 39 } -- QSFP28 100GBase module 10km, I-Temp
 cevQSFP100G4W40I                        OBJECT IDENTIFIER ::= { cevModuleQSFP28S 40 } -- QSFP28 100GBase module, 40km, I-Temp
 cevQSFP100GDRS                          OBJECT IDENTIFIER ::= { cevModuleQSFP28S 41 } -- QSFP28 100GBase-DR module, 500m SMF 
+cevQSFP100G4W10I                        OBJECT IDENTIFIER ::= { cevModuleQSFP28S 42 } -- QSFP28 100GBase module, 10km, I-Temp
+cevQ100ZR4SEA                           OBJECT IDENTIFIER ::= { cevModuleQSFP28S 43 } -- QSFP28, 100GBase module, 80km, C-Temp
+
 
 
 cevModuleNCS4K                          OBJECT IDENTIFIER ::= { cevModule 119 } -- cevModuleNCS4K Series
@@ -9414,6 +9418,8 @@ cevSFP1025GLRI                          OBJECT IDENTIFIER ::= { cevModuleSFP25S 
 cevSFP1025GBXDI                         OBJECT IDENTIFIER ::= { cevModuleSFP25S 19 } -- Downstream SFP28 Dual Rate 10/25G Module,I-Temp
 cevSFP1025GBXUI                         OBJECT IDENTIFIER ::= { cevModuleSFP25S 20 } -- Upstream SFP28 Dual Rate 10/25G Module, I-Temp
 cevSFP25GERI                            OBJECT IDENTIFIER ::= { cevModuleSFP25S 21 } -- SFP28 ER Module 30/40km, I-Temp
+cevSFP25GBX40DI                         OBJECT IDENTIFIER ::= { cevModuleSFP25S 22 } -- Downstream SFP28 BiDi 25G Module, 40km, I-Temp
+cevSFP25GBX40UI                         OBJECT IDENTIFIER ::= { cevModuleSFP25S 23 } -- Upstream SFP28 BiDi 25G Module, 40km, I-Temp
 
 
 cevModuleISR4200Type                    OBJECT IDENTIFIER ::= { cevModule 123 } -- These are modules that are used in Cisco ISR 4200 Series Router
@@ -9482,6 +9488,7 @@ cevModuleC9400LC48S                     OBJECT IDENTIFIER ::= { cevModule94xxTyp
 cevModuleC9400LC24S                     OBJECT IDENTIFIER ::= { cevModule94xxType 9 } -- Cisco Catalyst 9400 Series 24-Port GE (SFP) Line Card
 cevModuleC9400SUP1XLY                   OBJECT IDENTIFIER ::= { cevModule94xxType 10 } -- Cisco Catalyst 9400 Series Supervisor 1XL Module with 25G
 cevModuleC9400LC48H                     OBJECT IDENTIFIER ::= { cevModule94xxType 11 } -- Cisco Catalyst 9400 Series 48-Port UPOE 10/100/1000 (RJ-45) Line Card with 90W
+cevModuleC9400LC48HN                    OBJECT IDENTIFIER ::= { cevModule94xxType 14 } -- Cisco Catalyst 9400 Series 48-Port 5Gig/mGig 90W BT (RJ-45) Line card
 
 cevModuleNCS1000Type                    OBJECT IDENTIFIER ::= { cevModule 129 } -- Modules for  NCS1K Platforms
 cevModuleNCS1000RP0                     OBJECT IDENTIFIER ::= { cevModuleNCS1000Type 1 } -- Route Processor 0 for NCS1K Platforms (NCS1001/NCS1002)
