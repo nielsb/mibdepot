@@ -2,7 +2,7 @@
 -- CISCO-LWAPP-AP-MIB.my
 -- January 2006, Devesh Pujari, Prasanna Viswakumar, Srinath Candadai
 -- August 2010, Suja Thangaveluchamy
--- Copyright (c) 2006-2007, 2010-2012, 2016-2020 by Cisco Systems Inc.
+-- Copyright (c) 2006-2007, 2010-2012, 2016-2021 by Cisco Systems Inc.
 -- All rights reserved.
 -- *******************************************************************
 
@@ -65,7 +65,7 @@ IMPORTS
 -- ********************************************************************
 
 ciscoLwappApMIB MODULE-IDENTITY
-    LAST-UPDATED    "202010260000Z"
+    LAST-UPDATED    "202106060000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
             "Cisco Systems,
@@ -314,6 +314,19 @@ ciscoLwappApMIB MODULE-IDENTITY
 
         [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
         Weight Access Point Protocol."
+        
+    REVISION        "202106060000Z"
+    DESCRIPTION
+        "Added following scalar object
+        - cLApAuthorizeApMacMethodList
+        - cLApAuthorizeApSerialNumMethodList
+        Addition of cLApRogueDot11RadioBand
+        Added followig object to AP profile table
+        - cLApProfileCountryCode
+        - cLApProfileOeapRogueDetectionEnable
+        - cLApProfileOeapEncryptionEnable
+        - cLApProfileOeapLocalAccessEnable
+        - cLApProfileOeapProvSsidEnable"
     REVISION        "202010260000Z"
     DESCRIPTION
         "Added below notification objects
@@ -5265,6 +5278,25 @@ cLApGlobalAPConnectCount OBJECT-TYPE
         "This object represents the Count of AP's that are connected
         to the Controller." 
     ::= { ciscoLwappApGlobal 35 }
+
+cLApAuthorizeApMacMethodList OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the method list used for the AP
+         MAC authorization when enabled."
+    ::= { ciscoLwappApGlobal 36 }
+
+cLApAuthorizeApSerialNumMethodList OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the method list used for the AP
+        serial number authorization when enabled."
+    ::= { ciscoLwappApGlobal 37 }
+    
 -- ********************************************************************
 -- *  AP Dot11 Interface Antenna Information
 -- ********************************************************************
@@ -7113,7 +7145,12 @@ CLApProfileEntry ::= SEQUENCE {
         cLApProfileBssidEnableStats                     TruthValue,
         cLApProfileBssidStatsFrequency                  INTEGER,
         cLApProfilePersistentSsidBroadcastEnable        TruthValue,
-        cLApProfileDhcpFallback                         TruthValue
+        cLApProfileDhcpFallback                         TruthValue,
+        cLApProfileOeapRogueDetectionEnable             TruthValue,
+        cLApProfileOeapEncryptionEnable                 TruthValue,
+        cLApProfileOeapLocalAccessEnable                TruthValue,
+        cLApProfileOeapProvSsidEnable                   TruthValue,
+        cLApProfileCountryCode                          INTEGER
 }
 
 cLApProfileName OBJECT-TYPE
@@ -8210,7 +8247,199 @@ cLApProfileDhcpFallback OBJECT-TYPE
         - A Value of 'false' represents that AP will not to DHCP if it fails to join controller via static IP." 
     ::= { cLApProfileEntry 98 }
  
+cLApProfileOeapRogueDetectionEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
 
+        "This object specifies whether Rogue Detection
+        is enabled for OEAP.
+        A value of 'true' indicates rogue detection is enabled.
+        A value of 'false' indicates rogue detection is disabled."
+    DEFVAL          { false }
+
+    ::= { cLApProfileEntry 99 }
+
+
+cLApProfileOeapEncryptionEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+
+        "This object specifies whether encyrption between
+        controller and OEAP is enabled or not in a profile.
+
+        A value of 'true' enables encryption between
+        controller and AP.
+
+        A value of 'false' disables encryption between
+        controller and AP."
+
+    DEFVAL          { true }
+    ::= { cLApProfileEntry 100 }
+
+
+cLApProfileOeapLocalAccessEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+
+        "This object specifies Personal SSID
+        broadcast
+
+        A value of 'true' enables local access of
+        AP Webui
+
+        A value of 'false' disables local access of
+        AP Webui."
+
+    DEFVAL          { true }
+    ::= { cLApProfileEntry 101 }
+
+
+cLApProfileOeapProvSsidEnable OBJECT-TYPE
+    SYNTAX          TruthValue
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+
+        "This object specifies Provisional SSID
+        broadcast
+
+        A value of 'true' enables broadcast of
+        Provisional SSID
+
+        A value of 'false' disables broadcast of
+        Provisional SSID."
+
+    DEFVAL          { false }
+    ::= { cLApProfileEntry 102 }
+
+cLApProfileCountryCode OBJECT-TYPE
+    SYNTAX          INTEGER {
+      ae(1),
+      al(2),
+      ar(3),
+      at(4),
+      au(5),
+      ba(6),
+      bb(7),
+      bd(8),
+      be(9),
+      bg(10),
+      bh(11),
+      bm(12),
+      bn(13),
+      bo(14),
+      br(15),
+      belarus(16),
+      ca(17),
+      ch(18),
+      cl(19),
+      cm(20),
+      cn(21),
+      co(22),
+      cr(23),
+      cu(24),
+      cy(25),
+      cz(26),
+      de(27),
+      dk(28),
+      do(29),
+      dz(30),
+      ec(31),
+      ee(32),
+      eg(33),
+      el(34),
+      es(35),
+      fi(36),
+      fj(37),
+      fr(38),
+      gb(39),
+      gh(40),
+      gi(41),
+      gr(42),
+      hk(43),
+      hr(44),
+      hu(45),
+      id(46),
+      ie(47),
+      il(48),
+      in(49),
+      io(50),
+      iq(51),
+      is(52),
+      it(53),
+      j2(54),
+      j4(55),
+      jm(56),
+      jo(57),
+      ke(58),
+      kn(59),
+      kw(60),
+      kz(61),
+      lb(62),
+      li(63),
+      lk(64),
+      lt(65),
+      lu(66),
+      lv(67),
+      ly(68),
+      ma(69),
+      mc(70),
+      me(71),
+      mk(72),
+      mn(73),
+      mo(74),
+      mt(75),
+      mx(76),
+      my(77),
+      ng(78),
+      nl(79),
+      no(80),
+      nz(81),
+      om(82),
+      pa(83),
+      pe(84),
+      ph(85),
+      pk(86),
+      pl(87),
+      pr(88),
+      pt(89),
+      py(90),
+      qa(91),
+      ro(92),
+      rs(93),
+      ru(94),
+      sa(95),
+      se(96),
+      sg(97),
+      si(98),
+      sk(99),
+      th(100),
+      ti(101),
+      tn(102),
+      tr(103),
+      tw(104),
+      ua(105),
+      us(106),
+      uy(107),
+      ve(108),
+      vn(109),
+      za(110),
+      unconfigured(111)
+    }
+
+    MAX-ACCESS      read-write
+    STATUS          current
+    DESCRIPTION
+        "This object specifies the country code for all APs
+        associated to this particular AP Profile."
+    ::= { cLApProfileEntry 103 }
+    
 -- *********************************************************************
 -- * Halo BLE Configuration
 -- *********************************************************************
@@ -9515,26 +9744,34 @@ cLApDot11XorRadioBandChangeReason OBJECT-TYPE
     ::= { ciscoLwappApMIBNotifObjects 37 }
 
 cLApBrokenAntApName OBJECT-TYPE
-         SYNTAX OCTET STRING (SIZE(0..32))
-         MAX-ACCESS accessible-for-notify
-         STATUS     current
-         DESCRIPTION
-             "This object represents the AP name of
-              the trap with broken antenna info."
-         ::= {  ciscoLwappApMIBNotifObjects 38 }
+    SYNTAX          OCTET STRING (SIZE  (0..32))
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION
+        "This object represents the AP name of
+        the trap with broken antenna info." 
+    ::= { ciscoLwappApMIBNotifObjects 38 }
 
 cLApBrokenAntInfo OBJECT-TYPE
-         SYNTAX OCTET STRING (SIZE(0..32))
-         MAX-ACCESS accessible-for-notify
-         STATUS     current
-         DESCRIPTION
-             "This object represents the condition of
-              antenna for a given AP. It denotes if
-              AP antenna are broken or not; if broken, then which
-              particular antenna (like ALL/A/B/C/D/AB/BC...) broken
-              will be mentioned."
-         ::= {  ciscoLwappApMIBNotifObjects 39 }
-         
+    SYNTAX          OCTET STRING (SIZE  (0..32))
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION
+        "This object represents the condition of
+        antenna for a given AP. It denotes if
+        AP antenna are broken or not; if broken, then which
+        particular antenna (like ALL/A/B/C/D/AB/BC...) broken
+        will be mentioned." 
+    ::= { ciscoLwappApMIBNotifObjects 39 }
+
+cLApRogueDot11RadioBand OBJECT-TYPE
+    SYNTAX          CLDot11Band
+    MAX-ACCESS      accessible-for-notify
+    STATUS          current
+    DESCRIPTION
+        "This object represents the radio band of the Rouge AP."
+    ::= { ciscoLwappApMIBNotifObjects 40 }
+    
 -- ********************************************************************
 -- *  Notifications
 -- ********************************************************************
@@ -9609,7 +9846,8 @@ ciscoLwappApRogueApDetected NOTIFICATION-TYPE
                         cLApDot11IfType,
                         cLApDot11RadioChannelNumber,
                         cLApRogueApSsid,
-                        cLApRogueType
+                        cLApRogueType,
+                        cLApRogueDot11RadioBand
                     }
     STATUS          current
     DESCRIPTION
@@ -9626,7 +9864,8 @@ ciscoLwappApRogueApCleared NOTIFICATION-TYPE
                         cLApDot11IfType,
                         cLApDot11RadioChannelNumber,
                         cLApRogueApSsid,
-                        cLApRogueType
+                        cLApRogueType,
+                        cLApRogueDot11RadioBand
                     }
     STATUS          current
     DESCRIPTION
@@ -9823,7 +10062,8 @@ ciscoLwappApRogueDetected NOTIFICATION-TYPE
                         cLApSeverityScore,
                         cLApRuleName,
                         cLApRogueClassifiedApMacAddress,
-                        cLApRogueClassifiedRSSI
+                        cLApRogueClassifiedRSSI,
+                        cLApRogueDot11RadioBand
                     }
     STATUS          current
     DESCRIPTION
@@ -9981,18 +10221,17 @@ ciscoLwappRadioBandChangeNotify NOTIFICATION-TYPE
         "This notification is generated whenever XOR radio of AP has
         changed its Band"
    ::= { ciscoLwappApMIBNotifs 31 }
-   
-ciscoLwappBrokenAntennaDetails NOTIFICATION-TYPE
-     OBJECTS {
-                 cLApBrokenAntApName,
-                 cLApBrokenAntInfo
-             }
-     STATUS     current
-     DESCRIPTION
-             "This notification is generated whenever this AP sends the
-              antenna details, if any got broken or not"
-     ::= { ciscoLwappApMIBNotifs 33 }
 
+ciscoLwappBrokenAntennaDetails NOTIFICATION-TYPE
+    OBJECTS         {
+                        cLApBrokenAntApName,
+                        cLApBrokenAntInfo
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This notification is generated whenever this AP sends the
+        antenna details, if any got broken or not"
+   ::= { ciscoLwappApMIBNotifs 33 }
 -- **********************************************************************************
 -- cLAPNtpInfoTable - NTP status for AP
 -- **********************************************************************************
@@ -14373,7 +14612,9 @@ ciscoLwappApGroupSup8 OBJECT-GROUP
                         cLApAuthorizeApMethodList,
                         cLApGlobalAPAuditReport,
                         cLApGlobalAPAuditReportInterval,
-                        cLApGlobalAPConnectCount
+                        cLApGlobalAPConnectCount,
+                        cLApAuthorizeApMacMethodList,
+                        cLApAuthorizeApSerialNumMethodList
                     }
     STATUS          current
     DESCRIPTION
@@ -15493,7 +15734,12 @@ ciscoLwappApProfileGroupSup4 OBJECT-GROUP
                         cLApProfileBssidEnableStats,
                         cLApProfileBssidStatsFrequency,
                         cLApProfilePersistentSsidBroadcastEnable,
-                        cLApProfileDhcpFallback
+                        cLApProfileDhcpFallback,
+                        cLApProfileOeapRogueDetectionEnable,
+                        cLApProfileOeapEncryptionEnable,
+                        cLApProfileOeapLocalAccessEnable,
+                        cLApProfileOeapProvSsidEnable,
+                        cLApProfileCountryCode
                     }
     STATUS          current
     DESCRIPTION
@@ -15724,6 +15970,7 @@ ciscoLwappApGroupSup14 OBJECT-GROUP
                         cLApDot11RadioChannelNumber,
                         cLApRogueApSsid,
                         cLApRogueType,
+                        cLApRogueDot11RadioBand,
                         cLApWipsReason,
                         cLApWipsClear,
                         cLApIfUpDownFailureType,
