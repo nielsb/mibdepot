@@ -4078,7 +4078,8 @@ fcIfModuleOverSubscriptionRatioConfig OBJECT-TYPE
 fcIfModuleBandwidthFairnessConfig OBJECT-TYPE
     SYNTAX          INTEGER  {
                         enable(1),
-                        disable(2)
+                        disable(2),
+                        notApplicable(3)
                     }
     MAX-ACCESS      read-write
     STATUS          current
@@ -4088,6 +4089,8 @@ fcIfModuleBandwidthFairnessConfig OBJECT-TYPE
 
         enable(1)  - Enables the bandwidth fairness
         disable(2) - Disables the bandwidth fairness 
+        notApplicable(3) - This value is read-only and is always returned for
+                           module which does not support this configuration
 
         By default, bandwidth fairness is enabled for a module. If the 
         user configures this object to disable (2), fair bandwidth 
@@ -4098,7 +4101,8 @@ fcIfModuleBandwidthFairnessConfig OBJECT-TYPE
 fcIfModuleBandwidthFairnessOper OBJECT-TYPE
     SYNTAX          INTEGER  {
                         enabled(1),
-                        disabled(2)
+                        disabled(2),
+                        notApplicable(3)
                     }
     MAX-ACCESS      read-only
     STATUS          current
@@ -4106,7 +4110,9 @@ fcIfModuleBandwidthFairnessOper OBJECT-TYPE
         "The operational status of bandwidth fairness on the module.
 
         enabled(1)  -  Bandwidth fairness is enabled on the module
-        disabled(2) -  Bandwidth fairness is disabled on the module" 
+        disabled(2) -  Bandwidth fairness is disabled on the module
+        notApplicable(3) - This value is read-only and is always returned for
+                           module which does not support this configuration"
     ::= { fcIfModuleEntry 3 }
 
 fcIfModuleXcvrFrequencyConfig OBJECT-TYPE
