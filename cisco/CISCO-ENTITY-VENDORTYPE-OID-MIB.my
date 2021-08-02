@@ -2072,6 +2072,8 @@ cevChassisESS930010XE                  OBJECT IDENTIFIER ::= { cevChassis 2401 }
 cevChassisDSC9220IK9                   OBJECT IDENTIFIER ::= { cevChassis 2402 } -- DS-C9220I-K9, Chassis for MDS 9220i Intelligent Fabric Switch, 12FC+6IPS 
 cevChassisN9KC9332DGX2B                OBJECT IDENTIFIER ::= { cevChassis 2403 } -- 1RU TOR fixed chassis with 32x400G+2x10G, QuadPeaks 25.6T 
 cevChassisASR9903                      OBJECT IDENTIFIER ::= { cevChassis 2404 } -- ASR 9903 Chassis
+cevChassisIR8140HK9                    OBJECT IDENTIFIER ::= { cevChassis 2405 } -- Cisco Catalyst IR8140H Heavy Duty Series Router
+cevChassisIR8140HPK9                   OBJECT IDENTIFIER ::= { cevChassis 2406 } -- Cisco Catalyst IR8140H Heavy Duty Series Router with PoE
 cevChassisC8500L8S4X                   OBJECT IDENTIFIER ::= { cevChassis 2408 } -- Cisco C8500L-8S4X chassis(4x10GE SFP+, 8x1GE SFP, 12Core, 16G FLASH, 16G DRAM)
 cevChassisC11138PLteEAWA               OBJECT IDENTIFIER ::= { cevChassis 2412 } -- Cisco C1113-8PLTEEAWA Router Chassis
 cevChassisN9KC9336CFX2E                OBJECT IDENTIFIER ::= { cevChassis 2413 } -- 1RU TOR fixed chassis with 36x40G/100G QSFP28 ports
@@ -2464,6 +2466,8 @@ cevContainerN77c7702FanBay              OBJECT IDENTIFIER ::= { cevContainer 337
 cevContainerASR1000XFanTrayBay          OBJECT IDENTIFIER ::= { cevContainer 338 } -- Cisco ASR1006-X/ASR1009-X Fan Tray Container
 cevContainerDSCAC1200W                  OBJECT IDENTIFIER ::= { cevContainer 339 } -- Container for 1200W AC Power Supply for MDS-9396 16G x 96 FC ports fabric switch
 cevContainerDSC96SFAN                   OBJECT IDENTIFIER ::= { cevContainer 340 } -- Fan Bay for MDS-9396 16G x 96 FC ports fabric switch
+cevContainerUCS6332PowerSupplyBay       OBJECT IDENTIFIER ::= { cevContainer 341 } -- Container for UCS 6332 PSU
+cevContainerUCS6332FanBay               OBJECT IDENTIFIER ::= { cevContainer 342 } -- Container for UCS 6332 Fan
 cevContainerASR9KPwrTraySlot            OBJECT IDENTIFIER ::= { cevContainer 343 } -- ASR9K Chassis Power Tray Slot 
 cevContainerDSCAC973KW                  OBJECT IDENTIFIER ::= { cevContainer 344 } -- Container for Power Supply Unit of MDS 18-Slot Director Switch, DS-C9718
 cevContainerDSC9718FAN                  OBJECT IDENTIFIER ::= { cevContainer 345 } -- Container for Fan module of MDS 18-Slot Director Switch, DS-C9718
@@ -2950,6 +2954,8 @@ cevPowerSupplySCE10000AC1200W           OBJECT IDENTIFIER ::= { cevPowerSupply 4
 cevPowerSupplySCE10000DC930W            OBJECT IDENTIFIER ::= { cevPowerSupply 481 } -- SCE10000 PSU Direct Current, 930 Watts
 cevPowerSupplyDSCAC1200WE               OBJECT IDENTIFIER ::= { cevPowerSupply 482 } -- 1200W AC Power Supply (port-side exhaust) for MDS-9396 16G x 96 FC ports fabric switch
 cevPowerSupplyDSCAC1200W                OBJECT IDENTIFIER ::= { cevPowerSupply 483 } -- 1200W AC Power Supply (bi-directional/ VE PSU) for MDS-9396 16G x 96 FC ports fabric switch
+cevPowerSupplyUCS6332AC                 OBJECT IDENTIFIER ::= { cevPowerSupply 487 } -- UCS 6332 Power Supply/100-240V AC
+cevPowerSupplyUCS6332DC                 OBJECT IDENTIFIER ::= { cevPowerSupply 488 } -- UCS 6332 DC Power Supply
 cevPowerSupplyASR9KACV2PWRTRAY          OBJECT IDENTIFIER ::= { cevPowerSupply 492 } -- ASR9K AC Power Tray Version 2 
 cevPowerSupplyASR9KDCV2PWRTRAY          OBJECT IDENTIFIER ::= { cevPowerSupply 493 } -- ASR9K DC Power Tray Version 2 
 cevPowerSupplyASR9KACV3PWRTRAY          OBJECT IDENTIFIER ::= { cevPowerSupply 494 } -- ASR9K AC Power Tray Version 3 
@@ -3179,6 +3185,7 @@ cevPowerSupplyNCS540LFHCSR              OBJECT IDENTIFIER ::= { cevPowerSupply 7
 cevPowerSupplyNCS540LFHAGG              OBJECT IDENTIFIER ::= { cevPowerSupply 758 } -- NCS540L series - N540-FH-AGG-SYS Power Supply Module
 cevPowerSupplyNCS540LFHIP65            OBJECT IDENTIFIER ::= { cevPowerSupply 759 } -- NCS540L series - N540-FH-IP65-SYS Power Supply Module
 cevPowerSupplyIR1800DC                 OBJECT IDENTIFIER ::= { cevPowerSupply 760 } -- Cisco IR1800 12V DC Power Supply
+cevPowerSupplyIRMHPWR60WAC              OBJECT IDENTIFIER ::= { cevPowerSupply 761 } -- 60W AC Power Supply module for IR8140
 cevPowerSupplyAC1600W                   OBJECT IDENTIFIER ::= { cevPowerSupply 762 } -- 1.6kW AC Power Module 
 cevPowerSupplyDC1600W                   OBJECT IDENTIFIER ::= { cevPowerSupply 763 } -- 1.6kW DC Power Module 
 cevPowerSupplyNXAPDC715WPE              OBJECT IDENTIFIER ::= { cevPowerSupply 764 } -- DC PSU 715W 
@@ -4304,6 +4311,7 @@ cevModule88LC036FHM                     OBJECT IDENTIFIER ::= { cevModuleCommonC
 cevModule88LC036FH                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 724 } -- Cisco 8800 88-LC0-36FH QSFP56-DD Line Card
 cevNCS10041200GLCDRLineCard             OBJECT IDENTIFIER ::= { cevModuleCommonCards 725 } -- Cisco NCS1004 1200G L-band CDR Line Card
 cevModuleIR1100SSD                      OBJECT IDENTIFIER ::= { cevModuleCommonCards 726 } -- IR mSATA SSD
+cevModuleIRMSSDMSATA100G                OBJECT IDENTIFIER ::= { cevModuleCommonCards 727 } -- 100GB MSATA SSD Module
 cevModuleN560IMA8Q4L                    OBJECT IDENTIFIER ::= { cevModuleCommonCards 729 } -- Introducing new multirate 10G/25G IM for NCS560
 cevModuleC9KF1SSD960G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 731 } -- This is 960GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
 cevModuleC9KF1SSD480G                   OBJECT IDENTIFIER ::= { cevModuleCommonCards 732 } -- This is 480GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
@@ -7590,6 +7598,8 @@ cevModuleC8500L8S4XSIP         OBJECT IDENTIFIER ::= { cevModuleASR1000Type 114 
 
 
 
+
+
 cevModuleCatRfgwType    OBJECT IDENTIFIER ::= { cevModule 69 }                  -- Cards that go into Rfgw chassis
 cevRfgwDtcc             OBJECT IDENTIFIER ::= { cevModuleCatRfgwType 1 }        -- DOCSIS Timing, Communication, and Control Plus Card for RF gateway
 cevRfgwQam48ABC         OBJECT IDENTIFIER ::= { cevModuleCatRfgwType 2 }        -- Card with 12 ports, each having 4 QAM (Quadrature Amplitude Modulation)channels, based on ITU-T J.83 Annex A, B & C
@@ -8408,6 +8418,7 @@ cevUCSFI6296UPFixedModule  OBJECT IDENTIFIER ::= { cevModuleUCSType 9 }         
 cevUCSFIDL2                OBJECT IDENTIFIER ::= { cevModuleUCSType 10 }        -- UCS 6248 Layer 2 Daughter Card
 cevUCSFIM6324FixedModule   OBJECT IDENTIFIER ::= { cevModuleUCSType 171 }         -- Fixed Module within Cisco UCS 6324 Fabric InterConnect 
 cevUCSFI6332FixedModule    OBJECT IDENTIFIER ::= { cevModuleUCSType 172 }         -- Fixed Module within Cisco UCS 6332 Fabric InterConnect
+cevUCSFI633216UPFixedModule OBJECT IDENTIFIER ::= { cevModuleUCSType 173 }        -- Fixed Module within Cisco UCS 6332-16UP Fabric InterConnect
 cevUCSIOM2304Q             OBJECT IDENTIFIER ::= { cevModuleUCSType 176 }         -- 4 ports 40G Network Facing and 8 ports 40G Host Facing
 cevUCSFI6454FixedModule    OBJECT IDENTIFIER ::= { cevModuleUCSType 182 }         -- Fixed Module within Cisco UCS 6454 Fabric InterConnect with 40x10G/25G + 6x40G/100G + 8 UP Ports
 cevUCSE180DM3K9            OBJECT IDENTIFIER ::= { cevModuleUCSType 183 }         -- Cisco Integrated Management Controller (CIMC) UCS-E180D-M3/K9
@@ -8594,6 +8605,8 @@ cevModuleCSR1000vESP      OBJECT IDENTIFIER ::= { cevModuleCSR1000vType 2 } -- C
 cevModuleCSRC8000VRP      OBJECT IDENTIFIER ::= { cevModuleCSR1000vType 4 } -- Cisco Catalyst 8000V Edge Route Processor
 cevModuleCSRC8000VESP     OBJECT IDENTIFIER ::= { cevModuleCSR1000vType 5 } -- Cisco Catalyst 8000V Edge Embedded Services Processor
 cevModuleCSRC8000VNIM     OBJECT IDENTIFIER ::= { cevModuleCSR1000vType 6 } -- Cisco Catalyst 8000V Edge NIM controller
+
+
  
 cevModuleCgrType              OBJECT IDENTIFIER ::= { cevModule 91 }           -- cevModuleCgrType Modules
 cevModuleCGMPlc               OBJECT IDENTIFIER ::= { cevModuleCgrType 18 } -- Connected Grid Module - PLC Module
@@ -8965,6 +8978,17 @@ cevModuleISR1100X6GFP       OBJECT IDENTIFIER ::= { cevModuleISRType 257 } -- Ci
 cevModuleISR1100X6GSIP      OBJECT IDENTIFIER ::= { cevModuleISRType 258 } -- Cisco ISR1100X-6G SPA Interface Processor Module 
 cevModuleISRFLteNA          OBJECT IDENTIFIER ::= { cevModuleISRType 259 } -- WP7610 based fixed module for  Cisco ISR1100-4GLTE-NA 
 cevModuleISRFLteGB          OBJECT IDENTIFIER ::= { cevModuleISRType 260 } -- WP7607 based fixed module for  Cisco ISR1100-4GLTE-GB 
+cevModuleIRMHSUPSP          OBJECT IDENTIFIER ::= { cevModuleISRType 261 } -- Supervisor Module with 1 Copper + 1 Fiber Port for IR8140
+cevModuleIRMHWPANNA         OBJECT IDENTIFIER ::= { cevModuleISRType 262 } -- IEEE 802.15.4e/g 900Mhz WPAN Module for North America
+cevModuleIRMHWPANBRZ        OBJECT IDENTIFIER ::= { cevModuleISRType 263 } -- IEEE 802.15.4e/g 900Mhz WPAN Module for Brazil
+cevModuleIRMHWPANANZ        OBJECT IDENTIFIER ::= { cevModuleISRType 264 } -- IEEE 802.15.4e/g 900Mhz WPAN Module for AUS and NZ
+cevModuleIRMHLTEMNA         OBJECT IDENTIFIER ::= { cevModuleISRType 265 } -- Multi-carrier band-14 CAT4 LTE Module for North America
+cevModuleIRMHLTEMNA900      OBJECT IDENTIFIER ::= { cevModuleISRType 266 } -- Multi-carrier band-14 CAT4 LTE Module for NA w/900Mhz filter
+cevModuleIRMHLTEAEA         OBJECT IDENTIFIER ::= { cevModuleISRType 267 } -- CAT6 LTEA Module for Europe and North America
+cevModuleIRMHLTEAEA900      OBJECT IDENTIFIER ::= { cevModuleISRType 268 } -- CAT6 LTEA Module for North America w/900Mhz filter
+cevModuleIRMHLTEALA         OBJECT IDENTIFIER ::= { cevModuleISRType 269 } -- CAT6 LTEA Module for APAC, LATAM and ANZ
+cevModuleIRMHLTEAP18GL      OBJECT IDENTIFIER ::= { cevModuleISRType 270 } -- CAT18 LTEA PRO Module for ALL Global Regions
+cevModuleIRMHBATT4AH        OBJECT IDENTIFIER ::= { cevModuleISRType 271 } -- 4 AH Battery Backup for IR8140
 cevModuleISRTypeCNIM2T      OBJECT IDENTIFIER ::= { cevModuleISRType 277 } -- network interface module with 2x1G combo ethernet ports
 cevModuleISRTypeCNIM1M      OBJECT IDENTIFIER ::= { cevModuleISRType 278 } -- network interface module with one mGig ethernet port
 
@@ -9472,8 +9496,6 @@ cevModuleC930048UB                     OBJECT IDENTIFIER ::= { cevModule93xxType
 cevModuleC930024UB                     OBJECT IDENTIFIER ::= { cevModule93xxType 14 } -- Catalyst 9300 24-port UPOE switch with support of deepbuffer feature for all interfaces
 cevModuleC930024H                        OBJECT IDENTIFIER ::= { cevModule93xxType 15 } -- Catalyst 9300 24-port UPOE+ switch
 cevModuleC930048H                        OBJECT IDENTIFIER ::= { cevModule93xxType 16 } -- Catalyst 9300 48-port UPOE+ switch
-
-
  
 
 cevModule94xxType                       OBJECT IDENTIFIER ::= { cevModule 128 } -- Module for 94xx Types 
@@ -9574,8 +9596,6 @@ cevModule9300L24UXG2Q                   OBJECT IDENTIFIER ::= { cevModule9300LTy
 cevModule9300L48UXG2Q                   OBJECT IDENTIFIER ::= { cevModule9300LType 12 } -- Catalyst 9300L 36 x 10/100/1000M + 12 x 100M/1000M/2.5G/5G/10G, 2 x 40G QSFP+ Uplink, UPOE, Stackable Data, 1RU
 cevModule9300L48PF4X                    OBJECT IDENTIFIER ::= { cevModule9300LType 13 } --  Catalyst 9300L 48 x 10/100/1000M, PoE+, 4 x 10G SFP+ Uplink, Stackable Data, 1RU, 1100 FEP
 cevModule9300L48PF4G                    OBJECT IDENTIFIER ::= { cevModule9300LType 14 } --  Catalyst 9300L 48 x 10/100/1000M, PoE+, 4 x 1G SFP Uplink, Stackable Data, 1RU, 1100 FEP
-
-
 
 cevModuleQSFPDD              OBJECT IDENTIFIER ::= { cevModule 139  } --  QSFPDD group of Optics
 cevQSFP400GCU1M              OBJECT IDENTIFIER ::= { cevModuleQSFPDD 1 } -- 400GBASE-CR4 Passive Copper Cable, 1m
