@@ -6,7 +6,7 @@
 -- Jul 2014, Sreejith Sreekumaran
 -- Jan 2016, Kishan Panchangam
 --   
--- Copyright (c) 2014-2017, 2020 by Cisco Systems Inc.
+-- Copyright (c) 2017, 2020-2021 by cisco Systems, Inc.
 -- All rights reserved.
 --   
 -- The Structure looks like this
@@ -34,7 +34,8 @@ IMPORTS
     OBJECT-TYPE,
     NOTIFICATION-TYPE,
     Unsigned32,
-    Integer32
+    Integer32,
+    OBJECT-IDENTITY
         FROM SNMPv2-SMI
     MODULE-COMPLIANCE,
     NOTIFICATION-GROUP,
@@ -49,7 +50,7 @@ IMPORTS
 
 
 ciscoSmartLicMIB MODULE-IDENTITY
-    LAST-UPDATED    "202006210000Z"
+    LAST-UPDATED    "202107270000Z"
     ORGANIZATION    "Cisco Systems, Inc."
     CONTACT-INFO
             "Cisco Systems
@@ -153,6 +154,12 @@ ciscoSmartLicMIB MODULE-IDENTITY
         This MIB module also defines various notifications that
         will be triggered to asynchronously notify the management
         application of any critical events."
+    REVISION        "202107210000Z"
+    DESCRIPTION
+        "Documentaiton change for few of the existing OIDs.
+
+        Also added new traps for few more new notifications
+        for Policy mode."
     REVISION        "202006210000Z"
     DESCRIPTION
         "Documentaiton change."
@@ -203,7 +210,7 @@ ciscoSlaInstanceId OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "This field contains the smart licence agent's instance number"
+        "This field contains the smart licence agent's instance number" 
     ::= { ciscoSlaMIBObjects 1 }
 
 ciscoSlaSUDIInfo OBJECT-TYPE
@@ -228,7 +235,7 @@ ciscoSlaEnabled OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Tells whether the Smart Licensing mode is enabled or not."
+        "Tells whether the Smart Licensing mode is enabled or not." 
     ::= { ciscoSlaMIBObjects 4 }
 -- - Smart License Entitlements
 
@@ -259,13 +266,13 @@ ciscoSlaEntitlementInfoEntry OBJECT-TYPE
     ::= { ciscoSlaEntitlementInfoTable 1 }
 
 CiscoSlaEntitlementInfoEntry ::= SEQUENCE {
-        ciscoSlaEntitlementInfoIndex    Unsigned32,
-        ciscoSlaEntitlementRequestCount Unsigned32,
-        ciscoSlaEntitlementTag          SnmpAdminString,
-        ciscoSlaEntitlementVersion      SnmpAdminString,
-        ciscoSlaEntitlementEnforceMode  INTEGER,
-        ciscoSlaEntitlementDescription  SnmpAdminString,
-        ciscoSlaEntitlementFeatureName  SnmpAdminString,
+        ciscoSlaEntitlementInfoIndex     Unsigned32,
+        ciscoSlaEntitlementRequestCount  Unsigned32,
+        ciscoSlaEntitlementTag           SnmpAdminString,
+        ciscoSlaEntitlementVersion       SnmpAdminString,
+        ciscoSlaEntitlementEnforceMode   INTEGER,
+        ciscoSlaEntitlementDescription   SnmpAdminString,
+        ciscoSlaEntitlementFeatureName   SnmpAdminString,
         ciscoSlaEntitlementExportAllowed INTEGER
 }
 
@@ -352,12 +359,14 @@ ciscoSlaEntitlementEnforceMode OBJECT-TYPE
                                              -- registered.
                         evaluationExpired(7), -- Evaluation period has
                                               -- expired.
-                        authorizationExpired(8), -- Authorization period has expired.
-                                                 -- This will occur if the device has not
-                                                 -- has not been able to
-                                                 -- communicate with Cisco for an
-                                                 -- extended period of time
-                                                 -- usually 90 days.
+                        authorizationExpired(8), -- Authorization period
+                                                 -- has expired. This will
+                                                 -- occur if the device
+                                                 -- has not has not been
+                                                 -- able to communicate
+                                                 -- with Cisco for an
+                                                 -- extended period of
+                                                 -- time usually 90 days.
                         gracePeriodExpired(9), -- The grace period has
                                                -- expired. This means
                                                -- the device has not
@@ -368,31 +377,39 @@ ciscoSlaEntitlementEnforceMode OBJECT-TYPE
                                       -- deactivated or disabled. The
                                       -- application should disable the
                                       -- feature using this entitlement.
-                        reservedAuthorized(11), -- Authorized and reservation 
-                                                -- authorization code is installed.
+                        reservedAuthorized(11), -- Authorized and
+                                                -- reservation
+                                                -- authorization code is
+                                                -- installed.
                         invalidTag(12), -- The entitlement tag is
-                                       -- invalid. The Licensing
-                                       -- backend at Cisco
-                                       -- does not recognize the
-                                       -- entitlement tag because it is
-                                       -- not in the database. 
-                        notAuthorized(13) -- SLR authorization code is
-                                          -- installed and it does not 
-                                          -- contain one or more already
-                                          -- consumed license.
-                                          -- Or it does not contain enough 
-                                          -- count for one or more license
-                                          -- already consumed.
+                                        -- invalid. The Licensing
+                                        -- backend at Cisco
+                                        -- does not recognize the
+                                        -- entitlement tag because it is
+                                        -- not in the database.
+                        notAuthorized(13), -- SLR authorization code is
+                                           -- installed and it does not
+                                           -- contain one or more already
+                                           -- consumed license. Or it does
+                                           -- not contain enough count for
+                                           -- one or more license already
+                                           -- consumed.
+                        notApplicable(14), -- Policy mode enforcement
+                                           -- mode. Not used any more.
+                        inUse(15), -- Policy mode enforcement mode.
+                                   -- Entitlements are in use.
+                        notInUse(16) -- Policy mode enforcement mode.
+                                     -- Entitlements are in use.                        
                     }
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Enforce Mode. This denotes  the enforcement mode for 
+        "Enforce Mode. This denotes  the enforcement mode for
         the entitlement tag.
 
         * In Entitlement notifications this will indicate the
         enforcement mode of an individual entitlement.
-        
+
         * In global notifications this indicates the overall
         enforcement mode in the agent." 
     ::= { ciscoSlaEntitlementInfoEntry 5 }
@@ -416,7 +433,7 @@ ciscoSlaEntitlementFeatureName OBJECT-TYPE
         The feature name is only available after the agent receives a
         response, from Cisco, to an Authorization request." 
     ::= { ciscoSlaEntitlementInfoEntry 7 }
-    
+
 ciscoSlaEntitlementExportAllowed OBJECT-TYPE
     SYNTAX          INTEGER  {
                         false(0), -- The entitlement is export restricted
@@ -425,7 +442,7 @@ ciscoSlaEntitlementExportAllowed OBJECT-TYPE
                         true(1) -- Either the entitlement is not export
                                 -- restricted so device is allowed to use
                                 -- it. Or it's export restricted but
-                                -- still device is is allowed to use it.
+                                -- still device is is allowed to use it.                        
                     }
     MAX-ACCESS      read-only
     STATUS          current
@@ -454,15 +471,16 @@ ciscoSlaRegistrationStatus OBJECT-TYPE
                                                         -- Progress
                         registrationCompleted(5) -- Smart Agent
                                                  -- registration
-                                                 -- completed.
+                                                 -- completed.                        
                     }
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
         "Smart Agent Registration Status. This is the status of the
         registration  initiated using the token generated from the
-        Cisco
-        Licensing portal." 
+        Cisco Licensing portal.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegistrationStatusInfo 1 }
 
 ciscoSlaVirtualAccount OBJECT-TYPE
@@ -471,7 +489,9 @@ ciscoSlaVirtualAccount OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "The virtual account name created in the Licensing Portal to
-        which this device will be registered." 
+        which this device will be registered.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegistrationStatusInfo 2 }
 
 ciscoSlaNextCertificateExpireTime OBJECT-TYPE
@@ -480,7 +500,9 @@ ciscoSlaNextCertificateExpireTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "The next expiration date/time of ID Certificate in UTC epoch
-        seconds." 
+        seconds.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegistrationStatusInfo 3 }
 
 ciscoSlaEnterpriseAccountName OBJECT-TYPE
@@ -489,7 +511,9 @@ ciscoSlaEnterpriseAccountName OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "The enterprise account name as configured in the Cisco
-        Licensing Portal." 
+        Licensing Portal.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegistrationStatusInfo 4 }
 -- Initial Registration Times
 
@@ -503,8 +527,9 @@ ciscoSlaRegisterInitTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Time in UTC epoch seconds when the Registration of the Smart
-        Agent
-        was initialized." 
+        Agent was initialized.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegisterTime 1 }
 
 ciscoSlaRegisterSuccess OBJECT-TYPE
@@ -512,7 +537,9 @@ ciscoSlaRegisterSuccess OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Status of the last attempted Registration of Smart Agent" 
+        "Status of the last attempted Registration of Smart Agent.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegisterTime 2 }
 
 ciscoSlaRegisterFailureReason OBJECT-TYPE
@@ -520,7 +547,9 @@ ciscoSlaRegisterFailureReason OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Reason for the failure of the last Registration Attempt" 
+        "Reason for the failure of the last Registration Attempt.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegisterTime 3 }
 
 ciscoSlaRegisterNextRetryTime OBJECT-TYPE
@@ -529,7 +558,9 @@ ciscoSlaRegisterNextRetryTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Time in UTC epoch seconds when the next registration attempt
-        will be made." 
+        will be made.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRegisterTime 4 }
 -- Renew Registration Times
 
@@ -543,7 +574,9 @@ ciscoSlaRenewInitTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Time in UTC epoch seconds when the ID Cert renewal was
-        initialized" 
+        initialized.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRenewTime 1 }
 
 ciscoSlaRenewSuccess OBJECT-TYPE
@@ -551,7 +584,9 @@ ciscoSlaRenewSuccess OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Status of Renewal of ID Certificate" 
+        "Status of Renewal of ID Certificate.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRenewTime 2 }
 
 ciscoSlaRenewFailureReason OBJECT-TYPE
@@ -559,7 +594,9 @@ ciscoSlaRenewFailureReason OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Reason for the failure of the last attempted ID Cert Renewal" 
+        "Reason for the failure of the last attempted ID Cert Renewal.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRenewTime 3 }
 
 ciscoSlaRenewNextRetryTime OBJECT-TYPE
@@ -568,7 +605,9 @@ ciscoSlaRenewNextRetryTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Time in UTC epoch seconds when the next ID Cert  renewal will
-        be tried." 
+        be tried.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaRenewTime 4 }
 -- - Authorization Info
 
@@ -582,8 +621,9 @@ ciscoSlaAuthExpireTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "The time in UTC epoch seconds  when the authorization will
-        expire if
-        not renewed" 
+        expire if not renewed.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthorizationInfo 1 }
 
 ciscoSlaAuthComplianceStatus OBJECT-TYPE
@@ -591,7 +631,9 @@ ciscoSlaAuthComplianceStatus OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Overall enforcement status of Smart Licensing in the device." 
+        "Overall enforcement status of Smart Licensing in the device.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthorizationInfo 2 }
 
 ciscoSlaAuthOOCStartTime OBJECT-TYPE
@@ -600,8 +642,9 @@ ciscoSlaAuthOOCStartTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "The  time in UTC epoch seconds Smart Agent entered Out of
-        Compliance state for this
-        device." 
+        Compliance state for this device.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthorizationInfo 3 }
 -- Authorization Info Eval Period
 
@@ -614,7 +657,9 @@ ciscoSlaAuthEvalPeriodInUse OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Indicates if the Evaluation Period is in Use or not" 
+        "Indicates if the Evaluation Period is in Use or not.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthEvalPeriod 1 }
 
 ciscoSlaAuthEvalExpiredTime OBJECT-TYPE
@@ -623,7 +668,9 @@ ciscoSlaAuthEvalExpiredTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Time in UTC epoch seconds  when the Evaluation Period had
-        expired." 
+        expired.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthEvalPeriod 2 }
 
 ciscoSlaAuthEvalPeriodLeft OBJECT-TYPE
@@ -631,7 +678,9 @@ ciscoSlaAuthEvalPeriodLeft OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "Amount of Time left in the Evaluation Period" 
+        "Amount of Time left in the Evaluation Period.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthEvalPeriod 3 }
 -- Authorization Renewal
 
@@ -645,7 +694,9 @@ ciscoSlaAuthRenewInitTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Smart Agent Authorization Renewal Initialization Time in UTC
-        epoch seconds" 
+        epoch seconds.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthRenewTime 1 }
 
 ciscoSlaAuthRenewSuccess OBJECT-TYPE
@@ -654,7 +705,9 @@ ciscoSlaAuthRenewSuccess OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Indicates if the Authorization Renewal was successful
-        or not" 
+        or not.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthRenewTime 2 }
 
 ciscoSlaAuthRenewFailureReason OBJECT-TYPE
@@ -662,7 +715,9 @@ ciscoSlaAuthRenewFailureReason OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "The reason for the failure of the last renewal request." 
+        "The reason for the failure of the last renewal request.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthRenewTime 3 }
 
 ciscoSlaAuthRenewNextRetryTime OBJECT-TYPE
@@ -671,7 +726,9 @@ ciscoSlaAuthRenewNextRetryTime OBJECT-TYPE
     STATUS          current
     DESCRIPTION
         "Time in UTC epoch seconds when the next renewal will be
-        retried." 
+        retried.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaAuthRenewTime 4 }
 -- - Notification Objects
 
@@ -692,11 +749,13 @@ ciscoSlaGlobalNotifEnable OBJECT-TYPE
          ciscoSlaSmartAgentNotifyEnabled,
          ciscoSlaSmartAgentNotifyDisabled,                            
          ciscoSlaSmartAgentNotifyRegisterFailed,                       
-         ciscoSlaSmartAgentNotifyRegisterSuccess,                       
+         ciscoSlaSmartAgentNotifyRegisterSuccess,                      
+
          ciscoSlaSmartAgentNotifyIdCertExpired,                       
          ciscoSlaSmartAgentNotifyIdCertRenewSuccess,
          ciscoSlaSmartAgentNotifyIdCertRenewFail,                      
-         ciscoSlaSmartAgentNotifyAuthRenewSuccess,                      
+         ciscoSlaSmartAgentNotifyAuthRenewSuccess,                     
+
          ciscoSlaSmartAgentNotifyAuthRenewFail,                       
          ciscoSlaSmartAgentNotifyCommunicationFailure,
          ciscoSlaSmartAgentNotifyCommunicationRestored,              
@@ -735,7 +794,13 @@ ciscoSlaGlobalNotifEnable OBJECT-TYPE
          ciscoSlaSmartAgentNotifyRUMACKNotReceived,
          ciscoSlaSmartAgentNotifyRUMACKReceived,
          ciscoSlaSmartAgentNotifyAuthorizationInstallFailed,
-         ciscoSlaSmartAgentNotifyReportingRequired"
+         ciscoSlaSmartAgentNotifyReportingRequired,
+         ciscoSlaSmartAgentNotifyPolicyInstallFailed,
+         ciscoSlaSmartAgentNotifyPolicyInstallSuccess,
+         ciscoSlaSmartAgentNotifyReportingNotSupported,
+         ciscoSlaSmartAgentNotifyTrustInstallSuccess,
+         ciscoSlaSmartAgentNotifyTrustInstallFailed,
+         ciscoSlaSmartAgentNotifyPolicyInitialACKState"
     DEFVAL          { true } 
     ::= { ciscoSlaNotifObjects 1 }
 
@@ -748,7 +813,7 @@ ciscoSlaEntitlementNotifEnable OBJECT-TYPE
         the  notifications related to entitlement enforce mode in Smart
         Agent. This object
         enables/disables sending following notifications:
-        ciscoSlaSmartAgentNotifyEntitlementEnforceMode"
+        ciscoSlaSmartAgentNotifyEntitlementEnforceMode" 
     ::= { ciscoSlaNotifObjects 2 }
 -- De Registration Info objects
 
@@ -764,15 +829,18 @@ ciscoSlaFailureReason OBJECT-TYPE
                         dailyJobTimerReset(2), -- Smart Agent
                                                -- Daily Job timer reset
                         deRegisterFailure(3) -- Generic failure reason
-                                              -- for de-register
-                                              -- Specific reason is in ciscoSlaDeRegisterFailureMsg
+                                             -- for de-register
+                                             -- Specific reason is in ciscoSlaDeRegisterFailureMsg                        
                     }
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
         "Smart Agent Registration/de-registration failure reasons. This
-        should be received in response message from Cisco Smart Software
-        Manager." 
+        should be received in response message from Cisco Smart
+        Software
+        Manager.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaDeRegistrationInfo 1 }
 
 ciscoSlaDeRegisterFailureMsg OBJECT-TYPE
@@ -780,7 +848,9 @@ ciscoSlaDeRegisterFailureMsg OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "The failure message of the last deregistration request." 
+        "The failure message of the last deregistration request.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode." 
     ::= { ciscoSlaDeRegistrationInfo 2 }
 -- Third party and Utility Info objects
 
@@ -837,6 +907,44 @@ ciscoSlaDaysReportingRequired OBJECT-TYPE
     DESCRIPTION
         "Number of days within which reporting has to be done." 
     ::= { ciscoSlaReportingInfo 2 }
+ciscoSlaPolicyModeInfo  OBJECT IDENTIFIER
+    ::= { ciscoSlaMIBObjects 13 }
+
+
+ciscoSlaPolicyModeFailureMessage OBJECT-TYPE
+    SYNTAX          SnmpAdminString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "Failure message in string format.
+        This OID value is not persisted. SNMP get or SNMP walk would not
+        fetch a proper value for this OID.
+
+        Policy Mode OID: This OID is only relevant when Smart Agent is
+        operating in Policy mode." 
+    ::= { ciscoSlaPolicyModeInfo 1 }
+
+ciscoSlaPolicyModeInitialACKState OBJECT-TYPE
+    SYNTAX          Integer32
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "Current RUM report ACK status in device, dictated by installed
+        policy. Enum Includes:
+        invalid = 0
+        ackNotRequired = 1
+        reportNotRequired = 2
+        received = 3
+        notReceived = 4
+        expired = 5
+
+        This OID value is not persisted. SNMP get or SNMP walk would
+        not
+        fetch a proper valuefor this OID.
+
+        Policy Mode OID: This OID is only relevant when Smart Agent is
+        operating in Policy mode." 
+    ::= { ciscoSlaPolicyModeInfo 2 }
 -- Smart License MIB Notify
 
 ciscoSlaMIBNotifs  OBJECT IDENTIFIER
@@ -883,7 +991,9 @@ ciscoSlaSmartAgentNotifyRegisterFailed NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing registration
-        with Cisco Software Manager has failed"
+        with Cisco Software Manager has failed.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 5 }
 
 ciscoSlaSmartAgentNotifyRegisterSuccess NOTIFICATION-TYPE
@@ -891,7 +1001,9 @@ ciscoSlaSmartAgentNotifyRegisterSuccess NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing registration
-        with Cisco Software Manager has succeeded."
+        with Cisco Software Manager has succeeded.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 6 }
 
 ciscoSlaSmartAgentNotifyIdCertExpired NOTIFICATION-TYPE
@@ -899,7 +1011,9 @@ ciscoSlaSmartAgentNotifyIdCertExpired NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing ID (node)
-        certificate has expired"
+        certificate has expired.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 7 }
 
 ciscoSlaSmartAgentNotifyIdCertRenewSuccess NOTIFICATION-TYPE
@@ -907,7 +1021,9 @@ ciscoSlaSmartAgentNotifyIdCertRenewSuccess NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing ID (node)
-        certificate renewal has succeded."
+        certificate renewal has succeded.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 8 }
 
 ciscoSlaSmartAgentNotifyIdCertRenewFail NOTIFICATION-TYPE
@@ -915,7 +1031,9 @@ ciscoSlaSmartAgentNotifyIdCertRenewFail NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing ID (node)
-        certificate renewal has failed."
+        certificate renewal has failed.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 9 }
 
 ciscoSlaSmartAgentNotifyAuthRenewSuccess NOTIFICATION-TYPE
@@ -923,7 +1041,9 @@ ciscoSlaSmartAgentNotifyAuthRenewSuccess NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing entitlement
-        (AUTH) renew was successful."
+        (AUTH) renew was successful.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 10 }
 
 ciscoSlaSmartAgentNotifyAuthRenewFail NOTIFICATION-TYPE
@@ -931,7 +1051,9 @@ ciscoSlaSmartAgentNotifyAuthRenewFail NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart licensing entitlement
-        (AUTH) renew has failed"
+        (AUTH) renew has failed.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 11 }
 
 ciscoSlaSmartAgentNotifyCommunicationFailure NOTIFICATION-TYPE
@@ -955,7 +1077,9 @@ ciscoSlaSmartAgentNotifyIdCertRenewNotStarted NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when Smart Agent
-        Id (Node) certificate renewal is not started"
+        Id (Node) certificate renewal is not started.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 14 }
 
 ciscoSlaSmartAgentNotifyEntitlementEnforceMode NOTIFICATION-TYPE
@@ -979,7 +1103,9 @@ ciscoSlaSmartAgentNotifyIdCertOutOfRange NOTIFICATION-TYPE
         "This notification is sent when the ID certificate is
         out of the valid range after the system clock changed.
         It means the current time is either before the start time or
-        after the end time of the certificate."
+        after the end time of the certificate.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 16 }
 
 ciscoSlaSmartAgentNotifySystemClockChanged NOTIFICATION-TYPE
@@ -994,7 +1120,9 @@ ciscoSlaSmartAgentNotifyEvalExpiryWarning NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent to warn regarding the impending
-        evaluation  time expiry."
+        evaluation  time expiry.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 18 }
 
 ciscoSlaSmartAgentNotifyEvalExpired NOTIFICATION-TYPE
@@ -1002,7 +1130,9 @@ ciscoSlaSmartAgentNotifyEvalExpired NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent to notify the expiration of the
-        evaluation period."
+        evaluation period.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 19 }
 
 ciscoSlaSmartAgentNotifyIdCertExpiryWarning NOTIFICATION-TYPE
@@ -1010,16 +1140,20 @@ ciscoSlaSmartAgentNotifyIdCertExpiryWarning NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent to warn regarding the impending
-        expiry of the id (node) certificate."
+        expiry of the id (node) certificate.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 20 }
-   
+
 ciscoSlaSmartAgentNotifyDeRegisterSuccess NOTIFICATION-TYPE
     OBJECTS         { ciscoSlaSUDIInfo }
     STATUS          current
     DESCRIPTION
         "This notification is sent to inform that the product has
         successfully un-registered with the Cisco Smart Software 
-        Manager."
+        Manager.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 21 }
 
 ciscoSlaSmartAgentNotifyDeRegisterFailed NOTIFICATION-TYPE
@@ -1034,7 +1168,9 @@ ciscoSlaSmartAgentNotifyDeRegisterFailed NOTIFICATION-TYPE
         Manager has send error in de-registration response.
         The agent will locally remove all registration information and 
         transition back to the unidentified (not-registered) state.
-        CSSM would not know the agent is un-registered."
+        CSSM would not know the agent is un-registered.
+        This OID is not relevant when Smart Agent is operating in Policy
+        mode."
    ::= { ciscoSlaMIBNotifs 22 }
 
 ciscoSlaSmartAgentNotifyThirdpartyModeEnabled NOTIFICATION-TYPE
@@ -1219,7 +1355,9 @@ ciscoSlaSmartAgentNotifyAuthorizationInstall NOTIFICATION-TYPE
         - A new authorization code has been installed and has
         overwritten a previous code.
         - The platform has delivered a list of entitlements to the
-        agent that may be authorized."
+        agent that may be authorized.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 40 }
 
 ciscoSlaSmartAgentNotifyAuthorizationRemove NOTIFICATION-TYPE
@@ -1227,7 +1365,9 @@ ciscoSlaSmartAgentNotifyAuthorizationRemove NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when an authorization code has
-        been removed."
+        been removed.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 41 }
 
 ciscoSlaSmartAgentNotifyPolicyInstalled NOTIFICATION-TYPE
@@ -1235,7 +1375,9 @@ ciscoSlaSmartAgentNotifyPolicyInstalled NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when policy file is installed in
-        device."
+        device.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 42 }
 
 ciscoSlaSmartAgentNotifyPolicyRemoved NOTIFICATION-TYPE
@@ -1243,7 +1385,9 @@ ciscoSlaSmartAgentNotifyPolicyRemoved NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when policy file is removed from
-        device."
+        device.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 43 }
 
 ciscoSlaSmartAgentNotifyRUMACKNotReceived NOTIFICATION-TYPE
@@ -1255,14 +1399,18 @@ ciscoSlaSmartAgentNotifyRUMACKNotReceived NOTIFICATION-TYPE
     DESCRIPTION
         "This notification would be sent when RUM report ack has not
         been received in the time (in days) specified by the installed
-        policy."
+        policy.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 44 }
 
 ciscoSlaSmartAgentNotifyRUMACKReceived NOTIFICATION-TYPE
     OBJECTS         { ciscoSlaSUDIInfo }
     STATUS          current
     DESCRIPTION
-        "This notification is sent when a RUM report ACK is received."
+        "This notification is sent when a RUM report ACK is received.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 45 }
 
 ciscoSlaSmartAgentNotifyAuthorizationInstallFailed NOTIFICATION-TYPE
@@ -1270,7 +1418,9 @@ ciscoSlaSmartAgentNotifyAuthorizationInstallFailed NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when an attempt to install licensing
-        authorization code is failed."
+        authorization code is failed.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 46 }
 
 ciscoSlaSmartAgentNotifyReportingRequired NOTIFICATION-TYPE
@@ -1281,8 +1431,77 @@ ciscoSlaSmartAgentNotifyReportingRequired NOTIFICATION-TYPE
     STATUS          current
     DESCRIPTION
         "This notification is sent when a license is in use that was not
-        purchased so reporting will be required at the time specified."
+        purchased so reporting will be required at the time specified.
+        This OID is only relevant when Smart Agent is operating in
+        Policy mode."
    ::= { ciscoSlaMIBNotifs 47 }
+
+ciscoSlaSmartAgentNotifyPolicyInstallFailed NOTIFICATION-TYPE
+    OBJECTS         {
+                        ciscoSlaSUDIInfo,
+                        ciscoSlaPolicyModeFailureMessage
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent when Policy installation fails.
+
+        Policy Mode Notification: This notificaiton/OID is exclussive
+        for Policy mode of operation."
+   ::= { ciscoSlaMIBNotifs 48 }
+
+ciscoSlaSmartAgentNotifyPolicyInstallSuccess NOTIFICATION-TYPE
+    OBJECTS         { ciscoSlaSUDIInfo }
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent when Policy installation is
+        Successful.
+
+        Policy Mode Notification: This notificaiton/OID is exclussive
+        for Policy mode of operation."
+   ::= { ciscoSlaMIBNotifs 49 }
+
+ciscoSlaSmartAgentNotifyReportingNotSupported NOTIFICATION-TYPE
+    OBJECTS         { ciscoSlaSUDIInfo }
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent when backend sserver (in most cases
+        on-Prem) does not support reporting.
+
+        Policy Mode Notification: This notificaiton/OID is exclussive
+        for Policy mode of operation."
+   ::= { ciscoSlaMIBNotifs 50 }
+
+ciscoSlaSmartAgentNotifyTrustInstallSuccess NOTIFICATION-TYPE
+    OBJECTS         { ciscoSlaSUDIInfo }
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent when Trust is installed
+        successfully.
+
+        Policy Mode Notification: This notificaiton/OID is exclussive
+        for Policy mode of operation."
+   ::= { ciscoSlaMIBNotifs 51 }
+
+ciscoSlaSmartAgentNotifyTrustInstallFailed NOTIFICATION-TYPE
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent when Trust installation fails.
+
+        Policy Mode Notification: This notificaiton/OID is exclussive
+        for Policy mode of operation."
+   ::= { ciscoSlaMIBNotifs 52 }
+
+ciscoSlaSmartAgentNotifyPolicyInitialACKState NOTIFICATION-TYPE
+    OBJECTS         {
+                        ciscoSlaSUDIInfo,
+                        ciscoSlaPolicyModeInitialACKState
+                    }
+    STATUS          current
+    DESCRIPTION
+        "This notification is sent during device bootup. It contains
+        current RUM acknowledgement state, discated by installed
+        policy."
+   ::= { ciscoSlaMIBNotifs 53 }
 -- Smart License MIB Conformance Objects
 
 ciscoSlaMIBConform  OBJECT IDENTIFIER
@@ -1310,7 +1529,8 @@ ciscoSlaMIBCompliance MODULE-COMPLIANCE
                         ciscoSlaMIBDeRegistrationInfoGroup,
                         ciscoSlaMIBThirdPartyAndUtilityInfoGroup,
                         ciscoSlaMIBExportInfoGroup,
-                        ciscoSlaMIBReportingInfoGroup
+                        ciscoSlaMIBReportingInfoGroup,
+                        ciscoSlaMIBPolicyModeInfoGroup
                     }
     ::= { ciscoSlaMIBCompliances 1 }
 -- - Conformance Groups
@@ -1403,7 +1623,13 @@ ciscoSlaMIBGlobalNotificationGroup NOTIFICATION-GROUP
                         ciscoSlaSmartAgentNotifyRUMACKNotReceived,
                         ciscoSlaSmartAgentNotifyRUMACKReceived,
                         ciscoSlaSmartAgentNotifyAuthorizationInstallFailed,
-                        ciscoSlaSmartAgentNotifyReportingRequired
+                        ciscoSlaSmartAgentNotifyReportingRequired,
+                        ciscoSlaSmartAgentNotifyPolicyInstallFailed,
+                        ciscoSlaSmartAgentNotifyPolicyInstallSuccess,
+                        ciscoSlaSmartAgentNotifyReportingNotSupported,
+                        ciscoSlaSmartAgentNotifyTrustInstallSuccess,
+                        ciscoSlaSmartAgentNotifyTrustInstallFailed,
+                        ciscoSlaSmartAgentNotifyPolicyInitialACKState
                     }
     STATUS          current
     DESCRIPTION
@@ -1501,6 +1727,17 @@ ciscoSlaMIBReportingInfoGroup OBJECT-GROUP
     DESCRIPTION
         "Please enter the description here"
     ::= { ciscoSlaMIBGroups 11 }
+
+ciscoSlaMIBPolicyModeInfoGroup OBJECT-GROUP
+    OBJECTS         {
+                        ciscoSlaPolicyModeFailureMessage,
+                        ciscoSlaPolicyModeInitialACKState
+                    }
+    STATUS          current
+    DESCRIPTION
+        "Collection of MIB object used for Policy mode notification
+        traps"
+    ::= { ciscoSlaMIBGroups 12 }
 
 END
 
