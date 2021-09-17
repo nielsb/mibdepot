@@ -25,32 +25,29 @@ IMPORTS
         FROM LLDP-V2-MIB
     VlanId
         FROM Q-BRIDGE-MIB
-    LldpV2LinkAggStatusMap
-        FROM LLDP-V2-TC-MIB
     IEEE8021PriorityValue 
         FROM IEEE8021-TC-MIB;
 
 lldpV2Xdot1MIB MODULE-IDENTITY
-    LAST-UPDATED "201103250000Z" -- March 25, 2011 
+    LAST-UPDATED "201806210000Z" -- June 21, 2018
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO 
-           "WG-URL: http://grouper.ieee.org/groups/802/1/index.html
-            WG-EMail: STDS-802-1-L@LISTSERV.IEEE.ORG
+           "WG-URL: http://www.ieee802.org/1/
+            WG-EMail: STDS-802-1-L@IEEE.ORG
 
-          Contact: Tony Jeffree
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
-                   P.O. Box 1331
                    Piscataway
-                   NJ 08855-1331
+                   NJ 08854
                    USA
-           E-mail: STDS-802-1-L@LISTSERV.IEEE.ORG"
+           E-mail: STDS-802-1-L@IEEE.ORG"
     DESCRIPTION
             "The LLDP Management Information Base extension module for
             IEEE 802.1 organizationally defined discovery information.
 
-            In order to assure the uniqueness of the LLDP-V2-MIB,
+            In order to ensure the uniqueness of the LLDP-V2-MIB,
             lldpV2Xdot1MIB is branched from lldpV2Extensions using an 
             Organizationally Unique Identifier (OUI) value as the node.
             An OUI is a 24 bit globally unique number assigned by the 
@@ -59,12 +56,44 @@ lldpV2Xdot1MIB MODULE-IDENTITY
             http://standards.ieee.org/develop/regauth/oui/index.html
 
             Unless otherwise indicated, the references in this
-            MIB module are to IEEE Std 802.1Q-2011.
+            MIB module are to IEEE Std 802.1Q.
 
-            Copyright (C) IEEE (2011).  This version of this MIB module
-            is published as Annex D.4.5 of IEEE Std 802.1Qaz-2011;
+            Copyright (C) IEEE (2018).  This version of this MIB module
+            is published as D.5.5 of IEEE Std 802.1Q;
             see the standard itself for full legal notices."
     
+    REVISION "201806210000Z" -- June 21, 2018
+
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q-2018 revision.
+            Cross references updated and corrected.
+            Changes introduced by IEEE Std 802.1Qcd-2015 and
+            IEEE Std 802.1Q-2014 Cor 1-2015 merged. "
+
+    REVISION "201502160000Z" -- February 16, 2015
+
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 Cor-1.
+            Updated as a result of maintenance items #0132 and #0152"
+            
+    REVISION "201502160000Z" -- February 16, 2015
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Qcd.
+            Adds Application VLAN TLV objects to the DCBX groups of
+            the MIB module."
+
+    REVISION "201412150000Z" -- December 15, 2014
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected.
+            New tables lldpV2Xdot1RemVidUsageDigestV2Table
+            and lldpV2Xdot1RemManVidV2Table inserted; old 
+            versions deprecated. New versions add an index for
+            lldpV2RemIndex. "
+            
     REVISION "201103250000Z" -- March 25, 2011 
     
     DESCRIPTION
@@ -91,7 +120,7 @@ lldpV2Xdot1MIB MODULE-IDENTITY
             This revision incorporated changes to the MIB to
             support the use of LLDP with multiple destination MAC
             addresses, and to import the Link Aggregation TLV
-            from the 802.3 extension MIB"
+            from the IEEE 802.3 extension MIB"
 
 -- OUI for IEEE 802.1 is 32962 (00-80-C2) 
    ::= { lldpV2Extensions 32962 }
@@ -111,6 +140,37 @@ lldpV2Xdot1Objects    OBJECT IDENTIFIER ::= { lldpV2Xdot1MIB 1 }
 lldpV2Xdot1Config     OBJECT IDENTIFIER ::= { lldpV2Xdot1Objects 1 }
 lldpV2Xdot1LocalData  OBJECT IDENTIFIER ::= { lldpV2Xdot1Objects 2 }
 lldpV2Xdot1RemoteData OBJECT IDENTIFIER ::= { lldpV2Xdot1Objects 3 }
+
+-----------------------------------------------------------------------
+-- Textual Convention definitions
+-----------------------------------------------------------------------
+
+LldpV2XLinkAggStatusMap ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+            "This TC describes the link aggregation status.
+
+            The bit 'aggCapable(0)' indicates the link is capable of being
+            aggregated if 1, not capable if 0. 
+
+            The bit 'aggEnabled(1)' indicates the link is currently in
+            an aggregation if 1, not in an aggregation if 0.
+
+            The bits 'portTypeLS(1)' and portTypeMS(2)' form the LS
+            and MS bits of a Port Type value respectively:
+            00 = no port type specified
+            01 = transmitted from Aggregation Port
+            10 = transmitted from Aggregator
+            11 = transmitted from an Aggregator with a single
+                 Aggregation Port.
+
+            The remaining bits are reserved for future standardization."
+    SYNTAX  BITS {
+            aggCapable(0),
+            aggEnabled(1),
+            portTypeLS(2),
+            portTypeMS(3)
+    }
 
 -----------------------------------------------------------------------
 -- IEEE 802.1 - Configuration for the basicSet TLV set
@@ -137,7 +197,7 @@ lldpV2Xdot1ConfigPortVlanEntry  OBJECT-TYPE
     DESCRIPTION
             "LLDP configuration information that controls the
             transmission of IEEE 802.1 organizationally defined Port
-            VLAN-ID TLV on LLDP transmission capable ports.
+            VLAN-ID TLV on LLDP transmission-capable ports.
 
             This configuration object augments the 
             lldpV2PortConfigEntry of the LLDP-MIB, therefore it is only
@@ -164,7 +224,7 @@ lldpV2Xdot1ConfigPortVlanTxEnable OBJECT-TYPE
             as a truth value and configured by the network management,
             determines whether the IEEE 802.1 organizationally defined
             port VLAN TLV transmission is allowed on a given LLDP
-            transmission capable port.
+            transmission-capable port.
 
             The value of this object is restored from non-volatile
             storage after a re-initialization of the management system."
@@ -244,7 +304,7 @@ lldpV2Xdot1ConfigProtoVlanTable OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-            "The table that controls selection of LLDP Port and 
+            "The table that controls selection of LLDP Port And 
             Protocol VLAN ID TLV instances to be transmitted on 
             individual ports."
     ::= { lldpV2Xdot1Config 3 }
@@ -451,7 +511,7 @@ lldpV2Xdot1ConfigManVidTxEnable OBJECT-TYPE
           truth value and configured by the network management, 
           determines whether the IEEE 802.1 organizationally 
           defined Management VID TLV transmission is allowed on a given
-          LLDP transmission capable port. 
+          LLDP transmission-capable port. 
           The value of this object must be restored from
           non-volatile storage after a re-initialization of the 
           management system."
@@ -502,7 +562,7 @@ lldpV2Xdot1LocPortVlanId OBJECT-TYPE
             identifier associated with the local system.   A value 
             of zero shall be used if the system either does not know
             the PVID or does
-            not support port-based VLAN operation."
+            not support Port-based VLAN operation."
     REFERENCE 
             "D.2.1.1"
     ::= { lldpV2Xdot1LocEntry 1 }
@@ -830,12 +890,12 @@ lldpV2Xdot1LocLinkAggEntry OBJECT-TYPE
     ::= { lldpV2Xdot1LocLinkAggTable 1 }
 
 LldpV2Xdot1LocLinkAggEntry ::= SEQUENCE {
-      lldpV2Xdot1LocLinkAggStatus       LldpV2LinkAggStatusMap,
+      lldpV2Xdot1LocLinkAggStatus       LldpV2XLinkAggStatusMap,
       lldpV2Xdot1LocLinkAggPortId       Unsigned32
 } 
 
 lldpV2Xdot1LocLinkAggStatus OBJECT-TYPE
-    SYNTAX      LldpV2LinkAggStatusMap
+    SYNTAX      LldpV2XLinkAggStatusMap
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
@@ -843,7 +903,7 @@ lldpV2Xdot1LocLinkAggStatus OBJECT-TYPE
             capabilities and the current aggregation status of the
             link."
     REFERENCE 
-            "D.2.7.1"
+            "Annex F of IEEE Std 802.1AX-2014"
     ::= { lldpV2Xdot1LocLinkAggEntry 1 }
 
 lldpV2Xdot1LocLinkAggPortId OBJECT-TYPE
@@ -860,7 +920,7 @@ lldpV2Xdot1LocLinkAggPortId OBJECT-TYPE
             does not support link aggregation, this value should be set
             to zero."
     REFERENCE 
-            "D.2.7.1"
+            "Annex F of IEEE Std 802.1AX-2014"
     ::= { lldpV2Xdot1LocLinkAggEntry 2 }
 
 
@@ -909,7 +969,7 @@ lldpV2Xdot1RemPortVlanId OBJECT-TYPE
             "The integer value used to identify the port's VLAN 
             identifier associated with the remote system.  if the 
             remote system either does not know the PVID or does not 
-            support port-based VLAN operation, the value of 
+            support Port-based VLAN operation, the value of 
             lldpV2Xdot1RemPortVlanId should be zero."
     REFERENCE 
             "D.2.1.1"
@@ -1124,13 +1184,14 @@ lldpV2Xdot1RemProtocolId  OBJECT-TYPE
 -- lldpV2Xdot1RemVidUsageDigestTable: Table of hash values of
 -- system VID Usage Table received
 -- via VID Usage Digest TLV.
+-- This version replaced by a reindexed version (V2).
 --
 
 
 lldpV2Xdot1RemVidUsageDigestTable  OBJECT-TYPE
     SYNTAX      SEQUENCE OF LldpV2Xdot1RemVidUsageDigestEntry
     MAX-ACCESS  not-accessible
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
             "This table contains one row per ifIndex/
             destination MAC address pair for usage digest
@@ -1142,7 +1203,7 @@ lldpV2Xdot1RemVidUsageDigestTable  OBJECT-TYPE
 lldpV2Xdot1RemVidUsageDigestEntry  OBJECT-TYPE
     SYNTAX      LldpV2Xdot1RemVidUsageDigestEntry
     MAX-ACCESS  not-accessible
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
             "Usage digest information received on
             the given port/destination address pair."
@@ -1161,7 +1222,7 @@ LldpV2Xdot1RemVidUsageDigestEntry ::= SEQUENCE {
 lldpV2Xdot1RemVidUsageDigest OBJECT-TYPE
     SYNTAX Unsigned32
     MAX-ACCESS read-only
-    STATUS current
+    STATUS deprecated
     DESCRIPTION
         "The integer value obtained by applying the CRC32 function 
         to the 128-octet VID Usage Table. A bit of the VID Usage 
@@ -1178,12 +1239,14 @@ lldpV2Xdot1RemVidUsageDigest OBJECT-TYPE
 -- lldpV2Xdot1RemManVidTable: Table of values configured on remote
 -- systems for the Management VID, or the value 0 if a Management
 -- VID has not been provisioned.
+-- This version replaced by a reindexed version (V2).
 --
+
 
 lldpV2Xdot1RemManVidTable  OBJECT-TYPE
     SYNTAX      SEQUENCE OF LldpV2Xdot1RemManVidEntry
     MAX-ACCESS  not-accessible
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
             "This table contains one row per ifIndex/
             destination MAC address pair for management VID
@@ -1195,7 +1258,7 @@ lldpV2Xdot1RemManVidTable  OBJECT-TYPE
 lldpV2Xdot1RemManVidEntry  OBJECT-TYPE
     SYNTAX      LldpV2Xdot1RemManVidEntry
     MAX-ACCESS  not-accessible
-    STATUS      current
+    STATUS      deprecated
     DESCRIPTION
             "Management VID information received
             through the given port/destination address pair."
@@ -1213,7 +1276,7 @@ LldpV2Xdot1RemManVidEntry ::= SEQUENCE {
 lldpV2Xdot1RemManVid OBJECT-TYPE
     SYNTAX Unsigned32 (0|1..4094)
     MAX-ACCESS read-only
-    STATUS current
+    STATUS deprecated
     DESCRIPTION
         "The integer value configured on a system for 
         the Management VID, or
@@ -1221,6 +1284,113 @@ lldpV2Xdot1RemManVid OBJECT-TYPE
     REFERENCE
         "D.2.6.1"
 ::= { lldpV2Xdot1RemManVidEntry 1 }
+
+
+
+--
+-- lldpV2Xdot1RemVidUsageDigestV2Table: Table of hash values of
+-- system VID Usage Table received
+-- via VID Usage Digest TLV.
+--
+
+
+lldpV2Xdot1RemVidUsageDigestV2Table  OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2Xdot1RemVidUsageDigestV2Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains one row per ifIndex/
+            destination MAC address pair for usage digest
+            information received by the local system."
+    REFERENCE 
+            "D.2.5"
+    ::= { lldpV2Xdot1RemoteData 8 }
+
+lldpV2Xdot1RemVidUsageDigestV2Entry  OBJECT-TYPE
+    SYNTAX      LldpV2Xdot1RemVidUsageDigestV2Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Usage digest information received on
+            the given port/destination address pair."
+    REFERENCE 
+            "D.2.5"
+    INDEX   { lldpV2RemTimeMark,
+              lldpV2RemLocalIfIndex,
+              lldpV2RemLocalDestMACAddress,
+              lldpV2RemIndex }
+    ::= { lldpV2Xdot1RemVidUsageDigestV2Table 1 }
+
+LldpV2Xdot1RemVidUsageDigestV2Entry ::= SEQUENCE {
+      lldpV2Xdot1RemVidUsageDigestV2  Unsigned32
+}
+
+
+lldpV2Xdot1RemVidUsageDigestV2 OBJECT-TYPE
+    SYNTAX Unsigned32
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+        "The integer value obtained by applying the CRC32 function 
+        to the 128-octet VID Usage Table. A bit of the VID Usage 
+        Table contains the value PBB-TE-USAGE (binary 1) if the 
+        corresponding element of the MST Configuration Table 
+        (IEEE Std 802.1Q 8.9.1) contains the value PBB-TE MSTID
+        (hex FFE)and otherwise contains the value NON-PBB-TE-USAGE
+        (binary 0)."
+    REFERENCE
+        "D.2.5.1"
+::= { lldpV2Xdot1RemVidUsageDigestV2Entry 1 }
+
+
+--
+-- lldpV2Xdot1RemManVidV2Table: Table of values configured on remote
+-- systems for the Management VID, or the value 0 if a Management
+-- VID has not been provisioned.
+--
+
+lldpV2Xdot1RemManVidV2Table  OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2Xdot1RemManVidV2Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains one row per ifIndex/
+            destination MAC address pair for management VID
+            information received from remote systems."
+    REFERENCE 
+            "D.2.6"
+    ::= { lldpV2Xdot1RemoteData 9 }
+
+lldpV2Xdot1RemManVidV2Entry  OBJECT-TYPE
+    SYNTAX      LldpV2Xdot1RemManVidV2Entry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Management VID information received
+            through the given port/destination address pair."
+    REFERENCE 
+            "D.2.6"
+    INDEX   { lldpV2RemTimeMark,
+              lldpV2RemLocalIfIndex,
+              lldpV2RemLocalDestMACAddress,
+              lldpV2RemIndex }
+    ::= { lldpV2Xdot1RemManVidV2Table 1 }
+
+LldpV2Xdot1RemManVidV2Entry ::= SEQUENCE {
+      lldpV2Xdot1RemManVidV2            Unsigned32
+}
+
+lldpV2Xdot1RemManVidV2 OBJECT-TYPE
+    SYNTAX Unsigned32 (0|1..4094)
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+        "The integer value configured on a system for 
+        the Management VID, or
+        the value 0 if a Management VID has not been provisioned."
+    REFERENCE
+        "D.2.6.1"
+::= { lldpV2Xdot1RemManVidV2Entry 1 }
 
 
 
@@ -1257,19 +1427,19 @@ lldpV2Xdot1RemLinkAggEntry OBJECT-TYPE
     ::= { lldpV2Xdot1RemLinkAggTable 1 }
 
 LldpV2Xdot1RemLinkAggEntry ::= SEQUENCE {
-            lldpV2Xdot1RemLinkAggStatus        LldpV2LinkAggStatusMap,
+            lldpV2Xdot1RemLinkAggStatus        LldpV2XLinkAggStatusMap,
             lldpV2Xdot1RemLinkAggPortId        Unsigned32
 } 
 
 lldpV2Xdot1RemLinkAggStatus OBJECT-TYPE
-    SYNTAX      LldpV2LinkAggStatusMap
+    SYNTAX      LldpV2XLinkAggStatusMap
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
             "The bitmap value contains the link aggregation capabilities
             and the current aggregation status of the link."
     REFERENCE 
-            "D.2.7.1"
+            "Annex F of IEEE Std 802.1AX-2014"
     ::= { lldpV2Xdot1RemLinkAggEntry 1 }
 
 lldpV2Xdot1RemLinkAggPortId OBJECT-TYPE
@@ -1286,7 +1456,7 @@ lldpV2Xdot1RemLinkAggPortId OBJECT-TYPE
             it does not support link aggregation, this value should be
             zero."
     REFERENCE 
-            "D.2.7.1"
+            "Annex F of IEEE Std 802.1AX-2014"
     ::= { lldpV2Xdot1RemLinkAggEntry 2 }
 
 
@@ -1341,7 +1511,7 @@ lldpV2Xdot1TxCompliance MODULE-COMPLIANCE
     ::= { lldpV2Xdot1Compliances 2 }
 
 lldpV2Xdot1RxCompliance MODULE-COMPLIANCE
-    STATUS  current
+    STATUS  deprecated
     DESCRIPTION
             "A compliance statement for SNMP entities that implement
             the IEEE 802.1 organizationally defined LLDP extension MIB.
@@ -1356,6 +1526,24 @@ lldpV2Xdot1RxCompliance MODULE-COMPLIANCE
         MANDATORY-GROUPS { lldpV2Xdot1RemSysGroup }
 
     ::= { lldpV2Xdot1Compliances 3 }
+
+lldpV2Xdot1RxComplianceV2 MODULE-COMPLIANCE
+    STATUS    current
+    DESCRIPTION
+            "A compliance statement for SNMP entities that implement
+            the IEEE 802.1 organizationally defined LLDP extension MIB.
+
+            This group is mandatory for agents that implement the 
+            LLDP 802.1 organizational extension in the RX mode
+            for the basicSet TLV set.
+
+            This version defines compliance requirements for
+            V2 of the LLDP MIB."
+    MODULE  -- this module
+        MANDATORY-GROUPS { lldpV2Xdot1RemSysV2Group }
+
+    ::= { lldpV2Xdot1Compliances 4 }
+
 
 -- MIB groupings for the basicSet TLV set
 
@@ -1407,12 +1595,31 @@ lldpV2Xdot1RemSysGroup  OBJECT-GROUP
         lldpV2Xdot1RemLinkAggStatus,
         lldpV2Xdot1RemLinkAggPortId
     }
-    STATUS  current
+    STATUS  deprecated
     DESCRIPTION
             "The collection of objects which are used to represent LLDP
             802.1 organizational extension Remote Device Information
             for the basicSet TLV set."
     ::= { lldpV2Xdot1Groups 3 }
+
+lldpV2Xdot1RemSysV2Group  OBJECT-GROUP
+    OBJECTS {
+        lldpV2Xdot1RemPortVlanId,
+        lldpV2Xdot1RemProtoVlanSupported,
+        lldpV2Xdot1RemProtoVlanEnabled,
+        lldpV2Xdot1RemVlanName,
+        lldpV2Xdot1RemProtocolId,
+        lldpV2Xdot1RemVidUsageDigestV2,
+        lldpV2Xdot1RemManVidV2,
+        lldpV2Xdot1RemLinkAggStatus,
+        lldpV2Xdot1RemLinkAggPortId
+    }
+    STATUS  current
+    DESCRIPTION
+            "The collection of objects which are used to represent LLDP
+            802.1 organizational extension Remote Device Information
+            for the basicSet TLV set."
+    ::= { lldpV2Xdot1Groups 4 }
 
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
@@ -1490,7 +1697,7 @@ lldpXdot1CnConfigCnEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        Congestion Notification TLV on LLDP transmission capable ports.
+        Congestion Notification TLV on LLDP transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -1516,12 +1723,12 @@ lldpXdot1CnConfigCnTxEnable OBJECT-TYPE
         defined as a truth value and configured by the network 
         management, determines whether the IEEE 802.1 organizationally
         defined Congestion Notification TLV transmission is allowed 
-        on a given LLDP transmission capable port.
+        on a given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.8"
+        "D.2.7"
     DEFVAL         { false }
     ::= { lldpXdot1CnConfigCnEntry 1 }
 
@@ -1568,7 +1775,7 @@ lldpV2Xdot1LocCNPVIndicators OBJECT-TYPE
             "This object contains the CNPV indicators
             for the Port."
     REFERENCE 
-            "D.2.8.3"
+            "D.2.7.3"
     ::= { lldpV2Xdot1LocCnEntry 1 }
 
 lldpV2Xdot1LocReadyIndicators OBJECT-TYPE
@@ -1579,7 +1786,7 @@ lldpV2Xdot1LocReadyIndicators OBJECT-TYPE
             "This object contains the Ready indicators
             for the Port."
     REFERENCE 
-            "D.2.8.4"
+            "D.2.7.4"
     ::= { lldpV2Xdot1LocCnEntry 2 }
 
 ------------------------------------------------------------------------
@@ -1627,7 +1834,7 @@ lldpV2Xdot1RemCNPVIndicators OBJECT-TYPE
             "This object contains the CNPV indicators
             for the Port."
     REFERENCE 
-            "D.2.8.3"
+            "D.2.7.3"
     ::= { lldpV2Xdot1RemCnEntry 1 }
 
 lldpV2Xdot1RemReadyIndicators OBJECT-TYPE
@@ -1638,7 +1845,7 @@ lldpV2Xdot1RemReadyIndicators OBJECT-TYPE
             "This object contains the Ready indicators
             for the Port."
     REFERENCE 
-            "D.2.8.4"
+            "D.2.7.4"
     ::= { lldpV2Xdot1RemCnEntry 2 }
 
 ------------------------------------------------------------------------
@@ -1734,12 +1941,17 @@ LldpXdot1dcbxAppSelector ::= TEXTUAL-CONVENTION
         1: Ethertype
         2: Well Known Port number over TCP, or SCTP
         3: Well Known Port number over UDP, or DCCP
-        4: Well Known Port number over TCP, SCTP, UDP, and DCCP"
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
     SYNTAX INTEGER {
         asEthertype(1),
         asTCPPortNumber(2),
         asUDPPortNumber(3),
-        asTCPUDPPortNumber(4)
+        asTCPUDPPortNumber(4),
+        asDSCPValue(5)
     }
  
  LldpXdot1dcbxAppProtocol ::= TEXTUAL-CONVENTION
@@ -1803,7 +2015,7 @@ lldpXdot1dcbxConfigETSConfigurationEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        ETS Configuration TLV on LLDP transmission capable ports.
+        ETS Configuration TLV on LLDP transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -1829,12 +2041,12 @@ lldpXdot1dcbxConfigETSConfigurationTxEnable OBJECT-TYPE
         defined as a truth value and configured by the network 
         management, determines whether the IEEE 802.1 organizationally
         defined ETS Configuration TLV transmission is allowed on a 
-        given LLDP transmission capable port.
+        given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.9"
+        "D.2.8"
     DEFVAL         { false }
     ::= { lldpXdot1dcbxConfigETSConfigurationEntry 1 }
 
@@ -1859,7 +2071,7 @@ lldpXdot1dcbxConfigETSRecommendationEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        ETS Recommendation TLV on LLDP transmission capable ports.
+        ETS Recommendation TLV on LLDP transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -1885,17 +2097,17 @@ lldpXdot1dcbxConfigETSRecommendationTxEnable OBJECT-TYPE
         defined as a truth value and configured by the network 
         management, determines whether the IEEE 802.1 organizationally 
         defined ETS Recommendation TLV transmission is allowed on a 
-        given LLDP transmission capable port.
+        given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.10"
+        "D.2.9"
     DEFVAL         { false }
     ::= { lldpXdot1dcbxConfigETSRecommendationEntry 1 }
 --
 --  lldpXdot1dcbxConfigPFCTable : configure the transmission of the  
---  Priority-based Flow Control TLV on a set of ports
+--  Priority-based Flow Control Configuration TLV on a set of ports
 --
 
 lldpXdot1dcbxConfigPFCTable OBJECT-TYPE
@@ -1904,7 +2116,7 @@ lldpXdot1dcbxConfigPFCTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "A table that controls selection of Priority-based
-        Flow Control TLVs to be transmitted on individual ports."
+        Flow Control Configuration TLVs to be transmitted on individual ports."
     ::= { lldpXdot1dcbxConfig 3 }
 
 lldpXdot1dcbxConfigPFCEntry OBJECT-TYPE
@@ -1914,8 +2126,8 @@ lldpXdot1dcbxConfigPFCEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        Priority-based Flow Control TLV on LLDP transmission
-        capable ports.
+        Priority-based Flow Control Configuration TLV on LLDP 
+        transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -1940,13 +2152,13 @@ lldpXdot1dcbxConfigPFCTxEnable OBJECT-TYPE
         "The lldpXdot1dcbxConfigPFCTxEnable, which is defined
         as a truth value and configured by the network management,
         determines whether the IEEE 802.1 organizationally defined
-        Priority-based Flow Control TLV transmission is allowed on
-        a given LLDP transmission capable port.
+        Priority-based Flow Control Configuration TLV transmission is allowed on
+        a given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.11"
+        "D.2.10"
     DEFVAL         { false }
     ::= { lldpXdot1dcbxConfigPFCEntry 1 }
 
@@ -1962,7 +2174,7 @@ lldpXdot1dcbxConfigApplicationPriorityTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "A table that controls selection of Priority-based
-        Flow Control TLVs to be transmitted on individual ports."
+        Flow Control Configuration TLVs to be transmitted on individual ports."
     ::= { lldpXdot1dcbxConfig 4 }
 
 lldpXdot1dcbxConfigApplicationPriorityEntry OBJECT-TYPE
@@ -1972,7 +2184,7 @@ lldpXdot1dcbxConfigApplicationPriorityEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        Application Priority TLV on LLDP transmission capable ports.
+        Application Priority TLV on LLDP transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -1998,14 +2210,71 @@ lldpXdot1dcbxConfigApplicationPriorityTxEnable OBJECT-TYPE
         is defined as a truth value and configured by the network 
         management, determines whether the IEEE 802.1 organizationally
         defined Application Priority TLV transmission is allowed on
-        a given LLDP transmission capable port.
+        a given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.12"
+        "D.2.11"
     DEFVAL         { false }
     ::= { lldpXdot1dcbxConfigApplicationPriorityEntry 1 }
+
+--
+--  lldpXdot1dcbxConfigApplicationVlanTable : configure the 
+--  transmission of the Application VLAN TLV on a set of ports
+--
+
+lldpXdot1dcbxConfigApplicationVlanTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF
+        LldpXdot1dcbxConfigApplicationVlanEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "A table that controls selection of Application VLAN
+        TLVs to be transmitted on individual ports."
+    ::= { lldpXdot1dcbxConfig 5 }
+
+lldpXdot1dcbxConfigApplicationVlanEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxConfigApplicationVlanEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "LLDP configuration information that controls the
+        transmission of IEEE 802.1 organizationally defined 
+        Application VLAN TLV on LLDP transmission-capable ports.
+
+        This configuration object augments the lldpV2PortConfigEntry of
+        the LLDP-MIB, therefore it is only present along with the port
+        configuration defined by the associated lldpV2PortConfigEntry
+        entry.
+
+        Each active lldpConfigEntry is restored from non-volatile
+        storage (along with the corresponding lldpV2PortConfigEntry)
+        after a re-initialization of the management system."
+    AUGMENTS     { lldpV2PortConfigEntry }
+    ::= { lldpXdot1dcbxConfigApplicationVlanTable 1 }
+
+LldpXdot1dcbxConfigApplicationVlanEntry ::= SEQUENCE {
+    lldpXdot1dcbxConfigApplicationVlanTxEnable TruthValue
+}
+
+lldpXdot1dcbxConfigApplicationVlanTxEnable OBJECT-TYPE
+    SYNTAX        TruthValue
+    MAX-ACCESS    read-write
+    STATUS        current
+    DESCRIPTION 
+        "The lldpXdot1dcbxConfigApplicationVlanTxEnable, which
+        is defined as a truth value and configured by the network 
+        management, determines whether the IEEE 802.1 organizationally
+        defined Application VLAN TLV transmission is allowed on
+        a given LLDP transmission-capable port.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system."
+    REFERENCE
+        "D.2.14"
+    DEFVAL         { false }
+    ::= { lldpXdot1dcbxConfigApplicationVlanEntry 1 }
 
 ------------------------------------------------------------------------
 -- IEEE 802.1 - DCBX Local System Information
@@ -2053,7 +2322,7 @@ lldpXdot1dcbxLocETSConCreditBasedShaperSupport OBJECT-TYPE
         "Indicates if the credit-based shaper Traffic Selection
         Algorithm is supported on the local system."
     REFERENCE
-        "D.2.9.4"
+        "D.2.8.4"
     ::= { lldpXdot1dcbxLocETSBasicConfigurationEntry 1 }
 
 lldpXdot1dcbxLocETSConTrafficClassesSupported OBJECT-TYPE
@@ -2063,7 +2332,7 @@ lldpXdot1dcbxLocETSConTrafficClassesSupported OBJECT-TYPE
     DESCRIPTION
         "Indicates the number of traffic classes supported."
     REFERENCE
-        "D.2.9.5"
+        "D.2.8.5"
     ::= { lldpXdot1dcbxLocETSBasicConfigurationEntry 2 }
 
 lldpXdot1dcbxLocETSConWilling OBJECT-TYPE
@@ -2074,7 +2343,7 @@ lldpXdot1dcbxLocETSConWilling OBJECT-TYPE
         "Indicates if the local system is willing to accept the
         ETS configuration recommended by the remote system."
     REFERENCE
-        "D.2.9.3"
+        "D.2.8.3"
     ::= { lldpXdot1dcbxLocETSBasicConfigurationEntry 3 }
 
 lldpXdot1dcbxLocETSConPriorityAssignmentTable OBJECT-TYPE
@@ -2114,7 +2383,7 @@ lldpXdot1dcbxLocETSConPriority OBJECT-TYPE
         "Indicates the priority that is assigned to a traffic
         class."
     REFERENCE
-        "D.2.9.6"
+        "D.2.8.6"
     ::= { lldpXdot1dcbxLocETSConPriorityAssignmentEntry 1 }
 
 lldpXdot1dcbxLocETSConPriTrafficClass OBJECT-TYPE
@@ -2125,7 +2394,7 @@ lldpXdot1dcbxLocETSConPriTrafficClass OBJECT-TYPE
         "Indicates the traffic class to which this priority is
         to be assigned."
     REFERENCE
-        "D.2.9.6"
+        "D.2.8.6"
     ::= { lldpXdot1dcbxLocETSConPriorityAssignmentEntry 2 }
 
 lldpXdot1dcbxLocETSConTrafficClassBandwidthTable OBJECT-TYPE
@@ -2166,7 +2435,7 @@ lldpXdot1dcbxLocETSConTrafficClass OBJECT-TYPE
         "Indicates the traffic class to
         which this bandwidth applies"
     REFERENCE
-        "D.2.9.7"
+        "D.2.8.7"
     ::= { lldpXdot1dcbxLocETSConTrafficClassBandwidthEntry 1 }
 
 lldpXdot1dcbxLocETSConTrafficClassBandwidth OBJECT-TYPE
@@ -2176,7 +2445,7 @@ lldpXdot1dcbxLocETSConTrafficClassBandwidth OBJECT-TYPE
     DESCRIPTION
         "Indicates the bandwidth assigned to this traffic class."
     REFERENCE
-        "D.2.9.7"
+        "D.2.8.7"
     ::= { lldpXdot1dcbxLocETSConTrafficClassBandwidthEntry 2 }
 
 
@@ -2219,7 +2488,7 @@ lldpXdot1dcbxLocETSConTSATrafficClass OBJECT-TYPE
         "Indicates the traffic class that is assigned to a traffic 
         selection algorithm."
     REFERENCE
-        "D.2.9.8"
+        "D.2.8.8"
     ::= { lldpXdot1dcbxLocETSConTrafficSelectionAlgorithmEntry 1 }
 
 lldpXdot1dcbxLocETSConTrafficSelectionAlgorithm OBJECT-TYPE
@@ -2230,7 +2499,7 @@ lldpXdot1dcbxLocETSConTrafficSelectionAlgorithm OBJECT-TYPE
         "Indicates the Traffic Selection Algorithm to which this
         traffic class is to be assigned."
     REFERENCE
-        "D.2.9.8"
+        "D.2.8.8"
     ::= { lldpXdot1dcbxLocETSConTrafficSelectionAlgorithmEntry 2 }
 
 --
@@ -2278,7 +2547,7 @@ lldpXdot1dcbxLocETSRecoTrafficClass OBJECT-TYPE
         "Indicates the traffic class to
         which this bandwidth applies"
     REFERENCE
-        "D.2.10.3"
+        "D.2.9.3"
     ::= { lldpXdot1dcbxLocETSRecoTrafficClassBandwidthEntry 1 }
 
 lldpXdot1dcbxLocETSRecoTrafficClassBandwidth OBJECT-TYPE
@@ -2288,7 +2557,7 @@ lldpXdot1dcbxLocETSRecoTrafficClassBandwidth OBJECT-TYPE
     DESCRIPTION
         "Indicates the bandwidth assigned to this traffic class."
     REFERENCE
-        "D.2.10.4"
+        "D.2.9.4"
     ::= { lldpXdot1dcbxLocETSRecoTrafficClassBandwidthEntry 2 }
 
 lldpXdot1dcbxLocETSRecoTrafficSelectionAlgorithmTable OBJECT-TYPE
@@ -2330,7 +2599,7 @@ lldpXdot1dcbxLocETSRecoTSATrafficClass OBJECT-TYPE
         "Indicates the traffic class that is assigned to a traffic 
         selection algorithm."
     REFERENCE
-        "D.2.10.5"
+        "D.2.9.5"
     ::= { lldpXdot1dcbxLocETSRecoTrafficSelectionAlgorithmEntry 1 }
 
 lldpXdot1dcbxLocETSRecoTrafficSelectionAlgorithm OBJECT-TYPE
@@ -2341,7 +2610,7 @@ lldpXdot1dcbxLocETSRecoTrafficSelectionAlgorithm OBJECT-TYPE
         "Indicates the Traffic Selection Algorithm to which this
         traffic class is to be assigned."
     REFERENCE
-        "D.2.10.5"
+        "D.2.9.5"
     ::= { lldpXdot1dcbxLocETSRecoTrafficSelectionAlgorithmEntry 2 }
 
 --
@@ -2384,7 +2653,7 @@ lldpXdot1dcbxLocPFCWilling OBJECT-TYPE
         "Indicates if the local system is willing to accept the 
         PFC configuration of the remote system."
     REFERENCE
-        "D.2.11.3"
+        "D.2.10.3"
     ::= { lldpXdot1dcbxLocPFCBasicEntry 1}
 
 lldpXdot1dcbxLocPFCMBC OBJECT-TYPE
@@ -2395,7 +2664,7 @@ lldpXdot1dcbxLocPFCMBC OBJECT-TYPE
         "Indicates if the local system is capable of bypassing
         MACsec processing when MACsec is disabled."
     REFERENCE
-        "D.2.11.4"
+        "D.2.10.4"
     ::= { lldpXdot1dcbxLocPFCBasicEntry 2}
     
 lldpXdot1dcbxLocPFCCap OBJECT-TYPE
@@ -2406,7 +2675,7 @@ lldpXdot1dcbxLocPFCCap OBJECT-TYPE
         "Indicates the number of traffic classes on the local device
         that may simultaneously have PFC enabled."
     REFERENCE
-        "D.2.11.5"
+        "D.2.10.5"
     ::= { lldpXdot1dcbxLocPFCBasicEntry 3}
 
 lldpXdot1dcbxLocPFCEnableTable OBJECT-TYPE
@@ -2451,7 +2720,7 @@ lldpXdot1dcbxLocPFCEnableEnabled OBJECT-TYPE
     DESCRIPTION
         "Indicates if PFC is enabled on the corresponding priority"
     REFERENCE
-        "D.2.11.6"
+        "D.2.10.6"
     ::= { lldpXdot1dcbxLocPFCEnableEntry 2 }
 --
 -- lldpXdot1dcbxLocApplicationPriorityTable - Contains the information 
@@ -2501,9 +2770,13 @@ lldpXdot1dcbxLocApplicationPriorityAESelector OBJECT-TYPE
         1: Ethertype
         2: Well Known Port number over TCP, or SCTP
         3: Well Known Port number over UDP, or DCCP
-        4: Well Known Port number over TCP, SCTP, UDP, and DCCP"
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
     REFERENCE
-        "D.2.12.3"
+        "D.2.11.3"
     ::= { lldpXdot1dcbxLocApplicationPriorityAppEntry 1 }
 
 lldpXdot1dcbxLocApplicationPriorityAEProtocol OBJECT-TYPE
@@ -2514,7 +2787,7 @@ lldpXdot1dcbxLocApplicationPriorityAEProtocol OBJECT-TYPE
         "The protocol indicator of the type indicated by
         lldpXdot1dcbxLocApplicationPriorityAESelector."
     REFERENCE
-        "D.2.12.3"
+        "D.2.11.3"
     ::= { lldpXdot1dcbxLocApplicationPriorityAppEntry 2 }
 
 lldpXdot1dcbxLocApplicationPriorityAEPriority OBJECT-TYPE
@@ -2527,8 +2800,89 @@ lldpXdot1dcbxLocApplicationPriorityAEPriority OBJECT-TYPE
         lldpXdot1dcbxLocApplicationPriorityAESelector and
         lldpXdot1dcbxLocApplicationPriorityAEProtocol"
     REFERENCE
-        "D.2.12.3"
+        "D.2.11.3"
     ::= { lldpXdot1dcbxLocApplicationPriorityAppEntry 3 }
+
+--
+-- lldpXdot1dcbxLocApplicationVlanAppTable - Contains the information 
+-- for the Application VLAN TLV. 
+--
+
+lldpXdot1dcbxLocApplicationVlanAppTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF 
+        LldpXdot1dcbxLocApplicationVlanAppEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "Table containing entries indicating the VLAN to be used
+        for a given application"
+    ::= { lldpXdot1dcbxLocalData 5 }
+
+lldpXdot1dcbxLocApplicationVlanAppEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxLocApplicationVlanAppEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION 
+        "Entry that indicates the VLAN to be used for a
+        given application."
+    INDEX         {
+                  lldpV2LocPortIfIndex,
+                  lldpXdot1dcbxLocApplicationVlanAESelector,
+                  lldpXdot1dcbxLocApplicationVlanAEProtocol
+    }
+    ::= { lldpXdot1dcbxLocApplicationVlanAppTable 1 }
+
+LldpXdot1dcbxLocApplicationVlanAppEntry ::= SEQUENCE {
+    lldpXdot1dcbxLocApplicationVlanAESelector    
+        LldpXdot1dcbxAppSelector,
+    lldpXdot1dcbxLocApplicationVlanAEProtocol    
+        LldpXdot1dcbxAppProtocol,
+    lldpXdot1dcbxLocApplicationVlanAEVlanId    
+        VlanId
+}
+
+lldpXdot1dcbxLocApplicationVlanAESelector OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAppSelector
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION 
+        "Indicates the contents of the protocol object
+        (lldpXdot1dcbxLocApplicationVlanAEProtocol)
+        1: Ethertype
+        2: Well Known Port number over TCP, or SCTP
+        3: Well Known Port number over UDP, or DCCP
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
+    REFERENCE
+        "D.2.11.3"
+    ::= { lldpXdot1dcbxLocApplicationVlanAppEntry 1 }
+
+lldpXdot1dcbxLocApplicationVlanAEProtocol OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAppProtocol
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "The protocol indicator of the type indicated by
+        lldpXdot1dcbxLocApplicationVlanAESelector."
+    REFERENCE
+        "D.2.11.3"
+    ::= { lldpXdot1dcbxLocApplicationVlanAppEntry 2 }
+
+lldpXdot1dcbxLocApplicationVlanAEVlanId OBJECT-TYPE
+    SYNTAX        VlanId
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION
+        "The VLAN Identifier that should be used in
+        frames transporting the protocol indicated by
+        lldpXdot1dcbxLocApplicationVlanAESelector and
+        lldpXdot1dcbxLocApplicationVlanAEProtocol"
+    REFERENCE
+        "D.2.14.3"
+    ::= { lldpXdot1dcbxLocApplicationVlanAppEntry 3 }
 
 
 ------------------------------------------------------------------------
@@ -2582,7 +2936,7 @@ lldpXdot1dcbxRemETSConCreditBasedShaperSupport OBJECT-TYPE
         "Indicates if the credit-based shaper Traffic Selection
         algorithm is supported on the remote system."
     REFERENCE
-        "D.2.9.4"
+        "D.2.8.4"
     ::= { lldpXdot1dcbxRemETSBasicConfigurationEntry 1 }
 
 lldpXdot1dcbxRemETSConTrafficClassesSupported OBJECT-TYPE
@@ -2592,7 +2946,7 @@ lldpXdot1dcbxRemETSConTrafficClassesSupported OBJECT-TYPE
     DESCRIPTION
         "Indicates the number of traffic classes supported."
     REFERENCE
-        "D.2.9.5"
+        "D.2.8.5"
     ::= { lldpXdot1dcbxRemETSBasicConfigurationEntry 2 }
 
 lldpXdot1dcbxRemETSConWilling OBJECT-TYPE
@@ -2603,7 +2957,7 @@ lldpXdot1dcbxRemETSConWilling OBJECT-TYPE
         "Indicates if the remote system is willing to accept the
         ETS configuration recommended by the remote system."
     REFERENCE
-        "D.2.9.3"
+        "D.2.8.3"
     ::= { lldpXdot1dcbxRemETSBasicConfigurationEntry 3 }
 
 lldpXdot1dcbxRemETSConPriorityAssignmentTable OBJECT-TYPE
@@ -2646,7 +3000,7 @@ lldpXdot1dcbxRemETSConPriority OBJECT-TYPE
         "Indicates the priority that is assigned to a traffic
         class."
     REFERENCE
-        "D.2.9.6"
+        "D.2.8.6"
     ::= { lldpXdot1dcbxRemETSConPriorityAssignmentEntry 1 }
 
 lldpXdot1dcbxRemETSConPriTrafficClass OBJECT-TYPE
@@ -2657,7 +3011,7 @@ lldpXdot1dcbxRemETSConPriTrafficClass OBJECT-TYPE
         "Indicates the traffic class to which this priority is 
         to be assigned."
     REFERENCE
-        "D.2.9.6"
+        "D.2.8.6"
     ::= { lldpXdot1dcbxRemETSConPriorityAssignmentEntry 2 }
 
 lldpXdot1dcbxRemETSConTrafficClassBandwidthTable OBJECT-TYPE
@@ -2701,7 +3055,7 @@ lldpXdot1dcbxRemETSConTrafficClass OBJECT-TYPE
         "Indicates the traffic class to
         which this bandwidth applies"
     REFERENCE
-        "D.2.9.7"
+        "D.2.8.7"
     ::= { lldpXdot1dcbxRemETSConTrafficClassBandwidthEntry 1 }
 
 lldpXdot1dcbxRemETSConTrafficClassBandwidth OBJECT-TYPE
@@ -2711,7 +3065,7 @@ lldpXdot1dcbxRemETSConTrafficClassBandwidth OBJECT-TYPE
     DESCRIPTION
         "Indicates the bandwidth assigned to this traffic class."
     REFERENCE
-        "D.2.9.7"
+        "D.2.8.7"
     ::= { lldpXdot1dcbxRemETSConTrafficClassBandwidthEntry 2 }
 
 
@@ -2757,7 +3111,7 @@ lldpXdot1dcbxRemETSConTSATrafficClass OBJECT-TYPE
         "Indicates the traffic class that is assigned to a traffic 
         selection algorithm."
     REFERENCE
-        "D.2.9.8"
+        "D.2.8.8"
     ::= { lldpXdot1dcbxRemETSConTrafficSelectionAlgorithmEntry 1 }
 
 lldpXdot1dcbxRemETSConTrafficSelectionAlgorithm OBJECT-TYPE
@@ -2768,7 +3122,7 @@ lldpXdot1dcbxRemETSConTrafficSelectionAlgorithm OBJECT-TYPE
         "Indicates the Traffic Selection Algorithm to which this
         traffic class is to be assigned."
     REFERENCE
-        "D.2.9.8"
+        "D.2.8.8"
     ::= { lldpXdot1dcbxRemETSConTrafficSelectionAlgorithmEntry 2 }
 
 --
@@ -2819,7 +3173,7 @@ lldpXdot1dcbxRemETSRecoTrafficClass OBJECT-TYPE
         "Indicates the traffic class to
         which this bandwidth applies"
     REFERENCE
-        "D.2.10.4"
+        "D.2.9.4"
     ::= { lldpXdot1dcbxRemETSRecoTrafficClassBandwidthEntry 1 }
 
 lldpXdot1dcbxRemETSRecoTrafficClassBandwidth OBJECT-TYPE
@@ -2829,7 +3183,7 @@ lldpXdot1dcbxRemETSRecoTrafficClassBandwidth OBJECT-TYPE
     DESCRIPTION
         "Indicates the bandwidth assigned to this traffic class."
     REFERENCE
-        "D.2.10.4"
+        "D.2.9.4"
     ::= { lldpXdot1dcbxRemETSRecoTrafficClassBandwidthEntry 2 }
 
 lldpXdot1dcbxRemETSRecoTrafficSelectionAlgorithmTable OBJECT-TYPE
@@ -2874,7 +3228,7 @@ lldpXdot1dcbxRemETSRecoTSATrafficClass OBJECT-TYPE
         "Indicates the traffic class that is assigned to a traffic 
         selection algorithm."
     REFERENCE
-        "D.2.10.5"
+        "D.2.9.5"
     ::= { lldpXdot1dcbxRemETSRecoTrafficSelectionAlgorithmEntry 1 }
 
 lldpXdot1dcbxRemETSRecoTrafficSelectionAlgorithm OBJECT-TYPE
@@ -2885,7 +3239,7 @@ lldpXdot1dcbxRemETSRecoTrafficSelectionAlgorithm OBJECT-TYPE
         "Indicates the Traffic Selection Algorithm to which this
         traffic class is to be assigned."
     REFERENCE
-        "D.2.10.5"
+        "D.2.9.5"
     ::= { lldpXdot1dcbxRemETSRecoTrafficSelectionAlgorithmEntry 2 }
 
 --
@@ -2933,7 +3287,7 @@ lldpXdot1dcbxRemPFCWilling OBJECT-TYPE
         "Indicates if the remote system is willing to accept the 
         PFC configuration of the local system."
     REFERENCE
-        "D.2.11.3"
+        "D.2.10.3"
     ::= { lldpXdot1dcbxRemPFCBasicEntry 1}
 
 lldpXdot1dcbxRemPFCMBC OBJECT-TYPE
@@ -2944,7 +3298,7 @@ lldpXdot1dcbxRemPFCMBC OBJECT-TYPE
         "Indicates if the remote system is capable of bypassing
         MACsec processing when MACsec is disabled."
     REFERENCE
-        "D.2.11.4"
+        "D.2.10.4"
     ::= { lldpXdot1dcbxRemPFCBasicEntry 2}
     
 lldpXdot1dcbxRemPFCCap OBJECT-TYPE
@@ -2955,7 +3309,7 @@ lldpXdot1dcbxRemPFCCap OBJECT-TYPE
         "Indicates the number of traffic classes on the remote device
         that may simultaneously have PFC enabled."
     REFERENCE
-        "D.2.11.5"
+        "D.2.10.5"
     ::= { lldpXdot1dcbxRemPFCBasicEntry 3}
 
 lldpXdot1dcbxRemPFCEnableTable OBJECT-TYPE
@@ -3003,7 +3357,7 @@ lldpXdot1dcbxRemPFCEnableEnabled OBJECT-TYPE
     DESCRIPTION
         "Indicates if PFC is enabled on the corresponding priority"
     REFERENCE
-        "D.2.11.6"
+        "D.2.10.6"
     ::= { lldpXdot1dcbxRemPFCEnableEntry 2 }
 
 --
@@ -3057,9 +3411,13 @@ lldpXdot1dcbxRemApplicationPriorityAESelector OBJECT-TYPE
         1: Ethertype
         2: Well Known Port number over TCP, or SCTP
         3: Well Known Port number over UDP, or DCCP
-        4: Well Known Port number over TCP, SCTP, UDP, and DCCP"
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
     REFERENCE
-        "D.2.12.3"
+        "D.2.11.3"
     ::= { lldpXdot1dcbxRemApplicationPriorityAppEntry 1 }
 
 lldpXdot1dcbxRemApplicationPriorityAEProtocol OBJECT-TYPE
@@ -3070,7 +3428,7 @@ lldpXdot1dcbxRemApplicationPriorityAEProtocol OBJECT-TYPE
         "The protocol indicator of the type indicated by
         lldpXdot1dcbxRemApplicationPriorityAESelector."
     REFERENCE
-        "D.2.12.3"
+        "D.2.11.3"
     ::= { lldpXdot1dcbxRemApplicationPriorityAppEntry 2 }
 
 lldpXdot1dcbxRemApplicationPriorityAEPriority OBJECT-TYPE
@@ -3083,8 +3441,93 @@ lldpXdot1dcbxRemApplicationPriorityAEPriority OBJECT-TYPE
         lldpXdot1dcbxRemApplicationPriorityAESelector and
         lldpXdot1dcbxRemApplicationPriorityAEProtocol"
     REFERENCE
-        "D.2.12.3"
+        "D.2.11.3"
     ::= { lldpXdot1dcbxRemApplicationPriorityAppEntry 3 }
+
+--
+-- lldpXdot1dcbxRemApplicationVlanAppTable - Contains the information 
+-- for the remote system Application VLAN TLV.   
+--
+
+lldpXdot1dcbxRemApplicationVlanAppTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF 
+        LldpXdot1dcbxRemApplicationVlanAppEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "Table containing entries indicating the VLAN to be used
+        for a given application"
+    ::= { lldpXdot1dcbxRemoteData 5 }
+
+lldpXdot1dcbxRemApplicationVlanAppEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxRemApplicationVlanAppEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION 
+        "Entry that indicates the VLAN to be used for a
+        given application."
+    INDEX         {
+                  lldpV2RemTimeMark,
+                  lldpV2RemLocalIfIndex,
+                  lldpV2RemLocalDestMACAddress,
+                  lldpV2RemIndex,
+                  lldpXdot1dcbxRemApplicationVlanAESelector,
+                  lldpXdot1dcbxRemApplicationVlanAEProtocol
+    }
+    ::= { lldpXdot1dcbxRemApplicationVlanAppTable 1 }
+
+LldpXdot1dcbxRemApplicationVlanAppEntry ::= SEQUENCE {
+    lldpXdot1dcbxRemApplicationVlanAESelector    
+        LldpXdot1dcbxAppSelector,
+    lldpXdot1dcbxRemApplicationVlanAEProtocol    
+        LldpXdot1dcbxAppProtocol,
+    lldpXdot1dcbxRemApplicationVlanAEVlanId    
+        VlanId
+}
+
+lldpXdot1dcbxRemApplicationVlanAESelector OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAppSelector
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION 
+        "Indicates the contents of the protocol object
+        (lldpXdot1dcbxRemApplicationVlanAEProtocol)
+        1: Ethertype
+        2: Well Known Port number over TCP, or SCTP
+        3: Well Known Port number over UDP, or DCCP
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
+    REFERENCE
+        "D.2.11.3"
+    ::= { lldpXdot1dcbxRemApplicationVlanAppEntry 1 }
+
+lldpXdot1dcbxRemApplicationVlanAEProtocol OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAppProtocol
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "The protocol indicator of the type indicated by
+        lldpXdot1dcbxRemApplicationVlanAESelector."
+    REFERENCE
+        "D.2.11.3"
+    ::= { lldpXdot1dcbxRemApplicationVlanAppEntry 2 }
+
+lldpXdot1dcbxRemApplicationVlanAEVlanId OBJECT-TYPE
+    SYNTAX        VlanId
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION
+        "The VLAN Identifier that should be used in
+        frames transporting the protocol indicated by
+        lldpXdot1dcbxRemApplicationVlanAESelector and
+        lldpXdot1dcbxRemApplicationVlanAEProtocol"
+    REFERENCE
+        "D.2.14.3"
+    ::= { lldpXdot1dcbxRemApplicationVlanAppEntry 3 }
+
 
 ------------------------------------------------------------------------
 -- IEEE 802.1 - DCBX Administrative Information
@@ -3133,7 +3576,7 @@ lldpXdot1dcbxAdminETSConCreditBasedShaperSupport OBJECT-TYPE
         "Indicates support for the credit-based shaper Traffic
         Selection Algorithm."
     REFERENCE
-        "D.2.9.4"
+        "D.2.8.4"
     ::= { lldpXdot1dcbxAdminETSBasicConfigurationEntry 1 }
 
 lldpXdot1dcbxAdminETSConTrafficClassesSupported OBJECT-TYPE
@@ -3143,7 +3586,7 @@ lldpXdot1dcbxAdminETSConTrafficClassesSupported OBJECT-TYPE
     DESCRIPTION
         "Indicates the number of traffic classes supported."
     REFERENCE
-        "D.2.9.5"
+        "D.2.8.5"
     ::= { lldpXdot1dcbxAdminETSBasicConfigurationEntry 2 }
 
 lldpXdot1dcbxAdminETSConWilling OBJECT-TYPE
@@ -3154,7 +3597,7 @@ lldpXdot1dcbxAdminETSConWilling OBJECT-TYPE
         "Indicates if the local system is willing to accept the
         ETS configuration recommended by the remote system."
     REFERENCE
-        "D.2.9.3"
+        "D.2.8.3"
     DEFVAL         { false }
     ::= { lldpXdot1dcbxAdminETSBasicConfigurationEntry 3 }
 
@@ -3195,7 +3638,7 @@ lldpXdot1dcbxAdminETSConPriority OBJECT-TYPE
         "Indicates the priority that is assigned to a traffic 
         class."
     REFERENCE
-        "D.2.9.6"
+        "D.2.8.6"
     ::= { lldpXdot1dcbxAdminETSConPriorityAssignmentEntry 1 }
 
 lldpXdot1dcbxAdminETSConPriTrafficClass OBJECT-TYPE
@@ -3206,7 +3649,7 @@ lldpXdot1dcbxAdminETSConPriTrafficClass OBJECT-TYPE
         "Indicates the traffic class to which this priority is
         to be assigned."
     REFERENCE
-        "D.2.9.6"
+        "D.2.8.6"
     DEFVAL      { 0 }
     ::= { lldpXdot1dcbxAdminETSConPriorityAssignmentEntry 2 }
 
@@ -3248,7 +3691,7 @@ lldpXdot1dcbxAdminETSConTrafficClass OBJECT-TYPE
         "Indicates the traffic class to
         which this bandwidth applies"
     REFERENCE
-        "D.2.9.7"
+        "D.2.8.7"
     ::= { lldpXdot1dcbxAdminETSConTrafficClassBandwidthEntry 1 }
 
 lldpXdot1dcbxAdminETSConTrafficClassBandwidth OBJECT-TYPE
@@ -3270,7 +3713,7 @@ lldpXdot1dcbxAdminETSConTrafficClassBandwidth OBJECT-TYPE
         table referring to the given port will no longer 
         sum to 100."
     REFERENCE
-        "D.2.9.7"
+        "D.2.8.7"
     ::= { lldpXdot1dcbxAdminETSConTrafficClassBandwidthEntry 2 }
 
 lldpXdot1dcbxAdminETSConTrafficSelectionAlgorithmTable OBJECT-TYPE
@@ -3312,7 +3755,7 @@ lldpXdot1dcbxAdminETSConTSATrafficClass OBJECT-TYPE
         "Indicates the traffic class that is assigned
         to a traffic selection algorithm."
     REFERENCE
-        "D.2.9.8"
+        "D.2.8.8"
     ::= { lldpXdot1dcbxAdminETSConTrafficSelectionAlgorithmEntry 1 }
 
 lldpXdot1dcbxAdminETSConTrafficSelectionAlgorithm OBJECT-TYPE
@@ -3323,7 +3766,7 @@ lldpXdot1dcbxAdminETSConTrafficSelectionAlgorithm OBJECT-TYPE
         "Indicates the Traffic Selection Algorithm to which this
         traffic class is to be assigned."
     REFERENCE
-        "D.2.9.8"
+        "D.2.8.8"
     ::= { lldpXdot1dcbxAdminETSConTrafficSelectionAlgorithmEntry 2 }
 
 
@@ -3372,7 +3815,7 @@ lldpXdot1dcbxAdminETSRecoTrafficClass OBJECT-TYPE
         "Indicates the traffic class to
         which this bandwidth applies"
     REFERENCE
-        "D.2.10.4"
+        "D.2.9.4"
     ::= { lldpXdot1dcbxAdminETSRecoTrafficClassBandwidthEntry 1 }
 
 lldpXdot1dcbxAdminETSRecoTrafficClassBandwidth OBJECT-TYPE
@@ -3395,7 +3838,7 @@ lldpXdot1dcbxAdminETSRecoTrafficClassBandwidth OBJECT-TYPE
         sum to 100."
 
     REFERENCE
-        "D.2.10.4"
+        "D.2.9.4"
     ::= { lldpXdot1dcbxAdminETSRecoTrafficClassBandwidthEntry 2 }
 
 lldpXdot1dcbxAdminETSRecoTrafficSelectionAlgorithmTable OBJECT-TYPE
@@ -3437,7 +3880,7 @@ lldpXdot1dcbxAdminETSRecoTSATrafficClass OBJECT-TYPE
         "Indicates the traffic class that is assigned to a traffic 
         selection algorithm."
     REFERENCE
-        "D.2.10.5"
+        "D.2.9.5"
     ::= { lldpXdot1dcbxAdminETSRecoTrafficSelectionAlgorithmEntry 1 }
 
 lldpXdot1dcbxAdminETSRecoTrafficSelectionAlgorithm OBJECT-TYPE
@@ -3448,7 +3891,7 @@ lldpXdot1dcbxAdminETSRecoTrafficSelectionAlgorithm OBJECT-TYPE
         "Indicates the Traffic Selection Algorithm to which this
         traffic class is to be assigned."
     REFERENCE
-        "D.2.10.5"
+        "D.2.9.5"
     ::= { lldpXdot1dcbxAdminETSRecoTrafficSelectionAlgorithmEntry 2 }
 
 --
@@ -3491,7 +3934,7 @@ lldpXdot1dcbxAdminPFCWilling OBJECT-TYPE
         "Indicates if the local system is willing to accept the 
         PFC configuration of the remote system."
     REFERENCE
-        "D.2.11.3"
+        "D.2.10.3"
     DEFVAL      { false }
     ::= { lldpXdot1dcbxAdminPFCBasicEntry 1}
 
@@ -3503,7 +3946,7 @@ lldpXdot1dcbxAdminPFCMBC OBJECT-TYPE
         "Indicates if the local system is capable of bypassing
         MACsec processing when MACsec is disabled."
     REFERENCE
-        "D.2.11.4"
+        "D.2.10.4"
     ::= { lldpXdot1dcbxAdminPFCBasicEntry 2}
 
 lldpXdot1dcbxAdminPFCCap OBJECT-TYPE
@@ -3520,7 +3963,7 @@ lldpXdot1dcbxAdminPFCCap OBJECT-TYPE
         should be changed to read-write with and an appropriate
         DEFVAL added."
     REFERENCE
-        "D.2.11.5"
+        "D.2.10.5"
     ::= { lldpXdot1dcbxAdminPFCBasicEntry 3}
 
 lldpXdot1dcbxAdminPFCEnableTable OBJECT-TYPE
@@ -3565,7 +4008,7 @@ lldpXdot1dcbxAdminPFCEnableEnabled OBJECT-TYPE
     DESCRIPTION
         "Indicates if PFC is enabled on the corresponding priority"
     REFERENCE
-        "D.2.11.6"
+        "D.2.10.6"
     DEFVAL      { false }
     ::= { lldpXdot1dcbxAdminPFCEnableEntry 2 }
 
@@ -3617,9 +4060,13 @@ lldpXdot1dcbxAdminApplicationPriorityAESelector OBJECT-TYPE
         1: Ethertype
         2: Well Known Port number over TCP, or SCTP
         3: Well Known Port number over UDP, or DCCP
-        4: Well Known Port number over TCP, SCTP, UDP, and DCCP"
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
     REFERENCE
-        "D.2.11.6"
+        "D.2.10.6"
     ::= { lldpXdot1dcbxAdminApplicationPriorityAppEntry 1 }
 
 lldpXdot1dcbxAdminApplicationPriorityAEProtocol OBJECT-TYPE
@@ -3630,7 +4077,7 @@ lldpXdot1dcbxAdminApplicationPriorityAEProtocol OBJECT-TYPE
         "The protocol indicator of the type indicated by
         lldpXdot1dcbxAdminApplicationPriorityAESelector."
     REFERENCE
-        "D.2.11.6"
+        "D.2.10.6"
     ::= { lldpXdot1dcbxAdminApplicationPriorityAppEntry 2 }
 
 lldpXdot1dcbxAdminApplicationPriorityAEPriority OBJECT-TYPE
@@ -3643,8 +4090,89 @@ lldpXdot1dcbxAdminApplicationPriorityAEPriority OBJECT-TYPE
         lldpXdot1dcbxAdminApplicationPriorityAESelector and
         lldpXdot1dcbxAdminApplicationPriorityAEProtocol"
     REFERENCE
-        "D.2.11.6"
+        "D.2.10.6"
     ::= { lldpXdot1dcbxAdminApplicationPriorityAppEntry 3 }
+
+--
+-- lldpXdot1dcbxAdminApplicationVlanAppTable - Contains the
+-- information for the Application VLAN TLV.    
+--
+
+lldpXdot1dcbxAdminApplicationVlanAppTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF 
+        LldpXdot1dcbxAdminApplicationVlanAppEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "Table containing entries indicating the VLAN to be used
+        for a given application"
+    ::= { lldpXdot1dcbxAdminData 5 }
+
+lldpXdot1dcbxAdminApplicationVlanAppEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAdminApplicationVlanAppEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION 
+        "Entry that indicates the VLAN to be used for a
+        given application."
+    INDEX         {
+                  lldpV2LocPortIfIndex,
+                  lldpXdot1dcbxAdminApplicationVlanAESelector,
+                  lldpXdot1dcbxAdminApplicationVlanAEProtocol
+    }
+    ::= { lldpXdot1dcbxAdminApplicationVlanAppTable 1 }
+
+LldpXdot1dcbxAdminApplicationVlanAppEntry ::= SEQUENCE {
+    lldpXdot1dcbxAdminApplicationVlanAESelector    
+        LldpXdot1dcbxAppSelector,
+    lldpXdot1dcbxAdminApplicationVlanAEProtocol    
+        LldpXdot1dcbxAppProtocol,
+    lldpXdot1dcbxAdminApplicationVlanAEVlanId    
+        VlanId
+}
+
+lldpXdot1dcbxAdminApplicationVlanAESelector OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAppSelector
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION 
+        "Indicates the contents of the protocol object
+        (lldpXdot1dcbxAdminApplicationVlanAEProtocol)
+        1: Ethertype
+        2: Well Known Port number over TCP, or SCTP
+        3: Well Known Port number over UDP, or DCCP
+        4: Well Known Port number over TCP, SCTP, UDP, and DCCP
+        5: Differentiated Services Code Point (DSCP) value. The
+           6 bit DSCP value is stored in the low order 6 bits of the 
+           protocol object. The higher order bits are set to zero.
+           (See IETF RFC 2474 for the definition of the DSCP value.)"
+    REFERENCE
+        "D.2.12.3"
+    ::= { lldpXdot1dcbxAdminApplicationVlanAppEntry 1 }
+
+lldpXdot1dcbxAdminApplicationVlanAEProtocol OBJECT-TYPE
+    SYNTAX        LldpXdot1dcbxAppProtocol
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "The protocol indicator of the type indicated by
+        lldpXdot1dcbxAdminApplicationVlanAESelector."
+    REFERENCE
+        "D.2.14.3"
+    ::= { lldpXdot1dcbxAdminApplicationVlanAppEntry 2 }
+
+lldpXdot1dcbxAdminApplicationVlanAEVlanId OBJECT-TYPE
+    SYNTAX        VlanId
+    MAX-ACCESS    read-create
+    STATUS        current
+    DESCRIPTION
+        "The VLAN Identifier that should be used in
+        frames transporting the protocol indicated by
+        lldpXdot1dcbxAdminApplicationVlanAESelector and
+        lldpXdot1dcbxAdminApplicationVlanAEProtocol"
+    REFERENCE
+        "D.2.14.3"
+    ::= { lldpXdot1dcbxAdminApplicationVlanAppEntry 3 }
 
 ------------------------------------------------------------------------
 -- IEEE 802.1 - DCBX Conformance Information
@@ -3672,6 +4200,7 @@ lldpXdot1dcbxCompliance MODULE-COMPLIANCE
         MANDATORY-GROUPS  { lldpXdot1dcbxETSGroup,
                             lldpXdot1dcbxPFCGroup,
                             lldpXdot1dcbxApplicationPriorityGroup,
+                            lldpXdot1dcbxApplicationVlanGroup,
                             ifGeneralInformationGroup
         }
     ::= { lldpXdot1dcbxCompliances 1 }
@@ -3749,5 +4278,17 @@ lldpXdot1dcbxApplicationPriorityGroup  OBJECT-GROUP
         "The collection of objects used for Application
         priority."
     ::= { lldpXdot1dcbxGroups 3 }        
-END
 
+lldpXdot1dcbxApplicationVlanGroup  OBJECT-GROUP
+    OBJECTS {
+        lldpXdot1dcbxConfigApplicationVlanTxEnable,
+        lldpXdot1dcbxLocApplicationVlanAEVlanId,
+        lldpXdot1dcbxRemApplicationVlanAEVlanId,
+        lldpXdot1dcbxAdminApplicationVlanAEVlanId
+    }
+    STATUS  current
+    DESCRIPTION
+        "The collection of objects used for Application
+        VLAN."
+    ::= { lldpXdot1dcbxGroups 4 }      
+END

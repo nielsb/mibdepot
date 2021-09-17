@@ -23,20 +23,20 @@ IMPORTS
 
 -- Define the MIB module
         lldpXDot1EvbExtensions MODULE-IDENTITY
-    LAST-UPDATED "201202150000Z" -- February 15, 2012 
+    LAST-UPDATED "201806210000Z" -- June 21, 2018
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO 
-           "WG-URL: http://www.ieee802.org/1
-            WG-EMail: STDS-802-1-L@LISTSERV.IEEE.ORG
+           "WG-URL: http://www.ieee802.org/1/
+            WG-EMail: STDS-802-1-L@IEEE.ORG
 
-          Contact: Tony Jeffree
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
                    Piscataway
                    NJ 08854
                    USA
-           E-mail: STDS-802-1-L@LISTSERV.IEEE.ORG"
+           E-mail: STDS-802-1-L@IEEE.ORG"
     DESCRIPTION
             "The LLDP Management Information Base extension module for
             IEEE 802.1 organizationally defined discovery information
@@ -47,16 +47,29 @@ IMPORTS
             of other 802.1 LLDP extension MIBs.
 
             Unless otherwise indicated, the references in this
-            MIB module are to IEEE Std 802.1Qbg-20XX.
+            MIB module are to IEEE Std 802.1Q.
 
-            Copyright (C) IEEE (2011).  This version of this MIB module
-            is published as D.4.6 of IEEE Std 802.1Qbg-20XX;
+            Copyright (C) IEEE (2018).  This version of this MIB module
+            is published as D.5.6 of IEEE Std 802.1Q;
             see the standard itself for full legal notices."
     
+    REVISION "201806210000Z" -- June 21, 2018
+
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2017 revision.
+            Cross references updated and corrected."
+
+    REVISION "201412150000Z" -- December 15, 2014
+    
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2014 revision.
+            Cross references updated and corrected."
+            
     REVISION "201202150000Z" -- February 15, 2012
 
     DESCRIPTION
-            "Initial version published as part of IEEE Std. 802.1Qbg"
+            "Initial version published as part of IEEE Std 802.1Qbg"
 
 -- Hang this MIB module under the stand-alone extension MIBs arc: 
    ::= { lldpXdot1StandAloneExtensions 1 }
@@ -109,7 +122,7 @@ lldpXdot1EvbConfigEvbEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        EVB TLV on LLDP transmission capable ports.
+        EVB TLV on LLDP transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -135,12 +148,12 @@ lldpXdot1EvbConfigEvbTxEnable OBJECT-TYPE
         defined as a truth value and configured by the network 
         management, determines whether the IEEE 802.1 organizationally
         defined EVB TLV transmission is allowed 
-        on a given LLDP transmission capable port.
+        on a given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.13"
+        "D.2.12"
     DEFVAL         { false }
     ::= { lldpXdot1EvbConfigEvbEntry 1 }
 
@@ -165,7 +178,7 @@ lldpXdot1EvbConfigCdcpEntry OBJECT-TYPE
     DESCRIPTION
         "LLDP configuration information that controls the
         transmission of IEEE 802.1 organizationally defined 
-        CDCP TLV on LLDP transmission capable ports.
+        CDCP TLV on LLDP transmission-capable ports.
 
         This configuration object augments the lldpV2PortConfigEntry of
         the LLDP-MIB, therefore it is only present along with the port
@@ -191,12 +204,12 @@ lldpXdot1EvbConfigCdcpTxEnable OBJECT-TYPE
         defined as a truth value and configured by the network 
         management, determines whether the IEEE 802.1 organizationally
         defined CDCP TLV transmission is allowed 
-        on a given LLDP transmission capable port.
+        on a given LLDP transmission-capable port.
 
         The value of this object is restored from non-volatile
         storage after a re-initialization of the management system."
     REFERENCE
-        "D.2.14"
+        "D.2.13"
     DEFVAL         { false }
     ::= { lldpXdot1EvbConfigCdcpEntry 1 }
     
@@ -248,7 +261,7 @@ lldpV2Xdot1LocEvbTlvString OBJECT-TYPE
             is not visible as separate objects within the
             local database."
     REFERENCE 
-            "D.2.13"
+            "D.2.12"
     ::= { lldpV2Xdot1LocEvbTlvEntry 1 }
 
 
@@ -296,7 +309,7 @@ lldpV2Xdot1LocCdcpTlvString OBJECT-TYPE
             is not visible as separate objects within the
             local database."
     REFERENCE 
-            "D.2.14"
+            "D.2.13"
     ::= { lldpV2Xdot1LocCdcpTlvEntry 1 }
 
 ------------------------------------------------------------------------
@@ -350,7 +363,7 @@ lldpV2Xdot1RemEvbTlvString OBJECT-TYPE
             is not visible as separate objects within the
             local database."
     REFERENCE 
-            "D.2.13"
+            "D.2.12"
     ::= { lldpV2Xdot1RemEvbTlvEntry 1 }
 
 
@@ -401,7 +414,7 @@ lldpV2Xdot1RemCdcpTlvString OBJECT-TYPE
             is not visible as separate objects within the
             local database."
     REFERENCE 
-            "D.2.14"
+            "D.2.13"
     ::= { lldpV2Xdot1RemCdcpTlvEntry 1 }
 
 ------------------------------------------------------------------------
@@ -454,4 +467,3 @@ lldpXdot1EvbGroup  OBJECT-GROUP
     ::= { lldpXdot1EvbGroups 1 }
 
 END
-
