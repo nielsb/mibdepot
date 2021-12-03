@@ -2709,6 +2709,10 @@ ciscoNCS540L8Z16GSysD               OBJECT IDENTIFIER ::= { ciscoProducts 3032 }
 ciscoNCS540L8Z16GSysA               OBJECT IDENTIFIER ::= { ciscoProducts 3033 } -- NCS540L Router - N540X-8Z16G-SYS-A
 ciscoNCS540L4Z14G2QA                OBJECT IDENTIFIER ::= { ciscoProducts 3034 } -- NCS540L Router - N540X-4Z14G2Q-A
 ciscoNCS540L4Z14G2QD                OBJECT IDENTIFIER ::= { ciscoProducts 3035 } -- NCS540L Router - N540X-4Z14G2Q-D
+ciscoC9300X12Y                       OBJECT IDENTIFIER ::= { ciscoProducts 3037 } -- Catalyst 9300X Pacman 12 ports Catalyst 9300X switch
+ciscoC9300X24Y                       OBJECT IDENTIFIER ::= { ciscoProducts 3038 } -- Catalyst 9300X Pacman 24 ports Catalyst 9300X switch 
+ciscoC9300X48HX                      OBJECT IDENTIFIER ::= { ciscoProducts 3039 } -- Catalyst 9300X 48 ports mGig with 90W POE Catalyst 9300X switch
+ciscoC9300X48TX                      OBJECT IDENTIFIER ::= { ciscoProducts 3040 } -- Catalyst 9300X 48 ports mGig 9300X switch
 ciscoISR1100X4G                     OBJECT IDENTIFIER ::= { ciscoProducts 3045 } -- Cisco ISR1100X-4G ( 4xGE, Flexible Core, 8G FLASH, 8G DRAM)
 ciscoISR1100X6G                     OBJECT IDENTIFIER ::= { ciscoProducts 3046 } -- Cisco ISR1100X-6G ( 4xGE, 2xSFP, Flexible Core, 8G FLASH, 8G DRAM)
 ciscoESS930010XE                    OBJECT IDENTIFIER ::= { ciscoProducts 3047 } -- Catalyst ESS9300 Embedded Series switch - 10p 10G, NE
@@ -2731,6 +2735,12 @@ ciscoUCSB480M5                      OBJECT IDENTIFIER ::= { ciscoProducts 3104 }
 ciscoUCSIOM2208                     OBJECT IDENTIFIER ::= { ciscoProducts 3138 } -- Cisco UCS-IOM-2208 IOM
 ciscoUCSIOM2304                     OBJECT IDENTIFIER ::= { ciscoProducts 3139 } -- Cisco UCS-IOM-2304 IOM
 ciscoUCSIOM2408                     OBJECT IDENTIFIER ::= { ciscoProducts 3140 } -- Cisco UCS-IOM-2408 IOM
+cisco810132FH                       OBJECT IDENTIFIER ::= { ciscoProducts 3144 } -- Cisco 8100 32x400G QSFPDD 1RU Fixed System w/o HBM
 ciscoNCS55A124Q6HSS                 OBJECT IDENTIFIER ::= { ciscoProducts 3146 } -- Network Convergence Services NCS55A1 24Q6H_SS 1RU Chassis 
+ciscoNCS1010                        OBJECT IDENTIFIER ::= { ciscoProducts 3153 } -- Cisco Network Convergence System 1010, Optical Line System
+ciscoNCS57C148Q6Sys                 OBJECT IDENTIFIER ::= { ciscoProducts 3154 } -- NCS5700 Router - NCS-57C1-48Q6-SYS
+ciscoNCS55A124Q6HS                  OBJECT IDENTIFIER ::= { ciscoProducts 3158 } -- Network Convergence Services NCS55A1 24Q6H_S 1RU Chassis
+ciscoNCS540L6Z14GSysD               OBJECT IDENTIFIER ::= { ciscoProducts 3163 } -- NCS540L Router - N540-6Z14G-SYS-D 
+
 END
 
