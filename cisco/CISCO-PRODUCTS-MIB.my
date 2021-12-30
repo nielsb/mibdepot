@@ -2219,6 +2219,7 @@ ciscoNCS1001                        OBJECT IDENTIFIER ::= { ciscoProducts 2423 }
 ciscoIR809G3GGAK9                   OBJECT IDENTIFIER ::= { ciscoProducts 2425 } -- Cisco 809 3G Industrial Integrated Service Routers with multi-mode HSPA+, ETSI compliant
 ciscoIR809GLTELAK9                  OBJECT IDENTIFIER ::= { ciscoProducts 2426 } -- Cisco 809 4G LTE Industrial Integrated Service Routers with multi-mode LTE/HSPA+, ETSI compliant
 cisco3504WLC                        OBJECT IDENTIFIER ::= { ciscoProducts 2427 } -- Cisco 3500 Series Wireless Controller
+ciscoNCS55A136HSES                  OBJECT IDENTIFIER ::= { ciscoProducts 2428 } -- Network Convergence Services NCS55A1 Fixed 36x100G Scale chassis
 ciscoNCS5501HD                      OBJECT IDENTIFIER ::= { ciscoProducts 2430 } -- Network Convergence Services Tortin 1RU Chassis, PID for this chassis is NCS-5501-HD
 ciscoNCS5501HDS                     OBJECT IDENTIFIER ::= { ciscoProducts 2431 } -- Network Convergence Services Trift 1RU Chassis, PID for this chassis is NCS-5501-HD-S
 ciscoNCS55A124H                     OBJECT IDENTIFIER ::= { ciscoProducts 2432 } -- Network Convergence Services NCS55A1 Fixed 24x100G chassis
@@ -2741,6 +2742,8 @@ ciscoNCS1010                        OBJECT IDENTIFIER ::= { ciscoProducts 3153 }
 ciscoNCS57C148Q6Sys                 OBJECT IDENTIFIER ::= { ciscoProducts 3154 } -- NCS5700 Router - NCS-57C1-48Q6-SYS
 ciscoNCS55A124Q6HS                  OBJECT IDENTIFIER ::= { ciscoProducts 3158 } -- Network Convergence Services NCS55A1 24Q6H_S 1RU Chassis
 ciscoNCS540L6Z14GSysD               OBJECT IDENTIFIER ::= { ciscoProducts 3163 } -- NCS540L Router - N540-6Z14G-SYS-D 
+ciscoUCSC225M6                     OBJECT IDENTIFIER ::= { ciscoProducts 3168 } -- Cisco UCS C225 M6 Rack server
+
 
 END
 
