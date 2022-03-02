@@ -1,0 +1,99 @@
+-- *********************************************************************
+-- CISCO-FIREPOWER-AP-INITIATOR-MIB.my
+-- 
+-- MIB representation of the Cisco Firepower
+-- INITIATOR management information model package
+-- 
+-- Created July 2021 by Charles Bullis
+-- 
+-- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- 
+-- *********************************************************************
+
+CISCO-FIREPOWER-AP-INITIATOR-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Counter32,
+    Gauge32,
+    TimeTicks,
+    Counter64,
+    Unsigned32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    RowPointer,
+    DateAndTime,
+    DisplayString,
+    MacAddress,
+    TimeInterval,
+    TimeStamp,
+    TruthValue
+        FROM SNMPv2-TC
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    InetAddressIPv4,
+    InetAddressIPv6
+        FROM INET-ADDRESS-MIB
+    ciscoMgmt
+        FROM CISCO-SMI
+    CiscoNetworkAddress,
+    Unsigned64,
+    CiscoInetAddressMask,
+    CiscoAlarmSeverity,
+    TimeIntervalSec
+        FROM CISCO-TC
+    ciscoFirepowerApMIBObjects,
+    CfprApManagedObjectId,
+    CfprApManagedObjectDn
+        FROM CISCO-FIREPOWER-AP-MIB;
+
+cfprApInitiatorObjects MODULE-IDENTITY
+    LAST-UPDATED    "202107260000Z"
+    ORGANIZATION    "Cisco Systems Inc."
+    CONTACT-INFO
+        "Cisco Systems
+        Customer Service
+        
+        Postal: 170 W Tasman Drive
+        San Jose, CA  95134
+        USA
+        
+        Tel: +1 800 553-NETS
+        
+        E-mail: firepower-mibs@cisco.com"
+    DESCRIPTION
+        "MIB representation of the Cisco Firepower
+        INITIATOR management information model package"
+    ::= { ciscoFirepowerApMIBObjects 39 }
+
+cfprApInitiatorFcInitiatorEpTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApInitiatorFcInitiatorEpEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower initiator:FcInitiatorEp managed object table"
+    ::= { cfprApInitiatorObjects 1 }
+
+cfprApInitiatorFcInitiatorEpEntry OBJECT-TYPE
+    SYNTAX           CfprApInitiatorFcInitiatorEpEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApInitiatorFcInitiatorEpTable table."
+    INDEX { cfprApInitiatorFcInitiatorEpInstanceId }
+    ::= { cfprApInitiatorFcInitiatorEpTable 1 }
+
+CfprApInitiatorFcInitiatorEpEntry ::= SEQUENCE {
+    cfprApInitiatorFcInitiatorEpInstanceId                           CfprApManagedObjectId
+}
+
+cfprApInitiatorFcInitiatorEpInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApInitiatorFcInitiatorEpEntry 1 }
+
+END

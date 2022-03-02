@@ -1,0 +1,289 @@
+-- *********************************************************************
+-- CISCO-FIREPOWER-AP-HOSTIMG-MIB.my
+-- 
+-- MIB representation of the Cisco Firepower
+-- HOSTIMG management information model package
+-- 
+-- Created July 2021 by Charles Bullis
+-- 
+-- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- 
+-- *********************************************************************
+
+CISCO-FIREPOWER-AP-HOSTIMG-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Counter32,
+    Gauge32,
+    TimeTicks,
+    Counter64,
+    Unsigned32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    RowPointer,
+    DateAndTime,
+    DisplayString,
+    MacAddress,
+    TimeInterval,
+    TimeStamp,
+    TruthValue
+        FROM SNMPv2-TC
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    InetAddressIPv4,
+    InetAddressIPv6
+        FROM INET-ADDRESS-MIB
+    ciscoMgmt
+        FROM CISCO-SMI
+    CiscoNetworkAddress,
+    Unsigned64,
+    CiscoInetAddressMask,
+    CiscoAlarmSeverity,
+    TimeIntervalSec
+        FROM CISCO-TC
+    ciscoFirepowerApMIBObjects,
+    CfprApManagedObjectId,
+    CfprApManagedObjectDn
+        FROM CISCO-FIREPOWER-AP-MIB
+    CfprApHostimgComposition,
+    CfprApHostimgDistribution,
+    CfprApHostimgImgType,
+    CfprApHostimgType,
+    CfprApPolicyPolicyOwner
+        FROM CISCO-FIREPOWER-AP-TC-MIB;
+
+cfprApHostimgObjects MODULE-IDENTITY
+    LAST-UPDATED    "202107260000Z"
+    ORGANIZATION    "Cisco Systems Inc."
+    CONTACT-INFO
+        "Cisco Systems
+        Customer Service
+        
+        Postal: 170 W Tasman Drive
+        San Jose, CA  95134
+        USA
+        
+        Tel: +1 800 553-NETS
+        
+        E-mail: firepower-mibs@cisco.com"
+    DESCRIPTION
+        "MIB representation of the Cisco Firepower
+        HOSTIMG management information model package"
+    ::= { ciscoFirepowerApMIBObjects 35 }
+
+cfprApHostimgPolicyTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApHostimgPolicyEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy managed object table"
+    ::= { cfprApHostimgObjects 1 }
+
+cfprApHostimgPolicyEntry OBJECT-TYPE
+    SYNTAX           CfprApHostimgPolicyEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApHostimgPolicyTable table."
+    INDEX { cfprApHostimgPolicyInstanceId }
+    ::= { cfprApHostimgPolicyTable 1 }
+
+CfprApHostimgPolicyEntry ::= SEQUENCE {
+    cfprApHostimgPolicyInstanceId                                    CfprApManagedObjectId,
+    cfprApHostimgPolicyDn                                            CfprApManagedObjectDn,
+    cfprApHostimgPolicyRn                                            SnmpAdminString,
+    cfprApHostimgPolicyComp                                          CfprApHostimgComposition,
+    cfprApHostimgPolicyConf                                          SnmpAdminString,
+    cfprApHostimgPolicyDescr                                         SnmpAdminString,
+    cfprApHostimgPolicyDistro                                        CfprApHostimgDistribution,
+    cfprApHostimgPolicyIntId                                         SnmpAdminString,
+    cfprApHostimgPolicyName                                          SnmpAdminString,
+    cfprApHostimgPolicyPolicyLevel                                   Gauge32,
+    cfprApHostimgPolicyPolicyOwner                                   CfprApPolicyPolicyOwner,
+    cfprApHostimgPolicyType                                          CfprApHostimgImgType
+}
+
+cfprApHostimgPolicyInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApHostimgPolicyEntry 1 }
+
+cfprApHostimgPolicyDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:dn managed object property"
+    ::= { cfprApHostimgPolicyEntry 2 }
+
+cfprApHostimgPolicyRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:rn managed object property"
+    ::= { cfprApHostimgPolicyEntry 3 }
+
+cfprApHostimgPolicyComp OBJECT-TYPE
+    SYNTAX       CfprApHostimgComposition
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:comp managed object property"
+    ::= { cfprApHostimgPolicyEntry 4 }
+
+cfprApHostimgPolicyConf OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:conf managed object property"
+    ::= { cfprApHostimgPolicyEntry 5 }
+
+cfprApHostimgPolicyDescr OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:descr managed object property"
+    ::= { cfprApHostimgPolicyEntry 6 }
+
+cfprApHostimgPolicyDistro OBJECT-TYPE
+    SYNTAX       CfprApHostimgDistribution
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:distro managed object property"
+    ::= { cfprApHostimgPolicyEntry 7 }
+
+cfprApHostimgPolicyIntId OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:intId managed object property"
+    ::= { cfprApHostimgPolicyEntry 8 }
+
+cfprApHostimgPolicyName OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:name managed object property"
+    ::= { cfprApHostimgPolicyEntry 9 }
+
+cfprApHostimgPolicyPolicyLevel OBJECT-TYPE
+    SYNTAX       Gauge32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:policyLevel managed
+        object property"
+    ::= { cfprApHostimgPolicyEntry 10 }
+
+cfprApHostimgPolicyPolicyOwner OBJECT-TYPE
+    SYNTAX       CfprApPolicyPolicyOwner
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:policyOwner managed
+        object property"
+    ::= { cfprApHostimgPolicyEntry 11 }
+
+cfprApHostimgPolicyType OBJECT-TYPE
+    SYNTAX       CfprApHostimgImgType
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Policy:type managed object property"
+    ::= { cfprApHostimgPolicyEntry 12 }
+
+cfprApHostimgTargetTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApHostimgTargetEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target managed object table"
+    ::= { cfprApHostimgObjects 2 }
+
+cfprApHostimgTargetEntry OBJECT-TYPE
+    SYNTAX           CfprApHostimgTargetEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApHostimgTargetTable table."
+    INDEX { cfprApHostimgTargetInstanceId }
+    ::= { cfprApHostimgTargetTable 1 }
+
+CfprApHostimgTargetEntry ::= SEQUENCE {
+    cfprApHostimgTargetInstanceId                                    CfprApManagedObjectId,
+    cfprApHostimgTargetDn                                            CfprApManagedObjectDn,
+    cfprApHostimgTargetRn                                            SnmpAdminString,
+    cfprApHostimgTargetName                                          SnmpAdminString,
+    cfprApHostimgTargetOrder                                         Gauge32,
+    cfprApHostimgTargetType                                          CfprApHostimgType,
+    cfprApHostimgTargetUri                                           SnmpAdminString
+}
+
+cfprApHostimgTargetInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApHostimgTargetEntry 1 }
+
+cfprApHostimgTargetDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target:dn managed object property"
+    ::= { cfprApHostimgTargetEntry 2 }
+
+cfprApHostimgTargetRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target:rn managed object property"
+    ::= { cfprApHostimgTargetEntry 3 }
+
+cfprApHostimgTargetName OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target:name managed object property"
+    ::= { cfprApHostimgTargetEntry 4 }
+
+cfprApHostimgTargetOrder OBJECT-TYPE
+    SYNTAX       Gauge32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target:order managed object property"
+    ::= { cfprApHostimgTargetEntry 5 }
+
+cfprApHostimgTargetType OBJECT-TYPE
+    SYNTAX       CfprApHostimgType
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target:type managed object property"
+    ::= { cfprApHostimgTargetEntry 6 }
+
+cfprApHostimgTargetUri OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower hostimg:Target:uri managed object property"
+    ::= { cfprApHostimgTargetEntry 7 }
+
+END

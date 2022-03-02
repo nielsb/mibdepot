@@ -1,0 +1,192 @@
+-- *********************************************************************
+-- CISCO-FIREPOWER-AP-CHANGE-MIB.my
+-- 
+-- MIB representation of the Cisco Firepower
+-- CHANGE management information model package
+-- 
+-- Created July 2021 by Charles Bullis
+-- 
+-- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- 
+-- *********************************************************************
+
+CISCO-FIREPOWER-AP-CHANGE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Counter32,
+    Gauge32,
+    TimeTicks,
+    Counter64,
+    Unsigned32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    RowPointer,
+    DateAndTime,
+    DisplayString,
+    MacAddress,
+    TimeInterval,
+    TimeStamp,
+    TruthValue
+        FROM SNMPv2-TC
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    InetAddressIPv4,
+    InetAddressIPv6
+        FROM INET-ADDRESS-MIB
+    ciscoMgmt
+        FROM CISCO-SMI
+    CiscoNetworkAddress,
+    Unsigned64,
+    CiscoInetAddressMask,
+    CiscoAlarmSeverity,
+    TimeIntervalSec
+        FROM CISCO-TC
+    ciscoFirepowerApMIBObjects,
+    CfprApManagedObjectId,
+    CfprApManagedObjectDn
+        FROM CISCO-FIREPOWER-AP-MIB
+    CfprApChangeStatus,
+    CfprApMoMoClassId
+        FROM CISCO-FIREPOWER-AP-TC-MIB;
+
+cfprApChangeObjects MODULE-IDENTITY
+    LAST-UPDATED    "202107260000Z"
+    ORGANIZATION    "Cisco Systems Inc."
+    CONTACT-INFO
+        "Cisco Systems
+        Customer Service
+        
+        Postal: 170 W Tasman Drive
+        San Jose, CA  95134
+        USA
+        
+        Tel: +1 800 553-NETS
+        
+        E-mail: firepower-mibs@cisco.com"
+    DESCRIPTION
+        "MIB representation of the Cisco Firepower
+        CHANGE management information model package"
+    ::= { ciscoFirepowerApMIBObjects 9 }
+
+cfprApChangeChangedObjectRefTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApChangeChangedObjectRefEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef managed object table"
+    ::= { cfprApChangeObjects 1 }
+
+cfprApChangeChangedObjectRefEntry OBJECT-TYPE
+    SYNTAX           CfprApChangeChangedObjectRefEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApChangeChangedObjectRefTable table."
+    INDEX { cfprApChangeChangedObjectRefInstanceId }
+    ::= { cfprApChangeChangedObjectRefTable 1 }
+
+CfprApChangeChangedObjectRefEntry ::= SEQUENCE {
+    cfprApChangeChangedObjectRefInstanceId                           CfprApManagedObjectId,
+    cfprApChangeChangedObjectRefDn                                   CfprApManagedObjectDn,
+    cfprApChangeChangedObjectRefRn                                   SnmpAdminString,
+    cfprApChangeChangedObjectRefCentraleMoDn                         SnmpAdminString,
+    cfprApChangeChangedObjectRefChangedMoClassId                     CfprApMoMoClassId,
+    cfprApChangeChangedObjectRefGuid                                 SnmpAdminString,
+    cfprApChangeChangedObjectRefId                                   Gauge32,
+    cfprApChangeChangedObjectRefOldCentraleMoDn                      SnmpAdminString,
+    cfprApChangeChangedObjectRefRefObjStatus                         CfprApChangeStatus,
+    cfprApChangeChangedObjectRefUcsmMoDn                             SnmpAdminString
+}
+
+cfprApChangeChangedObjectRefInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApChangeChangedObjectRefEntry 1 }
+
+cfprApChangeChangedObjectRefDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:dn managed
+        object property"
+    ::= { cfprApChangeChangedObjectRefEntry 2 }
+
+cfprApChangeChangedObjectRefRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:rn managed
+        object property"
+    ::= { cfprApChangeChangedObjectRefEntry 3 }
+
+cfprApChangeChangedObjectRefCentraleMoDn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:centraleMoDn
+        managed object property"
+    ::= { cfprApChangeChangedObjectRefEntry 4 }
+
+cfprApChangeChangedObjectRefChangedMoClassId OBJECT-TYPE
+    SYNTAX       CfprApMoMoClassId
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:changedMoClassId
+        managed object property"
+    ::= { cfprApChangeChangedObjectRefEntry 5 }
+
+cfprApChangeChangedObjectRefGuid OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:guid managed
+        object property"
+    ::= { cfprApChangeChangedObjectRefEntry 6 }
+
+cfprApChangeChangedObjectRefId OBJECT-TYPE
+    SYNTAX       Gauge32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:id managed
+        object property"
+    ::= { cfprApChangeChangedObjectRefEntry 7 }
+
+cfprApChangeChangedObjectRefOldCentraleMoDn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:oldCentraleMoDn
+        managed object property"
+    ::= { cfprApChangeChangedObjectRefEntry 8 }
+
+cfprApChangeChangedObjectRefRefObjStatus OBJECT-TYPE
+    SYNTAX       CfprApChangeStatus
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:refObjStatus
+        managed object property"
+    ::= { cfprApChangeChangedObjectRefEntry 9 }
+
+cfprApChangeChangedObjectRefUcsmMoDn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower change:ChangedObjectRef:ucsmMoDn
+        managed object property"
+    ::= { cfprApChangeChangedObjectRefEntry 10 }
+
+END

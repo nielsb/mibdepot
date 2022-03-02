@@ -1,0 +1,175 @@
+-- *********************************************************************
+-- CISCO-FIREPOWER-AP-FSM-MIB.my
+-- 
+-- MIB representation of the Cisco Firepower
+-- FSM management information model package
+-- 
+-- Created July 2021 by Charles Bullis
+-- 
+-- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- 
+-- *********************************************************************
+
+CISCO-FIREPOWER-AP-FSM-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Counter32,
+    Gauge32,
+    TimeTicks,
+    Counter64,
+    Unsigned32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    RowPointer,
+    DateAndTime,
+    DisplayString,
+    MacAddress,
+    TimeInterval,
+    TimeStamp,
+    TruthValue
+        FROM SNMPv2-TC
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    InetAddressIPv4,
+    InetAddressIPv6
+        FROM INET-ADDRESS-MIB
+    ciscoMgmt
+        FROM CISCO-SMI
+    CiscoNetworkAddress,
+    Unsigned64,
+    CiscoInetAddressMask,
+    CiscoAlarmSeverity,
+    TimeIntervalSec
+        FROM CISCO-TC
+    ciscoFirepowerApMIBObjects,
+    CfprApManagedObjectId,
+    CfprApManagedObjectDn
+        FROM CISCO-FIREPOWER-AP-MIB
+    CfprApFsmFsmStageStatus
+        FROM CISCO-FIREPOWER-AP-TC-MIB;
+
+cfprApFsmObjects MODULE-IDENTITY
+    LAST-UPDATED    "202107260000Z"
+    ORGANIZATION    "Cisco Systems Inc."
+    CONTACT-INFO
+        "Cisco Systems
+        Customer Service
+        
+        Postal: 170 W Tasman Drive
+        San Jose, CA  95134
+        USA
+        
+        Tel: +1 800 553-NETS
+        
+        E-mail: firepower-mibs@cisco.com"
+    DESCRIPTION
+        "MIB representation of the Cisco Firepower
+        FSM management information model package"
+    ::= { ciscoFirepowerApMIBObjects 32 }
+
+cfprApFsmStatusTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApFsmStatusEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status managed object table"
+    ::= { cfprApFsmObjects 1 }
+
+cfprApFsmStatusEntry OBJECT-TYPE
+    SYNTAX           CfprApFsmStatusEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApFsmStatusTable table."
+    INDEX { cfprApFsmStatusInstanceId }
+    ::= { cfprApFsmStatusTable 1 }
+
+CfprApFsmStatusEntry ::= SEQUENCE {
+    cfprApFsmStatusInstanceId                                        CfprApManagedObjectId,
+    cfprApFsmStatusDn                                                CfprApManagedObjectDn,
+    cfprApFsmStatusRn                                                SnmpAdminString,
+    cfprApFsmStatusConvertedEpRef                                    SnmpAdminString,
+    cfprApFsmStatusDescr                                             SnmpAdminString,
+    cfprApFsmStatusName                                              SnmpAdminString,
+    cfprApFsmStatusObjectClassName                                   SnmpAdminString,
+    cfprApFsmStatusRemoteEpRef                                       SnmpAdminString,
+    cfprApFsmStatusState                                             CfprApFsmFsmStageStatus
+}
+
+cfprApFsmStatusInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApFsmStatusEntry 1 }
+
+cfprApFsmStatusDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:dn managed object property"
+    ::= { cfprApFsmStatusEntry 2 }
+
+cfprApFsmStatusRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:rn managed object property"
+    ::= { cfprApFsmStatusEntry 3 }
+
+cfprApFsmStatusConvertedEpRef OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:convertedEpRef managed
+        object property"
+    ::= { cfprApFsmStatusEntry 4 }
+
+cfprApFsmStatusDescr OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:descr managed object property"
+    ::= { cfprApFsmStatusEntry 5 }
+
+cfprApFsmStatusName OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:name managed object property"
+    ::= { cfprApFsmStatusEntry 6 }
+
+cfprApFsmStatusObjectClassName OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:objectClassName managed
+        object property"
+    ::= { cfprApFsmStatusEntry 7 }
+
+cfprApFsmStatusRemoteEpRef OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:remoteEpRef managed object property"
+    ::= { cfprApFsmStatusEntry 8 }
+
+cfprApFsmStatusState OBJECT-TYPE
+    SYNTAX       CfprApFsmFsmStageStatus
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower fsm:Status:state managed object property"
+    ::= { cfprApFsmStatusEntry 9 }
+
+END

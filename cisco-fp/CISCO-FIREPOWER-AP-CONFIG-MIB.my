@@ -1,0 +1,407 @@
+-- *********************************************************************
+-- CISCO-FIREPOWER-AP-CONFIG-MIB.my
+-- 
+-- MIB representation of the Cisco Firepower
+-- CONFIG management information model package
+-- 
+-- Created July 2021 by Charles Bullis
+-- 
+-- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- 
+-- *********************************************************************
+
+CISCO-FIREPOWER-AP-CONFIG-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Counter32,
+    Gauge32,
+    TimeTicks,
+    Counter64,
+    Unsigned32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    RowPointer,
+    DateAndTime,
+    DisplayString,
+    MacAddress,
+    TimeInterval,
+    TimeStamp,
+    TruthValue
+        FROM SNMPv2-TC
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB
+    InetAddressIPv4,
+    InetAddressIPv6
+        FROM INET-ADDRESS-MIB
+    ciscoMgmt
+        FROM CISCO-SMI
+    CiscoNetworkAddress,
+    Unsigned64,
+    CiscoInetAddressMask,
+    CiscoAlarmSeverity,
+    TimeIntervalSec
+        FROM CISCO-TC
+    ciscoFirepowerApMIBObjects,
+    CfprApManagedObjectId,
+    CfprApManagedObjectDn
+        FROM CISCO-FIREPOWER-AP-MIB
+    CfprApConfigImpactResponseState,
+    CfprApConfigSorterDirection,
+    CfprApLsConfigIssues,
+    CfprApLsConfigState,
+    CfprApMoMoClassId,
+    CfprApTrigAckChanges,
+    CfprApTrigAckMode
+        FROM CISCO-FIREPOWER-AP-TC-MIB;
+
+cfprApConfigObjects MODULE-IDENTITY
+    LAST-UPDATED    "202107260000Z"
+    ORGANIZATION    "Cisco Systems Inc."
+    CONTACT-INFO
+        "Cisco Systems
+        Customer Service
+        
+        Postal: 170 W Tasman Drive
+        San Jose, CA  95134
+        USA
+        
+        Tel: +1 800 553-NETS
+        
+        E-mail: firepower-mibs@cisco.com"
+    DESCRIPTION
+        "MIB representation of the Cisco Firepower
+        CONFIG management information model package"
+    ::= { ciscoFirepowerApMIBObjects 13 }
+
+cfprApConfigImpactTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApConfigImpactEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower config:Impact managed object table"
+    ::= { cfprApConfigObjects 1 }
+
+cfprApConfigImpactEntry OBJECT-TYPE
+    SYNTAX           CfprApConfigImpactEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApConfigImpactTable table."
+    INDEX { cfprApConfigImpactInstanceId }
+    ::= { cfprApConfigImpactTable 1 }
+
+CfprApConfigImpactEntry ::= SEQUENCE {
+    cfprApConfigImpactInstanceId                                     CfprApManagedObjectId,
+    cfprApConfigImpactDn                                             CfprApManagedObjectDn,
+    cfprApConfigImpactRn                                             SnmpAdminString,
+    cfprApConfigImpactAffectedObj                                    SnmpAdminString,
+    cfprApConfigImpactAffectedServer                                 SnmpAdminString,
+    cfprApConfigImpactChanges                                        CfprApTrigAckChanges,
+    cfprApConfigImpactConfigIssues                                   CfprApLsConfigIssues,
+    cfprApConfigImpactConfigQualifier                                CfprApLsConfigIssues,
+    cfprApConfigImpactConfigState                                    CfprApLsConfigState,
+    cfprApConfigImpactDeploymentMode                                 CfprApTrigAckMode,
+    cfprApConfigImpactName                                           SnmpAdminString,
+    cfprApConfigImpactRebootRequired                                 TruthValue
+}
+
+cfprApConfigImpactInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApConfigImpactEntry 1 }
+
+cfprApConfigImpactDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:dn managed object property"
+    ::= { cfprApConfigImpactEntry 2 }
+
+cfprApConfigImpactRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:rn managed object property"
+    ::= { cfprApConfigImpactEntry 3 }
+
+cfprApConfigImpactAffectedObj OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:affectedObj managed
+        object property"
+    ::= { cfprApConfigImpactEntry 4 }
+
+cfprApConfigImpactAffectedServer OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:affectedServer managed
+        object property"
+    ::= { cfprApConfigImpactEntry 5 }
+
+cfprApConfigImpactChanges OBJECT-TYPE
+    SYNTAX       CfprApTrigAckChanges
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:changes managed object property"
+    ::= { cfprApConfigImpactEntry 6 }
+
+cfprApConfigImpactConfigIssues OBJECT-TYPE
+    SYNTAX       CfprApLsConfigIssues
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:configIssues managed
+        object property"
+    ::= { cfprApConfigImpactEntry 7 }
+
+cfprApConfigImpactConfigQualifier OBJECT-TYPE
+    SYNTAX       CfprApLsConfigIssues
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:configQualifier
+        managed object property"
+    ::= { cfprApConfigImpactEntry 8 }
+
+cfprApConfigImpactConfigState OBJECT-TYPE
+    SYNTAX       CfprApLsConfigState
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:configState managed
+        object property"
+    ::= { cfprApConfigImpactEntry 9 }
+
+cfprApConfigImpactDeploymentMode OBJECT-TYPE
+    SYNTAX       CfprApTrigAckMode
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:deploymentMode managed
+        object property"
+    ::= { cfprApConfigImpactEntry 10 }
+
+cfprApConfigImpactName OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:name managed object property"
+    ::= { cfprApConfigImpactEntry 11 }
+
+cfprApConfigImpactRebootRequired OBJECT-TYPE
+    SYNTAX       TruthValue
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Impact:rebootRequired managed
+        object property"
+    ::= { cfprApConfigImpactEntry 12 }
+
+cfprApConfigManagedEpImpactResponseTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApConfigManagedEpImpactResponseEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse
+        managed object table"
+    ::= { cfprApConfigObjects 2 }
+
+cfprApConfigManagedEpImpactResponseEntry OBJECT-TYPE
+    SYNTAX           CfprApConfigManagedEpImpactResponseEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApConfigManagedEpImpactResponseTable table."
+    INDEX { cfprApConfigManagedEpImpactResponseInstanceId }
+    ::= { cfprApConfigManagedEpImpactResponseTable 1 }
+
+CfprApConfigManagedEpImpactResponseEntry ::= SEQUENCE {
+    cfprApConfigManagedEpImpactResponseInstanceId                    CfprApManagedObjectId,
+    cfprApConfigManagedEpImpactResponseDn                            CfprApManagedObjectDn,
+    cfprApConfigManagedEpImpactResponseRn                            SnmpAdminString,
+    cfprApConfigManagedEpImpactResponseAffectedServers               Gauge32,
+    cfprApConfigManagedEpImpactResponseAppConnectorId                Gauge32,
+    cfprApConfigManagedEpImpactResponseEpName                        SnmpAdminString,
+    cfprApConfigManagedEpImpactResponseImpactAnalyzerId              DateAndTime,
+    cfprApConfigManagedEpImpactResponseRebootRequired                TruthValue,
+    cfprApConfigManagedEpImpactResponseSourceConnectorId             Gauge32,
+    cfprApConfigManagedEpImpactResponseState                         CfprApConfigImpactResponseState
+}
+
+cfprApConfigManagedEpImpactResponseInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApConfigManagedEpImpactResponseEntry 1 }
+
+cfprApConfigManagedEpImpactResponseDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:dn
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 2 }
+
+cfprApConfigManagedEpImpactResponseRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:rn
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 3 }
+
+cfprApConfigManagedEpImpactResponseAffectedServers OBJECT-TYPE
+    SYNTAX       Gauge32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:affectedServers
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 4 }
+
+cfprApConfigManagedEpImpactResponseAppConnectorId OBJECT-TYPE
+    SYNTAX       Gauge32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:appConnectorId
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 5 }
+
+cfprApConfigManagedEpImpactResponseEpName OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:epName
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 6 }
+
+cfprApConfigManagedEpImpactResponseImpactAnalyzerId OBJECT-TYPE
+    SYNTAX       DateAndTime
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:impactAnalyzerId
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 7 }
+
+cfprApConfigManagedEpImpactResponseRebootRequired OBJECT-TYPE
+    SYNTAX       TruthValue
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:rebootRequired
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 8 }
+
+cfprApConfigManagedEpImpactResponseSourceConnectorId OBJECT-TYPE
+    SYNTAX       Gauge32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:sourceConnectorId
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 9 }
+
+cfprApConfigManagedEpImpactResponseState OBJECT-TYPE
+    SYNTAX       CfprApConfigImpactResponseState
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:ManagedEpImpactResponse:state
+        managed object property"
+    ::= { cfprApConfigManagedEpImpactResponseEntry 10 }
+
+cfprApConfigSorterTable OBJECT-TYPE
+    SYNTAX           SEQUENCE OF CfprApConfigSorterEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Cisco Firepower config:Sorter managed object table"
+    ::= { cfprApConfigObjects 3 }
+
+cfprApConfigSorterEntry OBJECT-TYPE
+    SYNTAX           CfprApConfigSorterEntry
+    MAX-ACCESS       not-accessible
+    STATUS           current
+    DESCRIPTION
+        "Entry for the cfprApConfigSorterTable table."
+    INDEX { cfprApConfigSorterInstanceId }
+    ::= { cfprApConfigSorterTable 1 }
+
+CfprApConfigSorterEntry ::= SEQUENCE {
+    cfprApConfigSorterInstanceId                                     CfprApManagedObjectId,
+    cfprApConfigSorterDn                                             CfprApManagedObjectDn,
+    cfprApConfigSorterRn                                             SnmpAdminString,
+    cfprApConfigSorterDirection                                      CfprApConfigSorterDirection,
+    cfprApConfigSorterSortClass                                      CfprApMoMoClassId,
+    cfprApConfigSorterSortProp                                       SnmpAdminString
+}
+
+cfprApConfigSorterInstanceId OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectId
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "Instance identifier of the managed object."
+    ::= { cfprApConfigSorterEntry 1 }
+
+cfprApConfigSorterDn OBJECT-TYPE
+    SYNTAX       CfprApManagedObjectDn
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Sorter:dn managed object property"
+    ::= { cfprApConfigSorterEntry 2 }
+
+cfprApConfigSorterRn OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Sorter:rn managed object property"
+    ::= { cfprApConfigSorterEntry 3 }
+
+cfprApConfigSorterDirection OBJECT-TYPE
+    SYNTAX       CfprApConfigSorterDirection
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Sorter:direction managed object property"
+    ::= { cfprApConfigSorterEntry 4 }
+
+cfprApConfigSorterSortClass OBJECT-TYPE
+    SYNTAX       CfprApMoMoClassId
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Sorter:sortClass managed object property"
+    ::= { cfprApConfigSorterEntry 5 }
+
+cfprApConfigSorterSortProp OBJECT-TYPE
+    SYNTAX       SnmpAdminString
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+        "Cisco Firepower config:Sorter:sortProp managed object property"
+    ::= { cfprApConfigSorterEntry 6 }
+
+END
