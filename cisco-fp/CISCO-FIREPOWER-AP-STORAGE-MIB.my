@@ -108,7 +108,6 @@ IMPORTS
     CfprApStorageLinkSpeed,
     CfprApStorageLocalDiskConfigFlexFlashRAIDReportingState,
     CfprApStorageLocalDiskConfigFlexFlashState,
-    CfprApStorageLocalDiskId,
     CfprApStorageLocalDiskMode,
     CfprApStorageLocalDiskPartitionType,
     CfprApStorageLunType,

@@ -115,7 +115,6 @@ IMPORTS
     CfprApFabricEthLanEpSpeedCap,
     CfprApFabricEthLanEpVlanStatus,
     CfprApFabricEthLanPcAdminState,
-    CfprApFabricEthLanPcEpAdminState,
     CfprApFabricEthLanPcLacpDetach,
     CfprApFabricEthLanPcSpeedCap,
     CfprApFabricEthLanPcTransport,
