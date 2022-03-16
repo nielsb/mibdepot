@@ -2,7 +2,7 @@ EATON-ATS2-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
 	OBJECT-TYPE, NOTIFICATION-TYPE, MODULE-IDENTITY, 
-	Counter32
+	Gauge32, Integer32
 		FROM SNMPv2-SMI
 	TEXTUAL-CONVENTION, DisplayString
 		FROM SNMPv2-TC
@@ -10,7 +10,7 @@ IMPORTS
 		FROM EATON-OIDS;
 
 ats2 MODULE-IDENTITY
-	LAST-UPDATED "201407311200Z"
+	LAST-UPDATED "202001310000Z"
 	ORGANIZATION 
 		"Eaton Corporation"
 	CONTACT-INFO 
@@ -18,6 +18,10 @@ ats2 MODULE-IDENTITY
 	DESCRIPTION 
 		"The MIB module for Eaton ATS (Automatic Transfer Switch)."
 
+	REVISION "202001310000Z"
+	DESCRIPTION 
+		"Change type of data ats2ConfigTimeRTC to Gauge32 that can be set according to SMI v2 spec.
+         Fix a few warning in this mib description file  found by MIB validation tool."
 	REVISION "201407311200Z"
 	DESCRIPTION 
 		"Initial release."
@@ -39,7 +43,7 @@ UnixTimeStamp ::= TEXTUAL-CONVENTION
 	STATUS     current
 	DESCRIPTION 
 		"Unix time stamp.  Measured in seconds since January 1, 1970."
-	SYNTAX  Counter32
+	SYNTAX  Gauge32
 
 --
 -- Identification group
@@ -104,7 +108,7 @@ ats2IdentAgentVersion OBJECT-TYPE
 ats2Input		OBJECT IDENTIFIER ::=  { ats2Measure 1 }
 
 ats2InputDephasing OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS		"degrees"
 	MAX-ACCESS		read-only
 	STATUS		current
@@ -169,7 +173,7 @@ ats2InputIndex OBJECT-TYPE
 	::= { ats2InputEntry 1 }
 
 ats2InputVoltage OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "0.1 V"
 	MAX-ACCESS		read-only
 	STATUS		current
@@ -178,7 +182,7 @@ ats2InputVoltage OBJECT-TYPE
 	::= { ats2InputEntry 2 }
 
 ats2InputFrequency OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "0.1 Hz"
 	MAX-ACCESS		read-only
 	STATUS		current
@@ -189,7 +193,7 @@ ats2InputFrequency OBJECT-TYPE
 --
 -- Mesurement / Output group
 ats2OutputVoltage OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS		"0.1 V"
 	MAX-ACCESS		read-only
 	STATUS		current
@@ -198,7 +202,7 @@ ats2OutputVoltage OBJECT-TYPE
 	::= { ats2Output 1 }
 
 ats2OutputCurrent OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS		"0.1 A"
 	MAX-ACCESS		read-only
 	STATUS		current
@@ -409,7 +413,7 @@ ats2StatusConfigurationFailure OBJECT-TYPE
 ats2ConfigTime		OBJECT IDENTIFIER ::=  { ats2Config 1 }
 
 ats2ConfigInputVoltageRating OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "1 V"
 	MAX-ACCESS    read-only
 	STATUS		current
@@ -418,7 +422,7 @@ ats2ConfigInputVoltageRating OBJECT-TYPE
 	::= { ats2Config 2 }
 
 ats2ConfigInputFrequencyRating OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "Hz"
 	MAX-ACCESS    read-only
 	STATUS		current
@@ -427,7 +431,7 @@ ats2ConfigInputFrequencyRating OBJECT-TYPE
 	::= { ats2Config 3 }
 
 ats2ConfigOutputVoltage OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "1 V"
 	MAX-ACCESS    read-write
 	STATUS		current
@@ -485,7 +489,7 @@ ats2ConfigTransferTest OBJECT-TYPE
 	::= { ats2Config 8 }
 
 ats2ConfigBrownoutLow OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "1 V"
 	MAX-ACCESS    read-only
 	STATUS		current
@@ -494,7 +498,7 @@ ats2ConfigBrownoutLow OBJECT-TYPE
 	::= { ats2Config 9 }
 
 ats2ConfigBrownoutLowDerated OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "1 V"
 	MAX-ACCESS    read-only
 	STATUS		current
@@ -503,7 +507,7 @@ ats2ConfigBrownoutLowDerated OBJECT-TYPE
 	::= { ats2Config 10 }
 
 ats2ConfigBrownoutHigh OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "1 V"
 	MAX-ACCESS    read-only
 	STATUS		current
@@ -512,7 +516,7 @@ ats2ConfigBrownoutHigh OBJECT-TYPE
 	::= { ats2Config 11 }
 
 ats2ConfigHysteresisVoltage OBJECT-TYPE
-	SYNTAX		INTEGER
+	SYNTAX		Integer32
 	UNITS      "1 V"
 	MAX-ACCESS    read-only
 	STATUS		current
@@ -566,7 +570,7 @@ ats2ConfigTimeTextTime OBJECT-TYPE
 
 
 ats2EnvRemoteTemp OBJECT-TYPE
-    SYNTAX  INTEGER (-100..200)   
+    SYNTAX  Integer32 (-100..200)   
     UNITS       "degrees Centigrade"
     MAX-ACCESS  read-only
     STATUS      current
@@ -575,7 +579,7 @@ ats2EnvRemoteTemp OBJECT-TYPE
     ::= { ats2Environment  1 }
 
 ats2EnvRemoteHumidity OBJECT-TYPE
-    SYNTAX  INTEGER (0..100)  
+    SYNTAX  Integer32 (0..100)  
     UNITS       "percent"
     MAX-ACCESS  read-only
     STATUS      current
@@ -590,7 +594,7 @@ ats2EnvRemoteHumidity OBJECT-TYPE
 --
 
 ats2EnvNumContacts OBJECT-TYPE
-    SYNTAX  INTEGER (1..1024)
+    SYNTAX  Integer32 (1..1024)
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
@@ -600,7 +604,7 @@ ats2EnvNumContacts OBJECT-TYPE
     ::= { ats2Environment  3 }
 
 ats2ContactSenseTable OBJECT-TYPE
-    SYNTAX  SEQUENCE OF Ats2ContactsTableEntry
+    SYNTAX  SEQUENCE OF ATS2ContactSenseEntry
     MAX-ACCESS  not-accessible
     STATUS  current
     DESCRIPTION
@@ -609,8 +613,8 @@ ats2ContactSenseTable OBJECT-TYPE
         ats2EnvNumContacts."
     ::= { ats2Environment  4 }
 
-ats2ContactsTableEntry OBJECT-TYPE
-    SYNTAX  Ats2ContactsTableEntry
+ats2ContactSenseEntry OBJECT-TYPE
+    SYNTAX  ATS2ContactSenseEntry
     MAX-ACCESS  not-accessible
     STATUS  current
     DESCRIPTION
@@ -619,7 +623,7 @@ ats2ContactsTableEntry OBJECT-TYPE
     INDEX   { ats2ContactIndex }
     ::= { ats2ContactSenseTable  1 }
 
-Ats2ContactsTableEntry ::= SEQUENCE {
+ATS2ContactSenseEntry ::= SEQUENCE {
     ats2ContactIndex   INTEGER,
     ats2ContactType    INTEGER,
     ats2ContactState   INTEGER,
@@ -627,14 +631,14 @@ Ats2ContactsTableEntry ::= SEQUENCE {
     }
 
 ats2ContactIndex OBJECT-TYPE
-    SYNTAX  INTEGER (1..1024)
+    SYNTAX  Integer32 (1..1024)
     MAX-ACCESS  read-only           -- actually not-accessible
     STATUS  current
     DESCRIPTION
        "The Contact identifier; identical to the Contact Number.
         This object is not-accessible to MIB browsers, but had to be changed to
         read-only to satisfy SMIv2 syntax checkers if it is included in traps."
-    ::= { ats2ContactsTableEntry  1 }
+    ::= { ats2ContactSenseEntry  1 }
 
 ats2ContactType OBJECT-TYPE
     SYNTAX  INTEGER {
@@ -653,7 +657,7 @@ ats2ContactType OBJECT-TYPE
         No traps are sent if the Contact is set to notUsed(4).
         In many cases, the configuration for Contacts may be done by other 
         means, so this object may be read-only."
-    ::= { ats2ContactsTableEntry  2 }
+    ::= { ats2ContactSenseEntry  2 }
 
 ats2ContactState OBJECT-TYPE
     SYNTAX  INTEGER {
@@ -671,7 +675,7 @@ ats2ContactState OBJECT-TYPE
         When entering the openWithNotice(3) and closedWithNotice(4) 
         states, no entries added to the ats2AlarmTable, but
         the ats2tdContactActiveNotice trap is sent."
-    ::= { ats2ContactsTableEntry  3 }
+    ::= { ats2ContactSenseEntry  3 }
 
 ats2ContactDescr OBJECT-TYPE
     SYNTAX  DisplayString (SIZE (0..63))
@@ -680,10 +684,10 @@ ats2ContactDescr OBJECT-TYPE
     DESCRIPTION
        "A label identifying the Contact.  This object should be
         set by the administrator."
-    ::= { ats2ContactsTableEntry  4 }
+    ::= { ats2ContactSenseEntry  4 }
 
 ats2EnvRemoteTempLowerLimit OBJECT-TYPE
-    SYNTAX  INTEGER (-100..200) 
+    SYNTAX  Integer32 (-100..200) 
     UNITS       "degrees Centigrade"
     MAX-ACCESS  read-write
     STATUS      current
@@ -693,7 +697,7 @@ ats2EnvRemoteTempLowerLimit OBJECT-TYPE
     ::= { ats2Environment  5 }
 
 ats2EnvRemoteTempUpperLimit OBJECT-TYPE
-    SYNTAX  INTEGER (-100..200) 
+    SYNTAX  Integer32 (-100..200) 
     UNITS       "degrees Centigrade"
     MAX-ACCESS  read-write
     STATUS      current
@@ -704,7 +708,7 @@ ats2EnvRemoteTempUpperLimit OBJECT-TYPE
     ::= { ats2Environment  6 }
 
 ats2EnvRemoteHumidityLowerLimit OBJECT-TYPE
-    SYNTAX  INTEGER (0..100) 
+    SYNTAX  Integer32 (0..100) 
     UNITS       "percent"
     MAX-ACCESS  read-write
     STATUS      current
@@ -714,7 +718,7 @@ ats2EnvRemoteHumidityLowerLimit OBJECT-TYPE
     ::= { ats2Environment  7 }
 
 ats2EnvRemoteHumidityUpperLimit OBJECT-TYPE
-    SYNTAX  INTEGER (0..100) 
+    SYNTAX  Integer32 (0..100) 
     UNITS       "percent"
     MAX-ACCESS  read-write
     STATUS      current

@@ -11,7 +11,7 @@ IMPORTS
            FROM EATON-OIDS;
 
 eatonEMPMIB MODULE-IDENTITY
-    LAST-UPDATED "200703120000Z"
+    LAST-UPDATED "202005270000Z"
     ORGANIZATION "Eaton Corporation"
     CONTACT-INFO
         "Eaton Power Quality Technical Support (PQTS) group
@@ -27,6 +27,10 @@ eatonEMPMIB MODULE-IDENTITY
 
         Copyright (C) Eaton Corporation (2007)."
 
+    REVISION "202005270000Z"
+    DESCRIPTION 
+        "xupsEnvRemoteCommunicationStatus is added, it reports the EMP communication status."
+
     REVISION        "200703120000Z"
     DESCRIPTION
         "Initial Version of eatonEMPMIB."
@@ -36,7 +40,6 @@ eatonEMPMIB MODULE-IDENTITY
 --  ::= { enterprises 534  8  1  }
 -- eatonEMPMIB { iso org(3) dod(6) internet(1) private(4)
 --       enterprises(1) eaton(534) xupsMIB(1) xupsEnvironment(6) (0) }
-
 
 --
 -- EMP group
@@ -221,6 +224,17 @@ xupsEnvRemoteHumidityUpperLimit OBJECT-TYPE
         This value should be greater than xupsEnvRemoteHumidityLowerLimit."
     ::= { xupsEnvironment  12 }
 
+xupsEnvRemoteCommunicationStatus OBJECT-TYPE
+    SYNTAX  INTEGER {
+        unknown(0),
+        communicationOK(2),
+        communicationLost(3)
+        }
+    MAX-ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+       "The current communication status of the EMP."
+    ::= { xupsEnvironment  13 }
 
 --
 -- Traps / Notifications for the EMP in the PowerMIB style
@@ -241,7 +255,8 @@ eatonEMPConformance OBJECT IDENTIFIER ::= { eatonEMPMIB 2 }
 eatonEMPGroup  OBJECT-GROUP
     OBJECTS { xupsEnvRemoteTemp, xupsEnvRemoteHumidity,
               xupsEnvRemoteTempLowerLimit, xupsEnvRemoteTempUpperLimit,
-              xupsEnvRemoteHumidityLowerLimit, xupsEnvRemoteHumidityUpperLimit  }
+              xupsEnvRemoteHumidityLowerLimit, xupsEnvRemoteHumidityUpperLimit,
+              xupsEnvRemoteCommunicationStatus }
     STATUS  current
     DESCRIPTION
         "The EMP scalar objects."
