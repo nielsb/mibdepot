@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- VNIC management information model package
 -- 
--- Created July 2021 by Charles Bullis
+-- Created April 2022 by Charles Bullis
 -- 
--- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -74,7 +74,6 @@ IMPORTS
     CfprApVnicExternalMgmtIPMode,
     CfprApVnicFcBasePersBind,
     CfprApVnicFcBaseType,
-    CfprApVnicFcNodeOwner,
     CfprApVnicHostNwIOPerfPref,
     CfprApVnicIPv4DnsPref,
     CfprApVnicIScsiIfDefType,
@@ -99,7 +98,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-TC-MIB;
 
 cfprApVnicObjects MODULE-IDENTITY
-    LAST-UPDATED    "202107260000Z"
+    LAST-UPDATED    "202204180000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -309,9 +308,7 @@ CfprApVnicConnDefEntry ::= SEQUENCE {
     cfprApVnicConnDefRn                                              SnmpAdminString,
     cfprApVnicConnDefFltAggr                                         Unsigned64,
     cfprApVnicConnDefLanConnPolicyName                               SnmpAdminString,
-    cfprApVnicConnDefOperLanConnPolicyName                           SnmpAdminString,
-    cfprApVnicConnDefOperSanConnPolicyName                           SnmpAdminString,
-    cfprApVnicConnDefSanConnPolicyName                               SnmpAdminString
+    cfprApVnicConnDefOperLanConnPolicyName                           SnmpAdminString
 }
 
 cfprApVnicConnDefInstanceId OBJECT-TYPE
@@ -363,24 +360,6 @@ cfprApVnicConnDefOperLanConnPolicyName OBJECT-TYPE
         "Cisco Firepower vnic:ConnDef:operLanConnPolicyName
         managed object property"
     ::= { cfprApVnicConnDefEntry 6 }
-
-cfprApVnicConnDefOperSanConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:ConnDef:operSanConnPolicyName
-        managed object property"
-    ::= { cfprApVnicConnDefEntry 7 }
-
-cfprApVnicConnDefSanConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:ConnDef:sanConnPolicyName
-        managed object property"
-    ::= { cfprApVnicConnDefEntry 8 }
 
 cfprApVnicDefBehTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApVnicDefBehEntry
@@ -1847,7 +1826,6 @@ CfprApVnicFcEntry ::= SEQUENCE {
     cfprApVnicFcName                                                 SnmpAdminString,
     cfprApVnicFcNodeAddr                                             Unsigned64,
     cfprApVnicFcNwTemplName                                          SnmpAdminString,
-    cfprApVnicFcOperAdaptorProfileName                               SnmpAdminString,
     cfprApVnicFcOperHostPort                                         CfprApVnicVnicOperHostPort,
     cfprApVnicFcOperIdentPoolName                                    SnmpAdminString,
     cfprApVnicFcOperNwTemplName                                      SnmpAdminString,
@@ -2020,15 +1998,6 @@ cfprApVnicFcNwTemplName OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:Fc:nwTemplName managed object property"
     ::= { cfprApVnicFcEntry 19 }
-
-cfprApVnicFcOperAdaptorProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:Fc:operAdaptorProfileName
-        managed object property"
-    ::= { cfprApVnicFcEntry 20 }
 
 cfprApVnicFcOperHostPort OBJECT-TYPE
     SYNTAX       CfprApVnicVnicOperHostPort
@@ -2207,12 +2176,10 @@ CfprApVnicFcGroupDefEntry ::= SEQUENCE {
     cfprApVnicFcGroupDefName                                         SnmpAdminString,
     cfprApVnicFcGroupDefNwTemplName                                  SnmpAdminString,
     cfprApVnicFcGroupDefOperStatsPolicyName                          SnmpAdminString,
-    cfprApVnicFcGroupDefOperStorageConnPolicyName                    SnmpAdminString,
     cfprApVnicFcGroupDefPolicyLevel                                  Gauge32,
     cfprApVnicFcGroupDefPolicyOwner                                  CfprApPolicyPolicyOwner,
     cfprApVnicFcGroupDefQosPolicyName                                SnmpAdminString,
-    cfprApVnicFcGroupDefStatsPolicyName                              SnmpAdminString,
-    cfprApVnicFcGroupDefStorageConnPolicyName                        SnmpAdminString
+    cfprApVnicFcGroupDefStatsPolicyName                              SnmpAdminString
 }
 
 cfprApVnicFcGroupDefInstanceId OBJECT-TYPE
@@ -2308,15 +2275,6 @@ cfprApVnicFcGroupDefOperStatsPolicyName OBJECT-TYPE
         managed object property"
     ::= { cfprApVnicFcGroupDefEntry 11 }
 
-cfprApVnicFcGroupDefOperStorageConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcGroupDef:operStorageConnPolicyName
-        managed object property"
-    ::= { cfprApVnicFcGroupDefEntry 12 }
-
 cfprApVnicFcGroupDefPolicyLevel OBJECT-TYPE
     SYNTAX       Gauge32
     MAX-ACCESS   read-only
@@ -2353,15 +2311,6 @@ cfprApVnicFcGroupDefStatsPolicyName OBJECT-TYPE
         managed object property"
     ::= { cfprApVnicFcGroupDefEntry 16 }
 
-cfprApVnicFcGroupDefStorageConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcGroupDef:storageConnPolicyName
-        managed object property"
-    ::= { cfprApVnicFcGroupDefEntry 17 }
-
 cfprApVnicFcGroupTemplTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApVnicFcGroupTemplEntry
     MAX-ACCESS       not-accessible
@@ -2391,12 +2340,10 @@ CfprApVnicFcGroupTemplEntry ::= SEQUENCE {
     cfprApVnicFcGroupTemplName                                       SnmpAdminString,
     cfprApVnicFcGroupTemplNwTemplName                                SnmpAdminString,
     cfprApVnicFcGroupTemplOperStatsPolicyName                        SnmpAdminString,
-    cfprApVnicFcGroupTemplOperStorageConnPolicyName                  SnmpAdminString,
     cfprApVnicFcGroupTemplPolicyLevel                                Gauge32,
     cfprApVnicFcGroupTemplPolicyOwner                                CfprApPolicyPolicyOwner,
     cfprApVnicFcGroupTemplQosPolicyName                              SnmpAdminString,
     cfprApVnicFcGroupTemplStatsPolicyName                            SnmpAdminString,
-    cfprApVnicFcGroupTemplStorageConnPolicyName                      SnmpAdminString,
     cfprApVnicFcGroupTemplTemplType                                  CfprApVnicTemplateType
 }
 
@@ -2493,15 +2440,6 @@ cfprApVnicFcGroupTemplOperStatsPolicyName OBJECT-TYPE
         managed object property"
     ::= { cfprApVnicFcGroupTemplEntry 11 }
 
-cfprApVnicFcGroupTemplOperStorageConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcGroupTempl:operStorageConnPolicyName
-        managed object property"
-    ::= { cfprApVnicFcGroupTemplEntry 12 }
-
 cfprApVnicFcGroupTemplPolicyLevel OBJECT-TYPE
     SYNTAX       Gauge32
     MAX-ACCESS   read-only
@@ -2537,15 +2475,6 @@ cfprApVnicFcGroupTemplStatsPolicyName OBJECT-TYPE
         "Cisco Firepower vnic:FcGroupTempl:statsPolicyName
         managed object property"
     ::= { cfprApVnicFcGroupTemplEntry 16 }
-
-cfprApVnicFcGroupTemplStorageConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcGroupTempl:storageConnPolicyName
-        managed object property"
-    ::= { cfprApVnicFcGroupTemplEntry 17 }
 
 cfprApVnicFcGroupTemplTemplType OBJECT-TYPE
     SYNTAX       CfprApVnicTemplateType
@@ -2821,110 +2750,6 @@ cfprApVnicFcLifVnicDn OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:FcLif:vnicDn managed object property"
     ::= { cfprApVnicFcLifEntry 10 }
-
-cfprApVnicFcNodeTable OBJECT-TYPE
-    SYNTAX           SEQUENCE OF CfprApVnicFcNodeEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode managed object table"
-    ::= { cfprApVnicObjects 19 }
-
-cfprApVnicFcNodeEntry OBJECT-TYPE
-    SYNTAX           CfprApVnicFcNodeEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Entry for the cfprApVnicFcNodeTable table."
-    INDEX { cfprApVnicFcNodeInstanceId }
-    ::= { cfprApVnicFcNodeTable 1 }
-
-CfprApVnicFcNodeEntry ::= SEQUENCE {
-    cfprApVnicFcNodeInstanceId                                       CfprApManagedObjectId,
-    cfprApVnicFcNodeDn                                               CfprApManagedObjectDn,
-    cfprApVnicFcNodeRn                                               SnmpAdminString,
-    cfprApVnicFcNodeAddrData                                         Unsigned64,
-    cfprApVnicFcNodeFltAggr                                          Unsigned64,
-    cfprApVnicFcNodeIdentPoolName                                    SnmpAdminString,
-    cfprApVnicFcNodeMaxDerivableWWPN                                 Gauge32,
-    cfprApVnicFcNodeOperIdentPoolName                                SnmpAdminString,
-    cfprApVnicFcNodeOwner                                            CfprApVnicFcNodeOwner
-}
-
-cfprApVnicFcNodeInstanceId OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectId
-    MAX-ACCESS   not-accessible
-    STATUS       current
-    DESCRIPTION
-        "Instance identifier of the managed object."
-    ::= { cfprApVnicFcNodeEntry 1 }
-
-cfprApVnicFcNodeDn OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectDn
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:dn managed object property"
-    ::= { cfprApVnicFcNodeEntry 2 }
-
-cfprApVnicFcNodeRn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:rn managed object property"
-    ::= { cfprApVnicFcNodeEntry 3 }
-
-cfprApVnicFcNodeAddrData OBJECT-TYPE
-    SYNTAX       Unsigned64
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:addr managed object property"
-    ::= { cfprApVnicFcNodeEntry 4 }
-
-cfprApVnicFcNodeFltAggr OBJECT-TYPE
-    SYNTAX       Unsigned64
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:fltAggr managed object property"
-    ::= { cfprApVnicFcNodeEntry 5 }
-
-cfprApVnicFcNodeIdentPoolName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:identPoolName managed
-        object property"
-    ::= { cfprApVnicFcNodeEntry 6 }
-
-cfprApVnicFcNodeMaxDerivableWWPN OBJECT-TYPE
-    SYNTAX       Gauge32
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:maxDerivableWWPN managed
-        object property"
-    ::= { cfprApVnicFcNodeEntry 7 }
-
-cfprApVnicFcNodeOperIdentPoolName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:operIdentPoolName
-        managed object property"
-    ::= { cfprApVnicFcNodeEntry 8 }
-
-cfprApVnicFcNodeOwner OBJECT-TYPE
-    SYNTAX       CfprApVnicFcNodeOwner
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:FcNode:owner managed object property"
-    ::= { cfprApVnicFcNodeEntry 9 }
 
 cfprApVnicFcOEIfTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApVnicFcOEIfEntry
@@ -3732,7 +3557,6 @@ CfprApVnicIScsiEntry ::= SEQUENCE {
     cfprApVnicIScsiAdminHostPort                                     CfprApFabricHostPortId,
     cfprApVnicIScsiAdminVcon                                         SnmpAdminString,
     cfprApVnicIScsiAppRole                                           CfprApVnicAppRole,
-    cfprApVnicIScsiAuthProfileName                                   SnmpAdminString,
     cfprApVnicIScsiBootDev                                           CfprApVnicVnicBootDev,
     cfprApVnicIScsiConfigQualifier                                   CfprApVnicConfigIssues,
     cfprApVnicIScsiConfigState                                       CfprApLsConfigState,
@@ -3747,8 +3571,6 @@ CfprApVnicIScsiEntry ::= SEQUENCE {
     cfprApVnicIScsiIqnIdentPoolName                                  SnmpAdminString,
     cfprApVnicIScsiName                                              SnmpAdminString,
     cfprApVnicIScsiNwTemplName                                       SnmpAdminString,
-    cfprApVnicIScsiOperAdaptorProfileName                            SnmpAdminString,
-    cfprApVnicIScsiOperAuthProfileName                               SnmpAdminString,
     cfprApVnicIScsiOperHostPort                                      CfprApVnicVnicOperHostPort,
     cfprApVnicIScsiOperIdentPoolName                                 SnmpAdminString,
     cfprApVnicIScsiOperIqnIdentPoolName                              SnmpAdminString,
@@ -3831,15 +3653,6 @@ cfprApVnicIScsiAppRole OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:IScsi:appRole managed object property"
     ::= { cfprApVnicIScsiEntry 8 }
-
-cfprApVnicIScsiAuthProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsi:authProfileName managed
-        object property"
-    ::= { cfprApVnicIScsiEntry 9 }
 
 cfprApVnicIScsiBootDev OBJECT-TYPE
     SYNTAX       CfprApVnicVnicBootDev
@@ -3955,24 +3768,6 @@ cfprApVnicIScsiNwTemplName OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:IScsi:nwTemplName managed object property"
     ::= { cfprApVnicIScsiEntry 23 }
-
-cfprApVnicIScsiOperAdaptorProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsi:operAdaptorProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiEntry 24 }
-
-cfprApVnicIScsiOperAuthProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsi:operAuthProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiEntry 25 }
 
 cfprApVnicIScsiOperHostPort OBJECT-TYPE
     SYNTAX       CfprApVnicVnicOperHostPort
@@ -4284,13 +4079,11 @@ CfprApVnicIScsiBootVnicEntry ::= SEQUENCE {
     cfprApVnicIScsiBootVnicInstanceId                                CfprApManagedObjectId,
     cfprApVnicIScsiBootVnicDn                                        CfprApManagedObjectDn,
     cfprApVnicIScsiBootVnicRn                                        SnmpAdminString,
-    cfprApVnicIScsiBootVnicAuthProfileName                           SnmpAdminString,
     cfprApVnicIScsiBootVnicDescr                                     SnmpAdminString,
     cfprApVnicIScsiBootVnicInitiatorName                             SnmpAdminString,
     cfprApVnicIScsiBootVnicIntId                                     SnmpAdminString,
     cfprApVnicIScsiBootVnicIqnIdentPoolName                          SnmpAdminString,
     cfprApVnicIScsiBootVnicName                                      SnmpAdminString,
-    cfprApVnicIScsiBootVnicOperAuthProfileName                       SnmpAdminString,
     cfprApVnicIScsiBootVnicOperIqnIdentPoolName                      SnmpAdminString,
     cfprApVnicIScsiBootVnicPolicyLevel                               Gauge32,
     cfprApVnicIScsiBootVnicPolicyOwner                               CfprApPolicyPolicyOwner
@@ -4319,15 +4112,6 @@ cfprApVnicIScsiBootVnicRn OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:IScsiBootVnic:rn managed object property"
     ::= { cfprApVnicIScsiBootVnicEntry 3 }
-
-cfprApVnicIScsiBootVnicAuthProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsiBootVnic:authProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiBootVnicEntry 4 }
 
 cfprApVnicIScsiBootVnicDescr OBJECT-TYPE
     SYNTAX       SnmpAdminString
@@ -4370,15 +4154,6 @@ cfprApVnicIScsiBootVnicName OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:IScsiBootVnic:name managed object property"
     ::= { cfprApVnicIScsiBootVnicEntry 9 }
-
-cfprApVnicIScsiBootVnicOperAuthProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsiBootVnic:operAuthProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiBootVnicEntry 10 }
 
 cfprApVnicIScsiBootVnicOperIqnIdentPoolName OBJECT-TYPE
     SYNTAX       SnmpAdminString
@@ -4442,7 +4217,6 @@ CfprApVnicIScsiLCPEntry ::= SEQUENCE {
     cfprApVnicIScsiLCPInstType                                       CfprApVnicInstantiation,
     cfprApVnicIScsiLCPName                                           SnmpAdminString,
     cfprApVnicIScsiLCPNwTemplName                                    SnmpAdminString,
-    cfprApVnicIScsiLCPOperAdaptorProfileName                         SnmpAdminString,
     cfprApVnicIScsiLCPOperHostPort                                   CfprApVnicVnicOperHostPort,
     cfprApVnicIScsiLCPOperIdentPoolName                              SnmpAdminString,
     cfprApVnicIScsiLCPOperOrder                                      Gauge32,
@@ -4601,15 +4375,6 @@ cfprApVnicIScsiLCPNwTemplName OBJECT-TYPE
         "Cisco Firepower vnic:IScsiLCP:nwTemplName managed
         object property"
     ::= { cfprApVnicIScsiLCPEntry 17 }
-
-cfprApVnicIScsiLCPOperAdaptorProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsiLCP:operAdaptorProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiLCPEntry 18 }
 
 cfprApVnicIScsiLCPOperHostPort OBJECT-TYPE
     SYNTAX       CfprApVnicVnicOperHostPort
@@ -4855,10 +4620,8 @@ CfprApVnicIScsiStaticTargetIfEntry ::= SEQUENCE {
     cfprApVnicIScsiStaticTargetIfInstanceId                          CfprApManagedObjectId,
     cfprApVnicIScsiStaticTargetIfDn                                  CfprApManagedObjectDn,
     cfprApVnicIScsiStaticTargetIfRn                                  SnmpAdminString,
-    cfprApVnicIScsiStaticTargetIfAuthProfileName                     SnmpAdminString,
     cfprApVnicIScsiStaticTargetIfIpAddress                           InetAddressIPv4,
     cfprApVnicIScsiStaticTargetIfName                                SnmpAdminString,
-    cfprApVnicIScsiStaticTargetIfOperAuthProfileName                 SnmpAdminString,
     cfprApVnicIScsiStaticTargetIfPort                                Gauge32,
     cfprApVnicIScsiStaticTargetIfPriority                            Gauge32
 }
@@ -4889,15 +4652,6 @@ cfprApVnicIScsiStaticTargetIfRn OBJECT-TYPE
         object property"
     ::= { cfprApVnicIScsiStaticTargetIfEntry 3 }
 
-cfprApVnicIScsiStaticTargetIfAuthProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsiStaticTargetIf:authProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiStaticTargetIfEntry 4 }
-
 cfprApVnicIScsiStaticTargetIfIpAddress OBJECT-TYPE
     SYNTAX       InetAddressIPv4
     MAX-ACCESS   read-only
@@ -4915,15 +4669,6 @@ cfprApVnicIScsiStaticTargetIfName OBJECT-TYPE
         "Cisco Firepower vnic:IScsiStaticTargetIf:name
         managed object property"
     ::= { cfprApVnicIScsiStaticTargetIfEntry 6 }
-
-cfprApVnicIScsiStaticTargetIfOperAuthProfileName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:IScsiStaticTargetIf:operAuthProfileName
-        managed object property"
-    ::= { cfprApVnicIScsiStaticTargetIfEntry 7 }
 
 cfprApVnicIScsiStaticTargetIfPort OBJECT-TYPE
     SYNTAX       Gauge32
@@ -7848,110 +7593,6 @@ cfprApVnicRackServerDiscoveryProfilePolicyOwner OBJECT-TYPE
         managed object property"
     ::= { cfprApVnicRackServerDiscoveryProfileEntry 9 }
 
-cfprApVnicSanConnPolicyTable OBJECT-TYPE
-    SYNTAX           SEQUENCE OF CfprApVnicSanConnPolicyEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy managed object table"
-    ::= { cfprApVnicObjects 58 }
-
-cfprApVnicSanConnPolicyEntry OBJECT-TYPE
-    SYNTAX           CfprApVnicSanConnPolicyEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Entry for the cfprApVnicSanConnPolicyTable table."
-    INDEX { cfprApVnicSanConnPolicyInstanceId }
-    ::= { cfprApVnicSanConnPolicyTable 1 }
-
-CfprApVnicSanConnPolicyEntry ::= SEQUENCE {
-    cfprApVnicSanConnPolicyInstanceId                                CfprApManagedObjectId,
-    cfprApVnicSanConnPolicyDn                                        CfprApManagedObjectDn,
-    cfprApVnicSanConnPolicyRn                                        SnmpAdminString,
-    cfprApVnicSanConnPolicyDescr                                     SnmpAdminString,
-    cfprApVnicSanConnPolicyFltAggr                                   Unsigned64,
-    cfprApVnicSanConnPolicyIntId                                     SnmpAdminString,
-    cfprApVnicSanConnPolicyName                                      SnmpAdminString,
-    cfprApVnicSanConnPolicyPolicyLevel                               Gauge32,
-    cfprApVnicSanConnPolicyPolicyOwner                               CfprApPolicyPolicyOwner
-}
-
-cfprApVnicSanConnPolicyInstanceId OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectId
-    MAX-ACCESS   not-accessible
-    STATUS       current
-    DESCRIPTION
-        "Instance identifier of the managed object."
-    ::= { cfprApVnicSanConnPolicyEntry 1 }
-
-cfprApVnicSanConnPolicyDn OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectDn
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:dn managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 2 }
-
-cfprApVnicSanConnPolicyRn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:rn managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 3 }
-
-cfprApVnicSanConnPolicyDescr OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:descr managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 4 }
-
-cfprApVnicSanConnPolicyFltAggr OBJECT-TYPE
-    SYNTAX       Unsigned64
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:fltAggr managed
-        object property"
-    ::= { cfprApVnicSanConnPolicyEntry 5 }
-
-cfprApVnicSanConnPolicyIntId OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:intId managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 6 }
-
-cfprApVnicSanConnPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:name managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 7 }
-
-cfprApVnicSanConnPolicyPolicyLevel OBJECT-TYPE
-    SYNTAX       Gauge32
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:policyLevel
-        managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 8 }
-
-cfprApVnicSanConnPolicyPolicyOwner OBJECT-TYPE
-    SYNTAX       CfprApPolicyPolicyOwner
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:SanConnPolicy:policyOwner
-        managed object property"
-    ::= { cfprApVnicSanConnPolicyEntry 9 }
-
 cfprApVnicSanConnTemplTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApVnicSanConnTemplEntry
     MAX-ACCESS       not-accessible
@@ -9364,62 +9005,6 @@ cfprApVnicVnicBehPolicyType OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower vnic:VnicBehPolicy:type managed object property"
     ::= { cfprApVnicVnicBehPolicyEntry 11 }
-
-cfprApVnicWwnnHistoryTable OBJECT-TYPE
-    SYNTAX           SEQUENCE OF CfprApVnicWwnnHistoryEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Cisco Firepower vnic:WwnnHistory managed object table"
-    ::= { cfprApVnicObjects 69 }
-
-cfprApVnicWwnnHistoryEntry OBJECT-TYPE
-    SYNTAX           CfprApVnicWwnnHistoryEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Entry for the cfprApVnicWwnnHistoryTable table."
-    INDEX { cfprApVnicWwnnHistoryInstanceId }
-    ::= { cfprApVnicWwnnHistoryTable 1 }
-
-CfprApVnicWwnnHistoryEntry ::= SEQUENCE {
-    cfprApVnicWwnnHistoryInstanceId                                  CfprApManagedObjectId,
-    cfprApVnicWwnnHistoryDn                                          CfprApManagedObjectDn,
-    cfprApVnicWwnnHistoryRn                                          SnmpAdminString,
-    cfprApVnicWwnnHistoryOldwwnn                                     Unsigned64
-}
-
-cfprApVnicWwnnHistoryInstanceId OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectId
-    MAX-ACCESS   not-accessible
-    STATUS       current
-    DESCRIPTION
-        "Instance identifier of the managed object."
-    ::= { cfprApVnicWwnnHistoryEntry 1 }
-
-cfprApVnicWwnnHistoryDn OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectDn
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:WwnnHistory:dn managed object property"
-    ::= { cfprApVnicWwnnHistoryEntry 2 }
-
-cfprApVnicWwnnHistoryRn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:WwnnHistory:rn managed object property"
-    ::= { cfprApVnicWwnnHistoryEntry 3 }
-
-cfprApVnicWwnnHistoryOldwwnn OBJECT-TYPE
-    SYNTAX       Unsigned64
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower vnic:WwnnHistory:oldwwnn managed object property"
-    ::= { cfprApVnicWwnnHistoryEntry 4 }
 
 cfprApVnicWwpnHistoryTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApVnicWwpnHistoryEntry

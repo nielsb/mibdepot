@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- TEXTUALCONVENTIONS management information model package
 -- 
--- Created July 2021 by Charles Bullis
+-- Created April 2022 by Charles Bullis
 -- 
--- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -49,7 +49,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-MIB;
 
 cfprApTextualConventionsObjects MODULE-IDENTITY
-    LAST-UPDATED    "202107260000Z"
+    LAST-UPDATED    "202204180000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -13209,7 +13209,12 @@ CfprApEquipmentEthPortSpeedCap ::= TEXTUAL-CONVENTION
         ""
     SYNTAX        BITS
     {
-        auto(0)
+        auto(0),
+        n1g(1),
+        n10g(2),
+        n20g(3),
+        n40g(4),
+        n100m(7)
     }
 
 CfprApEquipmentFanId ::= TEXTUAL-CONVENTION
@@ -16759,7 +16764,12 @@ CfprApFabricEthLanEpSpeedCap ::= TEXTUAL-CONVENTION
         ""
     SYNTAX        BITS
     {
-        auto(0)
+        auto(0),
+        n1g(1),
+        n10g(2),
+        n20g(3),
+        n40g(4),
+        n100m(7)
     }
 
 CfprApFabricEthLanEpVlanStatus ::= TEXTUAL-CONVENTION
@@ -16864,7 +16874,12 @@ CfprApFabricEthLanPcSpeedCap ::= TEXTUAL-CONVENTION
         ""
     SYNTAX        BITS
     {
-        auto(0)
+        auto(0),
+        n1g(1),
+        n10g(2),
+        n20g(3),
+        n40g(4),
+        n100m(7)
     }
 
 CfprApFabricEthLanPcTransport ::= TEXTUAL-CONVENTION
@@ -26070,7 +26085,6 @@ CfprApPortEthSpeed ::= TEXTUAL-CONVENTION
         n20gbps(3),
         n40gbps(4),
         n100gbps(5),
-        n10mbps(6),
         n100mbps(7)
     }
 
