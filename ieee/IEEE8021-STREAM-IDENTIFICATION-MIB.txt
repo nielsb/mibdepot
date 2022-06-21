@@ -1,0 +1,1798 @@
+IEEE8021-STREAM-IDENTIFICATION-MIB DEFINITIONS ::= BEGIN
+
+-- =============================================================
+-- MIB for support of Stream identification of IEEE 802.1CB 
+-- Frame Replication and Elimination for Reliability
+-- =============================================================
+
+IMPORTS
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    OBJECT-IDENTITY,
+    Counter64,
+    Unsigned32,
+    Integer32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    TruthValue,
+    RowStatus,
+    MacAddress,
+    AutonomousType,
+    VariablePointer
+        FROM SNMPv2-TC
+    ifIndex
+        FROM IF-MIB
+    InetAddressType,
+    InetAddress,
+    InetPortNumber 
+        FROM INET-ADDRESS-MIB
+    IEEE8021PriorityValue,
+    ieee802dot1mibs
+        FROM IEEE8021-TC-MIB
+    ;
+
+ieee8021StreamIdMib MODULE-IDENTITY
+    LAST-UPDATED "202112090000Z" -- December 9, 2021
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO
+                "WG-URL: http://ieee802.org/1/
+                WG-EMail: stds-802-1-l@ieee.org
+
+    Contact: IEEE 802.1 Working Group Chair
+    Postal: C/O IEEE 802.1 Working Group
+            IEEE Standards Association
+            445 Hoes Lane
+            Piscataway, NJ 08854
+            USA
+
+    E-mail: stds-802-1-chairs@ieee.org"
+
+    DESCRIPTION
+        "The Management Information Base module for IEEE 802.1CB Stream 
+         identification. Unless otherwise indicated, the references in 
+         this MIB module are to IEEE Std 802.1CB-2017 as amended by
+         IEEE Std 802.1CBcv-2021 and IEEE Std 802.1CBdb-2021.
+         Copyright (C) IEEE (2022).
+         This version of this MIB module is part of IEEE Std 802.1CB-2021;
+         see the standard itself for full legal notices."
+
+    REVISION "202112090000Z" -- December 9, 2021
+    DESCRIPTION
+        "Published as part of IEEE Std 802.1CBdb-2021. Adds extended
+         Stream identification function objects."
+
+    REVISION "202112080000Z" -- December 8, 2021
+    DESCRIPTION
+        "Initial revision published as part of IEEE Std 802.1CBcv-2021."
+
+    ::= { ieee802dot1mibs 34 }
+
+-- =============================================================
+-- Textual Conventions
+-- =============================================================
+
+Ieee8021CBStreamIdentificationType ::= TEXTUAL-CONVENTION
+    STATUS       current
+    DESCRIPTION
+        "An enumerated value indicating the method used to identify
+         packets belonging to the Stream. The values 0-255 are reserved
+         for use by IEEE 802."
+    REFERENCE    "9.1.1.6 and Table 9-1"
+    SYNTAX      INTEGER {
+                    reserved(0),
+                    nullStreamIdentification(1),
+                    srcMacVlanStreamIdentification(2),
+                    activeDstMacVlanStreamIdentification(3),
+                    ipStreamStreamIdentification(4),
+                    maskAndMatchStreamIdentification(5),
+                    nonIEEESpecified(256)
+                }
+
+Ieee8021CBTaggedType ::= TEXTUAL-CONVENTION
+    STATUS       current
+    DESCRIPTION
+        "An enumerated value indicating whether a packet in an EISS
+         indication primitive to a Stream identification function is
+         permitted to have a VLAN tag."
+    REFERENCE    "9.1.2.2, 9.1.3.2, 9.1.4.2, 9.1.4.6, 9.1.5.2, and
+                  10.7.1.1.3"
+    SYNTAX      INTEGER {
+                    tagged(1),
+                    priority(2),
+                    all(3)
+                }
+
+Ieee8021CBVlanIdentifier ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS       current
+    DESCRIPTION
+        "Specifies the vlan_identifier. A value of 0 indicates a special
+         treatment, depending on the use of Ieee8021CBVlanIdentifier."
+    SYNTAX      Integer32 (0|1..4094)
+
+Ieee8021CBIpDscpType ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS   current
+    DESCRIPTION
+        "The code point used for discriminating a traffic
+         Stream."
+    SYNTAX      Integer32 (-1 | 0..63)
+
+Ieee8021CBIdNextProtocolType ::= TEXTUAL-CONVENTION
+    STATUS       current
+    DESCRIPTION
+        "An enumerated value indicating an IP next protocol."
+    SYNTAX      INTEGER {
+                    none(1),
+                    udp(2),
+                    tcp(3),
+                    sctp(4)
+                }
+
+Ieee8021CBLanPathIdType ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS       current
+    DESCRIPTION
+        "An integer specifying a path or LAN. If and only if a packet
+        matches an entry in the Sequence identification table that
+        specifies HSR or PRP in its frerSeqEncEncapsType  object,
+        tsnStreamIdLanPathId specifies the LanId or PathId value that
+        must be matched for this tsnStreamIdEntry to apply. A value
+        of -1 indicates that the LanId or PathId are to be ignored."
+    REFERENCE    "10.22"
+    SYNTAX      Integer32 (-1 | 0..15)
+
+-- =============================================================
+-- subtrees in the Stream identification MIB
+-- =============================================================
+
+ieee8021StreamIdNotifications
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdMib 0 }
+
+ieee8021StreamIdObjects
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdMib 1 }
+
+ieee8021StreamIdConformance
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdMib 2 }
+
+ieee8021StreamIdStreamIdentification
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 1 }
+
+ieee8021StreamIdStreamIdInFacOutputPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 2 }
+
+ieee8021StreamIdStreamIdOutFacOutputPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 3 }
+
+ieee8021StreamIdStreamIdInFacInputPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 4 }
+
+ieee8021StreamIdStreamIdOutFacInputPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 5 }
+
+ieee8021StreamIdPerPortPerStreamCounters
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 6 }
+
+ieee8021StreamIdPerPortCounters
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 7 }
+
+ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLength
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdObjects 8 }
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdentification table
+-- =============================================================
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdentificationTypes
+-- =============================================================
+ieee8021StreamIdStreamIdentificationTypes
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdStreamIdentification 1 }
+
+ieee8021StreamIdNullStream OBJECT-IDENTITY
+       STATUS current
+       DESCRIPTION
+           "The Stream identification type for the Null Stream
+            identification."
+       ::= { ieee8021StreamIdStreamIdentificationTypes 1 }
+
+ieee8021StreamIdSrcMacVlan OBJECT-IDENTITY
+       STATUS current
+       DESCRIPTION
+           "The Stream identification type for the Source MAC and VLAN
+            Stream identification."
+       ::= { ieee8021StreamIdStreamIdentificationTypes 2 }
+
+ieee8021StreamIdActiveDestMacVlan OBJECT-IDENTITY
+       STATUS current
+       DESCRIPTION
+           "The Stream identification type for the Active Destination
+            and VLAN Stream identification."
+       ::= { ieee8021StreamIdStreamIdentificationTypes 3 }
+
+ieee8021StreamIdIpStream OBJECT-IDENTITY
+       STATUS current
+       DESCRIPTION
+           "The Stream identification type for the IP Stream
+            identification."
+       ::= { ieee8021StreamIdStreamIdentificationTypes 4 }
+
+ieee8021StreamIdMaskAndMatch OBJECT-IDENTITY
+       STATUS current
+       DESCRIPTION
+           "The Stream identification type for the Mask-and-match
+            Stream identification."
+       ::= { ieee8021StreamIdStreamIdentificationTypes 5 }
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdentification
+-- =============================================================
+
+ieee8021StreamIdStreamIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdStreamIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of tsnStreamIdEntry objects each
+         relating to a single Stream, specifying the points in the
+         system where Stream identification functions are to be
+         instantiated."
+    REFERENCE   "9.1"
+    ::= { ieee8021StreamIdStreamIdentification 2 }
+
+ieee8021StreamIdStreamIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdStreamIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects, all applying to the Stream specified
+        by tsnStreamIdHandle, and all using the same Stream
+        identification types and parameters."
+    REFERENCE   "9.1.1"
+    INDEX  { ieee8021StreamIdStreamIdentificationIndex }
+    ::= { ieee8021StreamIdStreamIdentificationTable 1 }
+
+Ieee8021StreamIdStreamIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdStreamIdentificationIndex
+            Unsigned32,
+        ieee8021StreamIdStreamIdIdentificationType
+            Ieee8021CBStreamIdentificationType,
+        ieee8021StreamIdStreamIdIdentificationTypeOUI
+            OCTET STRING,
+        ieee8021StreamIdStreamIdIdentificationCustomType
+            Integer32,
+        ieee8021StreamIdStreamIdIdentificationCustomTypeOUI
+            OCTET STRING,
+        ieee8021StreamIdStreamIdIdentificationTypeSelect
+            AutonomousType,
+        ieee8021StreamIdStreamIdHandle
+            Unsigned32,
+        ieee8021StreamIdStreamIdInFacOutputPortList
+            AutonomousType,
+        ieee8021StreamIdStreamIdOutFacOutputPortList
+            AutonomousType,
+        ieee8021StreamIdStreamIdInFacInputPortList
+            AutonomousType,
+        ieee8021StreamIdStreamIdOutFacInputPortList
+            AutonomousType,
+        ieee8021StreamIdAutoConfigured
+            TruthValue,
+        ieee8021StreamIdLanPathId
+            Ieee8021CBLanPathIdType,
+        ieee8021StreamIdStatus
+            RowStatus
+    }
+
+ieee8021StreamIdStreamIdentificationIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Stream Identity table."
+    ::= { ieee8021StreamIdStreamIdentificationEntry 1 }
+
+ieee8021StreamIdStreamIdIdentificationType OBJECT-TYPE
+    SYNTAX      Ieee8021CBStreamIdentificationType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object is an enumerated value indicating the
+         method used to identify packets belonging to the Stream.
+         If the value used is nonIEEESpecified(256), the managed objects
+         ieee8021StreamIdStreamIdIdentificationCustomType and
+         ieee8021StreamIdStreamIdIdentificationCustomTypeOUI are used to
+         specify OUI/CID and the Stream identification method defined by
+         the entity owning the OUI/CID."
+    REFERENCE   "9.1.1.6"
+    DEFVAL  { nullStreamIdentification }
+    ::= { ieee8021StreamIdStreamIdentificationEntry 2 }
+
+ieee8021StreamIdStreamIdIdentificationTypeOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the OUI/CID used together with
+         the Stream identification method specified in
+         ieee8021StreamIdStreamIdIdentificationType.
+         It is used if and only if the value for
+         ieee8021StreamIdStreamIdIdentificationType is in the range of
+         0-255. In this case it always takes the value 00-80-C2."
+    REFERENCE   "9.1.1.6"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 3 }
+
+ieee8021StreamIdStreamIdIdentificationCustomType OBJECT-TYPE
+    SYNTAX      Integer32 (256..2147483647)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object is an enumerated value indicating the
+         method used to identify packets belonging to the Stream. It is
+         used if and only if the value for
+         ieee8021StreamIdStreamIdIdentificationType is 256."
+    REFERENCE   "9.1.1.6"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 4 }
+
+ieee8021StreamIdStreamIdIdentificationCustomTypeOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the OUI/CID used together with
+         the Stream identification method specified in
+         ieee8021StreamIdStreamIdIdentificationType. It is used if and
+         only if the value for
+         ieee8021StreamIdStreamIdIdentificationType is 256."
+    REFERENCE   "9.1.1.6"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 5 }
+    
+ieee8021StreamIdStreamIdIdentificationTypeSelect OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "An indication of the type of Stream identification method that
+         is used.
+
+         If this value is
+         'ieee8021StreamIdNullStream  ieee8021StreamIdObjects 1' then
+         an entry exists in the
+         ieee8021StreamIdStreamIdentificationTable
+         which corresponds to the Null Stream identification.
+     
+         If this value is
+         'ieee8021StreamIdSrcMacVlan  ieee8021StreamIdObjects 2' then
+         an entry exists in the
+         ieee8021StreamIdStreamIdentificationTable
+         which corresponds to the Source MAC and VLAN Stream
+         identification.
+
+         If this value is
+         'ieee8021StreamIdActiveDestMacVlan  ieee8021StreamIdObjects 3'
+         then an entry exists in the 
+         ieee8021StreamIdStreamIdentificationTable
+         which corresponds to the Active Destination MAC and VLAN Stream
+         identification.
+
+         If this value is
+         'ieee8021StreamIdIpStream  ieee8021StreamIdObjects 4' then
+         an entry exists in the
+         ieee8021StreamIdStreamIdentificationTable
+         which corresponds to the IP Stream identification.
+
+         If this value is
+         'ieee8021StreamIdMaskAndMatch  ieee8021StreamIdObjects 5' then
+         an entry exists in the
+         ieee8021StreamIdStreamIdentificationTable
+         which corresponds to the Mask-and-match Stream
+         identification."
+    ::= { ieee8021StreamIdStreamIdentificationEntry 6 }
+
+ieee8021StreamIdStreamIdHandle OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The objects in a given entry of the Stream identity table are
+         used to control packets whose stream_handle subparameter is
+         equal to the entry's tsnStreamIdHandle object."
+    REFERENCE   "9.1.1.1"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 7 }
+
+ieee8021StreamIdStreamIdInFacOutputPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The list of ports on which an in-facing Stream identification
+         function using this identification method is to be placed for
+         this Stream in the output (towards the system forwarding
+         function) direction.
+         For each port in this list, there exists an entry in the
+         ieee8021StreamIdStreamIdInFacOutputPortHandleListTable."
+    REFERENCE   "9.1.1.2"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 8 }
+
+ieee8021StreamIdStreamIdOutFacOutputPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The list of ports on which an out-facing Stream identification
+         function using this identification method is to be placed for
+         this Stream in the output (towards the physical interface)
+         direction.
+         For each port in this list, there exists an entry in the
+         ieee8021StreamIdStreamIdOutFacOutputPortHandleListTable."
+    REFERENCE   "9.1.1.3"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 9 }
+
+ieee8021StreamIdStreamIdInFacInputPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The list of ports on which an in-facing Stream identification
+         function using this identification method is to be placed for
+         this Stream in the input (coming from the system forwarding
+         function) direction.
+         For each port in this list, there exists an entry in the
+         ieee8021StreamIdStreamIdInFacInputPortHandleListTable."
+    REFERENCE   "9.1.1.4"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 10 }
+
+ieee8021StreamIdStreamIdOutFacInputPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The list of ports on which an out-facing Stream identification
+         function using this identification method is to be placed for
+         this Stream in the input (coming from the physical interface)
+         direction.
+         For each port in this list, there exists an entry in the
+         ieee8021StreamIdStreamIdOutFacInputPortHandleListTable."
+    REFERENCE   "9.1.1.5"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 11 }
+
+ieee8021StreamIdAutoConfigured OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A read-only Boolean value, supplied by the system, specifying
+         whether this entry was created explicitly (False) or via the
+         Sequence autoconfiguration table (True)."
+    REFERENCE   "10.2.1"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 12 }
+
+ieee8021StreamIdLanPathId OBJECT-TYPE
+    SYNTAX      Ieee8021CBLanPathIdType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "An integer specifying a path or LAN. If and only if a packet
+         matches an entry in the Sequence identification table that
+         specifies HSR or PRP in its frerSeqEncEncapsType object,
+         tsnStreamIdLanPathId specifies the LanId or PathId value that
+         must be matched for this tsnStreamIdEntry to apply. A value
+         of -1 indicates that the LanId or PathId are to be ignored."
+    REFERENCE   "10.2.2"
+    ::= { ieee8021StreamIdStreamIdentificationEntry 13 }
+
+ieee8021StreamIdStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Stream Identity table."
+    ::= { ieee8021StreamIdStreamIdentificationEntry 14 }
+
+-- =============================================================
+-- the ieee8021StreamIdNullStreamIdentificationTable
+-- =============================================================
+
+ieee8021StreamIdNullStreamIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdNullStreamIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of controlling parameters for the
+         Null Stream identification method."
+    REFERENCE   "9.1.2"
+    ::= { ieee8021StreamIdStreamIdentification 3 }
+
+ieee8021StreamIdNullStreamIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdNullStreamIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that serve as the Stream
+         identification parameters when using the Null Stream
+         identification method."
+    REFERENCE   "9.1.2"
+    INDEX  { ieee8021StreamIdStreamIdentificationIndex }
+    ::= { ieee8021StreamIdNullStreamIdentificationTable 1 }
+
+Ieee8021StreamIdNullStreamIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdCpeNullDownDestMac
+            MacAddress,
+        ieee8021StreamIdCPENullDownTagged
+            Ieee8021CBTaggedType,
+        ieee8021StreamIdCpeNullDownVlan
+            Ieee8021CBVlanIdentifier
+    }
+
+ieee8021StreamIdCpeNullDownDestMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the destination_address that identifies a packet in
+         an EISS indication primitive, to the Null Stream identification
+         function."
+    REFERENCE   "9.1.2.1"
+    ::= { ieee8021StreamIdNullStreamIdentificationEntry 1 }
+
+ieee8021StreamIdCPENullDownTagged OBJECT-TYPE
+    SYNTAX      Ieee8021CBTaggedType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value indicating whether a packet in an EISS
+         indication primitive to the Null Stream identification function
+         is permitted to have a VLAN tag."
+    REFERENCE   "9.1.2.2"
+    ::= { ieee8021StreamIdNullStreamIdentificationEntry 2 }
+
+ieee8021StreamIdCpeNullDownVlan OBJECT-TYPE
+    SYNTAX      Ieee8021CBVlanIdentifier
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the vlan_identifier parameter that identifies a
+         packet in an EISS indication primitive to the Null Stream
+         identification function. A value of 0 indicates that the
+         vlan_identifier parameter is ignored on EISS indication
+         primitives."
+    REFERENCE   "9.1.2.3"
+    ::= { ieee8021StreamIdNullStreamIdentificationEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdSrcMacVlanIdentificationTable
+-- =============================================================
+
+ieee8021StreamIdSrcMacVlanIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdSrcMacVlanIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of controlling parameters for the
+         Source MAC and VLAN Stream identification method."
+    REFERENCE   "9.1.3"
+    ::= { ieee8021StreamIdStreamIdentification 4 }
+
+ieee8021StreamIdSrcMacVlanIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdSrcMacVlanIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that serve as the Stream
+         identification parameters when using the Source MAC and VLAN
+         Stream identification method."
+    REFERENCE   "9.1.3"
+    INDEX  { ieee8021StreamIdStreamIdentificationIndex }
+    ::= { ieee8021StreamIdSrcMacVlanIdentificationTable 1 }
+
+Ieee8021StreamIdSrcMacVlanIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdCpeSmacVlanDownSrcMac
+            MacAddress,
+        ieee8021StreamIdCpeSmacVlanDownTagged
+            Ieee8021CBTaggedType,
+        ieee8021StreamIdCpeSmacVlanDownVlan
+            Ieee8021CBVlanIdentifier
+    }
+
+ieee8021StreamIdCpeSmacVlanDownSrcMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the source_address that identifies a packet in an
+         EISS indication primitive, to the Source MAC and VLAN Stream
+         identification function."
+    REFERENCE   "9.1.3.1"
+    ::= { ieee8021StreamIdSrcMacVlanIdentificationEntry 1 }
+
+ieee8021StreamIdCpeSmacVlanDownTagged OBJECT-TYPE
+    SYNTAX      Ieee8021CBTaggedType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value indicating whether a packet in an EISS
+         indication primitive to the Source MAC and VLAN Stream
+         identification function is permitted to have a VLAN tag."
+    REFERENCE   "9.1.3.2"
+    ::= { ieee8021StreamIdSrcMacVlanIdentificationEntry 2 }
+
+ieee8021StreamIdCpeSmacVlanDownVlan OBJECT-TYPE
+    SYNTAX      Ieee8021CBVlanIdentifier
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the vlan_identifier parameter that identifies a
+         packet in an EISS indication primitive to the Source MAC and
+         VLAN Stream identification function. A value of 0 indicates
+         that the vlan_identifier parameter is ignored on EISS
+         indication primitives."
+    REFERENCE   "9.1.3.3"
+    ::= { ieee8021StreamIdSrcMacVlanIdentificationEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdActiveDestMacVlanIdentificationTable
+-- =============================================================
+
+ieee8021StreamIdActiveDestMacVlanIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdActiveDestMacVlanIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of controlling parameters for the
+         Active Destination MAC and VLAN Stream identification method."
+    REFERENCE   "9.1.4"
+    ::= { ieee8021StreamIdStreamIdentification 5 }
+
+ieee8021StreamIdActiveDestMacVlanIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdActiveDestMacVlanIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that serve as the Stream
+         identification parameters when using the Active Destination
+         MAC and VLAN Stream identification method."
+    REFERENCE   "9.1.4"
+    INDEX  { ieee8021StreamIdStreamIdentificationIndex }
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationTable 1 }
+
+Ieee8021StreamIdActiveDestMacVlanIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdCpeDmacVlanDownDestMac
+            MacAddress,
+        ieee8021StreamIdCpeDmacVlanDownTagged
+            Ieee8021CBTaggedType,
+        ieee8021StreamIdCpeDmacVlanDownVlan
+            Ieee8021CBVlanIdentifier,
+        ieee8021StreamIdCpeDmacVlanDownPriority
+            IEEE8021PriorityValue,
+        ieee8021StreamIdCpeDmacVlanUpDestMac
+            MacAddress,
+        ieee8021StreamIdCpeDmacVlanUpTagged
+            Ieee8021CBTaggedType,
+        ieee8021StreamIdCpeDmacVlanUpVlan
+            Ieee8021CBVlanIdentifier,
+        ieee8021StreamIdCpeDmacVlanUpPriority
+            IEEE8021PriorityValue
+    }
+
+ieee8021StreamIdCpeDmacVlanDownDestMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the destination_address parameter to use in the
+         EISS request primitive for output packets sent to lower layers
+         by the Active Destination MAC and VLAN Stream identification
+         function, and the destination_address that identifies an input
+         packet in an EISS indication primitive to the Active
+         Destination MAC and VLAN Stream identification function."
+    REFERENCE   "9.1.4.1"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 1 }
+
+ieee8021StreamIdCpeDmacVlanDownTagged OBJECT-TYPE
+    SYNTAX      Ieee8021CBTaggedType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value indicating whether a packet in an EISS
+         indication or request primitive between the Active Destination
+         MAC and VLAN Stream identification function and the lower
+         layers is to have a VLAN tag.
+         This variable is not used in an FRER C-component."
+    REFERENCE   "9.1.4.2"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 2 }
+
+ieee8021StreamIdCpeDmacVlanDownVlan OBJECT-TYPE
+    SYNTAX      Ieee8021CBVlanIdentifier
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the vlan_identifier parameter to use in the EISS
+         request primitive for output packets sent to lower layers by
+         the Active Destination MAC and VLAN Stream identification
+         function, and the vlan_identifier that identifies an input
+         packet in an EISS indication primitive to the Active
+         Destination MAC and VLAN Stream identification function.
+         A value of 0 indicates that the vlan_identifier parameter is
+         ignored on EISS indication primitives."
+    REFERENCE   "9.1.4.3"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 3 }
+
+ieee8021StreamIdCpeDmacVlanDownPriority OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the priority parameter to use in the EISS request
+         primitive for output packets sent to lower layers by the Active
+         Destination MAC and VLAN Stream identification function for all
+         packets in a particular Stream."
+    REFERENCE   "9.1.4.4"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 4 }
+
+ieee8021StreamIdCpeDmacVlanUpDestMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the destination_address parameter to use in the EISS
+         indication primitive for input packets offered to upper layers
+         by the Active Destination MAC and VLAN Stream identification
+         layer. This address replaces the address that was used to
+         identify the packet (tsnCpeDmacVlanDownDestMac)."
+    REFERENCE   "9.1.4.5"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 5 }
+
+ieee8021StreamIdCpeDmacVlanUpTagged OBJECT-TYPE
+    SYNTAX      Ieee8021CBTaggedType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value indicating whether a packet in an EISS
+         indication or request primitive between the Active Destination
+         MAC and VLAN Stream identification function and the upper
+         layers is to have a VLAN tag.
+         This variable is used only by an end system and not by a
+         relay system."
+    REFERENCE   "9.1.4.6"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 6 }
+
+ieee8021StreamIdCpeDmacVlanUpVlan OBJECT-TYPE
+    SYNTAX      Ieee8021CBVlanIdentifier
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the vlan_identifier parameter to use in the EISS
+         indication primitive for packets offered to upper layers, or
+         the VLAN ID field for an IEEE 802.1Q tag in an
+         ISS mac_service_data_unit. This address replaces the VLAN ID
+         that was used to identify the packet (tsnCpeDmacVlanDownVlan)."
+    REFERENCE   "9.1.4.7"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 7 }
+
+ieee8021StreamIdCpeDmacVlanUpPriority OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the priority parameter to use in the EISS indication
+         primitive for packets offered to upper layers."
+    REFERENCE   "9.1.4.8"
+    ::= { ieee8021StreamIdActiveDestMacVlanIdentificationEntry 8 }
+
+-- =============================================================
+-- the ieee8021StreamIdIpStreamIdentificationTable
+-- =============================================================
+
+ieee8021StreamIdIpStreamIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdIpStreamIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of controlling parameters for the
+         IP Stream identification method."
+    REFERENCE   "9.1.5"
+    ::= { ieee8021StreamIdStreamIdentification 6 }
+
+ieee8021StreamIdIpStreamIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdIpStreamIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that serve as the Stream
+         identification parameters when using the IP Stream
+         identification method."
+    REFERENCE   "9.1.5"
+    INDEX  { ieee8021StreamIdStreamIdentificationIndex }
+    ::= { ieee8021StreamIdIpStreamIdentificationTable 1 }
+
+Ieee8021StreamIdIpStreamIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdCpeIpIdDestMac
+            MacAddress,
+        ieee8021StreamIdCpeIpIdTagged
+            Ieee8021CBTaggedType,
+        ieee8021StreamIdCpeIpIdVlan
+            Ieee8021CBVlanIdentifier,
+        ieee8021StreamIdCpeIpIdIpSourceType
+            InetAddressType,
+        ieee8021StreamIdCpeIpIdIpSource
+            InetAddress,
+        ieee8021StreamIdCpeIpIdIpDestinationType
+            InetAddressType,
+        ieee8021StreamIdCpeIpIdIpDestination
+            InetAddress,
+        ieee8021StreamIdCpeIpIdDscp
+            Ieee8021CBIpDscpType,
+        ieee8021StreamIdCpeIpIdNextProtocol
+            Ieee8021CBIdNextProtocolType,
+        ieee8021StreamIdCpeIpIdSourcePort
+            InetPortNumber,
+        ieee8021StreamIdCpeIpIdDestinationPort
+            InetPortNumber
+    }
+
+ieee8021StreamIdCpeIpIdDestMac OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the destination_address parameter that identifies a
+         packet in an EISS indication primitive."
+    REFERENCE   "9.1.5.1"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 1 }
+
+ieee8021StreamIdCpeIpIdTagged OBJECT-TYPE
+    SYNTAX      Ieee8021CBTaggedType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value indicating whether a packet in an EISS
+         indication or request primitive to the IP Stream identification
+         function is to have a VLAN tag."
+    REFERENCE   "9.1.5.2"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 2 }
+
+ieee8021StreamIdCpeIpIdVlan OBJECT-TYPE
+    SYNTAX      Ieee8021CBVlanIdentifier
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the vlan_identifier parameter that identifies a
+         packet in an EISS indication primitive. A value of 0 indicates
+         that the frame is not to have a VLAN tag."
+    REFERENCE   "9.1.5.3"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 3 }
+
+ieee8021StreamIdCpeIpIdIpSourceType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the type of the source address parameter supplied
+         in ieee8021StreamIdCpeIpIdIpSource."
+    REFERENCE   "9.1.5.4"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 4 }
+
+ieee8021StreamIdCpeIpIdIpSource OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the IPv4 (RFC 791) or IPv6 (RFC 2460) source address
+         parameter that must be matched to identify packets coming up
+         from lower layers. An address of all 0 indicates that the
+         IP source address is to be ignored on packets received from
+         lower layers."
+    REFERENCE   "9.1.5.4"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 5 }
+
+ieee8021StreamIdCpeIpIdIpDestinationType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the type of the destination address parameter
+         supplied in ieee8021StreamIdCpeIpIdIpDestination."
+    REFERENCE   "9.1.5.4"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 6 }
+
+ieee8021StreamIdCpeIpIdIpDestination OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the IPv4 (RFC 791) or IPv6 (RFC 2460) destination 
+        address parameter that must be matched to identify packets
+        coming up from lower layers."
+    REFERENCE   "9.1.5.5"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 7 }
+
+ieee8021StreamIdCpeIpIdDscp OBJECT-TYPE
+    SYNTAX      Ieee8021CBIpDscpType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the IPv4 (RFC 791) or IPv6 (RFC 2460) differentiated
+         services codepoint (DSCP, RFC 2474) that must be matched to
+         identify packets coming up from the lower layers. A value of
+         64 decimal indicates that the DSCP is to be ignored on packets
+         received from lower layers."
+    REFERENCE   "9.1.5.6"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 8 }
+
+ieee8021StreamIdCpeIpIdNextProtocol OBJECT-TYPE
+    SYNTAX      Ieee8021CBIdNextProtocolType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the IP next protocol parameter that must be matched
+         to identify packets coming up from lower layers. The value of
+         this parameter must specify either none, UDP (RFC 768),
+         TCP (RFC 793), or SCTP (RFC 4960). If 'none', then the
+         tsnCpeIpIdSourcePort and tsnCpeIpIdDestinationPort managed
+         objects are not used."
+    REFERENCE   "9.1.5.7"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 9 }
+
+ieee8021StreamIdCpeIpIdSourcePort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the TCP or UDP Source Port parameter that must be
+         matched to identify packets coming up from lower layers.
+         A value of 0 indicates that the Source Port number of the
+         packet is to be ignored on packets received from lower layers."
+    REFERENCE   "9.1.5.8"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 10 }
+
+ieee8021StreamIdCpeIpIdDestinationPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the TCP or UDP Destination Port parameter that must
+         be matched to identify packets coming up from lower layers.
+         A value of 0 indicates that the Destination Port number of the
+         packet is to be ignored on packets received from lower layers."
+    REFERENCE   "9.1.5.9"
+    ::= { ieee8021StreamIdIpStreamIdentificationEntry 11 }
+
+-- =============================================================
+-- the ieee8021StreamIdMaskAndMatchIdentificationTable
+-- =============================================================
+
+ieee8021StreamIdMaskAndMatchIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdMaskAndMatchIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of controlling parameters for the
+         Mask-and-match Stream identification method."
+    REFERENCE   "9.1.6"
+    ::= { ieee8021StreamIdStreamIdentification 7 }
+
+ieee8021StreamIdMaskAndMatchIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdMaskAndMatchIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that serve as the Stream
+         identification parameters when using the Mask-and-match Stream
+         identification method."
+    REFERENCE   "9.1.6"
+    INDEX  { ieee8021StreamIdStreamIdentificationIndex }
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationTable 1 }
+
+Ieee8021StreamIdMaskAndMatchIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdCpeMmIdDestMacMask
+            MacAddress,
+        ieee8021StreamIdCpeMmIdDestMacMatch
+            MacAddress,
+        ieee8021StreamIdCpeMmIdSrcMacMask
+            MacAddress,
+        ieee8021StreamIdCpeMmIdSrcMacMatch
+            MacAddress,
+        ieee8021StreamIdCpeMmIdMsduMaskLength
+            Integer32,
+        ieee8021StreamIdCpeMmIdMsduMask
+            OCTET STRING,
+        ieee8021StreamIdCpeMmIdMsduMatch
+            OCTET STRING
+    }
+
+ieee8021StreamIdCpeMmIdDestMacMask OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies a 48-bit mask. A bitwise AND operation is performed
+         between MmIdDestMacMask and the destination_address parameter
+         passed by the ISS indication primitive to the Mask-and-match
+         Stream identification function. The resulting 48-bit
+         information is the masked destination_address that is used as
+         input for the instance of the Mask-and-match Stream
+         identification function. If MmIdDestMacMask has a value of 0,
+         the destination_address parameter is ignored."
+    REFERENCE   "9.1.6.1"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 1 }
+
+ieee8021StreamIdCpeMmIdDestMacMatch OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the 48-bit value of the masked destination_address,
+         as defined in 9.1.6.1, to be matched by the instance of the
+         Mask-and-match Stream identification function."
+    REFERENCE   "9.1.6.2"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 2 }
+
+ieee8021StreamIdCpeMmIdSrcMacMask OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies a 48-bit mask. A bitwise AND operation is performed
+         between CpeMmIdSrcMacMask and the source_address parameter
+         passed by the ISS indication primitive to the Mask-and-match
+         Stream identification function. The resulting 48-bit
+         information is the masked source_address that is used as input
+         for the instance of the Mask-and-match Stream identification
+         function. If CpeMmIdSrcMacMask has a value of 0, the
+         source_address parameter is ignored."
+    REFERENCE   "9.1.6.3"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 3 }
+
+ieee8021StreamIdCpeMmIdSrcMacMatch OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the 48-bit value of the masked source_address, as
+         defined in 9.1.6.3, to be matched by the instance of the
+         Mask-and-match Stream identification function."
+    REFERENCE   "9.1.6.4"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 4 }
+
+ieee8021StreamIdCpeMmIdMsduMaskLength OBJECT-TYPE
+    SYNTAX      Integer32(2..1984)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Is an integer value that specifies the length, in octets, of
+         CpeMmIdMsduMask (9.1.6.6) and CpeMmIdMsduMatch (9.1.6.7). The
+         behavior of the Mask-and-match Stream identification function
+         is undefined on any port where the value of
+         CpeMmIdMsduMaskLength exceeds the per-port
+         mac_service_data_unit mask maximum length(9.4.1). If the
+         length of the frame's mac_service_data_unit is shorter than
+         CpeMmIdMsduMaskLength, then the identification fails."
+    REFERENCE   "9.1.6.5"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 5 }
+
+ieee8021StreamIdCpeMmIdMsduMask OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(2..1984))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies a mask of CpeMmIdMsduMaskLength octets. A bitwise
+         AND operation is performed between CpeMmIdMsduMask and the
+         CpeMmIdMsduMaskLength (9.1.6.6) first octets of the
+         mac_service_data_unit parameter passed by the ISS indication
+         primitive to the Mask-and-match Stream identification
+         function. The resulting CpeMmIdMsduMaskLength octets of
+         information are the masked mac_service_data_unit that is used
+         as input for the instance of the Mask-and-match Stream
+         identification function. If CpeMmIdMsduMask has a value of 0,
+         the mac_service_data_unit parameter is ignored."
+    REFERENCE   "9.1.6.6"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 6 }
+
+ieee8021StreamIdCpeMmIdMsduMatch OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(2..1984))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Specifies the value of the masked mac_service_data_unit, as
+         defined in 9.1.6.5 and 9.1.6.6, to be matched by the instance
+         of the Mask-and-match Stream identification function."
+    REFERENCE   "9.1.6.7"
+    ::= { ieee8021StreamIdMaskAndMatchIdentificationEntry 7 }
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdInFacOutputPortHandleList
+-- table
+-- =============================================================
+ieee8021StreamIdStreamIdInFacOutputPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports on which an in-facing Stream
+         identification function using this identification method is to
+         be placed for this Stream in the output (towards the system
+         forwarding function) direction, referenced in
+         ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.2"
+    ::= { ieee8021StreamIdStreamIdInFacOutputPortHandleList 2 }
+
+ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports on which an
+         in-facing Stream identification function using this
+         identification method is to be placed for this Stream in the
+         output (towards the system forwarding function) direction,
+         referenced in ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.2"
+    INDEX   { ieee8021StreamIdStreamIdentificationIndex,
+              ieee8021StreamIdStreamIdInFacOutputPortHandleListIndex 
+            }
+    ::= { ieee8021StreamIdStreamIdInFacOutputPortHandleListTable 1 }
+
+Ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdStreamIdInFacOutputPortHandleListIndex
+            Unsigned32,
+        ieee8021StreamIdStreamIdInFacOutputPortHandle
+            VariablePointer,
+        ieee8021StreamIdStreamIdInFacOutputPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021StreamIdStreamIdInFacOutputPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the In-Facing Output Port handle list table."
+    ::= { ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry 1 }
+
+ieee8021StreamIdStreamIdInFacOutputPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to an interface that is an element of the
+         ieee8021StreamIdStreamIdInFacOutputPortList instance in the
+         ieee8021StreamIdStreamIdentificationTable."
+    REFERENCE   "9.1.1.2"
+    ::= { ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry 2 }
+
+ieee8021StreamIdStreamIdInFacOutputPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the In-Facing Output Port handle list table."
+    ::= { ieee8021StreamIdStreamIdInFacOutputPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdOutFacOutputPortList
+-- table
+-- =============================================================
+ieee8021StreamIdStreamIdOutFacOutputPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports on which an out-facing
+         Stream identification function using this identification method
+         is to be placed for this Stream in the output (towards the
+         system forwarding function) direction, referenced in
+         ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.3"
+    ::= { ieee8021StreamIdStreamIdOutFacOutputPortHandleList 3 }
+
+ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports on which an
+         out-facing Stream identification function using this
+         identification method is to be placed for this Stream in the
+         output (towards the system forwarding function) direction,
+         referenced in ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.3"
+    INDEX   { ieee8021StreamIdStreamIdentificationIndex,
+              ieee8021StreamIdStreamIdOutFacOutputPortHandleListIndex 
+            }
+    ::= { ieee8021StreamIdStreamIdOutFacOutputPortHandleListTable 1 }
+
+Ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdStreamIdOutFacOutputPortHandleListIndex
+            Unsigned32,
+        ieee8021StreamIdStreamIdOutFacOutputPortHandle
+            VariablePointer,
+        ieee8021StreamIdStreamIdOutFacOutputPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021StreamIdStreamIdOutFacOutputPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Out-Facing Output Port handle list table."
+    ::= { ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry 1 }
+
+ieee8021StreamIdStreamIdOutFacOutputPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to an interface that is an element of the
+         ieee8021StreamIdStreamIdOutFacOutputPortList instance in the
+         ieee8021StreamIdStreamIdentificationTable."
+    REFERENCE   "9.1.1.3"
+    ::= { ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry 2 }
+
+ieee8021StreamIdStreamIdOutFacOutputPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Out-Facing Output Port handle list table."
+    ::= { ieee8021StreamIdStreamIdOutFacOutputPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdInFacInputPortList
+-- table
+-- =============================================================
+ieee8021StreamIdStreamIdInFacInputPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdStreamIdInFacInputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports on which an in-facing Stream
+         identification function using this identification method is to
+         be placed for this Stream in the input (coming from the system
+         forwarding function) direction, referenced in
+         ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.4"
+    ::= { ieee8021StreamIdStreamIdInFacInputPortHandleList 4 }
+
+ieee8021StreamIdStreamIdInFacInputPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdStreamIdInFacInputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports on which an
+         in-facing Stream identification function using this
+         identification method is to be placed for this Stream in the
+         input (coming from the system forwarding function) direction,
+         referenced in ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.4"
+    INDEX   { ieee8021StreamIdStreamIdentificationIndex,
+              ieee8021StreamIdStreamIdInFacInputPortHandleListIndex 
+            }
+    ::= { ieee8021StreamIdStreamIdInFacInputPortHandleListTable 1 }
+
+Ieee8021StreamIdStreamIdInFacInputPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdStreamIdInFacInputPortHandleListIndex
+            Unsigned32,
+        ieee8021StreamIdStreamIdInFacInputPortHandle
+            VariablePointer,
+        ieee8021StreamIdStreamIdInFacInputPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021StreamIdStreamIdInFacInputPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the In-Facing Input Port handle list table."
+    ::= { ieee8021StreamIdStreamIdInFacInputPortHandleListEntry 1 }
+
+ieee8021StreamIdStreamIdInFacInputPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to an interface that is an element of the
+         ieee8021StreamIdStreamIdOutFacInputPortList instance in the
+         ieee8021StreamIdStreamIdentificationTable."
+    REFERENCE   "9.1.1.4"
+    ::= { ieee8021StreamIdStreamIdInFacInputPortHandleListEntry 2 }
+
+ieee8021StreamIdStreamIdInFacInputPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the In-Facing Input Port handle list table."
+    ::= { ieee8021StreamIdStreamIdInFacInputPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdOutFacInputPortList
+-- table
+-- =============================================================
+ieee8021StreamIdStreamIdOutFacInputPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports on which an out-facing
+         Stream identification function using this identification method
+         is to be placed for this Stream in the input (coming from the
+         physical interface) direction, referenced in
+         ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.5"
+    ::= { ieee8021StreamIdStreamIdOutFacInputPortHandleList 5 }
+
+ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports on which an
+         out-facing Stream identification function using this
+         identification method is to be placed for this Stream in the
+         input (coming from the physical interface) direction,
+         referenced in ieee8021StreamIdStreamIdentificationIndex."
+    REFERENCE   "9.1.1.5"
+    INDEX   { ieee8021StreamIdStreamIdentificationIndex,
+              ieee8021StreamIdStreamIdOutFacInputPortHandleListIndex 
+            }
+    ::= { ieee8021StreamIdStreamIdOutFacInputPortHandleListTable 1 }
+
+Ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdStreamIdOutFacInputPortHandleListIndex
+            Unsigned32,
+        ieee8021StreamIdStreamIdOutFacInputPortHandle
+            VariablePointer,
+        ieee8021StreamIdStreamIdOutFacInputPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021StreamIdStreamIdOutFacInputPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Out-Facing Input Port handle list table."
+    ::= { ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry 1 }
+
+ieee8021StreamIdStreamIdOutFacInputPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to an interface that is an element of the
+         ieee8021StreamIdStreamIdOutFacInputPortList instance in the
+         ieee8021StreamIdStreamIdentificationTable."
+    REFERENCE   "9.1.1.5"
+    ::= { ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry 2 }
+
+ieee8021StreamIdStreamIdOutFacInputPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Out-Facing Input Port handle list table."
+    ::= { ieee8021StreamIdStreamIdOutFacInputPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdPerPortPerStreamCountersTable
+-- =============================================================
+
+ieee8021StreamIdPerPortPerStreamCountersTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdPerPortPerStreamCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing a set of counters for Stream
+             identification that are instantiated per port, Stream, and
+             direction."
+    REFERENCE   "9.2"
+    ::= { ieee8021StreamIdPerPortPerStreamCounters 6 }
+
+ieee8021StreamIdPerPortPerStreamCountersEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdPerPortPerStreamCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A set of managed objects for Stream identification
+             counters that are instantiated per port, Stream, and
+             direction."
+    REFERENCE   "9.2"
+     INDEX  { ifIndex,
+              ieee8021StreamIdStreamIdHandle,
+              ieee8021StreamIdPerPortPerStreamDirection
+            }
+    ::= { ieee8021StreamIdPerPortPerStreamCountersTable 1 }
+
+Ieee8021StreamIdPerPortPerStreamCountersEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdPerPortPerStreamDirection
+            TruthValue,
+        ieee8021StreamIdPerPortPerStreamInputPackets
+            Counter64,
+        ieee8021StreamIdPerPortPerStreamOutputPackets
+            Counter64
+    }
+
+ieee8021StreamIdPerPortPerStreamDirection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A managed object specifying the facing of a given Stream
+         on a port. The Stream can be either in-facing (False) or
+         out-facing (True)."
+    REFERENCE   "9.2"
+    ::= { ieee8021StreamIdPerPortPerStreamCountersEntry 1 }
+
+ieee8021StreamIdPerPortPerStreamInputPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet identified by the Stream identification
+         function."
+    REFERENCE   "9.2.1"
+    ::= { ieee8021StreamIdPerPortPerStreamCountersEntry 2 }
+
+ieee8021StreamIdPerPortPerStreamOutputPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet passed down the stack by the Stream 
+         identification function."
+    REFERENCE   "9.2.2"
+    ::= { ieee8021StreamIdPerPortPerStreamCountersEntry 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdPerPortCountersTable
+-- =============================================================
+
+ieee8021StreamIdPerPortCountersTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdPerPortCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing a set of counters for Stream
+             identification that are instantiated per port and
+             direction."
+    REFERENCE   "9.3"
+    ::= { ieee8021StreamIdPerPortCounters 7 }
+
+ieee8021StreamIdPerPortCountersEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdPerPortCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A a set of managed objects for Stream identification
+             counters that are instantiated per port and direction."
+    REFERENCE   "9.3"
+     INDEX  { ifIndex }
+    ::= { ieee8021StreamIdPerPortCountersTable 1 }
+
+Ieee8021StreamIdPerPortCountersEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdPerPortInputPackets
+            Counter64,
+        ieee8021StreamIdPerPortOutputPackets
+            Counter64
+    }
+
+ieee8021StreamIdPerPortInputPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet identified by any Stream identification
+         function on this port. Its value equals the sum (modulo the
+         size of the counters) of all of the
+         ieee8021StreamIdPerPortPerStreamInputPackets counters on this
+         same port."
+    REFERENCE   "9.3.1"
+    ::= { ieee8021StreamIdPerPortCountersEntry 1 }
+
+ieee8021StreamIdPerPortOutputPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet passed down the stack by any Stream
+         identification function on this port. Its value equals the sum
+         (modulo the size of the counters) of all of the
+         ieee8021StreamIdPerPortPerStreamOutputPackets counters on this
+         same port."
+    REFERENCE   "9.3.2"
+    ::= { ieee8021StreamIdPerPortCountersEntry 2 }
+
+-- =============================================================
+-- the ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthTable
+-- =============================================================
+
+ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of maximum msdu mask length
+         parameters that are defined per port."
+    REFERENCE   "9.4.1"
+    ::= { ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLength 8 }
+
+ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthEntry OBJECT-TYPE
+    SYNTAX      Ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A a set of managed objects specifying the maximum msdu
+         mask length per port, applicable to all the instances
+         of Mask-And-Match Stream identification functions"
+    REFERENCE   "9.4.1"
+    INDEX  { ifIndex }
+    ::= { ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthTable 1 }
+
+Ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthEntry ::=
+    SEQUENCE {
+        ieee8021StreamIdMaskAndMatchMsduMaskMaxLength
+        Integer32
+    }
+
+ieee8021StreamIdMaskAndMatchMsduMaskMaxLength OBJECT-TYPE
+    SYNTAX      Integer32(2..1984)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "A managed object specifying the maximum msdu mask length for
+         a given port."
+    REFERENCE   "9.4.1"
+    ::= { ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthEntry 1 }
+
+-- =============================================================
+-- IEEE802 STREAM IDENTIFICATION MIB - Conformance Information
+-- =============================================================
+
+ieee8021StreamIdCompliances
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdConformance 1 }
+ieee8021StreamIdGroups
+    OBJECT IDENTIFIER ::= { ieee8021StreamIdConformance 2 }
+
+-- =============================================================
+-- units of conformance
+-- =============================================================
+
+-- =============================================================
+-- the ieee8021StreamIdStreamIdentification group
+-- =============================================================
+
+ieee8021StreamIdStreamIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdStreamIdIdentificationTypeSelect,
+        ieee8021StreamIdStreamIdIdentificationType,
+        ieee8021StreamIdStreamIdIdentificationTypeOUI,
+        ieee8021StreamIdStreamIdIdentificationCustomType,
+        ieee8021StreamIdStreamIdIdentificationCustomTypeOUI,
+        ieee8021StreamIdStreamIdHandle,
+        ieee8021StreamIdStreamIdInFacOutputPortList,
+        ieee8021StreamIdStreamIdOutFacOutputPortList,
+        ieee8021StreamIdStreamIdInFacInputPortList,
+        ieee8021StreamIdStreamIdOutFacInputPortList,
+        ieee8021StreamIdStreamIdInFacOutputPortHandle,
+        ieee8021StreamIdStreamIdInFacOutputPortHandleListStatus,
+        ieee8021StreamIdStreamIdOutFacOutputPortHandle,
+        ieee8021StreamIdStreamIdOutFacOutputPortHandleListStatus,
+        ieee8021StreamIdStreamIdInFacInputPortHandle,
+        ieee8021StreamIdStreamIdInFacInputPortHandleListStatus,
+        ieee8021StreamIdStreamIdOutFacInputPortHandle,
+        ieee8021StreamIdStreamIdOutFacInputPortHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the Stream identification."
+    ::= { ieee8021StreamIdGroups 1 }
+
+-- =============================================================
+-- the ieee8021StreamIdNullStreamIdentification group
+-- =============================================================
+
+ieee8021StreamIdNullStreamIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdCpeNullDownDestMac,
+        ieee8021StreamIdCPENullDownTagged,
+        ieee8021StreamIdCpeNullDownVlan
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the null Stream identification
+         method."
+    ::= { ieee8021StreamIdGroups 2 }
+
+-- =============================================================
+-- the ieee8021StreamIdSrcMacVlanIdentification group
+-- =============================================================
+
+ieee8021StreamIdSrcMacVlanIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdCpeSmacVlanDownSrcMac,
+        ieee8021StreamIdCpeSmacVlanDownTagged,
+        ieee8021StreamIdCpeSmacVlanDownVlan
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the Source MAC and VLAN Stream
+         identification method."
+    ::= { ieee8021StreamIdGroups 3 }
+
+-- =============================================================
+-- the ieee8021StreamIdActiveDestMacVlanIdentification group
+-- =============================================================
+
+ieee8021StreamIdActiveDestMacVlanIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdCpeDmacVlanDownDestMac,
+        ieee8021StreamIdCpeDmacVlanDownTagged,
+        ieee8021StreamIdCpeDmacVlanDownVlan,
+        ieee8021StreamIdCpeDmacVlanDownPriority,
+        ieee8021StreamIdCpeDmacVlanUpDestMac,
+        ieee8021StreamIdCpeDmacVlanUpTagged,
+        ieee8021StreamIdCpeDmacVlanUpVlan,
+        ieee8021StreamIdCpeDmacVlanUpPriority
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the Active Destination MAC and
+         VLAN Stream identification method."
+    ::= { ieee8021StreamIdGroups 4 }
+
+-- =============================================================
+-- the ieee8021StreamIdIpStreamIdentification group
+-- =============================================================
+
+ieee8021StreamIdIpStreamIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdCpeIpIdDestMac,
+        ieee8021StreamIdCpeIpIdTagged,
+        ieee8021StreamIdCpeIpIdVlan,
+        ieee8021StreamIdCpeIpIdIpSourceType,
+        ieee8021StreamIdCpeIpIdIpSource,
+        ieee8021StreamIdCpeIpIdIpDestinationType,
+        ieee8021StreamIdCpeIpIdIpDestination,
+        ieee8021StreamIdCpeIpIdDscp,
+        ieee8021StreamIdCpeIpIdNextProtocol,
+        ieee8021StreamIdCpeIpIdSourcePort,
+        ieee8021StreamIdCpeIpIdDestinationPort
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the IP Stream identification method."
+    ::= { ieee8021StreamIdGroups 5 }
+
+-- =============================================================
+-- the ieee8021StreamIdAutoConfiguration group
+-- =============================================================
+
+ieee8021StreamIdAutoConfigurationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdAutoConfigured,
+        ieee8021StreamIdLanPathId,
+        ieee8021StreamIdStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are used if auto configuration for Streams is
+        used."
+    ::= { ieee8021StreamIdGroups 6 }
+
+-- =============================================================
+-- the ieee8021StreamIdPerPortPerStreamCounters group
+-- =============================================================
+
+ieee8021StreamIdPerPortPerStreamCountersGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdPerPortPerStreamInputPackets,
+        ieee8021StreamIdPerPortPerStreamOutputPackets
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that provide information on the count of packets
+         handled by Stream identification per port, Stream, and
+         direction ."
+    ::= { ieee8021StreamIdGroups 7 }
+
+-- =============================================================
+-- the ieee8021StreamIdPerPortCounters group
+-- =============================================================
+
+ieee8021StreamIdPerPortCountersGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdPerPortInputPackets,
+        ieee8021StreamIdPerPortOutputPackets
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that provide information on the count of packets
+         handled by Stream identification per port and direction."
+    ::= { ieee8021StreamIdGroups 8 }
+
+-- =============================================================
+-- the ieee8021StreamIdMaskAndMatchIdentification group
+-- =============================================================
+
+ieee8021StreamIdMaskAndMatchIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdCpeMmIdDestMacMask,
+        ieee8021StreamIdCpeMmIdDestMacMatch,
+        ieee8021StreamIdCpeMmIdSrcMacMask,
+        ieee8021StreamIdCpeMmIdSrcMacMatch,
+        ieee8021StreamIdCpeMmIdMsduMaskLength,
+        ieee8021StreamIdCpeMmIdMsduMask,
+        ieee8021StreamIdCpeMmIdMsduMatch
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the Mask-and-Match Stream
+         identification method."
+    ::= { ieee8021StreamIdGroups 9 }
+
+-- =============================================================
+-- the ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLength group
+-- =============================================================
+
+ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021StreamIdMaskAndMatchMsduMaskMaxLength
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that provide information on the maximum msdu mask
+         handled by the Mask-and-match Stream identification function
+         per port."
+    ::= { ieee8021StreamIdGroups 10 }
+
+-- =============================================================
+-- compliance statements
+-- =============================================================
+
+ieee8021StreamIdCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for devices supporting
+        Stream identification."
+
+    MODULE -- this module
+        MANDATORY-GROUPS {
+            ieee8021StreamIdStreamIdentificationGroup,
+            ieee8021StreamIdNullStreamIdentificationGroup,
+            ieee8021StreamIdSrcMacVlanIdentificationGroup,
+            ieee8021StreamIdActiveDestMacVlanIdentificationGroup,
+            ieee8021StreamIdIpStreamIdentificationGroup,
+            ieee8021StreamIdPerPortPerStreamCountersGroup,
+            ieee8021StreamIdPerPortCountersGroup,
+            ieee8021StreamIdMaskAndMatchIdentificationGroup,
+            ieee8021StreamIdMaskAndMatchPerPortMsduMaskMaxLengthGroup
+        }
+
+        GROUP ieee8021StreamIdAutoConfigurationGroup
+        DESCRIPTION
+            "Implementation of this group is mandatory if the
+             auto configuration feature is implemented."
+
+    ::= { ieee8021StreamIdCompliances 1 }
+
+END

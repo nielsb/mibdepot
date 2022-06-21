@@ -1,0 +1,2571 @@
+IEEE8021-FRER-MIB DEFINITIONS ::= BEGIN
+
+-- =============================================================
+-- MIB for support of frame replication and elimination of
+-- IEEE 802.1CB Frame Replication and Elimination for Reliability
+-- =============================================================
+
+IMPORTS
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+        FROM SNMPv2-CONF
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Counter64,
+    Unsigned32,
+    Integer32
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION,
+    TruthValue,
+    RowStatus,
+    AutonomousType,
+    VariablePointer
+        FROM SNMPv2-TC
+    ifIndex,
+    InterfaceIndex
+        FROM IF-MIB
+    ieee802dot1mibs
+        FROM IEEE8021-TC-MIB
+    Ieee8021CBTaggedType,
+    Ieee8021CBVlanIdentifier,
+    Ieee8021CBLanPathIdType,
+    ieee8021StreamIdStreamIdHandle
+        FROM IEEE8021-STREAM-IDENTIFICATION-MIB
+    ;
+
+ieee8021FrerMib MODULE-IDENTITY
+    LAST-UPDATED "202112080000Z" -- December 8, 2021
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO
+                "WG-URL: http://ieee802.org/1/
+                WG-EMail: stds-802-1-l@ieee.org
+
+    Contact: IEEE 802.1 Working Group Chair
+    Postal: C/O IEEE 802.1 Working Group
+            IEEE Standards Association
+            445 Hoes Lane
+            Piscataway, NJ 08854
+            USA
+
+    E-mail: stds-802-1-chairs@ieee.org"
+
+    DESCRIPTION
+        "The Management Information Base module for IEEE 802.1CB Stream 
+         identification. Unless otherwise indicated, the references in 
+         this MIB module are to IEEE Std 802.1CB-2017 as amended by
+         IEEE Std 802.1CBcv-2021. Copyright (C) IEEE (2021).
+         This version of this MIB module is part of IEEE Std 802.1CB-2021;
+         see the standard itself for full legal notices."
+
+    REVISION "202112080000Z" -- December 8, 2021
+    DESCRIPTION
+        "Initial revision published as part of IEEE Std 802.1CBcv-2021."
+
+    ::= { ieee802dot1mibs 35 }
+
+-- =============================================================
+-- Textual Conventions
+-- =============================================================
+
+Ieee8021CBSequenceRecoveryAlgorithm ::= TEXTUAL-CONVENTION
+    STATUS       current
+    DESCRIPTION
+        "An enumerated value specifying which sequence recovery
+         algorithm is to be used for this instance of the Sequence
+         recovery function. The enumeration uses an OUI or CID as shown
+         in Table 10-1. If the value used is in the range of 0-255,
+         the OUI used is 00-80-C2.
+         The values 0 and 2-255 are reserved for use by IEEE 802."
+    REFERENCE    "10.4.1.5 and Table 10-1"
+    SYNTAX      INTEGER {
+                    vectorAlgorithm(0),
+                    matchAlgorithm(1),
+                    nonIEEESpecified(256)
+                }
+
+Ieee8021CBSequenceEncodeDecodeType ::= TEXTUAL-CONVENTION
+    STATUS       current
+    DESCRIPTION
+        "An enumerated value indicating the type of encapsulation used
+         for this instance of the Sequence encode/decode function. The
+         enumeration uses an OUI or CID as shown in Table 10-2. If the
+         value used is in the range of 0-255, the OUI used is 00-80-C2.
+         The values 0 and 4-255 are reserved for use by IEEE 802."
+    REFERENCE    "10.5.1.5 and Table 10-2"
+    SYNTAX      INTEGER {
+                    reserved(0),
+                    rTAG(1),
+                    hsrSequenceTag(2),
+                    prpSequenceTag(3),
+                    nonIEEESpecified(256)
+                }
+
+-- =============================================================
+-- subtrees in the FRER MIB
+-- =============================================================
+
+ieee8021FrerNotifications
+    OBJECT IDENTIFIER ::= { ieee8021FrerMib 0 }
+
+ieee8021FrerObjects
+    OBJECT IDENTIFIER ::= { ieee8021FrerMib 1 }
+
+ieee8021FrerConformance
+    OBJECT IDENTIFIER ::= { ieee8021FrerMib 2 }
+
+ieee8021FrerSequenceGeneration
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 1 }
+
+ieee8021FrerSequenceGenerationHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 2 }
+
+ieee8021FrerSequenceRecovery
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 3 }
+
+ieee8021FrerSequenceRecoveryHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 4 }
+
+ieee8021FrerSequenceRecoveryPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 5 }
+
+ieee8021FrerSequenceIdentification
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 6 }
+
+ieee8021FrerSequenceIdentificationHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 7 }
+
+ieee8021FrerStreamSplit
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 8 }
+
+ieee8021FrerStreamSplitInputHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 9 }
+
+ieee8021FrerStreamSplitOutputHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 10 }
+
+ieee8021FrerSequenceAutoconfig
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 11 }
+
+ieee8021FrerSequenceAutoconfigReceivePortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 12 }
+
+ieee8021FrerSequenceAutoconfigVlanHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 13 }
+
+ieee8021FrerSequenceAutoconfigRecoveryPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 14 }
+
+ieee8021FrerOutputAutoconfig
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 15 }
+
+ieee8021FrerOutputAutoconfigPortHandleList
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 16 }
+
+ieee8021FrerPerPortPerStreamCounters
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 17 }
+
+ieee8021FrerPerPortCounters
+    OBJECT IDENTIFIER ::= { ieee8021FrerObjects 18 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceGeneration table
+-- =============================================================
+
+ieee8021FrerSequenceGenerationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceGenerationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of sequence generation entry objects.
+         There is one entry for each sequence generation function."
+    REFERENCE   "10.3"
+    ::= { ieee8021FrerSequenceGeneration 1 }
+
+ieee8021FrerSequenceGenerationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceGenerationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that manage the Streams and direction
+         for which a single instance of the Sequence generation function
+         is to be placed."
+    REFERENCE   "10.3.1"
+    INDEX  { ieee8021FrerSequenceGenerationIndex }
+    ::= { ieee8021FrerSequenceGenerationTable 1 }
+
+Ieee8021FrerSequenceGenerationEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceGenerationIndex
+            Unsigned32,
+        ieee8021FrerSequenceGenerationStreamList
+            AutonomousType,
+        ieee8021FrerSequenceGenerationDirection
+            TruthValue,
+        ieee8021FrerSequenceGenerationReset
+            TruthValue
+        
+    }
+
+ieee8021FrerSequenceGenerationIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Generation table."
+    ::= { ieee8021FrerSequenceGenerationEntry 1 }
+
+ieee8021FrerSequenceGenerationStreamList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "A list of stream_handle values, corresponding to the values of
+         the tsnStreamIdHandle objects in the Stream identity table,
+         on which this instance of the Sequence generation function
+         is to operate.
+         The single instance of the Sequence generation function created
+         by this frerSeqGenEntry operates every packet belonging to this
+         Stream, regardless of the port on which it is received.
+         For each instance of the Sequence generation function present
+         in the ieee8021FrerSequenceGenerationTable there exists a list
+         of stream_handle values in the 
+         ieee8021FrerSequenceGenerationHandleListTable."
+    REFERENCE   "10.3.1.1"
+    ::= { ieee8021FrerSequenceGenerationEntry 2 }
+
+ieee8021FrerSequenceGenerationDirection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates whether the Sequence generation
+         function is to be placed on the out-facing (True) or
+         in-facing (False) side of the port."
+    REFERENCE   "10.3.1.2"
+    ::= { ieee8021FrerSequenceGenerationEntry 3 }
+
+ieee8021FrerSequenceGenerationReset OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates that the Sequence generation
+         function is to be reset by calling its corresponding
+         SequenceGenerationReset function. Writing the value True to
+         this managed object triggers a reset; writing the value False
+         has no effect. When read, this managed object always returns
+         the value False."
+    REFERENCE   "10.3.1.3"
+    ::= { ieee8021FrerSequenceGenerationEntry 4 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceGenerationHandleList table
+-- =============================================================
+
+ieee8021FrerSequenceGenerationHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceGenerationHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of stream_handle values,
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, on which the instance of the
+         Sequence generation function referenced in
+         ieee8021FrerSequenceGenerationIndex is to operate.
+         The single instance of the Sequence generation function created
+         by the ieee8021FrerSequenceGenerationEntry referenced operates
+         every packet belonging to this Stream, regardless of the port
+         on which it is received."
+    REFERENCE   "10.3.1.1"
+    ::= { ieee8021FrerSequenceGenerationHandleList 2 }
+
+ieee8021FrerSequenceGenerationHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceGenerationHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the stream_handle values
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, on which the instance of the
+         Sequence generation function referenced in
+         ieee8021FrerSequenceGenerationIndex is to operate."
+    REFERENCE   "10.3.1.1"
+    INDEX   { ieee8021FrerSequenceGenerationIndex,
+              ieee8021FrerSequenceGenerationHandleListIndex 
+            }
+    ::= { ieee8021FrerSequenceGenerationHandleListTable 1 }
+
+Ieee8021FrerSequenceGenerationHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceGenerationHandleListIndex
+            Unsigned32,
+        ieee8021FrerSequenceGenerationStreamHandle
+            VariablePointer,
+        ieee8021FrerSequenceGenerationHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceGenerationHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Generation handle list table."
+    ::= { ieee8021FrerSequenceGenerationHandleListEntry 1 }
+
+ieee8021FrerSequenceGenerationStreamHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerSequenceGenerationStreamList
+         instance in the ieee8021StreamIdStreamIdentificationTable."
+    REFERENCE   "10.3.1.1"
+    ::= { ieee8021FrerSequenceGenerationHandleListEntry 2 }
+
+ieee8021FrerSequenceGenerationHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Generation handle list table."
+    ::= { ieee8021FrerSequenceGenerationHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceRecovery table
+-- =============================================================
+
+ieee8021FrerSequenceRecoveryTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceRecoveryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of managed objects for the single
+         instance of a Base recovery function and Latent error detection
+         function included in the Sequence recovery function or
+         Individual recovery function."
+    REFERENCE   "10.4"
+    ::= { ieee8021FrerSequenceRecovery 3 }
+
+ieee8021FrerSequenceRecoveryEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceRecoveryEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects listing the Streams, ports, and
+         direction for which instances of a Sequence recovery function
+         or Individual recovery function are to be instantiated."
+    REFERENCE   "10.4.1"
+    INDEX  { ieee8021FrerSequenceRecoveryIndex }
+    ::= { ieee8021FrerSequenceRecoveryTable 1 }
+
+Ieee8021FrerSequenceRecoveryEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceRecoveryIndex
+            Unsigned32,
+        ieee8021FrerSequenceRecoveryStreamList
+            AutonomousType,
+        ieee8021FrerSequenceRecoveryPortList
+            AutonomousType,
+        ieee8021FrerSequenceRecoveryDirection
+            TruthValue,
+        ieee8021FrerSequenceRecoveryReset
+            TruthValue,
+        ieee8021FrerSequenceRecoveryAlgorithm
+            Ieee8021CBSequenceRecoveryAlgorithm,
+        ieee8021FrerSequenceRecoveryAlgorithmOUI
+            OCTET STRING,
+        ieee8021FrerSequenceCustomRecoveryAlgorithm
+            Integer32,
+        ieee8021FrerSequenceCustomRecoveryAlgorithmOUI
+            OCTET STRING,
+        ieee8021FrerSequenceRecoveryHistoryLength
+            Integer32,
+        ieee8021FrerSequenceRecoveryResetMSec
+            Unsigned32,
+        ieee8021FrerSequenceRecoveryInvalidSequenceValue
+            Unsigned32,
+        ieee8021FrerSequenceRecoveryTakeNoSequence
+            TruthValue,
+        ieee8021FrerSequenceRecoveryIndividualRecovery
+            TruthValue,
+        ieee8021FrerSequenceRecoveryLatentErrorDetection
+            TruthValue,
+        ieee8021FrerSequenceRecoveryLatentErrorDifference
+            Integer32,
+        ieee8021FrerSequenceRecoveryLatentErrorPeriod
+            Integer32,
+        ieee8021FrerSequenceRecoveryLatentErrorPaths
+            Integer32,
+        ieee8021FrerSequenceRecoveryLatentResetPeriod
+            Integer32,
+        ieee8021FrerSequenceRecoveryStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceRecoveryIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Recovery table."
+    ::= { ieee8021FrerSequenceRecoveryEntry 1 }
+
+ieee8021FrerSequenceRecoveryStreamList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A list of the stream_handle values, corresponding to the values
+         of the tsnStreamIdHandle objects in the Stream identity table
+         to which the system is to apply the instance of the Sequence
+         recovery function or Individual recovery function.
+         For each entry in the ieee8021FrerSequenceRecoveryTable
+         there exists a list of stream_handle values in the 
+         ieee8021FrerSequenceRecoveryHandleListTable."
+    REFERENCE   "10.4.1.1"
+    ::= { ieee8021FrerSequenceRecoveryEntry 2 }
+
+ieee8021FrerSequenceRecoveryPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The list of ports on each of which the system is to instantiate
+         the Sequence recovery function, or from which received packets
+         are to be fed to a single instance of the Individual recovery
+         function.
+         For each entry in the ieee8021FrerSequenceRecoveryTable
+         there exists a list of ports in the
+         ieee8021FrerSequenceRecoveryPortHandleListTable."
+    REFERENCE   "10.4.1.2"
+    ::= { ieee8021FrerSequenceRecoveryEntry 3 }
+
+ieee8021FrerSequenceRecoveryDirection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates whether the Sequence recovery
+         function or Individual recovery function is to be placed on the
+         out-facing (True) or in-facing (False) side of the port."
+    REFERENCE   "10.4.1.3"
+    ::= { ieee8021FrerSequenceRecoveryEntry 4 }
+
+ieee8021FrerSequenceRecoveryReset OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates that the Sequence recovery
+         function or Individual recovery function is to be reset by
+         calling its corresponding SequenceGenerationReset function.
+         Writing the value True to ieee8021FrerSequenceRecoveryReset
+         triggers a reset; writing the value False has no effect.
+         When read, ieee8021FrerSequenceRecoveryReset always returns
+         the value False."
+    REFERENCE   "10.4.1.4"
+    ::= { ieee8021FrerSequenceRecoveryEntry 5 }
+
+ieee8021FrerSequenceRecoveryAlgorithm OBJECT-TYPE
+    SYNTAX      Ieee8021CBSequenceRecoveryAlgorithm
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object is an enumerated value specifying which
+         sequence recovery algorithm is to be used for this instance of
+         the Sequence recovery function. If the value used is
+         nonIEEESpecified(256), the managed objects
+         ieee8021FrerSequenceCustomRecoveryAlgorithmOUI and
+         ieee8021FrerSequenceCustomRecoveryAlgorithm are used to specify
+         OUI/CID and the recovery algorithm defined by the entity owning
+         the OUI/CID."
+    REFERENCE   "10.4.1.5"
+    DEFVAL  { vectorAlgorithm }
+    ::= { ieee8021FrerSequenceRecoveryEntry 6 }
+
+ieee8021FrerSequenceRecoveryAlgorithmOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the OUI/CID used together with
+         the sequence recovery algorithm type specified in
+         ieee8021FrerSequenceRecoveryAlgorithm.
+         It is used if and only if the value for
+         ieee8021FrerSequenceRecoveryAlgorithm is in the range of 0-255.
+         In this case it always takes the value 00-80-C2."
+    REFERENCE   "10.4.1.5"
+    ::= { ieee8021FrerSequenceRecoveryEntry 7 }
+
+ieee8021FrerSequenceCustomRecoveryAlgorithm OBJECT-TYPE
+    SYNTAX      Integer32 (256..2147483647)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object is an enumerated value specifying which
+         sequence recovery algorithm is to be used for this instance of
+         the Sequence recovery function. This managed object is used if
+         and only if the value for ieee8021FrerSequenceRecoveryAlgorithm
+         is 256."
+    REFERENCE   "10.4.1.5"
+    ::= { ieee8021FrerSequenceRecoveryEntry 8 }
+
+ieee8021FrerSequenceCustomRecoveryAlgorithmOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the OUI/CID used together with
+         the sequence recovery algorithm type specified in
+         ieee8021FrerSequenceRecoveryAlgorithm. It is used if and only
+         if the value for ieee8021FrerSequenceRecoveryAlgorithm is 256."
+    REFERENCE   "10.4.1.5"
+    ::= { ieee8021FrerSequenceRecoveryEntry 9 }
+
+ieee8021FrerSequenceRecoveryHistoryLength OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies how many bits of the
+         SequenceHistory variable are to be used. The minimum and the
+         default value is 2, maximum is the maximum allowed by the
+         implementation. It is not used if the value for
+         ieee8021FrerSequenceRecoveryAlgorithm is 1."
+    REFERENCE   "10.4.1.6"
+    ::= { ieee8021FrerSequenceRecoveryEntry 10 }
+
+ieee8021FrerSequenceRecoveryResetMSec OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the timeout period in
+         milliseconds for the RECOVERY_TIMEOUT event."
+    REFERENCE   "10.4.1.7"
+    ::= { ieee8021FrerSequenceRecoveryEntry 11 }
+
+ieee8021FrerSequenceRecoveryInvalidSequenceValue OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies a value that cannot be encoded in
+         a packet as a value for the sequence_number subparameter,
+         i.e., ieee8021FrerSequenceRecoveryInvalidSequenceValue is
+         larger than or equal to the value specified in RecovSeqSpace."
+    REFERENCE   "10.4.1.8 and 7.4.3.2.1"
+    ::= { ieee8021FrerSequenceRecoveryEntry 12 }
+
+ieee8021FrerSequenceRecoveryTakeNoSequence OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies whether packets with no
+         sequence_number subparameter are to be accepted (True) or
+         not (False)."
+    REFERENCE   "10.4.1.9"
+    DEFVAL  { false }
+    ::= { ieee8021FrerSequenceRecoveryEntry 13 }
+
+ieee8021FrerSequenceRecoveryIndividualRecovery OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies whether this entry describes a
+         Sequence recovery function (False) or Individual recovery
+         function (True)."
+    REFERENCE   "10.4.1.10"
+    ::= { ieee8021FrerSequenceRecoveryEntry 14 }
+
+ieee8021FrerSequenceRecoveryLatentErrorDetection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates whether an instance of the
+         Latent error detection function is to be instantiated along
+         with the Base recovery function in this recovery function.
+         It cannot be set True if
+         ieee8021FrerSequenceRecoveryIndividualRecovery is also True;
+         an Individual recovery function does not include a Latent
+         error detection function."
+    REFERENCE   "10.4.1.11"
+    ::= { ieee8021FrerSequenceRecoveryEntry 15 }
+
+ieee8021FrerSequenceRecoveryLatentErrorDifference OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the maximum difference between
+         ieee8021FrerPerPortPerStreamSeqRecoveryDiscardedPackets, and the
+         product of ieee8021FrerPerPortPerStreamSeqRecoveryPassedPackets and
+         (ieee8021FrerSequenceRecoveryLatentErrorPaths - 1)
+         that is allowed. Any larger difference will trigger the
+         detection of a latent error by the LatentErrorTest function.
+         It is used if and only if
+         ieee8021FrerSequenceRecoveryIndividualRecovery is False."
+    REFERENCE   "10.4.1.12.1"
+    ::= { ieee8021FrerSequenceRecoveryEntry 16 }
+
+ieee8021FrerSequenceRecoveryLatentErrorPeriod OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the number of milliseconds that
+         are to elapse between instances of running the LatentErrorTest
+         function. An implementation can have a minimum value for
+         this managed object, below which it cannot be set, but this
+         minimum shall be no larger than 1000 ms (1 s).
+         Default value 2000 (2 s).
+         It is used if and only if
+         ieee8021FrerSequenceRecoveryIndividualRecovery is False."
+    REFERENCE   "10.4.1.12.2"
+    DEFVAL  { 2000 }
+    ::= { ieee8021FrerSequenceRecoveryEntry 17 }
+
+ieee8021FrerSequenceRecoveryLatentErrorPaths OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the number of paths over which
+         FRER is operating for this instance of the Base recovery
+         function and Latent error detection function.
+         It is used if and only if
+         ieee8021FrerSequenceRecoveryIndividualRecovery is False."
+    REFERENCE   "10.4.1.12.3"
+    ::= { ieee8021FrerSequenceRecoveryEntry 18 }
+
+ieee8021FrerSequenceRecoveryLatentResetPeriod OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the number of milliseconds that
+         are to elapse between instances of running the LatentErrorReset
+         function. An implementation can have a minimum value for
+         this managed object, below which it cannot be set, but this
+         minimum shall be no larger than 1000 ms (1 s).
+         It is used if and only if
+         ieee8021FrerSequenceRecoveryIndividualRecovery is False."
+    REFERENCE   "10.4.1.12.4"
+    DEFVAL  { 30000 }
+    ::= { ieee8021FrerSequenceRecoveryEntry 19 }
+
+ieee8021FrerSequenceRecoveryStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Recovery table."
+    ::= { ieee8021FrerSequenceRecoveryEntry 20 }
+
+
+-- =============================================================
+-- the ieee8021FrerSequenceRecoveryHandleList table
+-- =============================================================
+
+ieee8021FrerSequenceRecoveryHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceRecoveryHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of stream_handle values,
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, to which the system is to apply the
+         instance of the Sequence recovery function or Individual
+         recovery function referenced in
+         ieee8021FrerSequenceRecoveryIndex."
+    REFERENCE   "10.4.1.1"
+    ::= { ieee8021FrerSequenceRecoveryHandleList 4 }
+
+ieee8021FrerSequenceRecoveryHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceRecoveryHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the stream_handle values
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, to which the system is to apply the
+         instance of the Sequence recovery function or Individual
+         recovery function referenced in
+         ieee8021FrerSequenceRecoveryIndex."
+    REFERENCE   "10.4.1.1"
+    INDEX   { ieee8021FrerSequenceRecoveryIndex,
+              ieee8021FrerSequenceRecoveryHandleListIndex 
+            }
+    ::= { ieee8021FrerSequenceRecoveryHandleListTable 1 }
+
+Ieee8021FrerSequenceRecoveryHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceRecoveryHandleListIndex
+            Unsigned32,
+        ieee8021FrerSequenceRecoveryStreamHandle
+            VariablePointer,
+        ieee8021FrerSequenceRecoveryHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceRecoveryHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Recovery handle list table."
+    ::= { ieee8021FrerSequenceRecoveryHandleListEntry 1 }
+
+ieee8021FrerSequenceRecoveryStreamHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerSequenceRecoveryStreamList instance
+         in the ieee8021FrerSequenceRecoveryTable."
+    REFERENCE   "10.4.1.1"
+    ::= { ieee8021FrerSequenceRecoveryHandleListEntry 2 }
+
+ieee8021FrerSequenceRecoveryHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Recovery handle list table."
+    ::= { ieee8021FrerSequenceRecoveryHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceRecoveryPortHandleList table
+-- =============================================================
+ieee8021FrerSequenceRecoveryPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceRecoveryPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports on each of which the system
+         is to instantiate the Sequence recovery function, or from which
+         received packets are to be fed to a single instance of the
+         Individual recovery function, referenced in
+         ieee8021FrerSequenceRecoveryIndex."
+    REFERENCE   "10.4.1.2"
+    ::= { ieee8021FrerSequenceRecoveryPortHandleList 5 }
+
+ieee8021FrerSequenceRecoveryPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceRecoveryPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports on each of which the system
+         is to instantiate the Sequence recovery function, or from which
+         received packets are to be fed to a single instance of the
+         Individual recovery function, referenced in
+         ieee8021FrerSequenceRecoveryIndex."
+    REFERENCE   "10.4.1.2"
+    INDEX   { ieee8021FrerSequenceRecoveryIndex,
+              ieee8021FrerSequenceRecoveryPortHandleListIndex 
+            }
+    ::= { ieee8021FrerSequenceRecoveryPortHandleListTable 1 }
+
+Ieee8021FrerSequenceRecoveryPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceRecoveryPortHandleListIndex
+            Unsigned32,
+        ieee8021FrerSequenceRecoveryPortHandle
+            VariablePointer,
+        ieee8021FrerSequenceRecoveryPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceRecoveryPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Recovery Port handle list table."
+    ::= { ieee8021FrerSequenceRecoveryPortHandleListEntry 1 }
+
+ieee8021FrerSequenceRecoveryPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to an interface that is an element of the
+         ieee8021FrerSequenceRecoveryPortList instance in the
+         ieee8021FrerSequenceRecoveryTable."
+    REFERENCE   "10.4.1.2"
+    ::= { ieee8021FrerSequenceRecoveryPortHandleListEntry 2 }
+
+ieee8021FrerSequenceRecoveryPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Recovery Port handle list table."
+    ::= { ieee8021FrerSequenceRecoveryPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceIdentification table
+-- =============================================================
+
+ieee8021FrerSequenceIdentificationTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of sequence identification entry
+         objects. There is one entry for each port and direction for
+         which an instance of the Sequence encode/decode function is to
+         be instantiated for a list of Streams."
+    REFERENCE   "10.5"
+    ::= { ieee8021FrerSequenceIdentification 6 }
+
+ieee8021FrerSequenceIdentificationEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceIdentificationEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that specify a port and direction on
+         which an instance of the Sequence encode/decode function is to
+         be instantiated for a list of Streams."
+    REFERENCE   "10.5.1"
+    INDEX   { ieee8021FrerSequenceIdentificationEncodePort,
+              ieee8021FrerSequenceIdentificationEncodeDirection
+            }
+    ::= { ieee8021FrerSequenceIdentificationTable 1 }
+
+Ieee8021FrerSequenceIdentificationEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceIdentificationEncodePort
+            InterfaceIndex,
+        ieee8021FrerSequenceIdentificationEncodeDirection
+            TruthValue,
+        ieee8021FrerSequenceIdentificationStreamList
+            AutonomousType,
+        ieee8021FrerSequenceIdentificationEncodeActive
+            TruthValue,
+        ieee8021FrerSequenceIdentificationEncodeEncapsulationType
+            Ieee8021CBSequenceEncodeDecodeType,
+        ieee8021FrerSequenceIdentificationEncodeEncapsulationOUI
+            OCTET STRING,
+        ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationType
+            Integer32,
+        ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationOUI
+            OCTET STRING,
+        ieee8021FrerSequenceIdentificationEncodePathIdLanId
+            Integer32,
+        ieee8021FrerSequenceIdentificationStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceIdentificationEncodePort OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The port on which the system is to place an instance of the
+         Sequence encode/decode function."
+    REFERENCE   "10.5.1.2"
+    ::= { ieee8021FrerSequenceIdentificationEntry 1 }
+
+ieee8021FrerSequenceIdentificationEncodeDirection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates whether the Sequence
+         encode/decode function is to be placed on the out-facing (True)
+         or in-facing (False) side of the port."
+    REFERENCE   "10.5.1.3"
+    ::= { ieee8021FrerSequenceIdentificationEntry 2 }
+
+ieee8021FrerSequenceIdentificationStreamList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A list of stream_handles, corresponding to the values of the
+         tsnStreamIdHandle objects in the Stream identity table, for
+         which the system is to use the same encapsulation for the
+         Sequence encode/decode function.
+         For each entry in the ieee8021FrerSequenceIdentificationTable
+         there exists a list of stream_handle values in the
+         ieee8021FrerSequenceIdentificationHandleListTable."
+    REFERENCE   "10.5.1.1"
+    ::= { ieee8021FrerSequenceIdentificationEntry 3 }
+
+ieee8021FrerSequenceIdentificationEncodeActive OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies whether this
+         ieee8021FrerSequenceIdentificationEntry is passive (False),
+         and therefore is used only to decode (extract information from)
+         input packets passing up the protocol stack, or active (True),
+         and therefore is used both for recognizing input packets and
+         for encoding output packets being passed down the protocol
+         stack."
+    REFERENCE   "10.5.1.4"
+    ::= { ieee8021FrerSequenceIdentificationEntry 4 }
+
+ieee8021FrerSequenceIdentificationEncodeEncapsulationType OBJECT-TYPE
+    SYNTAX      Ieee8021CBSequenceEncodeDecodeType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value specifying the type of encapsulation used
+         for this instance of the Sequence encode/decode function. If
+         the value used is nonIEEESpecified(256), the managed objects
+         ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationOUI
+         and
+         ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationType
+         are used to specify OUI/CID and the Sequence encode/decode
+         method defined by the entity owning the OUI/CID."
+    REFERENCE   "10.5.1.5"
+    ::= { ieee8021FrerSequenceIdentificationEntry 5 }
+
+ieee8021FrerSequenceIdentificationEncodeEncapsulationOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the OUI/CID used together with
+         the encapsulation type specified in
+         ieee8021FrerSequenceIdentificationEncodeEncapsulationType.
+         It is used if and only if the value for
+         ieee8021FrerSequenceIdentificationEncodeEncapsulationType is
+         in the range of 0-255. In this case it always takes the value
+         00-80-C2."
+    REFERENCE   "10.5.1.5"
+    ::= { ieee8021FrerSequenceIdentificationEntry 6 }
+
+ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationType OBJECT-TYPE
+    SYNTAX      Integer32 (256..2147483647)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value specifying the type of encapsulation used
+         for this instance of the Sequence encode/decode function. This
+         managed object is used if and only if the value for 
+         ieee8021FrerSequenceIdentificationEncodeEncapsulationType is
+         256."
+    REFERENCE   "10.5.1.5"
+    ::= { ieee8021FrerSequenceIdentificationEntry 7 }
+
+ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the OUI/CID used together with
+         the encapsulation type specified in
+         ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationType.
+         It is used if and only if the value for
+         ieee8021FrerSequenceIdentificationEncodeEncapsulationType is
+         256."
+    REFERENCE   "10.5.1.5"
+    ::= { ieee8021FrerSequenceIdentificationEntry 8 }
+
+ieee8021FrerSequenceIdentificationEncodePathIdLanId OBJECT-TYPE
+    SYNTAX      Integer32 (0..15)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A 4-bit integer value to be placed in the PathId field of an
+         HSR sequence tag or the LanId field of a PRP sequence trailer
+         added to an output packet."
+    REFERENCE   "10.5.1.6"
+    ::= { ieee8021FrerSequenceIdentificationEntry 9 }
+
+ieee8021FrerSequenceIdentificationStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Identification table."
+    ::= { ieee8021FrerSequenceIdentificationEntry 10 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceIdentificationHandleList table
+-- =============================================================
+
+ieee8021FrerSequenceIdentificationHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceIdentificationHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of stream_handle values,
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, for which the system is to use the
+         same encapsulation for the Sequence encode/decode function
+         referenced in ieee8021FrerSequenceIdentificationEncodePort
+         and ieee8021FrerSequenceIdentificationEncodeDirection."
+    REFERENCE   "10.5.1.1"
+    ::= { ieee8021FrerSequenceIdentificationHandleList 7 }
+
+ieee8021FrerSequenceIdentificationHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceIdentificationHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the stream_handle values
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, for which the system is to use the
+         same encapsulation for the Sequence encode/decode function
+         referenced in ieee8021FrerSequenceIdentificationEncodePort
+         and ieee8021FrerSequenceIdentificationEncodeDirection."
+    REFERENCE   "10.5.1.1"
+    INDEX   { ieee8021FrerSequenceIdentificationEncodePort,
+              ieee8021FrerSequenceIdentificationEncodeDirection,
+              ieee8021FrerSequenceIdentificationHandleListIndex 
+            }
+    ::= { ieee8021FrerSequenceIdentificationHandleListTable 1 }
+
+Ieee8021FrerSequenceIdentificationHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceIdentificationHandleListIndex
+            Unsigned32,
+        ieee8021FrerSequenceIdentificationStreamHandle
+            VariablePointer,
+        ieee8021FrerSequenceIdentificationHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceIdentificationHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Identification handle list table."
+    ::= { ieee8021FrerSequenceIdentificationHandleListEntry 1 }
+
+ieee8021FrerSequenceIdentificationStreamHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerSequenceIdentificationStreamList
+         instance in the ieee8021FrerSequenceIdentificationTable."
+    REFERENCE   "10.5.1.1"
+    ::= { ieee8021FrerSequenceIdentificationHandleListEntry 2 }
+
+ieee8021FrerSequenceIdentificationHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Identification handle list table."
+    ::= { ieee8021FrerSequenceIdentificationHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerStreamSplit table
+-- =============================================================
+
+ieee8021FrerStreamSplitTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerStreamSplitEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of FRER split entry objects. There is
+         one entry per Stream splitting function per set of
+         stream_handle values."
+    REFERENCE   "10.6"
+    ::= { ieee8021FrerStreamSplit 8 }
+
+ieee8021FrerStreamSplitEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerStreamSplitEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects that specify a port and direction
+         on which an instance of the Stream splitting function is to be
+         instantiated, and the list of stream_handles specifying its
+         operation."
+    REFERENCE   "10.6.1"
+    INDEX   { ieee8021FrerStreamSplitIndex }
+    ::= { ieee8021FrerStreamSplitTable 1 }
+
+Ieee8021FrerStreamSplitEntry ::=
+    SEQUENCE {
+        ieee8021FrerStreamSplitIndex
+            Unsigned32,
+        ieee8021FrerStreamSplitPort
+            InterfaceIndex,
+        ieee8021FrerStreamSplitDirection
+            TruthValue,
+        ieee8021FrerStreamSplitInputIdList
+            AutonomousType,
+        ieee8021FrerStreamSplitOutputIdList
+            AutonomousType
+    }
+
+ieee8021FrerStreamSplitIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Stream Split table."
+    ::= { ieee8021FrerStreamSplitEntry 1 }
+
+ieee8021FrerStreamSplitPort OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The port on which the system is to place an instance of the
+         Stream splitting function performing the stream_handle
+         translations specified by ieee8021FrerStreamSplitInputIdList
+         and ieee8021FrerStreamSplitOutputIdList is to be placed."
+    REFERENCE   "10.6.1.1"
+    ::= { ieee8021FrerStreamSplitEntry 2 }
+
+ieee8021FrerStreamSplitDirection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object indicates whether the instance of the
+         Stream splitting function performing the stream_handle
+         translations specified by ieee8021FrerStreamSplitInputIdList
+         and ieee8021FrerStreamSplitOutputIdList is to be placed on the
+         out-facing (True) or in-facing (False) side of the port."
+    REFERENCE   "10.6.1.1"
+    ::= { ieee8021FrerStreamSplitEntry 3 }
+
+ieee8021FrerStreamSplitInputIdList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "A list of stream_handles that are to be split.
+         For each entry in the ieee8021FrerStreamSplitTable
+         there exists a list of stream_handle values in the
+         ieee8021FrerStreamSplitInputHandleListTable."
+    REFERENCE   "10.6.1.3"
+    ::= { ieee8021FrerStreamSplitEntry 4 }
+
+ieee8021FrerStreamSplitOutputIdList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "A list of stream_handles into which the input packet is to be
+         split, one copy per item in the
+         ieee8021FrerStreamSplitOutputIdList.
+         For each entry in the ieee8021FrerStreamSplitTable
+         there exists a list of stream_handle values in the
+         ieee8021FrerStreamSplitOutputHandleListTable."
+    REFERENCE   "10.6.1.4"
+    ::= { ieee8021FrerStreamSplitEntry 5 }
+
+-- =============================================================
+-- the ieee8021FrerStreamSplitInputHandleList table
+-- =============================================================
+ieee8021FrerStreamSplitInputHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerStreamSplitInputHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of stream_handle values that are to
+         be split, referenced in ieee8021FrerStreamSplitIndex."
+    REFERENCE   "10.6.1.3"
+    ::= { ieee8021FrerStreamSplitInputHandleList 9 }
+
+ieee8021FrerStreamSplitInputHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerStreamSplitInputHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the stream_handle values
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, that are to be split, referenced in
+         ieee8021FrerStreamSplitIndex."
+    REFERENCE   "10.6.1.3"
+    INDEX   { ieee8021FrerStreamSplitIndex,
+              ieee8021FrerStreamSplitInputHandleListIndex 
+            }
+    ::= { ieee8021FrerStreamSplitInputHandleListTable 1 }
+
+Ieee8021FrerStreamSplitInputHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerStreamSplitInputHandleListIndex
+            Unsigned32,
+        ieee8021FrerStreamSplitInputIdHandle
+            VariablePointer,
+        ieee8021FrerStreamSplitInputHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerStreamSplitInputHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Stream Split Input handle list table."
+    ::= { ieee8021FrerStreamSplitInputHandleListEntry 1 }
+
+ieee8021FrerStreamSplitInputIdHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerStreamSplitInputIdList instance in
+         the ieee8021FrerStreamSplitTable."
+    REFERENCE   "10.6.1.3"
+    ::= { ieee8021FrerStreamSplitInputHandleListEntry 2 }
+
+ieee8021FrerStreamSplitInputHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Stream Split Input handle list table."
+    ::= { ieee8021FrerStreamSplitInputHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerStreamSplitOutputHandleList table
+-- =============================================================
+ieee8021FrerStreamSplitOutputHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerStreamSplitOutputHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of stream_handles values into which
+         the input packet is to be split, one copy per item in this 
+         table, referenced in ieee8021FrerStreamSplitIndex."
+    REFERENCE   "10.6.1.4"
+    ::= { ieee8021FrerStreamSplitOutputHandleList 10 }
+
+ieee8021FrerStreamSplitOutputHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerStreamSplitOutputHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the stream_handle values
+         corresponding to the values of the tsnStreamIdHandle objects in
+         the Stream identity table, into which the input packet is to be
+         split, one copy per item in this table, referenced in
+         ieee8021FrerStreamSplitIndex."
+    REFERENCE   "10.6.1.4"
+    INDEX   { ieee8021FrerStreamSplitIndex,
+              ieee8021FrerStreamSplitOutputHandleListIndex 
+            }
+    ::= { ieee8021FrerStreamSplitOutputHandleListTable 1 }
+
+Ieee8021FrerStreamSplitOutputHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerStreamSplitOutputHandleListIndex
+            Unsigned32,
+        ieee8021FrerStreamSplitOutputIdHandle
+            VariablePointer,
+        ieee8021FrerStreamSplitOutputHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerStreamSplitOutputHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Stream Split Output handle list table."
+    ::= { ieee8021FrerStreamSplitOutputHandleListEntry 1 }
+
+ieee8021FrerStreamSplitOutputIdHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerStreamSplitOutputIdList instance in
+         the ieee8021FrerStreamSplitTable."
+    REFERENCE   "10.6.1.4"
+    ::= { ieee8021FrerStreamSplitOutputHandleListEntry 2 }
+
+ieee8021FrerStreamSplitOutputHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Stream Split Output handle list table."
+    ::= { ieee8021FrerStreamSplitOutputHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceAutoconfig table
+-- =============================================================
+
+ieee8021FrerSequenceAutoconfigTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceAutoconfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of managed objects that specify how
+         entries are automatically created (and destroyed) in the
+         Stream identity table, the Sequence recovery table, and the
+         Sequence identification table."
+    REFERENCE   "10.7.1"
+    ::= { ieee8021FrerSequenceAutoconfig 11 }
+
+ieee8021FrerSequenceAutoconfigEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceAutoconfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects relating to a single class of Streams,
+         and specifying how entries are created (and destroyed) in the
+         Stream identity table, the Sequence recovery table, and the
+         Sequence identification table."
+    REFERENCE   "10.7.1.1"
+    INDEX  { ieee8021FrerSequenceAutoconfigIndex }
+    ::= { ieee8021FrerSequenceAutoconfigTable 1 }
+
+Ieee8021FrerSequenceAutoconfigEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceAutoconfigIndex
+            Unsigned32,
+        ieee8021FrerSequenceAutoconfigSequenceEncapsulation
+            Ieee8021CBSequenceEncodeDecodeType,
+        ieee8021FrerSequenceAutoconfigSequenceEncapsulationOUI
+            OCTET STRING,
+        ieee8021FrerSequenceAutoconfigCustomSequenceEncapsulation
+            Integer32,
+        ieee8021FrerSequenceAutoconfigCustomSequenceEncOUI
+            OCTET STRING,
+        ieee8021FrerSequenceAutoconfigReceivePortList
+            AutonomousType,
+        ieee8021FrerSequenceAutoconfigTagged
+            Ieee8021CBTaggedType,
+        ieee8021FrerSequenceAutoconfigVlanList
+            AutonomousType,
+        ieee8021FrerSequenceAutoconfigRecoveryPortList
+            AutonomousType,
+        ieee8021FrerSequenceAutoconfigDestructMSec
+            Integer32,
+        ieee8021FrerSequenceAutoconfigResetMSec
+            Unsigned32,
+        ieee8021FrerSequenceAutoconfigAlgorithm
+            Ieee8021CBSequenceRecoveryAlgorithm,
+        ieee8021FrerSequenceAutoconfigAlgorithmOUI
+            OCTET STRING,
+        ieee8021FrerSequenceAutoconfigCustomAlgorithm
+            Integer32,
+        ieee8021FrerSequenceAutoconfigCustomAlgorithmOUI
+            OCTET STRING,
+        ieee8021FrerSequenceAutoconfigHistoryLength
+            Integer32,
+        ieee8021FrerSequenceAutoconfigCreateIndividual
+            TruthValue,
+        ieee8021FrerSequenceAutoconfigCreateRecovery
+            TruthValue,
+        ieee8021FrerSequenceAutoconfigLatentErrorDetection
+            TruthValue,
+        ieee8021FrerSequenceAutoconfigLatentErrorDifference
+            Integer32,
+        ieee8021FrerSequenceAutoconfigLatentErrorPeriod
+            Integer32,
+        ieee8021FrerSequenceAutoconfigLatentErrorResetPeriod
+            Integer32,
+        ieee8021FrerSequenceAutoconfigStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceAutoconfigIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Autoconfiguration table."
+    ::= { ieee8021FrerSequenceAutoconfigEntry 1 }
+
+ieee8021FrerSequenceAutoconfigSequenceEncapsulation OBJECT-TYPE
+    SYNTAX      Ieee8021CBSequenceEncodeDecodeType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be recognized for the purposes of Autoconfiguration."
+    REFERENCE   "10.7.1.1.1"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 2 }
+
+ieee8021FrerSequenceAutoconfigSequenceEncapsulationOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be recognized for the purposes of Autoconfiguration.
+         It is used if and only if the value for
+         ieee8021FrerSequenceAutoconfigSequenceEncapsulation is
+         in the range of 0-255. In this case it always takes the value
+         00-80-C2."
+    REFERENCE   "10.7.1.1.1"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 3 }
+
+ieee8021FrerSequenceAutoconfigCustomSequenceEncapsulation OBJECT-TYPE
+    SYNTAX      Integer32 (256..2147483647)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be recognized for the purposes of Autoconfiguration.
+         This managed object is used if and only if the value for 
+         ieee8021FrerSequenceAutoconfigSequenceEncapsulation is
+         256."
+    REFERENCE   "10.7.1.1.1"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 4 }
+
+ieee8021FrerSequenceAutoconfigCustomSequenceEncOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be recognized for the purposes of Autoconfiguration.
+         This managed object is used if and only if the value for 
+         ieee8021FrerSequenceAutoconfigSequenceEncapsulation is
+         256."
+    REFERENCE   "10.7.1.1.1"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 5 }
+
+ieee8021FrerSequenceAutoconfigReceivePortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The list of ports to which this Sequence Autoconfiguration
+         entry applies, and on which Stream identification functions,
+         Sequence encode/decode functions, and Individual recovery
+         functions are to be autocreated.
+         For each entry in the ieee8021FrerSequenceAutoconfigTable
+         there exists a list of ports in the
+         ieee8021FrerSequenceAutoconfigReceivePortHandleListTable."
+    REFERENCE   "10.7.1.1.2"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 6 }
+
+ieee8021FrerSequenceAutoconfigTagged OBJECT-TYPE
+    SYNTAX      Ieee8021CBTaggedType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "An enumerated value indicating whether packets to be matched by
+         this Autorecovery entry are permitted to have a VLAN tag."
+    REFERENCE   "10.7.1.1.3"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 7 }
+
+ieee8021FrerSequenceAutoconfigVlanList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A list of vlan_identifiers for the packet to match. A null list
+         matches all vlan_identifiers.
+         For each entry in the ieee8021FrerSequenceAutoconfigTable
+         there exists a list of vlan_identifiers in the
+         ieee8021FrerSequenceAutoconfigVlanListTable."
+    REFERENCE   "10.7.1.1.4"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 8 }
+
+ieee8021FrerSequenceAutoconfigRecoveryPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The list of ports on which Sequence recovery functions are to
+         be autocreated by this Autorecovery entry.
+         For each entry in the ieee8021FrerSequenceAutoconfigTable
+         there exists a list of ports in the
+         ieee8021FrerSequenceAutoconfigRecoveryPortHandleListTable."
+    REFERENCE   "10.7.1.1.5"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 9 }
+
+ieee8021FrerSequenceAutoconfigDestructMSec OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the number of milliseconds after
+         which an idle set of functions created by this Autorecovery
+         entry can be destroyed. A value of 0 indicates that idle
+         autoconfigured functions are not to be destroyed."
+    REFERENCE   "10.7.1.1.6"
+    DEFVAL  { 86400000 }
+    ::= { ieee8021FrerSequenceAutoconfigEntry 10 }
+
+ieee8021FrerSequenceAutoconfigResetMSec OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryResetMSec when autoconfiguring
+         entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.7"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 11 }
+
+ieee8021FrerSequenceAutoconfigAlgorithm OBJECT-TYPE
+    SYNTAX      Ieee8021CBSequenceRecoveryAlgorithm
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryAlgorithm when autoconfiguring
+         entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.8"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 12 }
+
+ieee8021FrerSequenceAutoconfigAlgorithmOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryAlgorithmOUI when autoconfiguring
+         entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.8"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 13 }
+
+ieee8021FrerSequenceAutoconfigCustomAlgorithm OBJECT-TYPE
+    SYNTAX      Integer32 (256..2147483647)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceCustomRecoveryAlgorithm when
+         autoconfiguring entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.8"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 14 }
+
+ieee8021FrerSequenceAutoconfigCustomAlgorithmOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceCustomRecoveryAlgorithmOUI
+         when autoconfiguring entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.8"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 15 }
+
+ieee8021FrerSequenceAutoconfigHistoryLength OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryHistoryLength when autoconfiguring
+         entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.9"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 16 }
+
+ieee8021FrerSequenceAutoconfigCreateIndividual OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies if the receipt of a packet that
+         triggers the autoconfiguration of a new entry in the Stream
+         Identity table also triggers the instantiation of a new entry
+         in the Sequence Generation table for an Individual recovery
+         function (true) or not (false)."
+    REFERENCE   "10.7.1.1.10"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 17 }
+
+ieee8021FrerSequenceAutoconfigCreateRecovery OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies if the receipt of a packet that
+         triggers the autoconfiguration of a new entry in the Stream
+         Identity table also triggers the instantiation of a new entry
+         in the Sequence Generation table for a Sequence recovery
+         function (true) or not (false)."
+    REFERENCE   "10.7.1.1.11"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 18 }
+
+ieee8021FrerSequenceAutoconfigLatentErrorDetection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies if the autoconfiguration of a
+         new Sequence recovery function also creates an associated
+         Latent Error Detection function (true) or not (false)."
+    REFERENCE   "10.7.1.1.12"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 19 }
+
+ieee8021FrerSequenceAutoconfigLatentErrorDifference OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryLatentErrorDifference when
+         autoconfiguring entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.13"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 20 }
+
+ieee8021FrerSequenceAutoconfigLatentErrorPeriod OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryLatentErrorPeriod when
+         autoconfiguring entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.14"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 21 }
+
+ieee8021FrerSequenceAutoconfigLatentErrorResetPeriod OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies the value used to fill
+         ieee8021FrerSequenceRecoveryLatentResetPeriod when
+         autoconfiguring entries in the Sequence recovery table."
+    REFERENCE   "10.7.1.1.15"
+    ::= { ieee8021FrerSequenceAutoconfigEntry 22 }
+
+ieee8021FrerSequenceAutoconfigStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Autoconfiguration table."
+    ::= { ieee8021FrerSequenceAutoconfigEntry 23 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceAutoconfigReceivePortHandleList
+-- table
+-- =============================================================
+ieee8021FrerSequenceAutoconfigReceivePortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports to which this
+         frerAutSeqEntry applies, and on which Stream identification
+         functions, Sequence encode/decode functions, and Individual
+         recovery functions are to be autocreated, referenced in
+         ieee8021FrerSequenceAutoconfigIndex."
+    REFERENCE   "10.7.1.1.2"
+    ::= { ieee8021FrerSequenceAutoconfigReceivePortHandleList 12}
+
+ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports to which this
+         frerAutSeqEntry applies, and on which Stream identification
+         functions, Sequence encode/decode functions, and Individual
+         recovery functions are to be autocreated, referenced in
+         ieee8021FrerSequenceAutoconfigIndex."
+    REFERENCE   "10.7.1.1.2"
+    INDEX   { ieee8021FrerSequenceAutoconfigIndex,
+              ieee8021FrerSequenceAutoconfigReceivePortHandleListIndex 
+            }
+    ::= { ieee8021FrerSequenceAutoconfigReceivePortHandleListTable 1 }
+
+Ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceAutoconfigReceivePortHandleListIndex
+            Unsigned32,
+        ieee8021FrerSequenceAutoconfigReceivePortHandle
+            VariablePointer,
+        ieee8021FrerSequenceAutoconfigReceivePortHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceAutoconfigReceivePortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Autoconfiguration Receive Port handle
+         list table."
+    ::= { ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry 1 }
+
+ieee8021FrerSequenceAutoconfigReceivePortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerSequenceAutoconfigReceivePortList
+         instance in the ieee8021FrerSequenceAutoconfigTable."
+    REFERENCE   "10.7.1.1.2"
+    ::= { ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry 2 }
+
+ieee8021FrerSequenceAutoconfigReceivePortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Autoconfiguration Receive Port
+         handle list table."
+    ::= { ieee8021FrerSequenceAutoconfigReceivePortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceAutoconfigVlanHandleList table
+-- =============================================================
+ieee8021FrerSequenceAutoconfigVlanListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceAutoconfigVlanListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of vlan_identifiers for the packet to
+         match. A null list matches all vlan_identifiers."
+    REFERENCE   "10.7.1.1.4"
+    ::= { ieee8021FrerSequenceAutoconfigVlanHandleList 13}
+
+ieee8021FrerSequenceAutoconfigVlanListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceAutoconfigVlanListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the list of vlan_identifiers
+         for the packet to match. A null list matches all
+         vlan_identifiers."
+    REFERENCE   "10.7.1.1.4"
+    INDEX   { ieee8021FrerSequenceAutoconfigIndex,
+              ieee8021FrerSequenceAutoconfigVlanListIndex 
+            }
+    ::= { ieee8021FrerSequenceAutoconfigVlanListTable 1 }
+
+Ieee8021FrerSequenceAutoconfigVlanListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceAutoconfigVlanListIndex
+            Unsigned32,
+        ieee8021FrerSequenceAutoconfigVlan
+            Ieee8021CBVlanIdentifier,
+        ieee8021FrerSequenceAutoconfigVlanListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceAutoconfigVlanListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Autoconfiguration VLAN list table."
+    ::= { ieee8021FrerSequenceAutoconfigVlanListEntry 1 }
+
+ieee8021FrerSequenceAutoconfigVlan OBJECT-TYPE
+    SYNTAX      Ieee8021CBVlanIdentifier
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A vlan_identifier for the packet to match."
+    REFERENCE   "10.7.1.1.4"
+    ::= { ieee8021FrerSequenceAutoconfigVlanListEntry 2 }
+
+ieee8021FrerSequenceAutoconfigVlanListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Autoconfiguration VLAN list
+         table."
+    ::= { ieee8021FrerSequenceAutoconfigVlanListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceAutoconfigRecoveryPortHandleList
+-- table
+-- =============================================================
+ieee8021FrerSequenceAutoconfigRecoveryPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports on which Sequence recovery
+         functions are to be autocreated by this frerAutSeqEntry,
+         referenced in ieee8021FrerSequenceAutoconfigIndex."
+    REFERENCE   "10.7.1.1.5"
+    ::= { ieee8021FrerSequenceAutoconfigRecoveryPortHandleList 14}
+
+ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports on which Sequence
+         recovery functions are to be autocreated by this
+         frerAutSeqEntry, referenced in
+         ieee8021FrerSequenceAutoconfigIndex."
+    REFERENCE   "10.7.1.1.5"
+    INDEX   { ieee8021FrerSequenceAutoconfigIndex,
+              ieee8021FrerSequenceAutoconfigRecoveryPortHandleListIndex 
+            }
+    ::= { ieee8021FrerSequenceAutoconfigRecoveryPortHandleListTable 1 }
+
+Ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerSequenceAutoconfigRecoveryPortHandleListIndex
+            Unsigned32,
+        ieee8021FrerSequenceAutoconfigRecoveryPortHandle
+            VariablePointer,
+        ieee8021FrerSequenceAutoconfigRecoveryPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerSequenceAutoconfigRecoveryPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Sequence Autoconfiguration Recovery Port handle
+         list table."
+    ::= { ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry 1 }
+
+ieee8021FrerSequenceAutoconfigRecoveryPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerSequenceAutoconfigRecoveryPortList
+         instance in the ieee8021FrerSequenceAutoconfigTable."
+    REFERENCE   "10.7.1.1.5"
+    ::= { ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry 2 }
+
+ieee8021FrerSequenceAutoconfigRecoveryPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Sequence Autoconfiguration Recovery Port
+         handle list table."
+    ::= { ieee8021FrerSequenceAutoconfigRecoveryPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerOutputAutoconfig table
+-- =============================================================
+
+ieee8021FrerOutputAutoconfigTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerOutputAutoconfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of managed objects that specify how
+         active entries are created in the Sequence identification
+         table."
+    REFERENCE   "10.7.2"
+    ::= { ieee8021FrerOutputAutoconfig 15 }
+
+ieee8021FrerOutputAutoconfigEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerOutputAutoconfigEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects relating to a single class of Streams
+         specifying how active entries are created in the Sequence
+         identification table."
+    REFERENCE   "10.7.2.1"
+    INDEX  { ieee8021FrerOutputAutoconfigIndex }
+    ::= { ieee8021FrerOutputAutoconfigTable 1 }
+
+Ieee8021FrerOutputAutoconfigEntry ::=
+    SEQUENCE {
+        ieee8021FrerOutputAutoconfigIndex
+            Unsigned32,
+        ieee8021FrerOutputAutoconfigPortList
+            AutonomousType,
+        ieee8021FrerOutputAutoconfigEncapsulation
+            Ieee8021CBSequenceEncodeDecodeType,
+        ieee8021FrerOutputAutoconfigEncapsulationOUI
+            OCTET STRING,
+        ieee8021FrerOutputAutoconfigCustomEncapsulation
+            Integer32,
+        ieee8021FrerOutputAutoconfigCustomEncapsulationOUI
+            OCTET STRING,
+        ieee8021FrerOutputAutoconfigLanPathId
+            Ieee8021CBLanPathIdType,
+        ieee8021FrerOutputAutoconfigStatus
+            RowStatus
+    }
+
+ieee8021FrerOutputAutoconfigIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Output Autoconfiguration table."
+    ::= { ieee8021FrerOutputAutoconfigEntry 1 }
+
+ieee8021FrerOutputAutoconfigPortList OBJECT-TYPE
+    SYNTAX      AutonomousType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The list of ports to which this Output Autoconfiguration entry
+         applies, and on which active Sequence encode/decode functions
+         are to be autocreated.
+         For each entry in the ieee8021FrerOutputAutoconfigTable
+         there exists a list of ports in the
+         ieee8021FrerOutputAutoconfigPortHandleListTable."
+    REFERENCE   "10.7.2.1.1"
+    ::= { ieee8021FrerOutputAutoconfigEntry 2 }
+
+ieee8021FrerOutputAutoconfigEncapsulation OBJECT-TYPE
+    SYNTAX      Ieee8021CBSequenceEncodeDecodeType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+         "This managed object specifies which Sequence encode/decode
+          function, and therefore, which type sequence_number encoding,
+          is to be used for autoconfigured Streams on the ports in
+          ieee8021FrerSequenceAutoconfigReceivePortList."
+    REFERENCE   "10.7.2.1.2"
+    ::= { ieee8021FrerOutputAutoconfigEntry 3 }
+
+ieee8021FrerOutputAutoconfigEncapsulationOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be used for autoconfigured Streams on the ports in
+         ieee8021FrerSequenceAutoconfigReceivePortList.
+         It is used if and only if the value for
+         ieee8021FrerOutputAutoconfigEncapsulation is in the
+         range of 0-255. In this case it always takes the value
+         00-80-C2."
+    REFERENCE   "10.7.2.1.2"
+    ::= { ieee8021FrerOutputAutoconfigEntry 4 }
+
+ieee8021FrerOutputAutoconfigCustomEncapsulation OBJECT-TYPE
+    SYNTAX      Integer32 (256..2147483647)
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be used for autoconfigured Streams on the ports in
+         ieee8021FrerSequenceAutoconfigReceivePortList. This
+         managed object is used if and only if the value for 
+         ieee8021FrerOutputAutoconfigEncapsulation is 256."
+    REFERENCE   "10.7.2.1.2"
+    ::= { ieee8021FrerOutputAutoconfigEntry 5 }
+
+ieee8021FrerOutputAutoconfigCustomEncapsulationOUI OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (3))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "This managed object specifies which Sequence encode/decode
+         function, and therefore, which type sequence_number encoding,
+         is to be used for autoconfigured Streams on the ports in
+         ieee8021FrerSequenceAutoconfigReceivePortList. This
+         managed object is used if and only if the value for 
+         ieee8021FrerOutputAutoconfigEncapsulation is 256."
+    REFERENCE   "10.7.2.1.2"
+    ::= { ieee8021FrerOutputAutoconfigEntry 6 }
+
+ieee8021FrerOutputAutoconfigLanPathId OBJECT-TYPE
+    SYNTAX      Ieee8021CBLanPathIdType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "An integer specifying a path or LAN. If and only if
+         ieee8021FrerOutputAutoconfigEncapsulation specifies HSR
+         or PRP this managed object specifies the LanId or PathId value
+         to be inserted into the HSR sequence tag or PRP sequence
+         trailer of autoconfigured packets transmitted on the ports
+         in ieee8021FrerSequenceAutoconfigReceivePortList."
+    REFERENCE   "10.7.2.1.3"
+    ::= { ieee8021FrerOutputAutoconfigEntry 7 }
+
+ieee8021FrerOutputAutoconfigStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Output Autoconfiguration table."
+    ::= { ieee8021FrerOutputAutoconfigEntry 8 }
+
+-- =============================================================
+-- the ieee8021FrerOutputAutoconfigPortHandleList table
+-- =============================================================
+ieee8021FrerOutputAutoconfigPortHandleListTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerOutputAutoconfigPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a list of ports to which this
+         frerAutOutEntry applies, and on which active Sequence
+         encode/decode functions are to be autocreated, referenced in
+         ieee8021FrerOutputAutoconfigIndex."
+    REFERENCE   "10.7.2.1.1"
+    ::= { ieee8021FrerOutputAutoconfigPortHandleList 16}
+
+ieee8021FrerOutputAutoconfigPortHandleListEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerOutputAutoconfigPortHandleListEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A set of managed objects providing the ports to which this
+         frerAutOutEntry applies, and on which active Sequence
+         encode/decode functions are to be autocreated, referenced in
+         ieee8021FrerOutputAutoconfigIndex."
+    REFERENCE   "10.7.2.1.1"
+    INDEX   { ieee8021FrerOutputAutoconfigIndex,
+              ieee8021FrerOutputAutoconfigPortHandleListIndex 
+            }
+    ::= { ieee8021FrerOutputAutoconfigPortHandleListTable 1 }
+
+Ieee8021FrerOutputAutoconfigPortHandleListEntry ::=
+    SEQUENCE {
+        ieee8021FrerOutputAutoconfigPortHandleListIndex
+            Unsigned32,
+        ieee8021FrerOutputAutoconfigPortHandle
+            VariablePointer,
+        ieee8021FrerOutputAutoconfigPortHandleListStatus
+            RowStatus
+    }
+
+ieee8021FrerOutputAutoconfigPortHandleListIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Index for the Output Autoconfiguration Port handle list
+         table."
+    ::= { ieee8021FrerOutputAutoconfigPortHandleListEntry 1 }
+
+ieee8021FrerOutputAutoconfigPortHandle OBJECT-TYPE
+    SYNTAX      VariablePointer
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "A pointer to the ieee8021StreamIdStreamIdHandle that is an
+         element of the ieee8021FrerOutputAutoconfigPortList instance in
+         the ieee8021FrerOutputAutoconfigTable."
+    REFERENCE   "10.7.2.1.1"
+    ::= { ieee8021FrerOutputAutoconfigPortHandleListEntry 2 }
+
+ieee8021FrerOutputAutoconfigPortHandleListStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "Row-Status for the Output Autoconfiguration Port handle list
+         table."
+    ::= { ieee8021FrerOutputAutoconfigPortHandleListEntry 3 }
+
+-- =============================================================
+-- the ieee8021FrerPerPortPerStreamCounters table
+-- =============================================================
+
+ieee8021FrerPerPortPerStreamCountersTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerPerPortPerStreamCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A table containing a set of counters for frame replication
+             and elimination for reliability that are instantiated per
+             port, Stream, and direction."
+    REFERENCE   "10.8"
+    ::= { ieee8021FrerPerPortPerStreamCounters 17 }
+
+ieee8021FrerPerPortPerStreamCountersEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerPerPortPerStreamCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A a set of managed objects for FRER counters that are
+             instantiated per port, Stream, and direction."
+    REFERENCE   "10.8"
+     INDEX  { ifIndex,
+              ieee8021StreamIdStreamIdHandle,
+              ieee8021FrerPerPortPerStreamDirection
+            }
+    ::= { ieee8021FrerPerPortPerStreamCountersTable 1 }
+
+Ieee8021FrerPerPortPerStreamCountersEntry ::=
+    SEQUENCE {
+        ieee8021FrerPerPortPerStreamDirection
+            TruthValue,
+        ieee8021FrerPerPortPerStreamSeqGenResets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryOutOfOrderPackets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryRoguePackets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryPassedPackets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryDiscardedPackets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryLostPackets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryTaglessPackets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryResets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqRecoveryLatentErrorResets
+            Counter64,
+        ieee8021FrerPerPortPerStreamSeqEncErroredPackets
+            Counter64
+    }
+
+ieee8021FrerPerPortPerStreamDirection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A managed object specifying the facing of a given Stream
+         on a port. The Stream can be either in-facing (False) or
+         out-facing (True)."
+    REFERENCE   "10.8"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 1 }
+
+ieee8021FrerPerPortPerStreamSeqGenResets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented each
+         time the SequenceGenerationReset function is called."
+    REFERENCE   "10.8.2"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 2 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryOutOfOrderPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet accepted out-of-order by the
+         VectorRecoveryAlgorithm or MatchRecoveryAlgorithm. Out-of-order
+         means that the packet's sequence number is not one more than
+         the previous packet received."
+    REFERENCE   "10.8.3"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 3 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryRoguePackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet discarded by the VectorRecoveryAlgorithm
+         because its sequence_number subparameter is more than 
+         ieee8021FrerSequenceRecoveryHistoryLength from RecovSeqNum."
+    REFERENCE   "10.8.4"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 4 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryPassedPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet passed up the stack by the
+         VectorRecoveryAlgorithm or MatchRecoveryAlgorithm."
+    REFERENCE   "10.8.5"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 5 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryDiscardedPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet discarded due to a duplicate sequence number by
+         the VectorRecoveryAlgorithm or MatchRecoveryAlgorithm."
+    REFERENCE   "10.8.6"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 6 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryLostPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet lost by the VectorRecoveryAlgorithm. A packet
+         is counted as lost if its sequence number is not received on
+         any ingress port"
+    REFERENCE   "10.8.7"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 7 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryTaglessPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet received by the VectorRecoveryAlgorithm that
+         has no sequence_number subparameter."
+    REFERENCE   "10.8.8"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 8 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryResets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         each time the SequenceRecoveryReset function is called."
+    REFERENCE   "10.8.9"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 9 }
+
+ieee8021FrerPerPortPerStreamSeqRecoveryLatentErrorResets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         each time the LatentErrorReset function is called."
+    REFERENCE   "10.8.10"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 10 }
+
+ieee8021FrerPerPortPerStreamSeqEncErroredPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         each time the Sequence encode/decode function receives a packet
+         that it is unable to decode successfully."
+    REFERENCE   "10.8.11"
+    ::= { ieee8021FrerPerPortPerStreamCountersEntry 11 }
+
+-- =============================================================
+-- the ieee8021FrerPerPortCounters table
+-- =============================================================
+
+ieee8021FrerPerPortCountersTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021FrerPerPortCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table containing a set of counters for frame replication
+         and elimination for reliability that are instantiated per
+         port and direction."
+    REFERENCE   "10.9"
+    ::= { ieee8021FrerPerPortCounters 18 }
+
+ieee8021FrerPerPortCountersEntry OBJECT-TYPE
+    SYNTAX      Ieee8021FrerPerPortCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A a set of managed objects for FRER counters that are
+         instantiated per port and direction."
+    REFERENCE   "10.9"
+     INDEX  { ifIndex }
+    ::= { ieee8021FrerPerPortCountersTable 1 }
+
+Ieee8021FrerPerPortCountersEntry ::=
+    SEQUENCE {
+        ieee8021FrerPerPortSeqRecoveryPassedPackets
+            Counter64,
+        ieee8021FrerPerPortfrerCpSeqRecoveryDiscardPackets
+            Counter64,
+        ieee8021FrerPerPortfrerCpSeqEncErroredPackets
+            Counter64
+    }
+
+ieee8021FrerPerPortSeqRecoveryPassedPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet passed up the stack by the
+         VectorRecoveryAlgorithm or MatchRecoveryAlgorithm. Its value
+         equals the sum (modulo the size of the counters) of all of the
+         ieee8021FrerPerPortPerStreamSeqRecoveryPassedPackets counters on
+         this same port."
+    REFERENCE   "10.9.1"
+    ::= { ieee8021FrerPerPortCountersEntry 1 }
+
+ieee8021FrerPerPortfrerCpSeqRecoveryDiscardPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         for each packet discarded due to a duplicate sequence number or
+         for being a rogue packet by any VectorRecoveryAlgorithm or
+         MatchRecoveryAlgorithm on this port. Its value equals the sum
+         (modulo the size of the counters) of all of the
+         ieee8021FrerPerPortPerStreamSeqRecoveryRoguePackets and
+         ieee8021FrerPerPortPerStreamSeqRecoveryDiscardedPackets counters on
+         this same port."
+    REFERENCE   "10.9.2"
+    ::= { ieee8021FrerPerPortCountersEntry 2 }
+
+ieee8021FrerPerPortfrerCpSeqEncErroredPackets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "A managed object serving as a counter that is incremented once
+         each time the Sequence encode/decode function receives a packet
+         that it is unable to decode successfully. Its value equals the
+         sum (modulo the size of the counters) of all of the
+         ieee8021FrerPerPortPerStreamSeqEncErroredPackets counters on
+         this same port."
+    REFERENCE   "10.9.3"
+    ::= { ieee8021FrerPerPortCountersEntry 3 }
+
+-- =============================================================
+-- IEEE802 FRER MIB - Conformance Information
+-- =============================================================
+
+ieee8021FrerCompliances
+    OBJECT IDENTIFIER ::= { ieee8021FrerConformance 1 }
+ieee8021FrerGroups
+    OBJECT IDENTIFIER ::= { ieee8021FrerConformance 2 }
+
+-- =============================================================
+-- units of conformance
+-- =============================================================
+
+-- =============================================================
+-- the ieee8021FrerSequenceGeneration group
+-- =============================================================
+
+ieee8021FrerSequenceGenerationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerSequenceGenerationStreamList,
+        ieee8021FrerSequenceGenerationDirection,
+        ieee8021FrerSequenceGenerationReset,
+        ieee8021FrerSequenceGenerationStreamHandle,
+        ieee8021FrerSequenceGenerationHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the FRER sequence generation
+         functionality."
+    ::= { ieee8021FrerGroups 1 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceRecovery group
+-- =============================================================
+
+ieee8021FrerSequenceRecoveryGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerSequenceRecoveryStreamList,
+        ieee8021FrerSequenceRecoveryPortList,
+        ieee8021FrerSequenceRecoveryDirection,
+        ieee8021FrerSequenceRecoveryReset,
+        ieee8021FrerSequenceRecoveryAlgorithm,
+        ieee8021FrerSequenceRecoveryAlgorithmOUI,
+        ieee8021FrerSequenceCustomRecoveryAlgorithm,
+        ieee8021FrerSequenceCustomRecoveryAlgorithmOUI,
+        ieee8021FrerSequenceRecoveryHistoryLength,
+        ieee8021FrerSequenceRecoveryResetMSec,
+        ieee8021FrerSequenceRecoveryInvalidSequenceValue,
+        ieee8021FrerSequenceRecoveryTakeNoSequence,
+        ieee8021FrerSequenceRecoveryIndividualRecovery,
+        ieee8021FrerSequenceRecoveryLatentErrorDetection,
+        ieee8021FrerSequenceRecoveryLatentErrorDifference,
+        ieee8021FrerSequenceRecoveryLatentErrorPeriod,
+        ieee8021FrerSequenceRecoveryLatentErrorPaths,
+        ieee8021FrerSequenceRecoveryLatentResetPeriod,
+        ieee8021FrerSequenceRecoveryStatus,
+        ieee8021FrerSequenceRecoveryStreamHandle,
+        ieee8021FrerSequenceRecoveryHandleListStatus,
+        ieee8021FrerSequenceRecoveryPortHandle,
+        ieee8021FrerSequenceRecoveryPortHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the FRER sequence recovery
+         functionality."
+    ::= { ieee8021FrerGroups 2 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceIdentification group
+-- =============================================================
+
+ieee8021FrerSequenceIdentificationGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerSequenceIdentificationStreamList,
+        ieee8021FrerSequenceIdentificationEncodeActive,
+        ieee8021FrerSequenceIdentificationEncodeEncapsulationType,
+        ieee8021FrerSequenceIdentificationEncodeEncapsulationOUI,
+        ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationType,
+        ieee8021FrerSequenceIdentificationCustomEncodeEncapsulationOUI,
+        ieee8021FrerSequenceIdentificationEncodePathIdLanId,
+        ieee8021FrerSequenceIdentificationStatus,
+        ieee8021FrerSequenceIdentificationStreamHandle,
+        ieee8021FrerSequenceIdentificationHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the FRER sequence identification
+         functionality."
+    ::= { ieee8021FrerGroups 3 }
+
+-- =============================================================
+-- the ieee8021FrerStreamSplit group
+-- =============================================================
+
+ieee8021FrerStreamSplitGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerStreamSplitPort,
+        ieee8021FrerStreamSplitDirection,
+        ieee8021FrerStreamSplitInputIdList,
+        ieee8021FrerStreamSplitOutputIdList,
+        ieee8021FrerStreamSplitInputIdHandle,
+        ieee8021FrerStreamSplitInputHandleListStatus,
+        ieee8021FrerStreamSplitOutputIdHandle,
+        ieee8021FrerStreamSplitOutputHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the FRER Stream split functionality."
+    ::= { ieee8021FrerGroups 4 }
+
+-- =============================================================
+-- the ieee8021FrerSequenceAutoconfig group
+-- =============================================================
+
+ieee8021FrerSequenceAutoconfigGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerSequenceAutoconfigSequenceEncapsulation,
+        ieee8021FrerSequenceAutoconfigSequenceEncapsulationOUI,
+        ieee8021FrerSequenceAutoconfigCustomSequenceEncapsulation,
+        ieee8021FrerSequenceAutoconfigCustomSequenceEncOUI,
+        ieee8021FrerSequenceAutoconfigReceivePortList,
+        ieee8021FrerSequenceAutoconfigTagged,
+        ieee8021FrerSequenceAutoconfigVlanList,
+        ieee8021FrerSequenceAutoconfigRecoveryPortList,
+        ieee8021FrerSequenceAutoconfigDestructMSec,
+        ieee8021FrerSequenceAutoconfigResetMSec,
+        ieee8021FrerSequenceAutoconfigAlgorithm,
+        ieee8021FrerSequenceAutoconfigAlgorithmOUI,
+        ieee8021FrerSequenceAutoconfigCustomAlgorithm,
+        ieee8021FrerSequenceAutoconfigCustomAlgorithmOUI,
+        ieee8021FrerSequenceAutoconfigHistoryLength,
+        ieee8021FrerSequenceAutoconfigCreateIndividual,
+        ieee8021FrerSequenceAutoconfigCreateRecovery,
+        ieee8021FrerSequenceAutoconfigLatentErrorDetection,
+        ieee8021FrerSequenceAutoconfigLatentErrorDifference,
+        ieee8021FrerSequenceAutoconfigLatentErrorPeriod,
+        ieee8021FrerSequenceAutoconfigLatentErrorResetPeriod,
+        ieee8021FrerSequenceAutoconfigStatus,
+        ieee8021FrerSequenceAutoconfigReceivePortHandle,
+        ieee8021FrerSequenceAutoconfigReceivePortHandleListStatus,
+        ieee8021FrerSequenceAutoconfigVlan,
+        ieee8021FrerSequenceAutoconfigVlanListStatus,
+        ieee8021FrerSequenceAutoconfigRecoveryPortHandle,
+        ieee8021FrerSequenceAutoconfigRecoveryPortHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the FRER sequence autoconfiguration
+        functionality."
+    ::= { ieee8021FrerGroups 5 }
+
+-- =============================================================
+-- the ieee8021FrerOutputAutoconfig group
+-- =============================================================
+
+ieee8021FrerOutputAutoconfigGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerOutputAutoconfigPortList,
+        ieee8021FrerOutputAutoconfigEncapsulation,
+        ieee8021FrerOutputAutoconfigEncapsulationOUI,
+        ieee8021FrerOutputAutoconfigCustomEncapsulation,
+        ieee8021FrerOutputAutoconfigCustomEncapsulationOUI,
+        ieee8021FrerOutputAutoconfigLanPathId,
+        ieee8021FrerOutputAutoconfigStatus,
+        ieee8021FrerOutputAutoconfigPortHandle,
+        ieee8021FrerOutputAutoconfigPortHandleListStatus
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that are part of the FRER output autoconfiguration
+        functionality."
+    ::= { ieee8021FrerGroups 6 }
+
+-- =============================================================
+-- the ieee8021FrerPerPortPerStreamCounters group
+-- =============================================================
+
+ieee8021FrerPerPortPerStreamCountersGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerPerPortPerStreamSeqGenResets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryOutOfOrderPackets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryRoguePackets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryPassedPackets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryDiscardedPackets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryLostPackets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryTaglessPackets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryResets,
+        ieee8021FrerPerPortPerStreamSeqRecoveryLatentErrorResets,
+        ieee8021FrerPerPortPerStreamSeqEncErroredPackets
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that provide information on the count of packets
+         handled or actions taken by FRER algorithms per port, Stream,
+         and direction."
+    ::= { ieee8021FrerGroups 7 }
+
+-- =============================================================
+-- the ieee8021FrerPerPortCounters group
+-- =============================================================
+
+ieee8021FrerPerPortCountersGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021FrerPerPortSeqRecoveryPassedPackets,
+        ieee8021FrerPerPortfrerCpSeqRecoveryDiscardPackets,
+        ieee8021FrerPerPortfrerCpSeqEncErroredPackets
+    }
+    STATUS      current
+    DESCRIPTION
+        "Objects that provide information on the count of packets
+         handled by FRER per port and direction."
+    ::= { ieee8021FrerGroups 8 }
+
+-- =============================================================
+-- compliance statements
+-- =============================================================
+
+ieee8021FrerCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for devices supporting
+        Stream identification."
+
+    MODULE -- this module
+        MANDATORY-GROUPS {
+            ieee8021FrerSequenceGenerationGroup,
+            ieee8021FrerSequenceRecoveryGroup,
+            ieee8021FrerSequenceIdentificationGroup,
+            ieee8021FrerStreamSplitGroup,
+            ieee8021FrerPerPortPerStreamCountersGroup,
+            ieee8021FrerPerPortCountersGroup
+        }
+
+        GROUP ieee8021FrerSequenceAutoconfigGroup
+        DESCRIPTION
+            "Implementation of this group is mandatory if the
+             auto configuration feature is implemented."
+
+        GROUP ieee8021FrerOutputAutoconfigGroup
+        DESCRIPTION
+            "Implementation of this group is mandatory if the
+             auto configuration feature is implemented."
+
+    ::= { ieee8021FrerCompliances 1 }
+
+END
