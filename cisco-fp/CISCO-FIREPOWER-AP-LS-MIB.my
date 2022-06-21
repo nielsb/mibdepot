@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- LS management information model package
 -- 
--- Created July 2021 by Charles Bullis
+-- Created April 2022 by Charles Bullis
 -- 
--- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -87,7 +87,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-TC-MIB;
 
 cfprApLsObjects MODULE-IDENTITY
-    LAST-UPDATED    "202107260000Z"
+    LAST-UPDATED    "202204180000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -954,7 +954,6 @@ CfprApLsServerEntry ::= SEQUENCE {
     cfprApLsServerHostFwPolicyName                                   SnmpAdminString,
     cfprApLsServerIdentPoolName                                      SnmpAdminString,
     cfprApLsServerIntId                                              SnmpAdminString,
-    cfprApLsServerKvmMgmtPolicyName                                  SnmpAdminString,
     cfprApLsServerLocalDiskPolicyName                                SnmpAdminString,
     cfprApLsServerMaintPolicyName                                    SnmpAdminString,
     cfprApLsServerMgmtAccessPolicyName                               SnmpAdminString,
@@ -966,7 +965,6 @@ CfprApLsServerEntry ::= SEQUENCE {
     cfprApLsServerOperExtIPPoolName                                  SnmpAdminString,
     cfprApLsServerOperHostFwPolicyName                               SnmpAdminString,
     cfprApLsServerOperIdentPoolName                                  SnmpAdminString,
-    cfprApLsServerOperKvmMgmtPolicyName                              SnmpAdminString,
     cfprApLsServerOperLocalDiskPolicyName                            SnmpAdminString,
     cfprApLsServerOperMaintPolicyName                                SnmpAdminString,
     cfprApLsServerOperMgmtAccessPolicyName                           SnmpAdminString,
@@ -978,7 +976,6 @@ CfprApLsServerEntry ::= SEQUENCE {
     cfprApLsServerOperState                                          CfprApLsOperState,
     cfprApLsServerOperStatsPolicyName                                SnmpAdminString,
     cfprApLsServerOperVconProfileName                                SnmpAdminString,
-    cfprApLsServerOperVmediaPolicyName                               SnmpAdminString,
     cfprApLsServerOwner                                              CfprApLsOwner,
     cfprApLsServerPnDn                                               SnmpAdminString,
     cfprApLsServerPolicyLevel                                        Gauge32,
@@ -994,8 +991,7 @@ CfprApLsServerEntry ::= SEQUENCE {
     cfprApLsServerUsrLbl                                             SnmpAdminString,
     cfprApLsServerUuid                                               SnmpAdminString,
     cfprApLsServerUuidSuffix                                         Unsigned64,
-    cfprApLsServerVconProfileName                                    SnmpAdminString,
-    cfprApLsServerVmediaPolicyName                                   SnmpAdminString
+    cfprApLsServerVconProfileName                                    SnmpAdminString
 }
 
 cfprApLsServerInstanceId OBJECT-TYPE
@@ -1237,15 +1233,6 @@ cfprApLsServerIntId OBJECT-TYPE
         "Cisco Firepower ls:Server:intId managed object property"
     ::= { cfprApLsServerEntry 29 }
 
-cfprApLsServerKvmMgmtPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower ls:Server:kvmMgmtPolicyName managed
-        object property"
-    ::= { cfprApLsServerEntry 30 }
-
 cfprApLsServerLocalDiskPolicyName OBJECT-TYPE
     SYNTAX       SnmpAdminString
     MAX-ACCESS   read-only
@@ -1344,15 +1331,6 @@ cfprApLsServerOperIdentPoolName OBJECT-TYPE
         object property"
     ::= { cfprApLsServerEntry 41 }
 
-cfprApLsServerOperKvmMgmtPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower ls:Server:operKvmMgmtPolicyName
-        managed object property"
-    ::= { cfprApLsServerEntry 42 }
-
 cfprApLsServerOperLocalDiskPolicyName OBJECT-TYPE
     SYNTAX       SnmpAdminString
     MAX-ACCESS   read-only
@@ -1450,15 +1428,6 @@ cfprApLsServerOperVconProfileName OBJECT-TYPE
         "Cisco Firepower ls:Server:operVconProfileName
         managed object property"
     ::= { cfprApLsServerEntry 53 }
-
-cfprApLsServerOperVmediaPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower ls:Server:operVmediaPolicyName
-        managed object property"
-    ::= { cfprApLsServerEntry 54 }
 
 cfprApLsServerOwner OBJECT-TYPE
     SYNTAX       CfprApLsOwner
@@ -1591,15 +1560,6 @@ cfprApLsServerVconProfileName OBJECT-TYPE
         "Cisco Firepower ls:Server:vconProfileName managed
         object property"
     ::= { cfprApLsServerEntry 70 }
-
-cfprApLsServerVmediaPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower ls:Server:vmediaPolicyName managed
-        object property"
-    ::= { cfprApLsServerEntry 71 }
 
 cfprApLsServerAssocCtxTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApLsServerAssocCtxEntry

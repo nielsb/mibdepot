@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- FABRIC management information model package
 -- 
--- Created July 2021 by Charles Bullis
+-- Created April 2022 by Charles Bullis
 -- 
--- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -111,10 +111,12 @@ IMPORTS
     CfprApFabricEthEstcPortMode,
     CfprApFabricEthEstcTransport,
     CfprApFabricEthEstcType,
+    CfprApFabricEthLanEpAdminSpeed,
     CfprApFabricEthLanEpAdminState,
     CfprApFabricEthLanEpSpeedCap,
     CfprApFabricEthLanEpVlanStatus,
     CfprApFabricEthLanPcAdminState,
+    CfprApFabricEthLanPcEpAdminState,
     CfprApFabricEthLanPcLacpDetach,
     CfprApFabricEthLanPcSpeedCap,
     CfprApFabricEthLanPcTransport,
@@ -286,7 +288,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-TC-MIB;
 
 cfprApFabricObjects MODULE-IDENTITY
-    LAST-UPDATED    "202107260000Z"
+    LAST-UPDATED    "202204180000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -610,53 +612,6 @@ cfprApFabricBreakoutSlotId OBJECT-TYPE
     DESCRIPTION
         "Cisco Firepower fabric:Breakout:slotId managed object property"
     ::= { cfprApFabricBreakoutEntry 6 }
-
-cfprApFabricCablingTable OBJECT-TYPE
-    SYNTAX           SEQUENCE OF CfprApFabricCablingEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Cisco Firepower fabric:Cabling managed object table"
-    ::= { cfprApFabricObjects 3 }
-
-cfprApFabricCablingEntry OBJECT-TYPE
-    SYNTAX           CfprApFabricCablingEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Entry for the cfprApFabricCablingTable table."
-    INDEX { cfprApFabricCablingInstanceId }
-    ::= { cfprApFabricCablingTable 1 }
-
-CfprApFabricCablingEntry ::= SEQUENCE {
-    cfprApFabricCablingInstanceId                                    CfprApManagedObjectId,
-    cfprApFabricCablingDn                                            CfprApManagedObjectDn,
-    cfprApFabricCablingRn                                            SnmpAdminString
-}
-
-cfprApFabricCablingInstanceId OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectId
-    MAX-ACCESS   not-accessible
-    STATUS       current
-    DESCRIPTION
-        "Instance identifier of the managed object."
-    ::= { cfprApFabricCablingEntry 1 }
-
-cfprApFabricCablingDn OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectDn
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower fabric:Cabling:dn managed object property"
-    ::= { cfprApFabricCablingEntry 2 }
-
-cfprApFabricCablingRn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower fabric:Cabling:rn managed object property"
-    ::= { cfprApFabricCablingEntry 3 }
 
 cfprApFabricCablingSwTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApFabricCablingSwEntry

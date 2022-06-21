@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- CIMCVMEDIA management information model package
 -- 
--- Created July 2021 by Charles Bullis
+-- Created April 2022 by Charles Bullis
 -- 
--- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -56,7 +56,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-TC-MIB;
 
 cfprApCimcvmediaObjects MODULE-IDENTITY
-    LAST-UPDATED    "202107260000Z"
+    LAST-UPDATED    "202204180000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -718,115 +718,5 @@ cfprApCimcvmediaMountConfigDefRetryOnMountFail OBJECT-TYPE
         "Cisco Firepower cimcvmedia:MountConfigDef:retryOnMountFail
         managed object property"
     ::= { cfprApCimcvmediaMountConfigDefEntry 9 }
-
-cfprApCimcvmediaMountConfigPolicyTable OBJECT-TYPE
-    SYNTAX           SEQUENCE OF CfprApCimcvmediaMountConfigPolicyEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy managed
-        object table"
-    ::= { cfprApCimcvmediaObjects 6 }
-
-cfprApCimcvmediaMountConfigPolicyEntry OBJECT-TYPE
-    SYNTAX           CfprApCimcvmediaMountConfigPolicyEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Entry for the cfprApCimcvmediaMountConfigPolicyTable table."
-    INDEX { cfprApCimcvmediaMountConfigPolicyInstanceId }
-    ::= { cfprApCimcvmediaMountConfigPolicyTable 1 }
-
-CfprApCimcvmediaMountConfigPolicyEntry ::= SEQUENCE {
-    cfprApCimcvmediaMountConfigPolicyInstanceId                      CfprApManagedObjectId,
-    cfprApCimcvmediaMountConfigPolicyDn                              CfprApManagedObjectDn,
-    cfprApCimcvmediaMountConfigPolicyRn                              SnmpAdminString,
-    cfprApCimcvmediaMountConfigPolicyDescr                           SnmpAdminString,
-    cfprApCimcvmediaMountConfigPolicyIntId                           SnmpAdminString,
-    cfprApCimcvmediaMountConfigPolicyName                            SnmpAdminString,
-    cfprApCimcvmediaMountConfigPolicyPolicyLevel                     Gauge32,
-    cfprApCimcvmediaMountConfigPolicyPolicyOwner                     CfprApPolicyPolicyOwner,
-    cfprApCimcvmediaMountConfigPolicyRetryOnMountFail                CfprApCimcvmediaMountConfigRetryOnMountFail
-}
-
-cfprApCimcvmediaMountConfigPolicyInstanceId OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectId
-    MAX-ACCESS   not-accessible
-    STATUS       current
-    DESCRIPTION
-        "Instance identifier of the managed object."
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 1 }
-
-cfprApCimcvmediaMountConfigPolicyDn OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectDn
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:dn
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 2 }
-
-cfprApCimcvmediaMountConfigPolicyRn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:rn
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 3 }
-
-cfprApCimcvmediaMountConfigPolicyDescr OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:descr
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 4 }
-
-cfprApCimcvmediaMountConfigPolicyIntId OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:intId
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 5 }
-
-cfprApCimcvmediaMountConfigPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:name
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 6 }
-
-cfprApCimcvmediaMountConfigPolicyPolicyLevel OBJECT-TYPE
-    SYNTAX       Gauge32
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:policyLevel
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 7 }
-
-cfprApCimcvmediaMountConfigPolicyPolicyOwner OBJECT-TYPE
-    SYNTAX       CfprApPolicyPolicyOwner
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:policyOwner
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 8 }
-
-cfprApCimcvmediaMountConfigPolicyRetryOnMountFail OBJECT-TYPE
-    SYNTAX       CfprApCimcvmediaMountConfigRetryOnMountFail
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower cimcvmedia:MountConfigPolicy:retryOnMountFail
-        managed object property"
-    ::= { cfprApCimcvmediaMountConfigPolicyEntry 9 }
 
 END

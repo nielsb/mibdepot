@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- COMPUTE management information model package
 -- 
--- Created July 2021 by Charles Bullis
+-- Created April 2022 by Charles Bullis
 -- 
--- Copyright (c) 2005-2021 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -72,7 +72,6 @@ IMPORTS
     CfprApComputeIOHubEnvStatsHistThresholded,
     CfprApComputeIOHubEnvStatsThresholded,
     CfprApComputeIssues,
-    CfprApComputeKvmMgmtPolicyVmediaEncryption,
     CfprApComputeLinkAggregation,
     CfprApComputeMbPowerStatsHistThresholded,
     CfprApComputeMbPowerStatsThresholded,
@@ -138,7 +137,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-TC-MIB;
 
 cfprApComputeObjects MODULE-IDENTITY
-    LAST-UPDATED    "202107260000Z"
+    LAST-UPDATED    "202204180000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -3403,113 +3402,6 @@ cfprApComputeIOHubEnvStatsHistTimeCollected OBJECT-TYPE
         "Cisco Firepower compute:IOHubEnvStatsHist:timeCollected
         managed object property"
     ::= { cfprApComputeIOHubEnvStatsHistEntry 12 }
-
-cfprApComputeKvmMgmtPolicyTable OBJECT-TYPE
-    SYNTAX           SEQUENCE OF CfprApComputeKvmMgmtPolicyEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy managed object table"
-    ::= { cfprApComputeObjects 21 }
-
-cfprApComputeKvmMgmtPolicyEntry OBJECT-TYPE
-    SYNTAX           CfprApComputeKvmMgmtPolicyEntry
-    MAX-ACCESS       not-accessible
-    STATUS           current
-    DESCRIPTION
-        "Entry for the cfprApComputeKvmMgmtPolicyTable table."
-    INDEX { cfprApComputeKvmMgmtPolicyInstanceId }
-    ::= { cfprApComputeKvmMgmtPolicyTable 1 }
-
-CfprApComputeKvmMgmtPolicyEntry ::= SEQUENCE {
-    cfprApComputeKvmMgmtPolicyInstanceId                             CfprApManagedObjectId,
-    cfprApComputeKvmMgmtPolicyDn                                     CfprApManagedObjectDn,
-    cfprApComputeKvmMgmtPolicyRn                                     SnmpAdminString,
-    cfprApComputeKvmMgmtPolicyDescr                                  SnmpAdminString,
-    cfprApComputeKvmMgmtPolicyIntId                                  SnmpAdminString,
-    cfprApComputeKvmMgmtPolicyName                                   SnmpAdminString,
-    cfprApComputeKvmMgmtPolicyPolicyLevel                            Gauge32,
-    cfprApComputeKvmMgmtPolicyPolicyOwner                            CfprApPolicyPolicyOwner,
-    cfprApComputeKvmMgmtPolicyVmediaEncryption                       CfprApComputeKvmMgmtPolicyVmediaEncryption
-}
-
-cfprApComputeKvmMgmtPolicyInstanceId OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectId
-    MAX-ACCESS   not-accessible
-    STATUS       current
-    DESCRIPTION
-        "Instance identifier of the managed object."
-    ::= { cfprApComputeKvmMgmtPolicyEntry 1 }
-
-cfprApComputeKvmMgmtPolicyDn OBJECT-TYPE
-    SYNTAX       CfprApManagedObjectDn
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:dn managed object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 2 }
-
-cfprApComputeKvmMgmtPolicyRn OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:rn managed object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 3 }
-
-cfprApComputeKvmMgmtPolicyDescr OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:descr managed
-        object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 4 }
-
-cfprApComputeKvmMgmtPolicyIntId OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:intId managed
-        object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 5 }
-
-cfprApComputeKvmMgmtPolicyName OBJECT-TYPE
-    SYNTAX       SnmpAdminString
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:name managed
-        object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 6 }
-
-cfprApComputeKvmMgmtPolicyPolicyLevel OBJECT-TYPE
-    SYNTAX       Gauge32
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:policyLevel
-        managed object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 7 }
-
-cfprApComputeKvmMgmtPolicyPolicyOwner OBJECT-TYPE
-    SYNTAX       CfprApPolicyPolicyOwner
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:policyOwner
-        managed object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 8 }
-
-cfprApComputeKvmMgmtPolicyVmediaEncryption OBJECT-TYPE
-    SYNTAX       CfprApComputeKvmMgmtPolicyVmediaEncryption
-    MAX-ACCESS   read-only
-    STATUS       current
-    DESCRIPTION
-        "Cisco Firepower compute:KvmMgmtPolicy:vmediaEncryption
-        managed object property"
-    ::= { cfprApComputeKvmMgmtPolicyEntry 9 }
 
 cfprApComputeMbPowerStatsTable OBJECT-TYPE
     SYNTAX           SEQUENCE OF CfprApComputeMbPowerStatsEntry
