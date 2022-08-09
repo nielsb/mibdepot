@@ -2064,6 +2064,7 @@ ciscoASA5506Hsc                     OBJECT IDENTIFIER ::= { ciscoProducts 2243 }
 ciscoASA5516sc                      OBJECT IDENTIFIER ::= { ciscoProducts 2244 } -- ASA 5516 Adaptive Security Appliance Security Context
 ciscoASA5506Hsy                     OBJECT IDENTIFIER ::= { ciscoProducts 2245 } -- ASA 5506H Adaptive Security Appliance System Context
 ciscoASA5516sy                      OBJECT IDENTIFIER ::= { ciscoProducts 2246 } -- ASA 5516 Adaptive Security Appliance System Context
+ciscoASR92016SZIM                   OBJECT IDENTIFIER ::= { ciscoProducts 2247 } -- Cisco ASR920 Series - 12GE and 4-10GE - Modular PSU and IM
 ciscoIR829GWLTEMAAK9                OBJECT IDENTIFIER ::= { ciscoProducts 2248 } -- IR829 Hardened WAN GE 4G LTE secure platform multi-mode Sprint LTE/DoRa  with 802.11n, PoE, FCC compliant
 ciscoPwsX474812X48uE                OBJECT IDENTIFIER ::= { ciscoProducts 2249 } -- Switch 4500E  100/1000/2500/5000/10GBaseT (RJ45)+V E Series with 48 10GbaseT
 ciscoASR1002HX                      OBJECT IDENTIFIER ::= { ciscoProducts 2252 } -- Cisco Aggregation Services Router 1000 Series, ASR1002-HX Chassis
@@ -2208,6 +2209,7 @@ ciscoFpr2130td                      OBJECT IDENTIFIER ::= { ciscoProducts 2406 }
 ciscoFpr2140td                      OBJECT IDENTIFIER ::= { ciscoProducts 2407 } -- Cisco FirePOWER 2140 Security Appliance, 1U with embedded security module 
 ciscoFpr9000SM44                    OBJECT IDENTIFIER ::= { ciscoProducts 2409 } -- Cisco FirePOWER 9000 Security Module 44
 ciscoNCS5011                        OBJECT IDENTIFIER ::= { ciscoProducts 2411 } -- Cisco NCS 5011 Series Router
+ciscoNCS5516                        OBJECT IDENTIFIER ::= { ciscoProducts 2412 } -- Network Convergence Services NCS5500 16 Slot Single Chassis
 ciscoNCS5504                        OBJECT IDENTIFIER ::= { ciscoProducts 2413 } -- Network Convergence Services NCS5500 4 Slot Single Chassis
 ciscoUCSE160S                       OBJECT IDENTIFIER ::= { ciscoProducts 2415 } -- UCS-E,SingleWide generation 3, 6 Core 1.9 GHzCPU,2x7.5G eMMC,2x8G RDIMM,1-2 HDD
 ciscoUCSE180DM3                     OBJECT IDENTIFIER ::= { ciscoProducts 2416 } -- UCS-E , DoubleWide Generation 3, 8 Core 2.0G CPU, eMMC, 16GB RDIMM , 1-4HDD
@@ -2724,6 +2726,11 @@ ciscoIR8140HK9                      OBJECT IDENTIFIER ::= { ciscoProducts 3048 }
 ciscoIR8140HPK9                     OBJECT IDENTIFIER ::= { ciscoProducts 3049 } -- Catalyst IR8140H Heavy Duty Series Router with POE
 ciscoC9115AXEME                     OBJECT IDENTIFIER ::= { ciscoProducts 3050 } -- 4x4 11ax Access Point - Mobility Express edition
 ciscoC9120AXPME                     OBJECT IDENTIFIER ::= { ciscoProducts 3051 } -- 4x4 Wi-fi 6 Catalyst 9120AX Series Access Points- Mobility Express edition
+ciscoIR8340K9                       OBJECT IDENTIFIER ::= { ciscoProducts 3052 } -- Cisco Catalyst IR8340 Rugged Router System with 12 1G LAN ports and 2 1G WAN ports 
+ciscoFpr3110K9                      OBJECT IDENTIFIER ::= { ciscoProducts 3053 } -- Cisco Firepower 3110 Security Appliance
+ciscoFpr3120K9                      OBJECT IDENTIFIER ::= { ciscoProducts 3054 } -- Cisco Firepower 3120 Security Appliance
+ciscoFpr3130K9                      OBJECT IDENTIFIER ::= { ciscoProducts 3055 } -- Cisco Firepower 3130 Security Appliance
+ciscoFpr3140K9                      OBJECT IDENTIFIER ::= { ciscoProducts 3056 } -- Cisco Firepower 3140 Security Appliance
 ciscoC9KF1SSD960G                   OBJECT IDENTIFIER ::= { ciscoProducts 3062 } -- this is 960GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
 ciscoC9KF1SSD480G                   OBJECT IDENTIFIER ::= { ciscoProducts 3063 } -- this is 480GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
 ciscoC9KF1SSD240G                   OBJECT IDENTIFIER ::= { ciscoProducts 3064 } -- this is 240GB SSD used in starfleet c9500-H. this is fru'able ssd accessed through SATA
@@ -2750,6 +2757,7 @@ ciscoNCS57C3MODSSYS                 OBJECT IDENTIFIER ::= { ciscoProducts 3147 }
 ciscoNCS57C3MODSYS                  OBJECT IDENTIFIER ::= { ciscoProducts 3148 } -- NON-SE variant Network Convergence System-57A3 Hybrid Chassis with one LC and 2 fruable RP's
 cisco820232FHM                      OBJECT IDENTIFIER ::= { ciscoProducts 3150 } -- Cisco 8200 2 RU Chassis with 32x400G QSFP56-DD with IOS XR, HBM and MACsec
 cisco820232FHMO                     OBJECT IDENTIFIER ::= { ciscoProducts 3151 } -- Cisco 8200 2 RU Chassis with 32x400G QSFP56-DD with Open Software, HBM and MACsec
+cisco820388H16FHM                   OBJECT IDENTIFIER ::= { ciscoProducts 3152 } -- Cisco 8200 3 RU Chassis with 88x100G & 16x400G with IOS XR, HBM and MACsec DNP% until Jan 2022, contact sunethra
 ciscoNCS1010                        OBJECT IDENTIFIER ::= { ciscoProducts 3153 } -- Cisco Network Convergence System 1010, Optical Line System
 ciscoNCS57C148Q6Sys                 OBJECT IDENTIFIER ::= { ciscoProducts 3154 } -- NCS5700 Router - NCS-57C1-48Q6-SYS
 ciscoNCS55A124Q6HS                  OBJECT IDENTIFIER ::= { ciscoProducts 3158 } -- Network Convergence Services NCS55A1 24Q6H_S 1RU Chassis
@@ -2761,7 +2769,8 @@ ciscoUCSC225M6                     OBJECT IDENTIFIER ::= { ciscoProducts 3168 } 
 cisco810132H                         OBJECT IDENTIFIER ::= { ciscoProducts 3192 } -- Cisco 8100 32x100G QSFP28 1RU Fixed System w/o HBM
 cisco810264H                         OBJECT IDENTIFIER ::= { ciscoProducts 3193 } -- Cisco 8100 64x100G QSFP28 2RU Fixed System w/o HBM
 ciscoESR6300LICK9                   OBJECT IDENTIFIER ::= { ciscoProducts 3197 } -- Cisco ESR6300 Embedded Services Router Software operating on authorized 3rd party hardware
-
+ciscoDP01QSDDZF1                    OBJECT IDENTIFIER ::= { ciscoProducts 3198 } -- 100G ZR optics with fixed wavelength
+ciscoIE31008T4S                     OBJECT IDENTIFIER ::= { ciscoProducts 3204 } -- Catalyst IE3100 with 8 GE Copper and 4 GE SFP Ports, Fixed system, Network Essentials
 
  
 END
