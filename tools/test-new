@@ -1,3 +1,8 @@
 #!/bin/sh
 
-snmptranslate -m ALL -M ../rfc:new/rfc:new/iana:new/ieee:../atmforum:new/docsis:new/scte:new/clab:new/cisco:new/altiga -Td x
+#~/Install/net-snmp-bin/testsrc/apps/snmptranslate -m ALL -M ../rfc:new/rfc:../ieee:../atmforum:new/docsis:new/scte:new/clab:new/cisco:new/cisco-lwapp:new/altiga -Td -Dparse x 2>log
+~/Install/net-snmp-bin/testsrc/apps/snmptranslate \
+    -m ALL \
+    -M ../rfc:new/rfc:../ieee:../atmforum:new/docsis:new/scte:new/clab:new/cisco:new/cisco-lwapp:new/altiga \
+    -Td x
+
