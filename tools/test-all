@@ -1,0 +1,3 @@
+#!/bin/sh
+
+snmptranslate -m ALL -M ../rfc:../iana:../ieee:../atmforum:../docsis:../clab:../cisco:../cisco-lwapp:../cisco-ucs:../cisco-fp:../altiga -Td x
