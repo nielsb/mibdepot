@@ -1,5 +1,5 @@
-RFCHOST =	ftp://ftp.ietf.org
-RFCDIR =	rfc
+RFCHOST =	https://www.ietf.org
+RFCDIR =	ietf-ftp/rfc
 
 IANAHOST =	http://www.iana.org
 IANADIR =	assignments
