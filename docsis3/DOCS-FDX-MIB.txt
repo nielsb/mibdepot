@@ -1,0 +1,350 @@
+DOCS-FDX-MIB DEFINITIONS ::= BEGIN
+  IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Integer32,
+    Unsigned32
+             FROM SNMPv2-SMI         -- RFC 2578
+    TEXTUAL-CONVENTION,
+    TruthValue
+             FROM SNMPv2-TC          -- RFC 2579
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+             FROM SNMPv2-CONF        -- RFC 2580
+    ifIndex
+             FROM IF-MIB             -- RFC 2863
+    clabProjDocsis
+             FROM CLAB-DEF-MIB
+    docsIf3CmtsCmRegStatusId,
+    docsIf3CmtsCmRegStatusEntry
+             FROM DOCS-IF3-MIB
+    docsIf31CmtsCmUsOfdmaChannelStatusEntry,
+    docsIf31CmtsCmDsOfdmChannelStatusEntry,
+    docsIf31CmtsUsOfdmaChanEntry,
+    docsIf31CmtsDsOfdmChanEntry
+             FROM DOCS-IF31-MIB;
+docsFdxMib MODULE-IDENTITY
+     LAST-UPDATED    "201910310000Z" -- October 31, 2019
+     ORGANIZATION    "Cable Television Laboratories, Inc."
+     CONTACT-INFO
+         "
+         Postal: Cable Television Laboratories, Inc.
+         858 Coal Creek Circle
+         Louisville, Colorado 80027-9750
+         U.S.A.
+         Phone: +1 303-661-9100
+         Fax:   +1 303-661-9199
+         E-mail: mibs@cablelabs.com"
+     DESCRIPTION
+        "This MIB module contains the management objects for the
+        management of DOCSIS 4.0 Full-Duplex capabilities.
+        Copyright 2019 Cable Television Laboratories, Inc.
+        All rights reserved."
+     REVISION "201910310000Z" -- October 31, 2019
+     DESCRIPTION
+        "Initial version, per ECN CCAP-OSSIv4.0-N-19.2056-1"
+     ::= { clabProjDocsis 35 }  
+
+-- Textual Conventions
+
+FdxCapabilityType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type enumerates values associated with the FDXCapability.
+          Values are as follows:
+            'other'
+                Indicates vendor-specific and future extensions.
+            'noFdx'
+                Indicates that the CM does not support any form of FDX operation.
+            'fdxL'
+                Indicates that the CM supports FDX-L (Full Duplex Limited) operation.
+            'fdx'
+                Indicates that the CM supports FDX operation"
+
+     SYNTAX      INTEGER {
+                          other(1),
+                          noFdx(2),
+                          fdxL(3),
+                          fdx(4)
+                         }
+
+-- Object Definitions
+docsFdxNotifications      OBJECT IDENTIFIER ::= { docsFdxMib 0 }
+docsFdxMibObjects         OBJECT IDENTIFIER ::= { docsFdxMib 1 }
+docsFdxCcapMibObjects     OBJECT IDENTIFIER ::= { docsFdxMib 2 }
+docsFdxCmMibObjects       OBJECT IDENTIFIER ::= { docsFdxMib 3 }
+docsFdxMibConformance     OBJECT IDENTIFIER ::= { docsFdxMib 4 }
+docsFdxMibCompliances     OBJECT IDENTIFIER ::= { docsFdxMibConformance 1 }
+docsFdxMibGroups          OBJECT IDENTIFIER ::= { docsFdxMibConformance 2 }
+
+--
+-- Extensions to the DOCS-IF3-MIB docsIf3CmtsCmRegStatusTable
+--
+docsFdxCmtsCmRegStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFdxCmtsCmRegStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table extends the table in the IF3 MIB that
+          defines attributes that represent the CM's registration
+          status as tracked by the CMTS. In particular.
+          this table defines the Full-Duplex capabilities."
+     ::= { docsFdxCcapMibObjects 1 }
+
+docsFdxCmtsCmRegStatusEntry OBJECT-TYPE
+     SYNTAX      DocsFdxCmtsCmRegStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFdxCmtsCmRegStatusTable."
+     AUGMENTS {
+              docsIf3CmtsCmRegStatusEntry
+              }
+     ::= { docsFdxCmtsCmRegStatusTable 1 }
+
+DocsFdxCmtsCmRegStatusEntry ::= SEQUENCE 
+     {
+     docsFdxCmtsCmRegStatusFdxCapability          FdxCapabilityType
+     }
+
+docsFdxCmtsCmRegStatusFdxCapability OBJECT-TYPE
+     SYNTAX      FdxCapabilityType
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute indicates the FDX capability of this CM."
+     ::= { docsFdxCmtsCmRegStatusEntry 1 }
+
+--
+-- Extensions to the DOCS-IF31-MIB docsIf31CmtsCmUsOfdmaChannelStatusTable
+--
+
+docsFdxCmtsCmUsOfdmaChannelStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFdxCmtsCmUsOfdmaChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table defines current status information of the CM
+          on each OFDMA upstream channel, as reported by the CMTS. 
+          In particular, the Full-Duplex capabilities."
+     ::= { docsFdxCcapMibObjects 2 }
+
+docsFdxCmtsCmUsOfdmaChannelStatusEntry OBJECT-TYPE
+     SYNTAX      DocsFdxCmtsCmUsOfdmaChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFdxCmtsCmUsOfdmaChannelStatusTable.
+          A separate entry exists for every OFDMA channel of every CM
+          currently assigned to an OFDMA channel."
+     AUGMENTS {
+               docsIf31CmtsCmUsOfdmaChannelStatusEntry
+              }
+     ::= { docsFdxCmtsCmUsOfdmaChannelStatusTable 1 }
+
+DocsFdxCmtsCmUsOfdmaChannelStatusEntry ::= SEQUENCE 
+     {
+     docsFdxCmtsCmUsOfdmaChannelStatusFdxEnabled        TruthValue
+     }
+docsFdxCmtsCmUsOfdmaChannelStatusFdxEnabled OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute has a value of  'true' to indicate
+         that the CM's upstream channel is contained within an FDX subband."
+     ::= { docsFdxCmtsCmUsOfdmaChannelStatusEntry 1 }
+
+--
+-- Extensions to the DOCS-IF31-MIB docsIf31CmtsCmDsOfdmChannelStatusTable
+--
+
+docsFdxCmtsCmDsOfdmChannelStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFdxCmtsCmDsOfdmChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object defines current status information of the CM
+         on each OFDM downstream channel, as reported by the CMTS.
+         A separate entry exists for every OFDM channel of every CM
+         currently assigned to an OFDM channel. This table in particular
+         defines Full-Duplex capabilities."
+     ::= { docsFdxCcapMibObjects 3 }
+
+docsFdxCmtsCmDsOfdmChannelStatusEntry OBJECT-TYPE
+     SYNTAX      DocsFdxCmtsCmDsOfdmChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The conceptual row of docsFdxCmtsCmDsOfdmChannelStatusTable."
+     AUGMENTS {
+               docsIf31CmtsCmDsOfdmChannelStatusEntry
+              }
+     ::= { docsFdxCmtsCmDsOfdmChannelStatusTable 1 }
+
+DocsFdxCmtsCmDsOfdmChannelStatusEntry ::= SEQUENCE 
+     {
+     docsFdxCmtsCmDsOfdmChannelStatusFdxEnabled      TruthValue
+     }
+
+docsFdxCmtsCmDsOfdmChannelStatusFdxEnabled OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute has a value of  'true' to indicate that the CM's
+         downstream channel is contained within an FDX subband."
+     ::= { docsFdxCmtsCmDsOfdmChannelStatusEntry 1 }
+     
+--
+-- Replaces the DOCS-IF31-MIB docsIf31CmtsCmFdxStatusTable
+--
+     
+docsFdxCmtsCmFdxStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFdxCmtsCmFdxStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table defines status information of an FDX-capable
+		 CM (either FDX-L or FDX), as reported by the CMTS. An entry
+		 is created in this table when a CM registers and reports 
+		 it is FDX capable."
+     ::= { docsFdxCcapMibObjects 4 }
+
+docsFdxCmtsCmFdxStatusEntry OBJECT-TYPE
+     SYNTAX      DocsFdxCmtsCmFdxStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFdxCmtsCmFdxStatusTable."
+     INDEX { docsIf3CmtsCmRegStatusId }
+     ::= { docsFdxCmtsCmFdxStatusTable 1 }
+
+DocsFdxCmtsCmFdxStatusEntry ::= SEQUENCE {
+     docsFdxCmtsCmFdxStatusFdxStatus          INTEGER
+     }
+	 
+docsFdxCmtsCmFdxStatusFdxStatus OBJECT-TYPE
+     SYNTAX      INTEGER {
+                        preFdxInit(1),
+                        rangingProbing(2),
+                        igDiscovery(3),
+						echoCancellerInitialTraining(4),
+						operational(5)
+                      }
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute reports the status of the FDX-capable CM."
+     ::= { docsFdxCmtsCmFdxStatusEntry 1 }
+     
+--
+-- Extensions to the DOCS-IF31-MIB docsIf31CmtsUsOfdmaChanTable
+--
+
+docsFdxCmtsUsOfdmaChannelStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFdxCmtsUsOfdmaChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table provides channel-level visibility into Upstream
+          OFDMA channel configuration and status, in particular,
+          the Full-Duplex capabilities."
+     ::= { docsFdxCcapMibObjects 5 }
+
+docsFdxCmtsUsOfdmaChannelStatusEntry OBJECT-TYPE
+     SYNTAX      DocsFdxCmtsUsOfdmaChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFdxCmtsUsOfdmaChannelStatusTable."
+     AUGMENTS {
+               docsIf31CmtsUsOfdmaChanEntry
+              }
+     ::= { docsFdxCmtsUsOfdmaChannelStatusTable 1 }
+
+DocsFdxCmtsUsOfdmaChannelStatusEntry ::= SEQUENCE 
+     {
+       docsFdxCmtsUsOfdmaChannelStatusFdxEnabled      TruthValue
+     }
+docsFdxCmtsUsOfdmaChannelStatusFdxEnabled OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports if the OFDMA channel is enabled
+          for FDX as indicated by the channel's spectrum being
+          configured in the FDX Allocated Spectrum."
+     ::= { docsFdxCmtsUsOfdmaChannelStatusEntry 1 }
+     
+--
+-- Extensions to the DOCS-IF31-MIB docsIf31CmtsDsOfdmChanTable
+--
+
+docsFdxCmtsDsOfdmChannelStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFdxCmtsDsOfdmChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This CMTS table reports the status of the downstream OFDM channels,
+         in particular full-duplex capabilities."
+     ::= { docsFdxCcapMibObjects 6 }
+
+docsFdxCmtsDsOfdmChannelStatusEntry OBJECT-TYPE
+     SYNTAX      DocsFdxCmtsDsOfdmChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The conceptual row of docsFdxCmtsDsOfdmChannelStatusTable."
+     AUGMENTS {
+               docsIf31CmtsDsOfdmChanEntry
+              }
+     ::= { docsFdxCmtsDsOfdmChannelStatusTable 1 }
+
+DocsFdxCmtsDsOfdmChannelStatusEntry ::= SEQUENCE 
+     {
+     docsFdxCmtsDsOfdmChannelStatusFdxEnabled      TruthValue
+     }
+
+docsFdxCmtsDsOfdmChannelStatusFdxEnabled OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports if the OFDM channel is enabled
+          for FDX as indicated by the channel's spectrum being
+          configured in the FDX Allocated Spectrum."
+     ::= { docsFdxCmtsDsOfdmChannelStatusEntry 1 }
+     
+
+-- Conformance Definitions
+
+
+docsFdxCcapCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for the CCAP."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsFdxCcapGroup
+     }
+
+    ::= { docsFdxMibCompliances 1 }
+
+docsFdxCcapGroup OBJECT-GROUP
+    OBJECTS {
+     docsFdxCmtsCmRegStatusFdxCapability,
+     docsFdxCmtsCmUsOfdmaChannelStatusFdxEnabled,
+     docsFdxCmtsCmDsOfdmChannelStatusFdxEnabled,
+	 docsFdxCmtsCmFdxStatusFdxStatus,
+     docsFdxCmtsUsOfdmaChannelStatusFdxEnabled,
+     docsFdxCmtsDsOfdmChannelStatusFdxEnabled
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented in a DOCSIS 4.0 CCAP for
+          Full-Duplex capabiities."
+    ::= { docsFdxMibGroups 1 }
+
+END
