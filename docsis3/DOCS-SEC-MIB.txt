@@ -31,7 +31,7 @@ DOCS-SEC-MIB DEFINITIONS ::= BEGIN
              FROM DOCS-IETF-BPI2-MIB;
 
 docsSecMib MODULE-IDENTITY
-     LAST-UPDATED    "201601130000Z" -- January 13, 2016
+     LAST-UPDATED    "202203310000Z" -- March 31, 2022
      ORGANIZATION    "Cable Television Laboratories, Inc."
      CONTACT-INFO
          "
@@ -45,8 +45,24 @@ docsSecMib MODULE-IDENTITY
      DESCRIPTION
         "This MIB module contains the management objects for the
         management of the security requirements in the DOCSIS
-        Security Specification."
+        Security Specification.
+        Copyright 2006-2022 Cable Television Laboratories, Inc.
+        All rights reserved."
    
+     REVISION    "202203310000Z" -- March 31, 2022
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-22.2246-1"
+     REVISION    "202106170000Z" -- June 17, 2021
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-21.2172-1"
+     REVISION    "202102040000Z" -- February 4, 2021
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-21.2148-1"
+
+     REVISION    "202003190000Z" -- March 19, 2020
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-20.2087-1"
+
      REVISION    "201601130000Z" -- January 13, 2016
      DESCRIPTION
              "Modified per CM-OSSIv3.1-N-15.1393-6. 
@@ -55,27 +71,27 @@ docsSecMib MODULE-IDENTITY
              3.1 PKI MIBs moved to DOCS-BPI2EXT-MIB"
  
      REVISION    "201503260000Z" -- March 26, 2015
-    DESCRIPTION
+     DESCRIPTION
             "Revised Version includes ECN CM-OSSIv3.1-N-15.1243-1
             and published as CM-OSSIv3.1-I03, to support
             docsBpi2CodeUpdateCvcChain for DOCSIS 3.1."
 
-    REVISION    "201001150000Z" -- January 15, 2010
-    DESCRIPTION
+     REVISION    "201001150000Z" -- January 15, 2010
+     DESCRIPTION
             "Revised Version includes ECN
             OSSIv3.0-N-09.0872-4
             and published as I11"
 
-    REVISION    "200905290000Z" -- May 29, 2009
-    DESCRIPTION
+     REVISION    "200905290000Z" -- May 29, 2009
+     DESCRIPTION
             "Revised Version includes ECNs
             OSSIv3.0-N-09.0773-1
             OSSIv3.0-N-09.0775-3
             OSSIv3.0-N-09.0777-2
             and published as I09"
 
-    REVISION "200702230000Z" -- February 23, 2007
-    DESCRIPTION
+     REVISION "200702230000Z" -- February 23, 2007
+     DESCRIPTION
             "Revised Version includes ECN OSSIv3.0-N-06.0357-1
             and published as IO2"
 
@@ -124,6 +140,7 @@ docsSecCmtsServerCfgTftpOptions OBJECT-TYPE
          Requirements Annex."
      DEFVAL { {  } }
      ::= { docsSecCmtsServerCfg 1 }
+
 docsSecCmtsServerCfgConfigFileLearningEnable OBJECT-TYPE
      SYNTAX      TruthValue
      MAX-ACCESS  read-write
@@ -150,7 +167,9 @@ docsSecCmtsServerCfgConfigFileLearningEnable OBJECT-TYPE
          Specification CM-SP-MULPIv3.0-I01-060804."
      DEFVAL { true }
      ::= { docsSecCmtsServerCfg 2 }
+
 docsSecCmtsEncrypt OBJECT IDENTIFIER ::= { docsSecMibObjects 2 }
+
 docsSecCmtsEncryptEncryptAlgPriority OBJECT-TYPE
      SYNTAX      SnmpTagList
      MAX-ACCESS  read-write
@@ -486,8 +505,6 @@ docsSecSavCfgListRowStatus OBJECT-TYPE
         entries in this table."
      ::= { docsSecSavCfgListEntry 6 }
 
-
-
 docsSecSavStaticListTable OBJECT-TYPE
      SYNTAX      SEQUENCE OF DocsSecSavStaticListEntry
      MAX-ACCESS  not-accessible
@@ -720,8 +737,7 @@ docsSecCmtsCertRevocationListLastUpdate OBJECT-TYPE
         (hex)'00 00 01 01 00 00 00 00'."
      ::= { docsSecCmtsCertRevocationList 3 }
 
-docsSecCmtsOnlineCertStatusProtocol OBJECT IDENTIFIER
-                                            ::= { docsSecMibObjects 11 }
+docsSecCmtsOnlineCertStatusProtocol OBJECT IDENTIFIER ::= { docsSecMibObjects 11 }
 
 docsSecCmtsOnlineCertStatusProtocolUrl OBJECT-TYPE
      SYNTAX      SnmpAdminString
@@ -844,6 +860,583 @@ docsSecCmtsCmBpi2EnforceExclusionRowStatus OBJECT-TYPE
         table. There is no restriction on changing values in
         a row of this table while the row is active."
      ::= { docsSecCmtsCmBpi2EnforceExclusionEntry 4 }
+     
+--
+-- CM SSH Key Management Objects
+--
+--
+     
+docsSecCmSshKeyManagement OBJECT IDENTIFIER::= { docsSecMibObjects 13 }
+
+docsSecCmSshServer OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 1 }
+
+docsSecCmSshServerEnabledInterfaces OBJECT-TYPE
+     SYNTAX      BITS {
+                       customerFacing(0),
+                       operatorFacing(1)
+                       }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports whether SSH server function is enabled in the CM. 
+          The CM is required to disable SSH server function by default. 
+          The possible values for this attribute are listed below:
+            
+          Bit 0 'customerFacing' CM allows access only from all local (customer premises) 
+          network interfaces, addresses. This includes Ethernet, wireless and MOCA interfaces.
+            
+          Bit 1 'operatorFacing'  CM allows access only from all network private
+          interfaces,addresses (i.e., operator's network).
+          
+          If both Bit 0 and Bit 1 are set, the CM allows access from both local and
+          private network interfaces,addresses."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::EnabledInterfaces"
+     DEFVAL { { operatorFacing } }
+     ::= { docsSecCmSshServer 1 }
+     
+docsSecCmSshServerStatus OBJECT-TYPE
+     SYNTAX      INTEGER {
+                           disconnectedNotAllowed(1),
+                           disconnectedProtocolError(2),
+                           disconnectedKeyExchangeFailed(3),
+                           disconnectedReserved(4),
+                           disconnectedMacError(5),
+                           disconnectedCompressionError(6),
+                           disconnectedServiceNotAvailable(7),
+                           disconnectedProtocolVersionNotSupported(8),
+                           disconnectedHostKeyNotVerifiable(9),
+                           disconnectedConnectionLost(10),
+                           disconnectedByApplication(11),
+                           disconnectedTooManyConnections(12),
+                           disconnectedAuthCancelledByUser(13),
+                           disconnectedNoMoreAuthMethods(14),
+                           disconnectedIllegalUserName(15),
+                           connected(16),
+                           disconnectedUnknown(17)
+                         }
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute reports the status of the connection 
+         between the CM SSH server and the SSH client.
+         The possible values for this attribute are defined in RFC 4253
+         and are listed below:
+           
+           'disconnectedNotAllowed' SSH client is not allowed to connect to the host
+           
+           'disconnectedProtocolError' SSH client disconnected because of SSH protocol error
+           
+           'disconnectedKeyExchangeFailed' SSH client disconnected because the SSH key exchange 
+            failed at the SSH transport layer
+            
+           'disconnectedReserved' Value reserved for future use
+           
+           'disconnectedMacError' SSH client disconnected due to the incompatibility of the 
+            Message Authentication code algorithm or value
+            
+           'disconnectedCompressionError' SSH client disconnected due to the failure of compression
+            on the packet payload when it is required or the incompatibility
+            of the compression algorithm exists
+            
+           'disconnectedServiceNotAvailable' SSH client disconnected because SSH service is not 
+            available on the server
+            
+           'disconnectedProtocolVersionNotSupported' SSH client disconnected because the SSH protocol
+            version is not supported by the server
+            
+           'disconnectedHostKeyNotVerifiable' SSH client disconnected because of using an unverifiable host key.
+           'disconnectedConnectionLost' SSH client disconnected because of inactivity
+           
+           'disconnectedByApplication'  SSH server disconnected by the SCCA application when performing 
+            the TLS-based Authentication 
+            
+           'disconnectedTooManyConnections'  SSH client disconnected because the connections limitation has been exceeded
+           
+           'disconnectedAuthCancelledByUser' SSH client disconnected because the authentication is cancelled by the user
+           
+           'disconnectedNoMoreAuthMethods'   SSH client disconnected because no more authentication methods are available
+           
+           'disconnectedIllegalUserName'     SSH client disconnected because of an illegal username
+           
+           'connected'  Connection between the CM SSH server and the SSH client is active
+           
+           'disconnectedUnknown' SSH client disconnected for unknown or other reason"
+     REFERENCE
+       "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+        SshServer::Status"
+     ::= { docsSecCmSshServer 2 }
+     
+docsSecCmSshServerPublicKey  OBJECT-TYPE
+     SYNTAX      OCTET STRING
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the authorized SSH client public key
+          used by the CM to authenticate the client when the client
+          attempts to set up a CLI SSH connection. "
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::PublicKey"
+     ::= { docsSecCmSshServer 3 }
+     
+docsSecCmSshServerNewConnectionTimeout OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..28800)
+     UNITS       "Seconds"
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the new SSH connection timeout 
+          provisioned on the CM. When this timeout value is reached,
+          the CM sets the Enabled attribute to 'false' and stops 
+          accepting new SSH connections. Established connections
+          remain active."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         SshServer::NewConnectionTimeout"
+      DEFVAL { 0 }
+     ::= { docsSecCmSshServer 4 }
+     
+docsSecCmSshServerInactivityTimeout OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..65535)
+     UNITS       "Seconds"
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the SSH inactivity timeout provisioned
+          on the CM. This attribute represents the time at which an
+          established connection is terminated if there is no activity.
+          Inactivity is defined as the remote side of the connection 
+          timing out and disconnecting. If this attribute is set to 
+          zero, the inactivity timeout will be implementation specific."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0
+          SshServer::InactivityTimeout"
+     DEFVAL { 1800 }
+     ::= { docsSecCmSshServer 5 }
+     
+docsSecCmSshServerSshSourceAddrRestrictionType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "The type of internet address associated to the
+          SSH source address restriction."
+     ::= { docsSecCmSshServer 6 }
+     
+docsSecCmSshServerSshSourceAddrRestriction OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This optional attribute is the SSH source address 
+         restriction provisioned on the CM. When this attribute
+         is not present, the CM enables unrestricted access to
+         the SSH server."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::SshSourceAddrRestriction"
+     ::= { docsSecCmSshServer 7 }
+     
+docsSecCmSshServerSshSourcePrefixRestriction OBJECT-TYPE
+     SYNTAX      InetAddressPrefixLength
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This optional attribute is the SSH source address prefix 
+          restriction provisioned on the CM. This attribute is a 
+          network, address specifier in CIDR notation that limits 
+          the IP addresses where SSH connections can originate. "
+    REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::SshSourcePrefixRestriction"
+     ::= { docsSecCmSshServer 8 }
+     
+docsSecCmCdsFileServer OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 2 }
+     
+docsSecCmCdsFileServerIpAddrType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute indicates the type of the
+          Internet address for IpAddr."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::IpAddrType"
+     ::= { docsSecCmCdsFileServer 1 }
+     
+docsSecCmCdsFileServerIpAddr OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the Internet address of the 
+          CDS server in the operator's network."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::IpAddr"
+     ::= { docsSecCmCdsFileServer 2 }
+     
+docsSecCmCdsFileServerSshCmCdsDownloadUrl OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE(1..2048))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the URL of the CDS 
+         server in the operator's network."
+    REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::SshCmCdsDownloadUrl"
+     ::= { docsSecCmCdsFileServer 3 }
+     
+docsSecCmCdsFileServerRevocationStatusAction OBJECT-TYPE
+     SYNTAX      INTEGER {
+                         continue(0),
+                         reject(1)
+                         }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the action taken by the CM if it 
+        does not receive revocation status from the provisioning
+        system server. The possible values for this object are
+        listed below:
+        'continue'     Continue operation with the CDS server
+        'reject'       Reject the connection with the CDS server"
+      REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::RevocationStatusAction"
+     DEFVAL { 1 }
+     ::= { docsSecCmCdsFileServer 4 }
+     
+docsSecCmSshCmCds OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 3 }
+     
+docsSecCmPasswordCredentialTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmPasswordCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This table contains authorized password credential 
+         information for the CM to authenticate SSH Client 
+         CLI connections.
+         The CM supports creation of new instances of the
+         PasswordCredential object and deletion of existing 
+         PasswordCredential object instances."
+      REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential"
+     ::= { docsSecCmSshCmCds 1 }
+
+docsSecCmPasswordCredentialEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmPasswordCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmPasswordCredentialTable."
+     INDEX { 
+             docsSecCmPasswordCredentialIndex
+           }
+     ::= { docsSecCmPasswordCredentialTable 1 }
+
+DocsSecCmPasswordCredentialEntry ::= SEQUENCE {
+     docsSecCmPasswordCredentialIndex
+                  Unsigned32,
+     docsSecCmPasswordCredentialUserId
+                  SnmpAdminString,
+     docsSecCmPasswordCredentialPassword
+                  OCTET STRING,                        
+     docsSecCmPasswordCredentialMacAddr
+                  MacAddress,
+     docsSecCmPasswordCredentialRowStatus
+                  RowStatus
+     }
+
+docsSecCmPasswordCredentialIndex OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key attribute represents the unique
+         identifier of an instance of this object."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::Index"
+     ::= { docsSecCmPasswordCredentialEntry 1 }
+     
+docsSecCmPasswordCredentialUserId OBJECT-TYPE
+     SYNTAX      SnmpAdminString 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the identifier of the user for
+        which the password credential is to be evaluated."
+      REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::UserId"
+     ::= { docsSecCmPasswordCredentialEntry 2 }
+     
+docsSecCmPasswordCredentialPassword OBJECT-TYPE
+     SYNTAX      OCTET STRING (SIZE (8..128)) 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is a string encoded in the [ISO 8859-1] 
+         character-set and using characters in the range from 
+         0x21 to 0x7E serving as the credential to be evaluated
+         for the user."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::Password"
+     ::= { docsSecCmPasswordCredentialEntry 3 }
+
+docsSecCmPasswordCredentialMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This optional attribute is the MAC address 
+         assigned to the CM."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::MacAddr"
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmPasswordCredentialEntry 4 }
+
+docsSecCmPasswordCredentialRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+         table. There is no restriction on changing values in
+         a row of this table while the row is active."
+     ::= { docsSecCmPasswordCredentialEntry 5 }
+     
+docsSecCmPublicKeyCredentialTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmPublicKeyCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This table contains authorized RSA Public Key credential
+         information for the CM to authenticate SSH Client 
+         CLI connections.
+         The CM supports creation of new instances of the 
+         PublicKeyCredential object and deletion of existing
+         PublicKeyCredential object instances."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential"
+     ::= { docsSecCmSshCmCds 2 }
+
+docsSecCmPublicKeyCredentialEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmPublicKeyCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmPublicKeyCredentialTable."
+     INDEX { 
+             docsSecCmPublicKeyCredentialIndex
+           }
+     ::= { docsSecCmPublicKeyCredentialTable 1 }
+
+DocsSecCmPublicKeyCredentialEntry ::= SEQUENCE {
+     docsSecCmPublicKeyCredentialIndex
+                  Unsigned32,
+     docsSecCmPublicKeyCredentialSshPublicKey
+                  OCTET STRING,                        
+     docsSecCmPublicKeyCredentialMacAddr
+                  MacAddress,
+     docsSecCmPublicKeyCredentialRowStatus
+                  RowStatus
+     }
+
+docsSecCmPublicKeyCredentialIndex OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key attribute represents the unique
+         identifier of an instance of this object."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential::Index"
+     ::= { docsSecCmPublicKeyCredentialEntry 1 }
+     
+docsSecCmPublicKeyCredentialSshPublicKey OBJECT-TYPE
+     SYNTAX      OCTET STRING (SIZE (256..512)) 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is a string containing a DER-encoded
+        RSA PublicKey or ECDSA public keys in ASN.1 type, 
+        as defined in [X.509] and serving as the credential to be
+        evaluated for the user."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential::SshPublicKey"
+     ::= { docsSecCmPublicKeyCredentialEntry 2 }
+
+docsSecCmPublicKeyCredentialMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This optional attribute is the MAC address 
+        assigned to the CM."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential::MacAddr"
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmPublicKeyCredentialEntry 3 }
+
+docsSecCmPublicKeyCredentialRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+        table. There is no restriction on changing values in
+        a row of this table while the row is active."
+     ::= { docsSecCmPublicKeyCredentialEntry 4 }
+     
+docsSecCmEccPublicKeyCredentialTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmEccPublicKeyCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      deprecated
+     DESCRIPTION
+        "This table contains authorized ECC Public Key credential
+        information for the CM to authenticate SSH Client 
+        CLI connections.
+        The CM supports creation of new instances of the 
+        EccPublicKeyCredential object and deletion of existing
+        EccPublicKeyCredential object instances."
+     REFERENCE
+         "DOCSIS Security Specification, CM-SP-SECv4.0-I01-190815, 
+          August 15, 2019, Cable Television Laboratories, Inc. 
+          Secure Shell (SSH) Key Management for Cable Modems."
+     ::= { docsSecCmSshCmCds 3}
+
+docsSecCmEccPublicKeyCredentialEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmEccPublicKeyCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      deprecated
+     DESCRIPTION
+         "The conceptual row of docsSecCmEccPublicKeyCredentialTable."
+     INDEX { 
+             docsSecCmEccPublicKeyCredentialIndex
+           }
+     ::= { docsSecCmEccPublicKeyCredentialTable 1 }
+
+DocsSecCmEccPublicKeyCredentialEntry ::= SEQUENCE {
+     docsSecCmEccPublicKeyCredentialIndex
+                  Unsigned32,
+     docsSecCmEccPublicKeyCredentialEccPublicKey
+                  OCTET STRING,                        
+     docsSecCmEccPublicKeyCredentialMacAddr
+                  MacAddress,
+     docsSecCmEccPublicKeyCredentialRowStatus
+                  RowStatus
+     }
+
+docsSecCmEccPublicKeyCredentialIndex OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      deprecated
+     DESCRIPTION
+        "This key attribute represents the unique
+        identifier of an instance of this object."
+     ::= { docsSecCmEccPublicKeyCredentialEntry 1 }
+     
+docsSecCmEccPublicKeyCredentialEccPublicKey OBJECT-TYPE
+     SYNTAX      OCTET STRING (SIZE (16..64)) 
+     MAX-ACCESS  read-create
+     STATUS      deprecated
+     DESCRIPTION
+        "This attribute is a string containing ASN.1 DER 
+        encoded ECParameters structure as defined in [RFC 3279]
+        and serving as a credential to be evaluated for 
+        the user."
+     ::= { docsSecCmEccPublicKeyCredentialEntry 2 }
+
+docsSecCmEccPublicKeyCredentialMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      deprecated
+     DESCRIPTION
+        "This optional attribute is the MAC address 
+        assigned to the CM."
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmEccPublicKeyCredentialEntry 3 }
+
+docsSecCmEccPublicKeyCredentialRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      deprecated
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+        table. There is no restriction on changing values in
+        a row of this table while the row is active."
+     ::= { docsSecCmEccPublicKeyCredentialEntry 4 }
+
+docsSecCmSccaServerCfg  OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 4 }
+
+docsSecCmSccaServerCfgIpAddrType  OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute indicates the type of the 
+         Internet address for IpAddr."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM OSSIv4.0 
+          SccaServerCfg::IpAddrType"
+     ::= { docsSecCmSccaServerCfg 1 }
+     
+docsSecCmSccaServerCfgIpAddr OBJECT-TYPE
+     SYNTAX      InetAddress 
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the Internet address of the 
+         CDS server in the operator's network."
+      REFERENCE
+        "Information Model Mapping: CM-SP-CM OSSIv4.0 
+         SccaServerCfg::IpAddr"
+     ::= {  docsSecCmSccaServerCfg 2 }
+
+docsSecCmSccaServerCfgRestApiUrl  OBJECT-TYPE
+     SYNTAX      SnmpAdminString  (SIZE(1..2048))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the URL of the SCCA 
+         REST API to validate the user credentials."
+      REFERENCE
+        "Information Model Mapping: CM-SP-CM OSSIv4.0 
+         SccaServerCfg::RestApiUrl"
+     ::= {  docsSecCmSccaServerCfg 3 }
+
+docsSecCmSccaServerCfgRevocationStatusAction  OBJECT-TYPE
+     SYNTAX      INTEGER {
+                         continue(0),
+                         reject(1)
+                         }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the action taken by 
+         the CM if it does not receive revocation status 
+         from the HTTPS server. The possible values for 
+         this object are listed below:
+          'continue' Continue operation with the HTTPS server
+          'reject'   Reject the connection with the HTTPS server"
+      REFERENCE
+        "Information Model Mapping: CM-SP-CM OSSIv4.0 
+         SccaServerCfg::RevocationStatusAction"
+      DEFVAL { 0 }
+     ::= {  docsSecCmSccaServerCfg 4 }
 
 --
 -- DOCS-IETF-BPI2-MIB extension (deprecated)
@@ -880,7 +1473,7 @@ DESCRIPTION
          Security MIB."
 
     MODULE -- this MODULE
-MANDATORY-GROUPS {
+    MANDATORY-GROUPS {
      docsSecGroup
      }
 
@@ -898,6 +1491,19 @@ DESCRIPTION
      }
 
 ::= { docsSecMibCompliances 2 }
+
+docsSecCmSshCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement for CMs that implement SSH Key Management in the DOCSIS
+         Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecCmSshGroup
+     }
+
+::= { docsSecMibCompliances 3 }
 
 
 docsSecGroup OBJECT-GROUP
@@ -936,11 +1542,46 @@ docsSecGroup OBJECT-GROUP
 
 docsSecCmGroup OBJECT-GROUP
     OBJECTS {
-    docsBpi2CodeUpdateCvcChain
+     docsBpi2CodeUpdateCvcChain,
+     docsSecCmEccPublicKeyCredentialEccPublicKey,                     
+     docsSecCmEccPublicKeyCredentialMacAddr,
+     docsSecCmEccPublicKeyCredentialRowStatus
     }
     STATUS      deprecated
     DESCRIPTION
-         "Group of objects implemented in the CM."
+         "Group of objects deprecated in the CM."
     ::= { docsSecMibGroups 2 }
+    
+docsSecCmSshGroup OBJECT-GROUP
+    OBJECTS {
+     docsSecCmSshServerEnabledInterfaces,
+     docsSecCmSshServerStatus,
+     docsSecCmSshServerPublicKey,
+     docsSecCmSshServerNewConnectionTimeout,
+     docsSecCmSshServerInactivityTimeout,
+     docsSecCmSshServerSshSourceAddrRestrictionType,
+     docsSecCmSshServerSshSourceAddrRestriction,
+     docsSecCmSshServerSshSourcePrefixRestriction,
+     docsSecCmCdsFileServerIpAddrType,
+     docsSecCmCdsFileServerIpAddr,
+     docsSecCmCdsFileServerSshCmCdsDownloadUrl,
+     docsSecCmCdsFileServerRevocationStatusAction,
+     docsSecCmPasswordCredentialUserId,
+     docsSecCmPasswordCredentialPassword,                    
+     docsSecCmPasswordCredentialMacAddr,
+     docsSecCmPasswordCredentialRowStatus,
+     docsSecCmPublicKeyCredentialSshPublicKey,                     
+     docsSecCmPublicKeyCredentialMacAddr,
+     docsSecCmPublicKeyCredentialRowStatus,
+     docsSecCmSccaServerCfgIpAddrType,
+     docsSecCmSccaServerCfgIpAddr,
+     docsSecCmSccaServerCfgRestApiUrl,
+     docsSecCmSccaServerCfgRevocationStatusAction
+    }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented in the CM for 
+         Ssh Key Management."
+    ::= { docsSecMibGroups 3 }
 
 END

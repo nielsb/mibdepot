@@ -21,8 +21,8 @@ IMPORTS
 
 
 docsIfExt2Mib MODULE-IDENTITY 
-    LAST-UPDATED    "201010081700Z" -- October 8, 2010
-    ORGANIZATION    "Cable Television Laboratories, Inc" 
+    LAST-UPDATED    "202011050000Z" -- November 5, 2020
+    ORGANIZATION    "Cable Television Laboratories, Inc." 
     CONTACT-INFO 
          "
          Postal: Cable Television Laboratories, Inc. 
@@ -38,7 +38,11 @@ docsIfExt2Mib MODULE-IDENTITY
          It includes SCDMA capability of limiting the number of codes 
          assigned to a CM over the total active codes, referred as 
          Maximum Scheduled Codes (MSC)."
-        REVISION "201010081700Z"
+
+    REVISION "202011050000Z" -- November 5, 2020
+    DESCRIPTION
+        "Revised version includes ECN DOCS-IFEXT2-MIB-N-20.2126-1."
+    REVISION "201010081700Z"
     DESCRIPTION
         "Revised version includes ECN OSSIv3.0-N-10.0934-1 
          and published as I13."
@@ -164,7 +168,7 @@ docsIfExt2CmMscStatusState OBJECT-TYPE
 
 docsIfExt2CmMscStatusPowerShortfall OBJECT-TYPE
         SYNTAX      TenthdB
-        UNITS       "TenthdB"
+        UNITS       "dB"
         MAX-ACCESS  read-only
         STATUS      current
         DESCRIPTION 
@@ -218,7 +222,7 @@ docsIfExt2CmMscStatusMaximumScheduledCodes OBJECT-TYPE
 
 docsIfExt2CmMscStatusPowerHeadroom OBJECT-TYPE 
         SYNTAX      TenthdB 
-        UNITS       "TenthdB"
+        UNITS       "dB"
         MAX-ACCESS  read-only 
         STATUS      current 
         DESCRIPTION 
@@ -239,7 +243,7 @@ docsIfExt2CmMscStatusPowerHeadroom OBJECT-TYPE
 
 docsIfExt2CmMscStatusEffectivePower OBJECT-TYPE 
         SYNTAX      TenthdBmV 
-        UNITS       "TenthdBmV"
+        UNITS       "dBmV"
         MAX-ACCESS  read-only 
         STATUS      current 
         DESCRIPTION 
@@ -358,7 +362,7 @@ DocsIfExt2CmtsCmMscStatusEntry ::= SEQUENCE
 
 docsIfExt2CmtsCmMscStatusPowerShortfall OBJECT-TYPE
         SYNTAX      TenthdB
-        UNITS       "TenthdB"
+        UNITS       "dB"
         MAX-ACCESS  read-only 
         STATUS      current 
         DESCRIPTION 
@@ -412,7 +416,7 @@ docsIfExt2CmtsCmMscStatusMaximumScheduledCodes OBJECT-TYPE
 
 docsIfExt2CmtsCmMscStatusPowerHeadroom OBJECT-TYPE 
         SYNTAX      TenthdB 
-        UNITS       "TenthdB"
+        UNITS       "dB"
         MAX-ACCESS  read-only 
         STATUS      current 
         DESCRIPTION 
@@ -431,7 +435,7 @@ docsIfExt2CmtsCmMscStatusPowerHeadroom OBJECT-TYPE
 
 docsIfExt2CmtsCmMscStatusMeasuredSNR OBJECT-TYPE 
         SYNTAX      TenthdB
-        UNITS       "TenthdB"
+        UNITS       "dB"
         MAX-ACCESS  read-only
         STATUS      current
         DESCRIPTION
@@ -446,7 +450,7 @@ docsIfExt2CmtsCmMscStatusMeasuredSNR OBJECT-TYPE
 
 docsIfExt2CmtsCmMscStatusEffectiveSNR OBJECT-TYPE
         SYNTAX      TenthdB
-        UNITS       "TenthdB"
+        UNITS       "dB"
         MAX-ACCESS  read-only
         STATUS      current
         DESCRIPTION 

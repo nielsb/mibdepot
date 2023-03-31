@@ -29,7 +29,7 @@ DOCS-SUBMGT3-MIB DEFINITIONS ::= BEGIN
 
 
 docsSubmgt3Mib MODULE-IDENTITY
-     LAST-UPDATED    "201506030000Z" -- June 3, 2015
+     LAST-UPDATED    "202011050000Z" -- November 5, 2020
      ORGANIZATION    "Cable Television Laboratories, Inc."
      CONTACT-INFO
          "
@@ -41,38 +41,42 @@ docsSubmgt3Mib MODULE-IDENTITY
          Fax:   +1 303-661-9199
          E-mail: mibs@cablelabs.com"
      DESCRIPTION
-        "This MIB module contains the management objects for the
-        CMTS control of the IP4 and IPv6 traffic with origin and
-        destination to CMs and/or CPEs behind the CM."
-REVISION    "201506030000Z" -- June 3, 2015
+         "This MIB module contains the management objects for the
+          CMTS control of the IP4 and IPv6 traffic with origin and
+          destination to CMs and/or CPEs behind the CM."
+    REVISION    "202011050000Z" -- November 5, 2020
     DESCRIPTION
-            "Revised Version includes ECN
+           "Revised Version includes ECN
+            DOCS-SUBMGT3-MIB-N-20.2128-1."
+    REVISION    "201506030000Z" -- June 3, 2015
+    DESCRIPTION
+           "Revised Version includes ECN
             OSSIv3.0-N-15.1311-2"
-REVISION    "201404030000Z" -- April 3, 2014
+    REVISION    "201404030000Z" -- April 3, 2014
     DESCRIPTION
-            "Revised Version includes ECNs
+           "Revised Version includes ECN
             OSSIv3.0-N-13.1125-2
             and published as I23"
-REVISION    "201106230000Z" -- June 23, 2011
+    REVISION    "201106230000Z" -- June 23, 2011
     DESCRIPTION
-            "Revised Version includes ECNs
+           "Revised Version includes ECN
             OSSIv3.0-N-11.0996-1
             and published as I15"
-REVISION    "201006110000Z" -- June 11, 2010
+    REVISION    "201006110000Z" -- June 11, 2010
     DESCRIPTION
-            "Revised Version includes ECNs
+           "Revised Version includes ECNs
             OSSIv3.0-N-10.0906-2
             OSSIv3.0-N-10.0921-4
             and published as I12"
     REVISION    "200901210000Z" -- January 21, 2009
     DESCRIPTION
-            "Revised Version includes ECNs
+           "Revised Version includes ECNs
             OSSIv3.0-N-08.0651-3
             OSSIv3.0-N-08.0700-4
             and published as I08"
     REVISION    "200705180000Z" -- May 18, 2007
     DESCRIPTION
-            "Revised Version includes ECNs
+           "Revised Version includes ECNs
             OSSIv3.0-N-07.0445-3
             OSSIv3.0-N-07.0444-3
             OSSIv3.0-N-07.0441-4
@@ -351,7 +355,7 @@ docsSubmgt3CpeCtrlMaxCpeIpv6Addresses OBJECT-TYPE
      DESCRIPTION
         "This attribute represents the maximum number of simultaneous IPv6 
         prefixes and addresses that are permitted for CPEs connected to the CM.
-        When the MaxCpeIpv6Prefix is set to zero (0), all IPv6 CPE traffic from
+        When the MaxCpeIpv6Prefixes is set to zero (0), all IPv6 CPE traffic from
         the CM is dropped. The CMTS configures this attribute with whichever of 
         the ('Subscriber Management CPE IPv6 List (TLV 67)' plus 'Subscriber 
         Management CPE IPv6 Prefix List (TLV 61)') or ('Subscriber Management 
@@ -654,7 +658,7 @@ DocsSubmgt3GrpEntry ::= SEQUENCE {
 
 docsSubMgt3GrpUdcGroupIds OBJECT-TYPE
      SYNTAX      SnmpTagList
-     MAX-ACCESS  read-write
+     MAX-ACCESS  read-only
      STATUS      current
      DESCRIPTION
         "This attribute represents the filter group(s) associated
@@ -673,12 +677,11 @@ docsSubMgt3GrpUdcGroupIds OBJECT-TYPE
        be sent during registration to the CM. It is vendor specific 
        whether the CMTS updates individual CM UDCs after registration
        when rules are changed in the Grp object."
-     DEFVAL { ''H }
      ::= { docsSubmgt3GrpEntry 1 }
 
 docsSubMgt3GrpUdcSentInRegRsp OBJECT-TYPE
      SYNTAX      TruthValue
-     MAX-ACCESS  read-write
+     MAX-ACCESS  read-only
      STATUS      current
      DESCRIPTION
         "This attribute represents the CMTS upstream filtering 
@@ -695,7 +698,6 @@ docsSubMgt3GrpUdcSentInRegRsp OBJECT-TYPE
         CMTS capability to sent UDCs to CMs during the registration
         process is optional, the CMTS is not required to implement 
         the value 'true'."
-     DEFVAL { false }
      ::= { docsSubmgt3GrpEntry 2 }
 
 docsSubmgt3GrpSubFilterDs OBJECT-TYPE
@@ -1420,6 +1422,19 @@ MANDATORY-GROUPS {
      docsSubmgt3Group
      }
 ::= { docsSubmgt3MibCompliances 1 }
+
+docsSubmgt3DeprecatedCompliance MODULE-COMPLIANCE
+   STATUS      deprecated
+   DESCRIPTION
+        "The compliance statement for deprecated objects."
+
+    MODULE -- this MODULE
+    GROUP docsSubmgt3DeprecatedGroup
+    DESCRIPTION
+        "This group contains objects which are deprecated
+         from the MIB as of the current release."
+::= { docsSubmgt3MibCompliances 2 }
+
 docsSubmgt3Group OBJECT-GROUP
     OBJECTS {
      docsSubmgt3BaseCpeMaxIpv4Def,
@@ -1491,5 +1506,16 @@ docsSubmgt3Group OBJECT-GROUP
     DESCRIPTION
          "Group of objects implemented in the CMTS."
     ::= { docsSubmgt3MibGroups 1 }
+    
+docsSubmgt3DeprecatedGroup OBJECT-GROUP
+    OBJECTS {
+            docsSubmgt3BaseCpeMaxIpv6AddressesDef,
+            docsSubmgt3CpeCtrlMaxCpeIpv6Addresses
+            }
+   STATUS      deprecated
+    DESCRIPTION
+       "Group of deprecated objects no longer required to be
+       supported."
+    ::= { docsSubmgt3MibGroups 2}
 END
 
