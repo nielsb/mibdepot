@@ -1,0 +1,762 @@
+LRP-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Unsigned32,
+    Counter64
+        FROM SNMPv2-SMI
+    TruthValue
+        FROM SNMPv2-TC
+    MODULE-COMPLIANCE,
+    OBJECT-GROUP
+        FROM SNMPv2-CONF
+    AddressFamilyNumbers
+        FROM IANA-ADDRESS-FAMILY-NUMBERS-MIB
+    InetPortNumber
+        FROM INET-ADDRESS-MIB
+    InterfaceIndex
+        FROM IF-MIB
+    LldpV2ChassisIdSubtype,
+    LldpV2ChassisId,
+    LldpV2PortIdSubtype,
+    LldpV2PortId,
+    LldpV2ManAddress
+        FROM LLDP-V2-TC-MIB
+    ieee802dot1mibs
+        FROM IEEE8021-TC-MIB
+    LrpAppId
+        FROM LRP-TC-MIB;
+
+ieee8021LrpMIB MODULE-IDENTITY
+    LAST-UPDATED "202012030000Z" -- December 3, 2020
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO 
+            "WG-URL:   http://1.ieee802.org
+             WG-EMail: stds-802-1-l@ieee.org
+
+             Contact:  IEEE 802.1 Working Group Chair
+             Postal:   C/O IEEE 802.1 Working Group
+                       IEEE Standards Association
+                       445 Hoes Lane
+                       Piscataway
+                       NJ 08854
+                       USA
+             E-mail:   stds-802-1-chairs@ieee.org"
+    DESCRIPTION
+           "Management Information Base module for configuration of the
+            Link-local Registration Protocol.
+
+            This MIB module supports the managed objects described in
+            clause 11.
+
+            Unless otherwise indicated, the references in this
+            MIB module are to IEEE Std 802.1CS-2020.
+
+            Copyright (C) IEEE (2021). This version of this MIB module
+            is included in clause 13 of IEEE Std 802.1CS-2020;
+            see the standard itself for full legal notices."
+
+    REVISION    "202012030000Z" -- December 3, 2020
+    DESCRIPTION "This MIB module included in IEEE Std 802.1CS-2020.
+                "
+
+
+   ::= { ieee802dot1mibs 35 }
+
+lrpObjects              OBJECT IDENTIFIER ::= { ieee8021LrpMIB 1 }
+lrpConformance          OBJECT IDENTIFIER ::= { ieee8021LrpMIB 2 } 
+
+--
+-- LRP MIB Objects
+--
+
+lrpConfiguration        OBJECT IDENTIFIER ::= { lrpObjects 1 }
+lrpStatistics           OBJECT IDENTIFIER ::= { lrpObjects 2 }
+
+
+-- ***********************************************************
+--                  L R P    C O N F I G 
+-- *********************************************************** 
+
+
+-- ******************************************************************
+-- The table containing information about each LRP-DT instance.
+-- ******************************************************************
+
+lrpDtInstanceTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LrpDtInstanceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table presenting basic information about each LRP-DT instance
+        in the system.
+       "
+    REFERENCE
+       "11.4"
+    ::= { lrpConfiguration 1 }
+
+lrpDtInstanceEntry OBJECT-TYPE
+    SYNTAX      LrpDtInstanceEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A list of basic information about one LRP-DT instance.
+       "
+    INDEX { lrpDtInstNumber }
+    ::= { lrpDtInstanceTable 1 }
+
+LrpDtInstanceEntry ::= SEQUENCE {
+        lrpDtInstNumber             Unsigned32,
+        lrpDtInstActiveTcp          TruthValue,
+        lrpDtInstAddressTypes       AddressFamilyNumbers,
+        lrpDtInstMyAddress          LldpV2ManAddress,
+        lrpDtInstMyTcpPort          InetPortNumber,
+        lrpDtInstNeighborAddress    LldpV2ManAddress,
+        lrpDtInstNeighborTcpPort    InetPortNumber
+    }
+
+lrpDtInstNumber OBJECT-TYPE
+    SYNTAX      Unsigned32(1..4294967295)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A small integer identifying an LRP-DT instance.  Each
+        LRP-DT instance in a system has a unique lrpDtInstNumber.
+
+        This object SHALL NOT contain the value 0.
+       "
+    REFERENCE
+       "11.2"
+    ::= { lrpDtInstanceEntry 1 }
+
+lrpDtInstActiveTcp OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "TRUE if and only if lrpDtInstAddressTypes indicates an IPv4
+        or IPv6 address, and this LRP-DT instance uses an active TCP
+        OPEN, as opposed to a passive TCP OPEN, to initiate the TCP
+        connection.
+       "
+    REFERENCE
+       "11.4, 7.3.2.1"
+    ::= { lrpDtInstanceEntry 2 }
+
+lrpDtInstAddressTypes OBJECT-TYPE
+    SYNTAX      AddressFamilyNumbers
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "An enumerated value specifying the format of the addresses
+        in lrpDtInstMyAddress and lrpDtInstNeighborAddress.
+
+        If lrpDtInstAddressTypes has a value indicating a type of
+        Inetnet Protocol address, then this LRP-DT instance uses TCP.
+        Otherwise, it uses ECP.
+       "
+    REFERENCE
+       "11.4, 7.3.2.2, 7.3.2.4"
+    ::= { lrpDtInstanceEntry 3 }
+
+lrpDtInstMyAddress OBJECT-TYPE
+    SYNTAX      LldpV2ManAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The address used by the local end of the LRP-DT instance.  The
+        format of the address is determined by lrpDtInstAddressTypes.
+       "
+    REFERENCE
+       "11.4, 7.3.2.2"
+    ::= { lrpDtInstanceEntry 4 }
+
+lrpDtInstMyTcpPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The local TCP port number used for the TCP connection, or 0,
+        if this connection uses ECP, instead of TCP.
+       "
+    REFERENCE
+       "11.4, 7.3.2.3"
+    ::= { lrpDtInstanceEntry 5 }
+
+lrpDtInstNeighborAddress OBJECT-TYPE
+    SYNTAX      LldpV2ManAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The address used by the partner end of the LRP-DT instance, if
+        lrpDtInstActiveTcp is TRUE or lrpDtInstAddressTypes indicates
+        a MAC address.  Otherwise (this LRP-DT instance was created
+        from a passive TCP OPEN), lrpDtInstNeighborAddress contains a
+        zero-length string.  The format of the address is determined by
+        lrpDtInstAddressTypes.
+       "
+    REFERENCE
+       "11.4, 7.3.2.4"
+    ::= { lrpDtInstanceEntry 6 }
+
+lrpDtInstNeighborTcpPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The remote TCP port number used for the TCP connection, or 0,
+        if this connection uses ECP, instead of TCP.
+       "
+    REFERENCE
+       "11.4, 7.3.2.5"
+    ::= { lrpDtInstanceEntry 7 }
+
+
+-- ******************************************************************
+-- The table containing information about each LRP-DS Portal.
+-- ******************************************************************
+
+lrpPortalTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LrpPortalEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table containing the per-portal set of counters that record
+        LRP events.  There is an entry in the table for every portal in
+        a system.
+       "
+    REFERENCE
+       "8.2.2"
+    ::= { lrpConfiguration 2 }
+
+lrpPortalEntry OBJECT-TYPE
+    SYNTAX      LrpPortalEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A list of counters for events occurring on one Portal.
+       "
+    INDEX { lrpPortalNumber }
+    ::= { lrpPortalTable 1 }
+
+LrpPortalEntry ::= SEQUENCE {
+        lrpPortalNumber             Unsigned32,
+        lrpPortalIfIndex            InterfaceIndex,
+        lrpPortalDtInstanceIndex    Unsigned32,
+        lrpPortalAppId              LrpAppId,
+        lrpPortalMyChassisIdType    LldpV2ChassisIdSubtype,
+        lrpPortalMyChassisId        LldpV2ChassisId,
+        lrpPortalMyPortIdType       LldpV2PortIdSubtype,
+        lrpPortalMyPortId           LldpV2PortId,
+        lrpPortalNbrChassisIdType   LldpV2ChassisIdSubtype,
+        lrpPortalNbrChassisId       LldpV2ChassisId,
+        lrpPortalNbrPortIdType      LldpV2PortIdSubtype,
+        lrpPortalNbrPortId          LldpV2PortId,
+        lrpPortalLocalOverflow      TruthValue
+    }
+
+lrpPortalNumber OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A small integer identifying a portal.  Each portal in a system
+        has a unique lrpPortalNumber.
+
+        This object SHALL NOT contain the value 0.
+       "
+    ::= { lrpPortalEntry 1 }
+
+lrpPortalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The interface index identifying the target port to which this
+        portal is attached.  The value is 0, if there is none.
+       "
+    ::= { lrpPortalEntry 2 }
+
+lrpPortalDtInstanceIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The same value as the lrpDtInstNumber object of the
+        lrpDtInstanceEntry describing the LRP-DT instance to which this
+        Portal is attached.
+       "
+    REFERENCE
+       "8.2.2.1"
+    ::= { lrpPortalEntry 3 }
+
+lrpPortalAppId OBJECT-TYPE
+    SYNTAX      LrpAppId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The application ID used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.1"
+    ::= { lrpPortalEntry 4 }
+
+lrpPortalMyChassisIdType OBJECT-TYPE
+    SYNTAX      LldpV2ChassisIdSubtype
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The My Chassis ID TLV type field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.2"
+    ::= { lrpPortalEntry 5 }
+
+lrpPortalMyChassisId OBJECT-TYPE
+    SYNTAX      LldpV2ChassisId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The My Chassis ID TLV Chassis ID field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.2"
+    ::= { lrpPortalEntry 6 }
+
+lrpPortalMyPortIdType OBJECT-TYPE
+    SYNTAX      LldpV2PortIdSubtype
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The My Port ID TLV type field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.3"
+    ::= { lrpPortalEntry 7 }
+
+lrpPortalMyPortId OBJECT-TYPE
+    SYNTAX      LldpV2PortId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The My Port ID TLV Port ID field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.3"
+    ::= { lrpPortalEntry 8 }
+
+lrpPortalNbrChassisIdType OBJECT-TYPE
+    SYNTAX      LldpV2ChassisIdSubtype
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The Neighbor Chassis ID TLV type field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.2"
+    ::= { lrpPortalEntry 9 }
+
+lrpPortalNbrChassisId OBJECT-TYPE
+    SYNTAX      LldpV2ChassisId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The Neighbor Chassis ID TLV Chassis ID field used for this
+        Portal.
+       "
+    REFERENCE
+       "8.2.2.2"
+    ::= { lrpPortalEntry 10 }
+
+lrpPortalNbrPortIdType OBJECT-TYPE
+    SYNTAX      LldpV2PortIdSubtype
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The Neighbor Port ID TLV type field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.3"
+    ::= { lrpPortalEntry 11 }
+
+lrpPortalNbrPortId OBJECT-TYPE
+    SYNTAX      LldpV2PortId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The Neighbor Port ID TLV Port ID field used for this Portal.
+       "
+    REFERENCE
+       "8.2.2.3"
+    ::= { lrpPortalEntry 12 }
+
+lrpPortalLocalOverflow OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "A Boolean indicating whether or not the local registrar
+        database has overflowed its alloted memory.
+       "
+    REFERENCE
+       "8.2.2.10"
+    ::= { lrpPortalEntry 13 }
+
+-- ***********************************************************
+--           P O R T A L    S T A T I S T I C S 
+-- ***********************************************************
+
+lrpPortalCountersTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LrpPortalCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table containing the per-portal set of counters that record
+        LRP events.  There is an entry in the table for every portal in
+        a system.
+       "
+    REFERENCE
+       "11.5"
+    ::= { lrpStatistics 1 }
+
+lrpPortalCountersEntry OBJECT-TYPE
+    SYNTAX      LrpPortalCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A list of counters for events occurring on one Portal.
+       "
+    INDEX { lrpPortalNumber }
+    ::= { lrpPortalCountersTable 1 }
+
+LrpPortalCountersEntry ::= SEQUENCE {
+        lrpPortalApplicantActiveRecords Unsigned32,
+        lrpPptCtRegistrarActiveRecords  Unsigned32,
+        lrpPptCtSentHellos              Counter64,
+        lrpPptCtAcceptedHellos          Counter64,
+        lrpPptCtDiscardedHellos         Counter64,
+        lrpPptCtSentRecords             Counter64,
+        lrpPptCtAcceptedRecords         Counter64,
+        lrpPptCtDiscardedRecords        Counter64,
+        lrpPptCtRecordErrors            Counter64,
+        lrpPptCtSentPartials            Counter64,
+        lrpPptCtAcceptedPartials        Counter64,
+        lrpPptCtDiscardedPartials       Counter64,
+        lrpPptCtSentCompletes           Counter64,
+        lrpPptCtAcceptedCompletes       Counter64,
+        lrpPptCtDiscardedCompletes      Counter64,
+        lrpPptCtDiscardedUnknowns       Counter64
+    }
+
+lrpPortalApplicantActiveRecords OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The number of records in the applicant database.
+       "
+    REFERENCE
+       "11.5.1"
+    ::= { lrpPortalCountersEntry 1 }
+
+lrpPptCtRegistrarActiveRecords OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The number of records in the registrar database.
+       "
+    REFERENCE
+       "11.5.2"
+    ::= { lrpPortalCountersEntry 2 }
+
+lrpPptCtSentHellos OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each Hello LRPDU transmitted by the
+        Send Hello state machines.
+       "
+    REFERENCE
+       "11.5.3"
+    ::= { lrpPortalCountersEntry 3 }
+
+lrpPptCtAcceptedHellos OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each Hello LRPDU received by the
+        Receive Hello state machine.
+       "
+    REFERENCE
+       "11.5.4"
+    ::= { lrpPortalCountersEntry 4 }
+
+lrpPptCtDiscardedHellos OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each invalid Hello LRPDU discarded by the
+        Receive Hello state machine
+       "
+    REFERENCE
+       "11.5.5"
+    ::= { lrpPortalCountersEntry 5 }
+
+lrpPptCtSentRecords OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each Record LRPDU transmitted by the
+        Applicant state machine.
+       "
+    REFERENCE
+       "11.5.6"
+    ::= { lrpPortalCountersEntry 6 }
+
+lrpPptCtAcceptedRecords OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each valid Record LRPDU received by the
+        Partial list state machine.
+       "
+    REFERENCE
+       "11.5.7"
+    ::= { lrpPortalCountersEntry 7 }
+
+lrpPptCtDiscardedRecords OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each invalid Record LRPDU discarded by the
+        Partial list state machine.
+       "
+    REFERENCE
+       "11.5.8"
+    ::= { lrpPortalCountersEntry 8 }
+
+lrpPptCtRecordErrors OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each record discarded from a Record LRPDU
+        because of inconsistencies among the Checksum, Application data,
+        and Data length fields.
+       "
+    REFERENCE
+       "11.5.9"
+    ::= { lrpPortalCountersEntry 9 }
+
+lrpPptCtSentPartials OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each Partial List LRPDU transmitted by the
+        Applicant state machine.
+       "
+    REFERENCE
+       "11.5.10"
+    ::= { lrpPortalCountersEntry 10 }
+
+lrpPptCtAcceptedPartials OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each valid Partial List LRPDU received by
+        the Applicant state machine.
+       "
+    REFERENCE
+       "11.5.11"
+    ::= { lrpPortalCountersEntry 11 }
+
+lrpPptCtDiscardedPartials OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each invalid Partial List LRPDU discarded
+        by the Applicant state machine.
+       "
+    REFERENCE
+       "11.5.12"
+    ::= { lrpPortalCountersEntry 12 }
+
+lrpPptCtSentCompletes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each Complete List LRPDU transmitted by
+        the Applicant state machine.
+       "
+    REFERENCE
+       "11.5.13"
+    ::= { lrpPortalCountersEntry 13 }
+
+lrpPptCtAcceptedCompletes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each valid Complete List LRPDU received
+        by the Applicant state machine.
+       "
+    REFERENCE
+       "11.5.14"
+    ::= { lrpPortalCountersEntry 14 }
+
+lrpPptCtDiscardedCompletes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each invalid Complete List LRPDU discarded
+        by the Applicant state machine.
+       "
+    REFERENCE
+       "11.5.15"
+    ::= { lrpPortalCountersEntry 15 }
+
+lrpPptCtDiscardedUnknowns OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "Incremented once for each LRPDU of unknown type discarded by
+        the Applicant state machine or Partial list state machine.
+       "
+    REFERENCE
+       "11.5.16"
+    ::= { lrpPortalCountersEntry 16 }
+
+
+-- ******************************************************************
+--        L R P - D T   I N S T A N C E   S T A T I S T I C S
+-- ******************************************************************
+
+lrpDtInstanceCountersTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LrpDtInstanceCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table containing the per-LRP-DT instance set of counters that
+        record LRP events.  There is an entry in the table for every
+        LRP-DT instance in a system.
+       "
+    REFERENCE
+       "11.4"
+    ::= { lrpStatistics 2 }
+
+lrpDtInstanceCountersEntry OBJECT-TYPE
+    SYNTAX      LrpDtInstanceCountersEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A list of statistics about one LRP-DT instance.
+       "
+    INDEX { lrpDtInstNumber }
+    ::= { lrpDtInstanceCountersTable 1 }
+
+LrpDtInstanceCountersEntry ::= SEQUENCE {
+        lrpDtInstDiscardedLrpdus             Counter64
+    }
+
+lrpDtInstDiscardedLrpdus OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The number of received Link-local Registration Protocol Data
+        Units discarded by the LRP-DT instance because it could not
+        determine to which Portal it should be given.
+       "
+    REFERENCE
+       "11.4, 11.4.1"
+    ::= { lrpDtInstanceCountersEntry 1 }
+
+
+--
+-- ***********************************************************
+--           L R P   M I B   C O N F O R M A N C E 
+-- ***********************************************************
+--
+
+lrpCompliances OBJECT IDENTIFIER ::= { lrpConformance 1 }
+lrpGroups      OBJECT IDENTIFIER ::= { lrpConformance 2 }
+
+-- compliance statements
+
+lrpCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+           "A compliance statement for all SNMP entities that 
+            implement the LRP MIB.
+
+            This version defines compliance requirements for
+            LRP MIB module.
+           "
+    MODULE  -- this module
+        MANDATORY-GROUPS {
+            lrpDsDtGroup
+        }
+
+    ::= { lrpCompliances 1 }
+
+-- MIB groupings
+
+lrpDsDtGroup    OBJECT-GROUP
+    OBJECTS {
+        lrpDtInstActiveTcp,
+        lrpDtInstAddressTypes,
+        lrpDtInstMyAddress,
+        lrpDtInstMyTcpPort,
+        lrpDtInstNeighborAddress,
+        lrpDtInstNeighborTcpPort,
+        lrpPortalIfIndex,
+        lrpPortalDtInstanceIndex,
+        lrpPortalAppId,
+        lrpPortalMyChassisIdType,
+        lrpPortalMyChassisId,
+        lrpPortalMyPortIdType,
+        lrpPortalMyPortId,
+        lrpPortalNbrChassisIdType,
+        lrpPortalNbrChassisId,
+        lrpPortalNbrPortIdType,
+        lrpPortalNbrPortId,
+        lrpPortalLocalOverflow,
+        lrpPortalApplicantActiveRecords,
+        lrpPptCtRegistrarActiveRecords,
+        lrpPptCtSentHellos,
+        lrpPptCtAcceptedHellos,
+        lrpPptCtDiscardedHellos,
+        lrpPptCtSentRecords,
+        lrpPptCtAcceptedRecords,
+        lrpPptCtDiscardedRecords,
+        lrpPptCtRecordErrors,
+        lrpPptCtSentPartials,
+        lrpPptCtAcceptedPartials,
+        lrpPptCtDiscardedPartials,
+        lrpPptCtSentCompletes,
+        lrpPptCtAcceptedCompletes,
+        lrpPptCtDiscardedCompletes,
+        lrpPptCtDiscardedUnknowns,
+        lrpDtInstDiscardedLrpdus
+    }
+    STATUS  current
+    DESCRIPTION
+           "The collection of objects which are used to monitor the
+            status of LRP-DS and LRP-DT.
+           "
+    ::= { lrpGroups 1 }
+
+END

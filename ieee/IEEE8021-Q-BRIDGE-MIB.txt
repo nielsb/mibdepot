@@ -28,41 +28,40 @@ IMPORTS
         FROM RMON2-MIB;
 
 ieee8021QBridgeMib MODULE-IDENTITY
-    LAST-UPDATED "201806280000Z" -- June 28, 2018
+    LAST-UPDATED "202211080000Z" -- November 8, 2022
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://www.ieee802.org/1/
-         WG-EMail: stds-802-1-L@ieee.org
-
+         WG-EMail: stds-802-1-l@ieee.org
           Contact: IEEE 802.1 Working Group Chair 
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
-                   Piscataway
-                   NJ 08854
+                   Piscataway, NJ 08854
                    USA
-           E-mail: STDS-802-1-L@IEEE.ORG"
+           E-mail: stds-802-1-chairs@ieee.org"
     DESCRIPTION
         "The VLAN Bridge MIB module for managing Virtual Bridged
         Local Area Networks, as defined by IEEE Std 802.1Q.
 
-        This MIB module is derived from the IETF Q-BRIDGE-MIB
-        from RFC 4363.
-
         Unless otherwise indicated, the references in this MIB
-        module are to IEEE Std 802.1Q.
+        module are to IEEE Std 802.1Q-2022.
 
-        Copyright (C) IEEE (2018).
+        Copyright (C) IEEE (2022).
         This version of this MIB module is part of IEEE Std 802.1Q;
-        see the draft itself for full legal notices."
+        see that standard for full legal notices."
 
-    REVISION "201806280000Z" -- June 28, 2018
+    REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
-            "Published as part of IEEE Std 802.1Q-2018.
+            "Published as part of IEEE Std 802.1Q-2022.
+            Cross references and contact information updated."
+
+    REVISION "201807010000Z" -- July 1, 2018
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2018 revision.
             Cross references updated and corrected."
             
     REVISION "201412150000Z" -- December 15, 2014
-    
     DESCRIPTION
             "Published as part of IEEE Std 802.1Q 2014 revision.
             Cross references updated and corrected.
@@ -252,7 +251,7 @@ ieee8021QBridgeCVlanPortComponentId OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "The componentcontaining the customer VLAN port represented
+        "The component containing the customer VLAN port represented
         by this row."
     ::= { ieee8021QBridgeCVlanPortEntry 1 }
 
@@ -1350,7 +1349,7 @@ ieee8021QBridgeVlanStaticUntaggedPorts OBJECT-TYPE
     MAX-ACCESS  read-create
     STATUS      current
     DESCRIPTION
-        "The set of ports that should transmit egress packets
+        "The set of ports that should transmit egress frames
         for this VLAN as untagged.  The default value of this
         object for the default VLAN (ieee8021QBridgeVlanIndex = 1) is a string
         of appropriate length including all ports.  There is no
@@ -2063,7 +2062,7 @@ ieee8021QBridgeVIDXEntry OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "An entry for the S-VID translation table which includes 
+        "An entry for the S-VID translation table, which includes 
         both the Local and Relay S-VIDs."
 
     INDEX { ieee8021BridgeBasePortComponentId,
@@ -2134,7 +2133,7 @@ ieee8021QBridgeEgressVidXEntry OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      deprecated
     DESCRIPTION
-        "An entry for the Egress VID translation table which includes 
+        "An entry for the Egress VID translation table, which includes 
         both the relay and local IDs between which the PNP or CNP
         translates."
        
@@ -2209,7 +2208,7 @@ ieee8021QBridgeEgressVidXV2Entry OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "An entry for the Egress VID translation table which includes 
+        "An entry for the Egress VID translation table, which includes 
         both the relay and local IDs between which the PNP or CNP
         translates."
        
@@ -2391,7 +2390,7 @@ ieee8021QBridgeVlanStatisticsGroup OBJECT-GROUP
     }
     STATUS      current
     DESCRIPTION
-        "A collection of objects providing per-port packet
+        "A collection of objects providing per-port frame
         statistics for all VLANs currently configured on this
         device."
     ::= { ieee8021QBridgeGroups 8 }

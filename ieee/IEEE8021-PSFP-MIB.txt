@@ -26,19 +26,17 @@ IMPORTS
     ;
 
 ieee8021PSFPMib MODULE-IDENTITY
-    LAST-UPDATED "202011060000Z" -- November 6, 2020
+    LAST-UPDATED "202201130000Z" -- January 13, 2022
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
-        "WG-URL: http://ieee802.org/1/
+        "  WG-URL: http://www.ieee802.org/1/
          WG-EMail: stds-802-1-l@ieee.org
-
           Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
                    Piscataway, NJ 08854
                    USA
-                   
            E-mail: stds-802-1-chairs@ieee.org"
     DESCRIPTION
         "The Bridge MIB module for managing devices that support
@@ -46,23 +44,28 @@ ieee8021PSFPMib MODULE-IDENTITY
         for IEEE 802.1Q Bridges.
 
         Unless otherwise indicated, the references in this MIB
-        module are to IEEE Std 802.1Q.
+        module are to IEEE Std 802.1Q-2022.
 
-        Copyright (C) IEEE (2020).
+        Copyright (C) IEEE (2022).
         This version of this MIB module is part of IEEE Std 802.1Q;
-        see the draft itself for full legal notices."
+        see that standard for full legal notices."
+
+    REVISION "202201130000Z" -- January 13, 2022
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q-2022.
+            Cross references and contact information updated."
 
     REVISION "202011060000Z" -- November 6, 2020
     DESCRIPTION
             "Published as part of IEEE Std 802.1Qcr-2020.
-            Cross references updated and corrected."
+            Cross references and contact information updated."
 
-    REVISION "201806280000Z" -- June 28, 2018
+    REVISION "201807010000Z" -- July 1, 2018
     DESCRIPTION
             "Published as part of IEEE Std 802.1Q 2018 revision.
             Cross references updated and corrected."
 
-    REVISION "201709080000Z" -- September 29, 2017
+     REVISION "201709080000Z" -- September 29, 2017
     DESCRIPTION
             "Initial version published as part of IEEE Std 802.1Qci."
             
@@ -840,7 +843,7 @@ ieee8021PSFPConfigChangeTime OBJECT-TYPE
         of the traffic schedule has been requested with the old
         schedule still running and the requested base time was
         in the past."
-    REFERENCE   "8.6.8.4, 8.6.9.3, 8.6.9.1.1, 12.31.3"
+    REFERENCE   "8.6.8.4, 8.6.9.3, 12.31.3"
     ::= { ieee8021PSFPStreamGateEntry 23 }
 
 ieee8021PSFPAdminIPV OBJECT-TYPE

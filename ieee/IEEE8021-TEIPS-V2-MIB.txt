@@ -29,38 +29,40 @@ IMPORTS
         FROM SNMPv2-CONF;
 
 ieee8021TeipsV2Mib MODULE-IDENTITY
-    LAST-UPDATED "201806280000Z" -- June 28, 2018
+    LAST-UPDATED "202211080000Z" -- November 8, 2022
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
-       "WG-URL:   http://www.ieee802.org/1/
-        WG-EMail: stds-802-1-L@ieee.org 
-        Contact:  IEEE 802.1 Working Group Chair
-        Postal:   IEEE Standards Board
-                  445 Hoes Lane
-                  Piscataway, NJ 08854
-                  USA
-        E-mail:   stds-802-1-L@ieee.org
-       "
+        "  WG-URL: http://www.ieee802.org/1/
+         WG-EMail: stds-802-1-l@ieee.org
+          Contact: IEEE 802.1 Working Group Chair
+           Postal: C/O IEEE 802.1 Working Group
+                   IEEE Standards Association
+                   445 Hoes Lane
+                   Piscataway, NJ 08854
+                   USA
+           E-mail: stds-802-1-chairs@ieee.org"
 
     DESCRIPTION
        "MIB Module for managing systems that provide Provider
         Backbone Bridge Traffic Engineering (PBB-TE) Infrastructure
         Segment Protection.
 
-        Unless otherwise indicated, the references in this
-        MIB module are to IEEE Std 802.1Q.
+        Unless otherwise indicated, the references in this MIB
+        module are to IEEE Std 802.1Q-2022.
 
-        Copyright (C) IEEE (2018).  All Rights Reserved
+        Copyright (C) IEEE (2022).
+        This version of this MIB module is part of IEEE Std 802.1Q;
+        see that standard for full legal notices."
         
-        This MIB module is part of IEEE 802.1Q;
-        See the IEEE 802.1Q standard for full legal notices.
-       "
-
-    REVISION "201806280000Z" -- June 28, 2018
+    REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
-            "Published as part of IEEE Std 802.1Q-2018.
-            Cross references updated and corrected.
-            Description added."
+            "Published as part of IEEE Std 802.1Q-2022.
+            Cross references and contact information updated."
+
+    REVISION "201807010000Z" -- July 1, 2018
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2018 revision.
+            Cross references updated and corrected."
             
     REVISION "201412150000Z" -- December 15, 2014
     DESCRIPTION
@@ -265,7 +267,7 @@ ieee8021TeipsV2TesiIndex OBJECT-TYPE
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
-        "This is an identifier, of local signifigance to a
+        "This is an identifier, of local significance to a
          particular PBB-TE TE-SID associated with an IPG."
     REFERENCE
         "12.24.2.1.3 e"
@@ -348,7 +350,7 @@ ieee8021TeipsV2CandidatePsIndex OBJECT-TYPE
     MAX-ACCESS not-accessible
     STATUS     current    
     DESCRIPTION                                      
-        "This is an identifier, of local signifigance
+        "This is an identifier, of local significance
          to a particular candidate Protection Segment
          associated with an IPG."
     REFERENCE
@@ -437,7 +439,7 @@ ieee8021TeipsV2IpgConfigEntry OBJECT-TYPE
     MAX-ACCESS not-accessible
     STATUS     current
     DESCRIPTION
-        "The IPG confguration table entry.  Rows are
+        "The IPG configuration table entry.  Rows are
          created in this table implicitly when a row
          is added to the ieee8021TeipsV2IpgTable."
     INDEX { ieee8021BridgeBaseComponentId,
@@ -663,7 +665,7 @@ ieee8021TeipsV2IpgAdminFailure NOTIFICATION-TYPE
     STATUS  current
     DESCRIPTION 
         "An IPG generates this notification whenever
-         an adminisistrative command cannot be
+         an administrative command cannot be
          executed by the IPS state machine.  For
          example, when a requested  manual switch
          cannot be performed because of a signal
@@ -783,14 +785,14 @@ ieee8021TeipsV2Compliance MODULE-COMPLIANCE
         }
         GROUP ieee8021TeipsV2IpgConfigOptGroup
         DESCRIPTION
-           "This group allows implmementation to
+           "This group allows implementation to
             optionally change the WaitToRestore,
             M:1 WaitToRestore, and HoldOff timers
             for IPGs."  
             
         GROUP ieee8021TeipsV2CandidatePsGroup
         DESCRIPTION
-           "This group allows implmementation to
+           "This group allows implementation to
             optionally list candidate Protection
             Segments when M:1 IPS is deployed."
 

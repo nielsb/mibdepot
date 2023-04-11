@@ -11,40 +11,40 @@ IMPORTS
         FROM SNMPv2-TC; -- RFC 2579
 
 ieee8021TcMib MODULE-IDENTITY
-    LAST-UPDATED "201806210000Z" -- June 21, 2018
+    LAST-UPDATED "202211080000Z" -- November 8, 2022
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
-        "  WG-URL: http://www.ieee802.org/1
-         WG-EMail: stds-802-1-L@ieee.org
-
+        "  WG-URL: http://www.ieee802.org/1/
+         WG-EMail: stds-802-1-l@ieee.org
           Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
-                   Piscataway
-                   NJ 08855
+                   Piscataway, NJ 08854
                    USA
-           E-mail: STDS-802-1-L@IEEE.ORG"
+           E-mail: stds-802-1-chairs@ieee.org"
     DESCRIPTION
         "Textual conventions used throughout the various IEEE 802.1 MIB
          modules.
 
          Unless otherwise indicated, the references in this MIB
-         module are to IEEE Std 802.1Q.
+         module are to IEEE Std 802.1Q-2022.
 
-         Copyright (C) IEEE (2014).
+         Copyright (C) IEEE (2022).
          This version of this MIB module is part of IEEE Std 802.1Q;
-         see the draft itself for full legal notices."
+         see that standard for full legal notices."
 
-    REVISION "201806210000Z" -- June 21, 2018
-
-    
+    REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
-            "Published as part of IEEE Std 802.1Q 2017 revision.
+            "Published as part of IEEE Std 802.1Q-2022.
+            Cross references and contact information updated."
+
+    REVISION "201807010000Z" -- July 1, 2018
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Q 2018 revision.
             Cross references updated and corrected."
 
     REVISION "201412150000Z" -- December 15, 2014
-    
     DESCRIPTION
             "Published as part of IEEE Std 802.1Q 2014 revision.
             Cross references updated and corrected.
@@ -159,7 +159,7 @@ IEEE8021PbbServiceIdentifierOrUnassigned ::= TEXTUAL-CONVENTION
 IEEE8021PbbIngressEgress ::= TEXTUAL-CONVENTION
     STATUS       current
     DESCRIPTION
-        "A 2 bit selector which determines if frames on this VIP may
+        "A 2 bit selector that determines if frames on this VIP may
         ingress to the PBBN but not egress the PBBN, egress to the
         PBBN but not ingress the PBBN, or both ingress and egress
         the PBBN."
@@ -236,7 +236,7 @@ IEEE8021BridgePortType ::= TEXTUAL-CONVENTION
 
              virtualInstancePort(7) - Indicates a port is a virtual
                  S-tag-aware port within a Backbone Edge Bridge's
-                 I-component which is responsible for handling
+                 I-component that is responsible for handling
                  S-tagged traffic for a specific backbone service
                  instance.
 
@@ -352,20 +352,20 @@ IEEE8021ServiceSelectorType ::= TEXTUAL-CONVENTION
         in Bridges that implement PBB-TE functionality.  A selector of
         this type is interpreted as a 32 bit unsigned value of type
         IEEE8021PbbTeTSidId.  This type is used to index the
-        ieee8021PbbTeTeSiEspTable to find the ESPs which comprise the TE
+        ieee8021PbbTeTeSiEspTable to find the ESPs that comprise the TE
         Service Instance named by this TE-SID value.
         
         The segid is used as a service selector for MAs that are present
         in Bridges that implement IPS functionality.  A selector of
         this type is interpreted as a 32 bit unsigned value of type
         IEEE8021TeipsSegid.  This type is used to index the
-        Ieee8021TeipsSegTable to find the SMPs which comprise the
+        Ieee8021TeipsSegTable to find the SMPs that comprise the
         Infrastructure Segment named by this segid value.
 
         The path-tesid is used as a service selector for SPBM path MAs.
         A selector of this type is interpreted as a 32 bit unsigned value
         corresponding to the MA index dot1agCfmMaIndex. This type is used
-        to index the dot1agCfmMepSpbmEspTable to find the ESPs which
+        to index the dot1agCfmMepSpbmEspTable to find the ESPs that
         comprise the SPBM path associated with an SPBM path MA.
 
         The group-isid is used as a service selector for SPBM group MAs.
@@ -460,7 +460,7 @@ IEEE8021PortAcceptableFrameTypes ::= TEXTUAL-CONVENTION
     STATUS      current
     DESCRIPTION
         "Acceptable frame types on a port."
-    REFERENCE   "12.10.1.3, 12.13.3.3, 12.13.3.4"
+    REFERENCE   "12.10.1.3, 12.13.2.3, 12.13.2.4"
     SYNTAX      INTEGER {
                     admitAll(1),
                     admitUntaggedAndPriority(2),
@@ -472,7 +472,7 @@ IEEE8021PriorityValue ::= TEXTUAL-CONVENTION
     STATUS      current
     DESCRIPTION
         "An IEEE 802.1Q user priority value."
-   REFERENCE   "12.13.3.3"
+   REFERENCE   "12.13.2.3"
     SYNTAX      Unsigned32 (0..7)
 
 IEEE8021PbbTeProtectionGroupId ::= TEXTUAL-CONVENTION
@@ -495,7 +495,7 @@ IEEE8021PbbTeEsp ::= TEXTUAL-CONVENTION
         Bytes (1..6) of this textual convention contain the
         ESP-MAC-DA, bytes (7..12) contain the ESP-MAC-SA, and bytes
         (13..14) contain the ESP-VID."
-    REFERENCE "3.83"
+    REFERENCE "3.86"
     SYNTAX OCTET STRING ( SIZE(14))
 
 IEEE8021PbbTeTSidId ::= TEXTUAL-CONVENTION
@@ -507,7 +507,7 @@ IEEE8021PbbTeTSidId ::= TEXTUAL-CONVENTION
         a TE-SID is implementation dependent.  This textual convention
         defines the external representation of TE-SID values."
     REFERENCE
-        "3.270"
+        "3.275"
     SYNTAX  Unsigned32 (1..42947295)
 
 IEEE8021PbbTeProtectionGroupConfigAdmin ::= TEXTUAL-CONVENTION

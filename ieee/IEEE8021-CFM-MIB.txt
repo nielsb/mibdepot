@@ -23,43 +23,40 @@ IMPORTS
     LldpChassisId,
     LldpChassisIdSubtype,
     LldpPortId,
-    LldpPortIdSubtype        FROM LLDP-MIB      -- [IEEE Std 802.1AB-2005]
+    LldpPortIdSubtype        FROM LLDP-MIB      -- [IEEE Std 802.1AB]
     VlanIdOrNone, VlanId     FROM Q-BRIDGE-MIB  -- [RFC4363]
     ieee802dot1mibs,
     IEEE8021VlanIndex        FROM IEEE8021-TC-MIB
    ;
 
 ieee8021CfmMib   MODULE-IDENTITY
-    LAST-UPDATED "201806280000Z" -- June 28, 2018
+    LAST-UPDATED "202211080000Z" -- November 8, 2022
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
-       "WG-URL:   http://www.ieee802.org/1/
-        WG-EMail: stds-802-1-L@ieee.org 
-
-        Contact:  IEEE 802.1 Working Group Chair
+        "  WG-URL: http://www.ieee802.org/1/
+         WG-EMail: stds-802-1-l@ieee.org
+          Contact: IEEE 802.1 Working Group Chair
            Postal: C/O IEEE 802.1 Working Group
                    IEEE Standards Association
                    445 Hoes Lane
-                   Piscataway
-                   NJ 08854
+                   Piscataway, NJ 08854
                    USA
-           E-mail: STDS-802-1-L@IEEE.ORG
-       "
+           E-mail: stds-802-1-chairs@ieee.org"
    DESCRIPTION 
       "Connectivity Fault Management module.
 
-       Unless otherwise indicated, the references in this MIB
-       module are to IEEE Std 802.1Q.
+         Unless otherwise indicated, the references in this MIB
+         module are to IEEE Std 802.1Q-2022.
 
-       Copyright (C) IEEE (2018).
-       This version of this MIB module is part of IEEE Syd 802.1Q;
-       see the draft itself for full legal notices."
+         Copyright (C) IEEE (2022).
+         This version of this MIB module is part of IEEE Std 802.1Q-2022;
+         see that standard for full legal notices."
 
-    REVISION "201806280000Z" -- June 28, 2018
+    REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
-            "Published as part of IEEE Std 802.1Q-2018.
-            Cross references updated and corrected."
-            
+            "Published as part of IEEE Std 802.1Q-2022.
+            Cross references and contact information updated."
+
     REVISION "201412150000Z" -- December 15, 2014
     
     DESCRIPTION
@@ -138,7 +135,7 @@ Dot1agCfmMaintDomainNameType ::= TEXTUAL-CONVENTION
                           used.
         ieeeReserved(xx)  Reserved for definition by IEEE 802.1
                           xx values can be [5..31] and [96..255]
-        ituReserved(xx)   Reserved for definition by  ITU-T Y.1731
+        ituReserved(xx)   Reserved for definition by  ITU-T G.8013/Y.1731
                           xx values range from [32..63]
         ietfReserved(xx)  Reserved for definition by IETF.  xx values range
                           from [64..95].
@@ -243,7 +240,7 @@ Dot1agCfmMaintAssocNameType ::= TEXTUAL-CONVENTION
         unsignedInt16 (3) 2-octet integer/big endian
         rfc2685VpnId(4)   RFC 2685 VPN ID
                           3 octet VPN authority Organizationally
-                          Unique Identifier (OUI) or Company Identifier (CID)
+                          Unique Identifier (OUI) or Company ID (CID)
                           followed by 4 octet VPN index identifying VPN
                           according to the OUI or CID:
 
@@ -266,8 +263,8 @@ Dot1agCfmMaintAssocNameType ::= TEXTUAL-CONVENTION
 
         ieeeReserved(xx)  Reserved for definition by IEEE 802.1
                           xx values can be [5..31] and [96..255]
-        iccFormat(32)     ICC-based format as specified in ITU-T Y.1731
-        ituReserved(xx)   Reserved for definition by  ITU-T Y.1731
+        iccFormat(32)     ICC-based format as specified in ITU-T G.8013/Y.1731
+        ituReserved(xx)   Reserved for definition by  ITU-T G.8013/Y.1731
                           xx values range from [33..63]
         ietfReserved(xx)  Reserved for definition by IETF
                           xx values range from [64..95]
@@ -311,7 +308,7 @@ Dot1agCfmMaintAssocName ::= TEXTUAL-CONVENTION
     STATUS      current
     DESCRIPTION
        "Denotes a generic Maintenance Association Name. It is the
-        part of the Maintenance Association Identifier which is
+        part of the Maintenance Association Identifier that is
         unique within the Maintenance Domain Name and is appended
         to the Maintenance Domain Name to form the Maintenance
         Association Identifier (MAID).
@@ -370,7 +367,7 @@ Dot1agCfmMDLevelOrNone ::= TEXTUAL-CONVENTION
        "Integer identifying the Maintenance Domain Level (MD Level).
         Higher numbers correspond to higher Maintenance Domains,
         those with the greatest physical reach, with the highest
-        values for customers' CFM packets.  Lower numbers correspond
+        values for customers' CFM frames.  Lower numbers correspond
         to lower Maintenance Domains, those with more limited
         physical reach, with the lowest values for CFM PDUs
         protecting single Bridges or physical links.
@@ -403,11 +400,11 @@ Dot1agCfmMpDirection ::= TEXTUAL-CONVENTION
 Dot1agCfmPortStatus ::= TEXTUAL-CONVENTION
     STATUS      current
     DESCRIPTION
-       "An enumerated value from he Port Status TLV from the last CCM
+       "An enumerated value from the Port Status TLV from the last CCM
         received from the last MEP. It indicates the ability of the
         Bridge Port on which the transmitting MEP resides to pass
         ordinary data, regardless of the status of the MAC
-        (Table 21-10).
+        (Table 21-9).
 
         psNoPortStateTLV(0) Indicates either that no CCM has been
                             received or that no port status TLV was
@@ -449,9 +446,9 @@ Dot1agCfmInterfaceStatus ::= TEXTUAL-CONVENTION
                           received or that no interface status TLV
                           was present in the last CCM received.
 
-    isUp(1)               The interface is ready to pass packets.
+    isUp(1)               The interface is ready to pass frames.
 
-    isDown(2)             The interface cannot pass packets
+    isDown(2)             The interface cannot pass frames.
 
     isTesting(3)          The interface is in some test mode.
    
@@ -459,7 +456,7 @@ Dot1agCfmInterfaceStatus ::= TEXTUAL-CONVENTION
                           for some reason.
 
     isDormant(5)          The interface is not in a state to pass
-                          packets but is in a pending state, waiting
+                          frames but is in a pending state, waiting
                           for some external event.
     
     isNotPresent(6)       Some component of the interface is missing
@@ -554,7 +551,7 @@ Dot1agCfmMepId ::= TEXTUAL-CONVENTION
         identifying a specific MEP.
        "
     REFERENCE
-       "3.132, 19.2.1"
+       "3.133, 19.2.1"
     SYNTAX      Unsigned32 (1..8191)
 
 Dot1agCfmMepIdOrZero ::= TEXTUAL-CONVENTION
@@ -670,7 +667,7 @@ Dot1agCfmCcmInterval ::= TEXTUAL-CONVENTION
 Dot1agCfmFngState ::= TEXTUAL-CONVENTION
     STATUS      current
     DESCRIPTION
-       "Indicates the diferent states of the MEP Fault Notification
+       "Indicates the different states of the MEP Fault Notification
         Generator State Machine.
 
         fngReset(1)            No defect has been present since the
@@ -1532,14 +1529,14 @@ dot1agCfmMdTable OBJECT-TYPE
        "The Maintenance Domain table. Each row in the table
         represents a different Maintenance Domain.
 
-        A Maintenance Domain is described 3.135 as the
+        A Maintenance Domain is described 3.136 as the
         network or the part of the network for which faults in
         connectivity are to be managed. The boundary of a Maintenance
         Domain is defined by a set of DSAPs, each of which can become
         a point of connectivity to a service instance.
        "
     REFERENCE
-       "3.135, 18.1"
+       "3.136, 18.1"
     ::= { dot1agCfmMd 2 }
 
 dot1agCfmMdEntry OBJECT-TYPE
@@ -1606,13 +1603,13 @@ dot1agCfmMdName OBJECT-TYPE
         facilitates easy identification of administrative
         responsibility for each Maintenance Domain.
 
-        3.140 defines a Maintenance Domain name as the
+        3.141 defines a Maintenance Domain name as the
         identifier, unique over the domain for which CFM is to
         protect against accidental concatenation of Service
         Instances, of a particular Maintenance Domain.
        "
     REFERENCE
-       "3.140, 12.14.5, 21.6.5.3"
+       "3.141, 12.14.5, 21.6.5.3"
     DEFVAL { "DEFAULT" }
     ::= { dot1agCfmMdEntry 3 }
 
@@ -1730,7 +1727,7 @@ dot1agCfmMaNetTable OBJECT-TYPE
         incorrect connectivity among Service Instances.  A small
         integer, the Maintenance association Endpoint Identifier
         (MEPID), identifies each MEP among those configured on a
-        single MA (3.132, 18.2).
+        single MA (3.133, 18.2).
 
         This table uses two indices, first index is the index of the
         Maintenance Domain table.  The second index is the same as the
@@ -2079,7 +2076,7 @@ dot1agCfmMepTable OBJECT-TYPE
         CFM PDUs and track any responses.  It is an endpoint of a
         single Maintenance Association, and is an endpoint of a
         separate Maintenance Entity for each of the other MEPs in
-        the same Maintenance Association (3.132).
+        the same Maintenance Association (3.133).
 
         This table uses three indices. The first two indices are the
         indices of the Maintenance Domain and MA tables, the reason
@@ -2230,12 +2227,12 @@ dot1agCfmMepIdentifier OBJECT-TYPE
        "Integer that is unique among all the MEPs in the same MA.
         Other definition is: a small integer, unique over a given
         Maintenance Association, identifying a specific Maintenance
-        association Endpoint (3.132).
+        association Endpoint (3.133).
 
         MEP Identifier is also known as the MEPID.
        "
     REFERENCE
-       "3.132, 19.2, 12.14.7"
+       "3.133, 19.2, 12.14.7"
     ::= { dot1agCfmMepEntry 1 }
 
 dot1agCfmMepIfIndex OBJECT-TYPE
@@ -2397,7 +2394,7 @@ dot1agCfmMepHighestPrDefect OBJECT-TYPE
         the FNG_RESET state.
        "
     REFERENCE
-       "12.14.7.1.3:n, 20.35.9, Table 21-1"
+       "12.14.7.1.3:n, 20.35.9, Table 20-1"
     ::= { dot1agCfmMepEntry 13 }
 
 dot1agCfmMepDefects OBJECT-TYPE

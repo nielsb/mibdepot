@@ -1,0 +1,1111 @@
+LLDP-V2-LRP-EXT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Unsigned32
+        FROM SNMPv2-SMI
+    TruthValue
+        FROM SNMPv2-TC
+    MODULE-COMPLIANCE,
+    OBJECT-GROUP
+        FROM SNMPv2-CONF
+    TimeFilter
+        FROM RMON2-MIB
+    InterfaceIndex
+        FROM IF-MIB
+    InetAddress,
+    InetAddressIPv4,
+    InetAddressIPv6,
+    InetPortNumber
+        FROM INET-ADDRESS-MIB
+    LldpV2DestAddressTableIndex
+        FROM LLDP-V2-TC-MIB
+    lldpXdot1StandAloneExtensions
+        FROM LLDP-EXT-DOT1-EVB-EXTENSIONS-MIB
+    LrpAppId,
+    LrpInetAddressInfo
+        FROM LRP-TC-MIB;
+
+lldpXDot1LrpExtensions MODULE-IDENTITY
+    LAST-UPDATED "202012030000Z" -- December 3, 2020
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO 
+       "WG-URL: http://www.ieee802.org/1/
+        WG-EMail: stds-802-1-l@ieee.org
+
+        Contact: IEEE 802.1 Working Group Chair
+        Postal:  C/O IEEE 802.1 Working Group
+                 IEEE Standards Association
+                 445 Hoes Lane
+                 Piscataway
+                 NJ 08854
+                 USA
+        E-mail:  stds-802-1-chairs@ieee.org"
+    DESCRIPTION
+       "The LLDP Management Information Base extension module for IEEE
+        802.1 organizationally-defined discovery information, as
+        specified in IEEE Std 802.1CS, Link-local Registration Protocol
+        (LRP).
+
+        The Link-Layer Discovery Protocol (LLDP) is defined in
+        IEEE Std 802.1AB.
+
+        lldpXdot1StandAloneExtensions is the OUI for LLDP-EXT-DOT1-EVB-EXTENSIONS-MIB.
+        which defines managed objects for IEEE 802.1-defined
+        organizationally-specified LLDP Type-Length Value (TLV)
+        discovery information. lldpXdot1StandAloneExtensions is branched
+        from lldpV2Extensions (defined in LLDP-V2-MIB) using the
+        Organizationally Unique Identifier (OUI) value 00-80-C1, which
+        belongs to IEEE 802.1. An OUI is a 24 bit globally-unique number
+        assigned by the IEEE Registration Authority -- see:
+
+            http://standards.ieee.org/develop/regauth/oui/index.html
+
+        In turn, lldpXDot1LrpExtensions and lldpV2ExtLrpConformance are
+        branched from lldpXdot1StandAloneExtensions, and thus are also
+        extensions from the IEEE 802.1 OUI.
+
+        Unless otherwise indicated, the references in this MIB module
+        are to IEEE Std 802.1CS-2020.
+
+        Copyright (C) IEEE (2020). This version of this MIB module is
+        included in clause 13 of IEEE Std 802.1CS-2020; see the
+        standard itself for full legal notices."
+
+    REVISION "202012030000Z" -- December 3, 2020
+    DESCRIPTION
+       "This MIB module included in IEEE Std 802.1CS-2020.
+       "
+
+   ::= { lldpXdot1StandAloneExtensions 3 }
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+--
+-- Organizationally Defined Information Extension - IEEE 802.1
+-- Definitions to support the IEEE Std 802.1AB LLDP TLVs defined in
+-- IEEE Std 802.1CS Link-local Registration Protocol (LRP)
+--
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+lldpV2ExtLrpObjects    OBJECT IDENTIFIER ::= { lldpXDot1LrpExtensions 1 }
+
+-- LLDP IEEE 802.1CS extension MIB groups
+
+lldpV2ExtConfigLrp     OBJECT IDENTIFIER ::= { lldpV2ExtLrpObjects 1 }
+lldpV2ExtLrpLocalData  OBJECT IDENTIFIER ::= { lldpV2ExtLrpObjects 2 }
+lldpV2ExtLrpRemoteData OBJECT IDENTIFIER ::= { lldpV2ExtLrpObjects 3 }
+
+-----------------------------------------------------------------------
+-- IEEE 802.1 - Configuration for the LRP TLV set
+-----------------------------------------------------------------------
+
+--
+-- The table specifying, for each LRP application, what IP
+-- addresses to advertise in LRP TCP Discovery TLVs in a
+-- Controlled system.
+--
+
+lldpV2ConfigLrpTcpControlledTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2LrpConfigTcpControlledEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table specifying what IP addresses are to be advertised as
+        the address of the Proxy system controlling this Controlled
+        system, for each particular LRP application. These IP addresses
+        and application identifiers can be transmitted in
+        LRP TCP Discovery TLVs.
+       "
+    REFERENCE
+       "11.6.1.1"
+    ::= { lldpV2ExtConfigLrp 1 }
+
+lldpV2ConfigLrpTcpControlledEntry OBJECT-TYPE
+    SYNTAX      LldpV2LrpConfigTcpControlledEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table specifying what IP addresses are to be advertised as
+        the address of the Proxy system controlling this Controlled
+        system, for a particular LRP application. These IP addresses
+        and application identifiers can be transmitted in
+        LRP TCP Discovery TLVs.
+       "
+    INDEX { lldpV2ConfigLrpTcpControlledApplicationId }
+    ::= { lldpV2ConfigLrpTcpControlledTable 1 }
+
+LldpV2LrpConfigTcpControlledEntry ::= SEQUENCE {
+        lldpV2ConfigLrpTcpControlledApplicationId   LrpAppId,
+        lldpV2ConfigLrpTcpControlledTcpPortNumber   InetPortNumber,
+        lldpV2ConfigLrpTcpControlledIpV4Enable      TruthValue,
+        lldpV2ConfigLrpTcpControlledIpV4Address     InetAddressIPv4,
+        lldpV2ConfigLrpTcpControlledIpV6Enable      TruthValue,
+        lldpV2ConfigLrpTcpControlledIpV6Address     InetAddressIPv6
+
+    }
+
+lldpV2ConfigLrpTcpControlledApplicationId OBJECT-TYPE
+    SYNTAX      LrpAppId
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The application identifier to which the rest of the
+        lldpV2ConfigLrpTcpControlledEntry applies.
+       "
+    REFERENCE
+       "9.2"
+    ::= { lldpV2ConfigLrpTcpControlledEntry 1 }
+
+lldpV2ConfigLrpTcpControlledTcpPortNumber OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "The destination TCP Port number to which TCP connections for
+        LRP to the addresses in lldpV2ConfigLrpTcpControlledIpV4Address
+        or lldpV2ConfigLrpTcpControlledIpV6Address, for the
+        application in lldpV2ConfigLrpTcpControlledApplicationId, are
+        to be made.
+
+        If this object contains the value 0, then no
+        Application descriptor with the indexed application ID is
+        transmitted.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "C.2.2.6.1"
+    ::= { lldpV2ConfigLrpTcpControlledEntry 2 }
+
+lldpV2ConfigLrpTcpControlledIpV4Enable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "Specifies whether or not the indexed LRP application is
+        available through the LRP-DT TCP mechanism using TCP over IPv4.
+        It thus controls whether the LRP TCP Discovery TLVs transmitted
+        from this Controlled system include the IPv4 address in
+        lldpV2ConfigLrpTcpControlledIpV4Address in an
+        Application descriptor containing the indexed application ID.
+
+        If lldpV2ConfigLrpTcpControlledIpV4Enable and
+        lldpV2ConfigLrpTcpControlledIpV4Enable are both false(2), then
+        no Application descriptor with the indexed application ID is
+        transmitted.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "C.2.2.6.2"
+    ::= { lldpV2ConfigLrpTcpControlledEntry 3 }
+
+lldpV2ConfigLrpTcpControlledIpV4Address OBJECT-TYPE
+    SYNTAX      InetAddressIPv4
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "Specifies an IPv4 address to be advertised in all of the
+        LRP TCP Discovery TLVs that carry the indexed application ID
+        that are transmitted by this Controlled system.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "C.2.2.6.3"
+    ::= { lldpV2ConfigLrpTcpControlledEntry 4 }
+
+lldpV2ConfigLrpTcpControlledIpV6Enable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "Specifies whether or not the indexed LRP application is
+        available through the LRP-DT TCP mechanism using TCP over IPv6.
+        It thus controls whether the LRP TCP Discovery TLVs transmitted
+        from this Controlled system include the IPv6 address in
+        lldpV2ConfigLrpTcpControlledIpV6Address in an
+        Application descriptor containing the indexed application ID.
+
+        If lldpV2ConfigLrpTcpControlledIpV4Enable and
+        lldpV2ConfigLrpTcpControlledIpV4Enable are both false(2), then
+        no Application descriptor with the indexed application ID is
+        transmitted.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "C.2.2.6.2"
+    ::= { lldpV2ConfigLrpTcpControlledEntry 5 }
+
+lldpV2ConfigLrpTcpControlledIpV6Address OBJECT-TYPE
+    SYNTAX      InetAddressIPv6
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "Specifies an IPv6 address to be advertised in all of the
+        LRP TCP Discovery TLVs that carry the indexed application ID
+        that are transmitted by this Controlled system.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "C.2.2.6.3"
+    ::= { lldpV2ConfigLrpTcpControlledEntry 6 }
+
+--
+-- lldpV2ConfigLrpEcpTxTable: configure the transmission of the 
+--                 LRP ECP Discovery TLVs on a set of ports.
+--
+
+lldpV2ConfigLrpEcpTxTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2ConfigLrpEcpTxEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This table contains one or more rows per physical network
+        connection known to this agent.  The agent may wish to
+        ensure that only one lldpV2ConfigLrpEcpTxEntry is present for
+        each local port, or it may choose to maintain multiple
+        entries for the same local port."
+    REFERENCE
+       "11.6.2.1"
+    ::= { lldpV2ExtLrpLocalData 1 }
+
+lldpV2ConfigLrpEcpTxEntry OBJECT-TYPE
+    SYNTAX      LldpV2ConfigLrpEcpTxEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Information about a particular port component."
+    INDEX   { lldpV2ConfigLrpEcpTxLocalIfIndex,
+              lldpV2ConfigLrpEcpTxLocalDestMACAddress }
+    ::= { lldpV2ConfigLrpEcpTxTable 1 }
+
+LldpV2ConfigLrpEcpTxEntry ::= SEQUENCE {
+    lldpV2ConfigLrpEcpTxLocalIfIndex        InterfaceIndex,
+    lldpV2ConfigLrpEcpTxLocalDestMACAddress LldpV2DestAddressTableIndex,
+    lldpV2ConfigLrpEcpTxEnable              TruthValue
+    }
+
+lldpV2ConfigLrpEcpTxLocalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The interface index value used to identify the port
+        associated with this entry. Its value is an index
+        into the interfaces MIB
+
+        The value of this object is used as an index to the
+        lldpV2ConfigLrpEcpTxTable.
+       "
+    ::= { lldpV2ConfigLrpEcpTxEntry 1 } 
+
+lldpV2ConfigLrpEcpTxLocalDestMACAddress OBJECT-TYPE
+    SYNTAX      LldpV2DestAddressTableIndex 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The index value used to identify the LLDPDU frame destination
+        MAC address associated with this entry. Its value identifies
+        the row in the lldpV2DestAddressTable where the MAC address
+        can be found.
+
+        The value of this object is used as an index to the
+        lldpV2ConfigLrpEcpTxTable.
+       "
+    ::= { lldpV2ConfigLrpEcpTxEntry 2 } 
+
+lldpV2ConfigLrpEcpTxEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "The lldpV2ConfigLrpEcpTxEnable, which is defined 
+        as a truth value and configured by the network management,
+        determines whether the IEEE 802.1 organizationally defined
+        LRP ECP Discovery TLV transmission is allowed on a given
+        LLDP transmission-capable port component.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system."
+    DEFVAL  { false }
+    ::= { lldpV2ConfigLrpEcpTxEntry 3 }
+
+
+--
+-- lldpV2ConfigLrpTcpTxTable: configure the transmission of the 
+--                 LRP TCP Discovery TLVs on a set of ports.
+--
+
+lldpV2ConfigLrpTcpTxTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2ConfigLrpTcpTxEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This table contains one or more rows per physical network
+        connection known to this agent.  The agent may wish to
+        ensure that only one lldpV2ConfigLrpTcpTxEntry is present for
+        each local port, or it may choose to maintain multiple
+        entries for the same local port."
+    ::= { lldpV2ExtLrpLocalData 2 }
+
+lldpV2ConfigLrpTcpTxEntry OBJECT-TYPE
+    SYNTAX      LldpV2ConfigLrpTcpTxEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Information about a particular port component."
+    INDEX   { lldpV2ConfigLrpTcpTxLocalIfIndex,
+              lldpV2ConfigLrpTcpTxLocalDestMACAddress }
+    ::= { lldpV2ConfigLrpTcpTxTable 1 }
+
+LldpV2ConfigLrpTcpTxEntry ::= SEQUENCE {
+    lldpV2ConfigLrpTcpTxLocalIfIndex        InterfaceIndex,
+    lldpV2ConfigLrpTcpTxLocalDestMACAddress LldpV2DestAddressTableIndex,
+    lldpV2ConfigLrpTcpTxEnable              TruthValue
+    }
+
+lldpV2ConfigLrpTcpTxLocalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The interface index value used to identify the port
+        associated with this entry. Its value is an index
+        into the interfaces MIB
+
+        The value of this object is used as an index to the
+        lldpV2ConfigLrpTcpTxTable.
+       "
+    ::= { lldpV2ConfigLrpTcpTxEntry 1 } 
+
+lldpV2ConfigLrpTcpTxLocalDestMACAddress OBJECT-TYPE
+    SYNTAX      LldpV2DestAddressTableIndex 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The index value used to identify the LLDPDU frame destination
+        MAC address associated with this entry. Its value identifies
+        the row in the lldpV2DestAddressTable where the MAC address
+        can be found.
+
+        The value of this object is used as an index to the
+        lldpV2ConfigLrpTcpTxTable.
+       "
+    ::= { lldpV2ConfigLrpTcpTxEntry 2 } 
+
+lldpV2ConfigLrpTcpTxEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+           "The lldpV2ConfigLrpTcpTxEnable, which is defined 
+            as a truth value and configured by the network management,
+            determines whether the IEEE 802.1 organizationally defined
+            LRP TCP Discovery TLV transmission is allowed on a given
+            LLDP transmission-capable port component.
+
+            The value of this object is restored from non-volatile
+            storage after a re-initialization of the management system."
+    REFERENCE 
+            "9.1.2.1 of IEEE Std 802.1AB-2016"
+    DEFVAL  { false }
+    ::= { lldpV2ConfigLrpTcpTxEntry 3 }
+
+-----------------------------------------------------------------------
+-- IEEE 802.1CS LRP LLDP TLVs - Local System Information
+-----------------------------------------------------------------------
+
+--
+-- lldpV2LocLrpEcpTable 
+--
+
+lldpV2LocLrpEcpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2LocLrpEcpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This table contains one or more rows per physical network
+        connection known to this agent.  The agent may wish to
+        ensure that only one lldpV2ExtLrpLocEntry is present for
+        each local port, or it may choose to maintain multiple
+        lldpV2ExtLrpLocEntries for the same local port.
+       "
+    REFERENCE
+       "11.6.2.2"
+    ::= { lldpV2ExtLrpLocalData 3 }
+
+lldpV2LocLrpEcpEntry OBJECT-TYPE
+    SYNTAX      LldpV2LocLrpEcpEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "Information about the C.2.1LRP ECP Discovery TLV that can
+        be transmitted from a particular LLDP port component.
+        Note that this MIB supports the transmission of only one
+        LRP ECP Discovery TLV per port component.
+       "
+    INDEX   { lldpV2LocLrpEcpLocalIfIndex,
+              lldpV2LocLrpEcpLocalDestMACAddress,
+              lldpV2LocLrpEcpApplicationIndex }
+    ::= { lldpV2LocLrpEcpTable 1 }
+
+LldpV2LocLrpEcpEntry ::= SEQUENCE {
+    lldpV2LocLrpEcpLocalIfIndex         InterfaceIndex,
+    lldpV2LocLrpEcpLocalDestMACAddress  LldpV2DestAddressTableIndex,
+    lldpV2LocLrpEcpApplicationIndex     Unsigned32,
+    lldpV2LocLrpEcpApplicationId        LrpAppId
+    }
+
+lldpV2LocLrpEcpLocalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The interface index value used to identify the port
+        associated with this entry. Its value is an index
+        into the interfaces MIB
+
+        The value of this object is used as an index to the
+        lldpV2LocLrpEcpTable.
+       "
+    ::= { lldpV2LocLrpEcpEntry 1 } 
+
+lldpV2LocLrpEcpLocalDestMACAddress OBJECT-TYPE
+    SYNTAX      LldpV2DestAddressTableIndex 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The index value used to identify the LLDPDU frame destination
+        MAC address associated with this entry. Its value identifies
+        the row in the lldpV2DestAddressTable where the MAC address
+        can be found.
+
+        The value of this object is used as an index to the
+        lldpV2LocLrpEcpTable.
+       "
+    ::= { lldpV2LocLrpEcpEntry 2 } 
+
+lldpV2LocLrpEcpApplicationIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A small integer that selects one entry in the
+        lldpV2LocLrpEcpTable.  For every entry in lldpV2LocLrpEcpEntry,
+        there is one Application descriptor in the transmitted
+        LRP ECP Discovery TLV.
+
+        The value of the transmitted Application count field in the
+        LRP ECP Discovery TLV is equal to the number of different values
+        of lldpV2LocLrpEcpApplicationIndex for this port component.
+       "
+    REFERENCE "C.2.1.5, C.2.1.6"
+    ::= { lldpV2LocLrpEcpEntry 3 }
+
+lldpV2LocLrpEcpApplicationId OBJECT-TYPE
+    SYNTAX      LrpAppId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The AppId in one Application descriptor in the transmitted
+        LRP ECP Discovery TLV.
+       "
+    REFERENCE "C.2.1.5, C.2.1.6"
+    ::= { lldpV2LocLrpEcpEntry 4 }
+
+--
+-- lldpV2LocLrpTcpTable - indexed by ifIndex.
+--
+
+lldpV2LocLrpTcpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2LocLrpTcpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This table contains one or more rows per physical network
+        connection known to this agent, one for each port component.
+       "
+    ::= { lldpV2ExtLrpLocalData 4 }
+
+lldpV2LocLrpTcpEntry OBJECT-TYPE
+    SYNTAX      LldpV2LocLrpTcpEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "Information about a particular LLDP port component's transmitted
+        LRP TCP Discovery TLV.  Note that this MIB supports the
+        transmission of only one LRP TCP Discovery TLV per port
+        component.
+       "
+    INDEX   { lldpV2LocLrpTcpLocalIfIndex,
+              lldpV2LocLrpTcpLocalDestMACAddress,
+              lldpV2LocLrpTcpApplicationIndex }
+    ::= { lldpV2LocLrpTcpTable 1 }
+
+LldpV2LocLrpTcpEntry ::= SEQUENCE {
+    lldpV2LocLrpTcpLocalIfIndex         InterfaceIndex,
+    lldpV2LocLrpTcpLocalDestMACAddress  LldpV2DestAddressTableIndex,
+    lldpV2LocLrpTcpApplicationIndex     Unsigned32,
+    lldpV2LocLrpTcpApplicationId        LrpAppId,
+    lldpV2LocLrpTcpPortNumber           InetPortNumber,
+    lldpV2LocLrpTcpAddressInfo1         LrpInetAddressInfo,
+    lldpV2LocLrpTcpAddress1             InetAddress,
+    lldpV2LocLrpTcpAddressInfo2         LrpInetAddressInfo,
+    lldpV2LocLrpTcpAddress2             InetAddress
+}
+
+lldpV2LocLrpTcpLocalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The interface index value used to identify the port
+        associated with this entry. Its value is an index
+        into the interfaces MIB
+
+        The value of this object is used as an index to the
+        lldpV2LocLrpTcpTable.
+       "
+    ::= { lldpV2LocLrpTcpEntry 1 } 
+
+lldpV2LocLrpTcpLocalDestMACAddress OBJECT-TYPE
+    SYNTAX      LldpV2DestAddressTableIndex 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The index value used to identify the destination
+        MAC address associated with this entry. Its value identifies
+        the row in the lldpV2DestAddressTable where the MAC address
+        can be found.
+
+        The value of this object is used as an index to the
+        lldpV2LocLrpTcpTable.
+       "
+    ::= { lldpV2LocLrpTcpEntry 2 }
+
+lldpV2LocLrpTcpApplicationIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A small integer that selects one entry in the
+        lldpV2LocLrpTcpTable.  For every entry in lldpV2LocLrpTcpEntry,
+        there is one Application descriptor in the transmitted
+        LRP TCP Discovery TLV.
+
+        The value of the transmitted Application count field in the
+        LRP TCP Discovery TLV is equal to the number of different values
+        of lldpV2LocLrpTcpApplicationIndex for this port component.
+       "
+    REFERENCE "C.2.2.5, C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 3 }
+
+lldpV2LocLrpTcpApplicationId OBJECT-TYPE
+    SYNTAX      LrpAppId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The AppId in one Application descriptor in the transmitted
+        LRP TCP Discovery TLV.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 4 }
+
+lldpV2LocLrpTcpPortNumber OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the TCP Port number field in the transmitted
+        LRP TCP Discovery TLV.  lldpV2LocLrpTcpPortNumber SHALL NOT
+        contain the value 0.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 5 }
+
+lldpV2LocLrpTcpAddressInfo1 OBJECT-TYPE
+    SYNTAX      LrpInetAddressInfo
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the first Address info field in the transmitted
+        Application descriptor.  lldpV2LocLrpTcpAddressInfo1 SHALL NOT
+        contain the value, notPresent(256).
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 6 }
+
+lldpV2LocLrpTcpAddress1 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the first Address field in the transmitted
+        Application descriptor.  If lldpV2LocLrpTcpAddressInfo1 has the
+        value notPresent(256) or noAddress(0), lldpV2LocLrpTcpAddress1
+        SHALL contain a zero-length octet string.  Otherwise,
+        lldpV2LocLrpTcpAddress1 SHALL contain an IPv4 or IPv6 address,
+        as specified by lldpV2LocLrpTcpAddressInfo1.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 7 }
+
+lldpV2LocLrpTcpAddressInfo2 OBJECT-TYPE
+    SYNTAX      LrpInetAddressInfo
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the second Address info field in the transmitted
+        Application descriptor.  lldpV2LocLrpTcpAddressInfo2 has the
+        value notPresent(256) if there is no second Address info field
+        in the Application descriptor.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 8 }
+
+lldpV2LocLrpTcpAddress2 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the second Address field in the transmitted
+        Application descriptor.  If lldpV2LocLrpTcpAddressInfo2 has the
+        value notPresent(256) or noAddress(0), lldpV2LocLrpTcpAddress2
+        SHALL contain a zero-length octet string.  Otherwise,
+        lldpV2LocLrpTcpAddress2 SHALL contain an IPv4 or IPv6 address,
+        as specified by lldpV2LocLrpTcpAddressInfo2.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2LocLrpTcpEntry 9 }
+
+-----------------------------------------------------------------------
+-- IEEE 802.1CS LRP LLDP TLVs - Remote (Neighbor) System Information
+-----------------------------------------------------------------------
+
+--
+-- lldpV2RemLrpEcpTable 
+--
+
+lldpV2RemLrpEcpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2RemLrpEcpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains one or more rows per physical network
+            connection known to this agent.  The agent may wish to
+            ensure that only one lldpV2ExtLrpRemEntry is present for
+            each local port, or it may choose to maintain multiple
+            lldpV2ExtLrpRemEntries for the same local port."
+    REFERENCE
+       "11.6.2.3"
+    ::= { lldpV2ExtLrpRemoteData 1 }
+
+lldpV2RemLrpEcpEntry OBJECT-TYPE
+    SYNTAX      LldpV2RemLrpEcpEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Information about a particular port component."
+    INDEX   { lldpV2RemLrpEcpTimeMark,
+              lldpV2RemLrpEcpLocalIfIndex,
+              lldpV2RemLrpEcpLocalDestMACAddress,
+              lldpV2RemLrpEcpIndex,
+              lldpV2RemLrpEcpApplicationIndex }
+    ::= { lldpV2RemLrpEcpTable 1 }
+
+LldpV2RemLrpEcpEntry ::= SEQUENCE {
+    lldpV2RemLrpEcpTimeMark             TimeFilter,
+    lldpV2RemLrpEcpLocalIfIndex         InterfaceIndex,
+    lldpV2RemLrpEcpLocalDestMACAddress  LldpV2DestAddressTableIndex,
+    lldpV2RemLrpEcpIndex                Unsigned32,
+    lldpV2RemLrpEcpApplicationIndex     Unsigned32,
+    lldpV2RemLrpEcpApplicationId        LrpAppId
+    }
+
+lldpV2RemLrpEcpTimeMark OBJECT-TYPE
+    SYNTAX      TimeFilter
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A TimeFilter for this entry. See the TimeFilter textual
+        convention in IETF RFC 4502 to see how TimeFilter works.
+       "
+    REFERENCE 
+       "IETF RFC 4502 section 6"
+    ::= { lldpV2RemLrpEcpEntry 1 }
+
+
+lldpV2RemLrpEcpLocalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The interface index value used to identify the port
+        associated with this entry. Its value is an index
+        into the interfaces MIB
+
+        The value of this object is used as an index to the
+        lldpV2RemLrpEcpTable.
+       "
+    ::= { lldpV2RemLrpEcpEntry 2 } 
+
+lldpV2RemLrpEcpLocalDestMACAddress OBJECT-TYPE
+    SYNTAX      LldpV2DestAddressTableIndex 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The index value used to identify the LLDPDU frame destination
+        MAC address associated with this entry. Its value identifies
+        the row in the lldpV2DestAddressTable where the MAC address
+        can be found.
+
+        The value of this object is used as an index to the
+        lldpV2RemLrpTcpTable.
+       "
+    ::= { lldpV2RemLrpEcpEntry 3 } 
+
+
+lldpV2RemLrpEcpIndex OBJECT-TYPE
+    SYNTAX      Unsigned32(1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This object represents an arbitrary local integer value used
+        by this agent to identify a particular connection instance,
+        unique only for the indicated remote system.
+
+        An agent is encouraged to assign monotonically increasing
+        index values to new entries, starting with one, after each
+        reboot. It is considered unlikely that the
+        lldpV2RemLrpEcpIndex can wrap between reboots.
+       "
+    ::= { lldpV2RemLrpEcpEntry 4 }
+
+lldpV2RemLrpEcpApplicationIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A small integer that selects one entry in the
+        lldpV2RemLrpEcpTable.  For every entry in lldpV2RemLrpEcpEntry,
+        there is one Application descriptor in the received
+        LRP ECP Discovery TLV.
+
+        The value of the received Application count field in the
+        LRP ECP Discovery TLV is equal to the number of different values
+        of lldpV2RemLrpEcpApplicationIndex for this connection instance.
+       "
+    REFERENCE "C.2.1.5, C.2.1.6"
+    ::= { lldpV2RemLrpEcpEntry 5 }
+
+lldpV2RemLrpEcpApplicationId OBJECT-TYPE
+    SYNTAX      LrpAppId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The AppId in one Application descriptor in the received
+        LRP ECP Discovery TLV.
+       "
+    REFERENCE "C.2.1.5, C.2.1.6"
+    ::= { lldpV2RemLrpEcpEntry 6 }
+
+--
+-- lldpV2RemLrpTcpTable 
+--
+
+lldpV2RemLrpTcpTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2RemLrpTcpEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains one or more rows per physical network
+            connection known to this agent.  The agent may wish to
+            ensure that only one lldpV2ExtLrpRemEntry is present for
+            each local port, or it may choose to maintain multiple
+            lldpV2ExtLrpRemEntries for the same local port."
+    ::= { lldpV2ExtLrpRemoteData 2 }
+
+lldpV2RemLrpTcpEntry OBJECT-TYPE
+    SYNTAX      LldpV2RemLrpTcpEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Information about a particular port component."
+    INDEX   { lldpV2RemLrpTcpTimeMark,
+              lldpV2RemLrpTcpLocalIfIndex,
+              lldpV2RemLrpTcpLocalDestMACAddress,
+              lldpV2RemLrpTcpIndex,
+              lldpV2RemLrpTcpApplicationIndex }
+    ::= { lldpV2RemLrpTcpTable 1 }
+
+LldpV2RemLrpTcpEntry ::= SEQUENCE {
+    lldpV2RemLrpTcpTimeMark             TimeFilter,
+    lldpV2RemLrpTcpLocalIfIndex         InterfaceIndex,
+    lldpV2RemLrpTcpLocalDestMACAddress  LldpV2DestAddressTableIndex,
+    lldpV2RemLrpTcpIndex                Unsigned32,
+    lldpV2RemLrpTcpApplicationIndex     Unsigned32,
+    lldpV2RemLrpTcpApplicationId        LrpAppId,
+    lldpV2RemLrpTcpPortNumber           InetPortNumber,
+    lldpV2RemLrpTcpAddressInfo1         LrpInetAddressInfo,
+    lldpV2RemLrpTcpAddress1             InetAddress,
+    lldpV2RemLrpTcpAddressInfo2         LrpInetAddressInfo,
+    lldpV2RemLrpTcpAddress2             InetAddress
+    }
+
+lldpV2RemLrpTcpTimeMark OBJECT-TYPE
+    SYNTAX      TimeFilter
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A TimeFilter for this entry. See the TimeFilter textual
+        convention in IETF RFC 4502 to see how TimeFilter works.
+       "
+    REFERENCE 
+       "IETF RFC 4502 section 6"
+    ::= { lldpV2RemLrpTcpEntry 1 }
+
+
+lldpV2RemLrpTcpLocalIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The interface index value used to identify the port
+        associated with this entry. Its value is an index
+        into the interfaces MIB
+
+        The value of this object is used as an index to the
+        lldpV2RemLrpTcpTable.
+       "
+    ::= { lldpV2RemLrpTcpEntry 2 } 
+
+lldpV2RemLrpTcpLocalDestMACAddress OBJECT-TYPE
+    SYNTAX      LldpV2DestAddressTableIndex 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The index value used to identify the destination
+        MAC address associated with this entry. Its value identifies
+        the row in the lldpV2DestAddressTable where the MAC address
+        can be found.
+
+        The value of this object is used as an index to the
+        lldpV2RemLrpTcpTable.
+       "
+    ::= { lldpV2RemLrpTcpEntry 3 } 
+
+
+lldpV2RemLrpTcpIndex OBJECT-TYPE
+    SYNTAX      Unsigned32(1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "This object represents an arbitrary local integer value used
+        by this agent to identify a particular connection instance,
+        unique only for the indicated remote system.
+
+        An agent is encouraged to assign monotonically increasing
+        index values to new entries, starting with one, after each
+        reboot. It is considered unlikely that the
+        lldpV2RemLrpTcpIndex can wrap between reboots.
+       "
+    ::= { lldpV2RemLrpTcpEntry 4 }
+
+lldpV2RemLrpTcpApplicationIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A small integer that selects one entry in the
+        lldpV2RemLrpTcpTable.  For every entry in lldpV2RemLrpTcpEntry,
+        there is one Application descriptor in the received
+        LRP TCP Discovery TLV.
+
+        The value of the received Application count field in the
+        LRP TCP Discovery TLV is equal to the number of different values
+        of lldpV2RemLrpTcpApplicationIndex for this connection instance.
+       "
+    REFERENCE "C.2.2.5, C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 5 }
+
+lldpV2RemLrpTcpApplicationId OBJECT-TYPE
+    SYNTAX      LrpAppId
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The AppId in one Application descriptor in the received
+        LRP TCP Discovery TLV.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 6 }
+
+lldpV2RemLrpTcpPortNumber OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the TCP Port number field in the received
+        Application descriptor.  lldpV2RemLrpTcpPortNumber SHALL NOT
+        contain the value 0.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 7 }
+
+lldpV2RemLrpTcpAddressInfo1 OBJECT-TYPE
+    SYNTAX      LrpInetAddressInfo
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the first Address info field in the received
+        Application descriptor.  lldpV2RemLrpTcpAddressInfo1 SHALL NOT
+        contain the value, notPresent(256).
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 8 }
+
+lldpV2RemLrpTcpAddress1 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the first Address field in the received
+        Application descriptor.  If lldpV2RemLrpTcpAddressInfo1 has the
+        value notPresent(256) or noAddress(0), lldpV2RemLrpTcpAddress1
+        SHALL contain a zero-length octet string.  Otherwise,
+        lldpV2RemLrpTcpAddress1 SHALL contain an IPv4 or IPv6 address,
+        as specified by lldpV2RemLrpTcpAddressInfo1.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 9 }
+
+lldpV2RemLrpTcpAddressInfo2 OBJECT-TYPE
+    SYNTAX      LrpInetAddressInfo
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the second Address info field in the received
+        Application descriptor.  lldpV2RemLrpTcpAddressInfo2 has the
+        value notPresent(256) if there is no second Address info field
+        in the Application descriptor.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 10 }
+
+lldpV2RemLrpTcpAddress2 OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The contents of the second Address field in the received
+        Application descriptor.  If lldpV2RemLrpTcpAddressInfo2 has the
+        value notPresent(256) or noAddress(0), lldpV2RemLrpTcpAddress2
+        SHALL contain a zero-length octet string.  Otherwise,
+        lldpV2RemLrpTcpAddress2 SHALL contain an IPv4 or IPv6 address,
+        as specified by lldpV2RemLrpTcpAddressInfo2.
+       "
+    REFERENCE "C.2.2.6"
+    ::= { lldpV2RemLrpTcpEntry 11 }
+
+-----------------------------------------------------------------------
+-- Conformance Information for the basicSet TLV set
+-----------------------------------------------------------------------
+
+lldpV2ExtLrpConformance
+    OBJECT IDENTIFIER ::= { lldpXdot1StandAloneExtensions 9 }
+lldpV2ExtLrpCompliances
+    OBJECT IDENTIFIER ::= { lldpV2ExtLrpConformance 1 }
+lldpV2ExtLrpGroups
+    OBJECT IDENTIFIER ::= { lldpV2ExtLrpConformance 2 }
+
+-- compliance statements
+
+
+lldpV2ExtLrpTxRxCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "A compliance statement for SNMP entities that implement
+            the IEEE 802.1 organizationally defined LLDP extension MIB.
+
+            This group is mandatory for all agents that implement the 
+            LLDP 802.1 organizational extension in TX and/or RX mode
+            for the basicSet TLV set.
+
+            This version defines compliance requirements for
+            V2 of the LLDP MIB."
+    MODULE  -- this module
+    ::= { lldpV2ExtLrpCompliances 1 }
+
+
+
+-- MIB groupings for the basicSet TLV set
+
+lldpV2ExtLrpControlledTcpControlGroup    OBJECT-GROUP
+    OBJECTS {
+        lldpV2ConfigLrpTcpControlledTcpPortNumber,
+        lldpV2ConfigLrpTcpControlledIpV4Enable,
+        lldpV2ConfigLrpTcpControlledIpV4Address,
+        lldpV2ConfigLrpTcpControlledIpV6Enable,
+        lldpV2ConfigLrpTcpControlledIpV6Address
+    }
+    STATUS  current
+    DESCRIPTION
+       "The optional collection of objects which are required of a
+        Controlled system so that a Proxy system SNMP client can
+        configure the LRP TCP Discovery TLVs to be transmitted by the
+        Controlled system.
+       "
+    REFERENCE  "5.10:b"
+    ::= { lldpV2ExtLrpGroups 1 }
+
+lldpV2ExtLrpEcpTlvGroup    OBJECT-GROUP
+    OBJECTS {
+        lldpV2ConfigLrpEcpTxEnable,
+        lldpV2LocLrpEcpApplicationId,
+        lldpV2RemLrpEcpApplicationId
+    }
+    STATUS  current
+    DESCRIPTION
+       "The optional collection of objects which are required of any
+        system implementing the LRP-DT ECP mechanism so that an SNMP
+        client can observe the LRP ECP Discovery TLVs transmitted and
+        received by the system."
+    REFERENCE  "Clause 5"
+    ::= { lldpV2ExtLrpGroups 2 }
+
+lldpV2ExtLrpTcpTlvGroup    OBJECT-GROUP
+    OBJECTS {
+        lldpV2ConfigLrpTcpTxEnable,
+        lldpV2LocLrpTcpApplicationId,
+        lldpV2LocLrpTcpPortNumber,
+        lldpV2LocLrpTcpAddressInfo1,
+        lldpV2LocLrpTcpAddress1,
+        lldpV2LocLrpTcpAddressInfo2,
+        lldpV2LocLrpTcpAddress2,
+        lldpV2RemLrpTcpApplicationId,
+        lldpV2RemLrpTcpPortNumber,
+        lldpV2RemLrpTcpAddressInfo1,
+        lldpV2RemLrpTcpAddress1,
+        lldpV2RemLrpTcpAddressInfo2,
+        lldpV2RemLrpTcpAddress2
+    }
+    STATUS  current
+    DESCRIPTION
+       "The optional collection of objects which are required of any
+        system implementing the LRP-DT TCP mechanism so that an SNMP
+        client can observe the LRP TCP Discovery TLVs transmitted and
+        received by the system."
+    REFERENCE  "Clause 5"
+    ::= { lldpV2ExtLrpGroups 3 }
+
+END

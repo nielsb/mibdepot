@@ -1,0 +1,108 @@
+LRP-TC-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY,
+    Unsigned32
+        FROM SNMPv2-SMI
+    ieee802dot1mibs
+        FROM IEEE8021-TC-MIB
+    TEXTUAL-CONVENTION
+        FROM SNMPv2-TC;
+
+ieee8021LrpTcMIB MODULE-IDENTITY
+    LAST-UPDATED "202012030000Z" -- December 3, 2020
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO 
+            "WG-URL:   http://1.ieee802.org
+             WG-EMail: stds-802-1-l@ieee.org
+
+             Contact:  IEEE 802.1 Working Group Chair
+             Postal:   C/O IEEE 802.1 Working Group
+                       IEEE Standards Association
+                       445 Hoes Lane
+                       Piscataway
+                       NJ 08854
+                       USA
+             E-mail:   stds-802-1-chairs@ieee.org"
+
+    DESCRIPTION
+            "Textual conventions used throughout IEEE Std 802.1CS.
+
+            Unless otherwise indicated, the references in this
+            MIB module are to IEEE Std 802.1CS-2020.
+
+            Copyright (C) IEEE (2021). This version of this MIB module
+            is included in clause 13 of IEEE Std 802.1CS-2020;
+            see the standard itself for full legal notices."
+    REVISION    "202012030000Z" -- December 3, 2020
+    DESCRIPTION "This MIB module included in IEEE Std 802.1CS-2020.
+                "
+
+   ::= { ieee802dot1mibs 34 }
+
+-- 
+-- ***********************************************************
+-- Textual Conventions
+-- ***********************************************************
+
+LrpHelloStatus ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION
+       "This specifies the current state of the Hello Receive State
+        Machine.  It can take the following values:
+
+        hsLooking(1) This Portal has not yet received a successful
+                    Complete Portal create request.
+        hsConnecting(2) This Portal has received a successful
+                    Complete Portal create request (10.2.4), and a
+                    Hello LRPDU with the hsLooking status.
+                    The Portal is ready to receive all LRPDUs.
+        hsConnected(3) This Portal is up and ready to transfer
+                    LRP application data. The Portal is allowed to
+                    transmit all LRPDUs
+       "
+    REFERENCE
+       "8.2.2.8"
+    SYNTAX  INTEGER {
+        hsLooking    (1),
+        hsConnecting (2),
+        hsConnected  (3)
+    }
+
+LrpAppId ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT    "x"
+    STATUS          current
+    DESCRIPTION
+       "Identifies an LRP application type.
+        A 32 bit number. The most-significant 24 bits of the integer are
+        an OUI or CID (obtainable from the IEEE Registration Authority),
+        and the least-significant 8 bits are assigned by the owner of
+        the OUI or CID. This creates a world-wide unique identity for
+        the LRP application type.
+       "
+    REFERENCE   "9.2"
+    SYNTAX      Unsigned32
+
+LrpInetAddressInfo ::= TEXTUAL-CONVENTION
+    STATUS  current
+    DESCRIPTION
+       "An LRP TCP Discovery TLV has some number of
+        Application descriptors, each of which can have either one or
+        two Address info fields.  The Address info field tells whether
+        the following Address field is present or not, and if present,
+        whether it contains an IPv4 or an IPv6 address.
+        LrpInetAddressInfo can take the following values:
+
+        noAddress(0),   Address info present, Address field not present
+        addrIPv4(1),    Address info present, Address field has IPv4
+        addrIPv6(2),    Address info present, Address field has IPv6
+        notPresent(256) Address info not present
+       "
+    REFERENCE   "C.2.2.6.2"
+    SYNTAX      INTEGER {
+        noAddress(0),
+        addrIPv4(1),
+        addrIPv6(2),
+        notPresent(256)
+    }
+
+END
