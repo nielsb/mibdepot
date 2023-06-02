@@ -53,33 +53,15 @@ diff -ru auto/mibs/v2/CISCO-NAT-CGN-EXT-MIB.my cisco/CISCO-NAT-CGN-EXT-MIB.my
 diff -ru auto/mibs/v2/CISCO-RTTMON-TC-MIB.my cisco/CISCO-RTTMON-TC-MIB.my
 --- auto/mibs/v2/CISCO-RTTMON-TC-MIB.my	2012-06-01 23:06:31.000000000 +0200
 +++ cisco/CISCO-RTTMON-TC-MIB.my	2016-06-07 13:35:05.000000000 +0200
-@@ -90,6 +90,26 @@
- 
- -- Textual Conventions
- 
-+RttMonScheduleStartType ::= TEXTUAL-CONVENTION
-+    STATUS          current
-+    DESCRIPTION
-+	"This object specifies the start-time option to be used for
-+	scheduling the start time of RTT operation.
-+	The following list defines the start-time options
-+	that can be configured for the probe:
-+	    pending(1)      pending state.
-+	    now(2)          schedule to immediately start the probe.
-+	    random(3)       schedule start time of probe at random time over a range.
-+	    after(4)        schedule start time of probe after a certain amount of time from now.
-+	    specific(5)     schedule start time of probe at a given specific time interval"
-+    SYNTAX          INTEGER  {
-+			pending(1),
-+			now(2),
-+			random(3),
-+			after(4),
-+			specific(5)
-+		    }
-+
- RttReset ::= TEXTUAL-CONVENTION
-     STATUS          current
-     DESCRIPTION
+@@ -428,7 +425,7 @@
+
+         The value 'fabricPathEcho' will cause the RTT application to
+         perform delay performance measurment and verify connectivity in
+-        a Fabric Path Network.
++        a Fabric Path Network."
+
+         NOTE:  The 'pathJitter' time delay operation is a heuristic
+                measurement because an intermediate hop may forward
 diff -ru auto/mibs/v2/CISCO-SDSL-LINE-MIB.my cisco/CISCO-SDSL-LINE-MIB.my
 --- auto/mibs/v2/CISCO-SDSL-LINE-MIB.my	2001-12-04 02:11:06.000000000 +0100
 +++ cisco/CISCO-SDSL-LINE-MIB.my	2016-06-07 13:15:27.000000000 +0200
