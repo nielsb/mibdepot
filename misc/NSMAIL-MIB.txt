@@ -1,10 +1,9 @@
 NSMAIL-MIB DEFINITIONS ::= BEGIN 
 
 IMPORTS 
-   MODULE-IDENTITY, OBJECT-TYPE, OBJECT-IDENTITY 
-      FROM SNMPv2-SMI 
+   MODULE-IDENTITY, OBJECT-TYPE, OBJECT-IDENTITY,
    enterprises 
-      FROM ObjectIds 
+      FROM SNMPv2-SMI 
    Counter32, Gauge32 
       FROM SNMPv2-SMI 
    Counter, IpAddress, TimeTicks 
@@ -28,9 +27,9 @@ nsmail MODULE-IDENTITY
 
    ::= { netscape 5 } 
 
------ 
+---- 
 -- Static variables 
------ 
+---- 
 
 nsmailEntityInfo OBJECT IDENTIFIER ::= { nsmail 1 } 
 
@@ -85,9 +84,9 @@ nsmailEntityName     OBJECT-TYPE
 		  installation site." 
     ::= { nsmailEntityInfo 6 } 
 
------ 
+---- 
 -- mta table for statistic information 
------ 
+---- 
 
 mtaTable       OBJECT-TYPE 
     SYNTAX     SEQUENCE OF MtaEntry 
@@ -198,19 +197,19 @@ mtaId          OBJECT-TYPE
     SYNTAX     INTEGER 
     ACCESS     read-only 
     STATUS     mandatory 
-    DESCRIPTION  The id of the MTA as configured." 
+    DESCRIPTION  "The id of the MTA as configured." 
     ::= { mtaEntry 10 } 
 
------ 
+---- 
 -- Traps 
------ 
+---- 
 
 nsMailServerDown     TRAP-TYPE 
     ENTERPRISE       netscape 
     VARIABLES       { nsmailEntityDescr, nsmailEntityVers,
 		      nsmailEntityLocation,
 		      nsmailEntityContact } 
-    DESCRIPTION       This trap is generated whenever the 
+    DESCRIPTION       "This trap is generated whenever the 
 		      agent detects the Netscape Mail
 		      Server to be (potentially) Down."
     ::= 5001 
