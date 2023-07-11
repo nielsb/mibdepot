@@ -19,11 +19,11 @@ nsmail MODULE-IDENTITY
    LAST-UPDATED         "9706021700Z" 
    ORGANIZATION         "Netscape Communications Corp." 
    CONTACT-INFO         "Netscape Communications Corp. 
-			 501 E. Middlefield Rd. 
-			 Mountain View, CA 94043" 
+                         501 E. Middlefield Rd. 
+                         Mountain View, CA 94043" 
 
    DESCRIPTION          "A private MIB module for Netscape
-			 Messaging Server" 
+                         Messaging Server" 
 
    ::= { netscape 5 } 
 
@@ -38,7 +38,7 @@ nsmailEntityDescr     OBJECT-TYPE
    ACCESS     read-only 
    STATUS     mandatory 
    DESCRIPTION   "A general textual description 
-		  of the Netscape Mail Server." 
+                  of the Netscape Mail Server." 
    ::= { nsmailEntityInfo 1 } 
 
 nsmailEntityVers     OBJECT-TYPE 
@@ -53,7 +53,7 @@ nsmailEntityOrg     OBJECT-TYPE
    ACCESS     read-only 
    STATUS     mandatory 
    DESCRIPTION  "Organization responsible for Netscape
-		 Mail Server at this installation." 
+                 Mail Server at this installation." 
    ::= { nsmailEntityInfo 3 } 
 
 nsmailEntityLocation     OBJECT-TYPE 
@@ -61,9 +61,9 @@ nsmailEntityLocation     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "Physical location of this entity
-	          (Netscape Mail Server). For example: 
-	          hostname, building number, 
-	          lab number, etc."
+                  (Netscape Mail Server). For example: 
+                  hostname, building number, 
+                  lab number, etc."
     ::= { nsmailEntityInfo 4 } 
 
 nsmailEntityContact     OBJECT-TYPE 
@@ -71,9 +71,9 @@ nsmailEntityContact     OBJECT-TYPE
     ACCESS      read-only 
     STATUS      mandatory 
     DESCRIPTION "Contact person(s) responsible for the 
-	         Netscape Mail Server at this
-	         installation, together with
-	         information on how to contact." 
+                 Netscape Mail Server at this
+                 installation, together with
+                 information on how to contact." 
     ::= { nsmailEntityInfo 5 } 
 
 nsmailEntityName     OBJECT-TYPE 
@@ -81,7 +81,7 @@ nsmailEntityName     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "Name assigned to this entity at the 
-		  installation site." 
+                  installation site." 
     ::= { nsmailEntityInfo 6 } 
 
 ---- 
@@ -119,7 +119,7 @@ mtaReceivedMessages     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The total number of messages received 
-		  since MTA Initialization." 
+                  since MTA Initialization." 
     ::= { mtaEntry 1 } 
 
 mtaStoredMessages     OBJECT-TYPE 
@@ -127,7 +127,7 @@ mtaStoredMessages     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The total number of messages currently 
-		  stored in the MTA." 
+                  stored in the MTA." 
     ::= { mtaEntry 2 } 
 
 mtaTransmittedMessages     OBJECT-TYPE 
@@ -135,7 +135,7 @@ mtaTransmittedMessages     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The total number of messages
-		  transmitted since MTA Initialization." 
+                  transmitted since MTA Initialization." 
     ::= { mtaEntry 3 } 
 
 mtaReceivedVolume     OBJECT-TYPE 
@@ -143,7 +143,7 @@ mtaReceivedVolume     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The number of msgs (in kilo-octets
-		  received since MTA Initialization."
+                  received since MTA Initialization."
     ::= { mtaEntry 4 } 
 
 mtaStoredVolume     OBJECT-TYPE 
@@ -151,8 +151,8 @@ mtaStoredVolume     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The total number of msgs 
-		  (in kilo-octets) currently stored 
-		  in the MTA."
+                  (in kilo-octets) currently stored 
+                  in the MTA."
     ::= { mtaEntry 5 } 
 
 mtaTransmittedVolume     OBJECT-TYPE 
@@ -160,7 +160,7 @@ mtaTransmittedVolume     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "Number of msgs, in kilo-octets, 
-		  transmitted since MTA initialization."
+                  transmitted since MTA initialization."
     ::= { mtaEntry 6 } 
 
 mtaReceivedRecipients     OBJECT-TYPE 
@@ -168,9 +168,9 @@ mtaReceivedRecipients     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The number of recipients specified 
-		  in all messages received since MTA 
-		  Initialization. Recipients this MTA 
-		  had no responsibility for are not counted."
+                  in all messages received since MTA 
+                  Initialization. Recipients this MTA 
+                  had no responsibility for are not counted."
     ::= { mtaEntry 7 } 
 
 mtaStoredRecipients     OBJECT-TYPE 
@@ -178,9 +178,9 @@ mtaStoredRecipients     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The total number of recipients 
-		  specified in all messages currently 
-		  stored in the MTA. Recipients this MTA 
-		  had no responsibility for are not counted."
+                  specified in all messages currently 
+                  stored in the MTA. Recipients this MTA 
+                  had no responsibility for are not counted."
     ::= { mtaEntry 8 } 
 
 mtaTransmittedRecipients     OBJECT-TYPE 
@@ -188,9 +188,9 @@ mtaTransmittedRecipients     OBJECT-TYPE
     ACCESS     read-only 
     STATUS     mandatory 
     DESCRIPTION  "The number of recipients specified in
-		  all messages transmitted since MTA 
-		  Initialization. Recipients this MTA
-		  had no responsibility for are not counted."
+                  all messages transmitted since MTA 
+                  Initialization. Recipients this MTA
+                  had no responsibility for are not counted."
     ::= { mtaEntry 9 } 
 
 mtaId          OBJECT-TYPE 
@@ -207,36 +207,36 @@ mtaId          OBJECT-TYPE
 nsMailServerDown     TRAP-TYPE 
     ENTERPRISE       netscape 
     VARIABLES       { nsmailEntityDescr, nsmailEntityVers,
-		      nsmailEntityLocation,
-		      nsmailEntityContact } 
+                      nsmailEntityLocation,
+                      nsmailEntityContact } 
     DESCRIPTION       "This trap is generated whenever the 
-		      agent detects the Netscape Mail
-		      Server to be (potentially) Down."
+                      agent detects the Netscape Mail
+                      Server to be (potentially) Down."
     ::= 5001 
 
 nsMailServerStart    TRAP-TYPE 
     ENTERPRISE       netscape 
     VARIABLES      { nsmailEntityDescr, nsmailEntityVers,
-		     nsmailEntityLocation } 
+                     nsmailEntityLocation } 
     DESCRIPTION     "This trap is generated whenever 
-		     the agent detects the Netscape 
-		     Mail Server to have (re)started." 
+                     the agent detects the Netscape 
+                     Mail Server to have (re)started." 
     ::= 5002 
 
 nsMailServerNoResponse  TRAP-TYPE 
     ENTERPRISE       netscape 
     VARIABLES      { nsmailEntityDescr, nsmailEntityVers,
-		     nsmailEntityLocation,
-		     nsmailEntityContact } 
+                     nsmailEntityLocation,
+                     nsmailEntityContact } 
     DESCRIPTION     "This trap is generated whenever the 
-		     agent detects the Netscape Mail Server
-		     not responding to its polls. This 
-		     TRAP is different from the 
-		     'nsMailServerDown' TRAP, as the 
-		     Netscape Mail Server is still 
-		     potentially up, serving its main 
-		     purpose. But, the SNMP data collection
-		     entity has most likely gone down." 
+                     agent detects the Netscape Mail Server
+                     not responding to its polls. This 
+                     TRAP is different from the 
+                     'nsMailServerDown' TRAP, as the 
+                     Netscape Mail Server is still 
+                     potentially up, serving its main 
+                     purpose. But, the SNMP data collection
+                     entity has most likely gone down." 
     ::= 5003 
 
 END 
