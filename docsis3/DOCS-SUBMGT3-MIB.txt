@@ -24,14 +24,14 @@ DOCS-SUBMGT3-MIB DEFINITIONS ::= BEGIN
    SnmpTagList             
              FROM SNMP-TARGET-MIB     -- RFC 3411
     clabProjDocsis,
-    DocsL2vpnIfList
+    CpeInterfaceMaskType
              FROM CLAB-DEF-MIB;
 
 
 docsSubmgt3Mib MODULE-IDENTITY
-     LAST-UPDATED    "202011050000Z" -- November 5, 2020
-     ORGANIZATION    "Cable Television Laboratories, Inc."
-     CONTACT-INFO
+    LAST-UPDATED    "202306010000Z" -- June 1, 2023
+    ORGANIZATION    "Cable Television Laboratories, Inc."
+    CONTACT-INFO
          "
          Postal: Cable Television Laboratories, Inc.
          858 Coal Creek Circle
@@ -40,10 +40,14 @@ docsSubmgt3Mib MODULE-IDENTITY
          Phone: +1 303-661-9100
          Fax:   +1 303-661-9199
          E-mail: mibs@cablelabs.com"
-     DESCRIPTION
+    DESCRIPTION
          "This MIB module contains the management objects for the
           CMTS control of the IP4 and IPv6 traffic with origin and
           destination to CMs and/or CPEs behind the CM."
+    REVISION    "202306010000Z" -- June 1, 2023
+    DESCRIPTION
+           "Revised Version includes ECN
+            DOCS-SUBMGT3-MIB-N-23.2315-1."
     REVISION    "202011050000Z" -- November 5, 2020
     DESCRIPTION
            "Revised Version includes ECN
@@ -344,8 +348,8 @@ docsSubmgt3CpeCtrlMaxCpeIpv4 OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I26-150305, Subscriber Management
-         TLVs section in the Common Radio Frequency Interface Encodings
-         Annex."
+         TLVs section in the Encodings for Configuration and MAC-Layer
+         Messaging Annex."
      ::= { docsSubmgt3CpeCtrlEntry 1 }
 
 docsSubmgt3CpeCtrlMaxCpeIpv6Addresses OBJECT-TYPE
@@ -372,8 +376,8 @@ docsSubmgt3CpeCtrlMaxCpeIpv6Addresses OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I26-150305, Subscriber Management
-         TLVs section in the Common Radio Frequency Interface Encodings
-         Annex."
+         TLVs section in the Encodings for Configuration and MAC-Layer
+         Messaging Annex."
      ::= { docsSubmgt3CpeCtrlEntry 2 }
      
 docsSubmgt3CpeCtrlMaxCpeIpv6Prefixes OBJECT-TYPE
@@ -399,8 +403,8 @@ docsSubmgt3CpeCtrlMaxCpeIpv6Prefixes OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I04-070518, Subscriber Management
-         TLVs section in the Common Radio Frequency Interface Encodings
-         Annex."
+         TLVs section in the Encodings for Configuration and MAC-Layer
+         Messaging Annex."
      ::= { docsSubmgt3CpeCtrlEntry 7 }
 
 docsSubmgt3CpeCtrlActive OBJECT-TYPE
@@ -420,8 +424,8 @@ docsSubmgt3CpeCtrlActive OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I26-150305, Subscriber Management
-         Control section in the Common Radio Frequency Interface
-         Encodings Annex."
+         Control section in the Encodings for Configuration and MAC-Layer
+         Messaging Annex."
      ::= { docsSubmgt3CpeCtrlEntry 3 }
 
 docsSubmgt3CpeCtrlLearnable OBJECT-TYPE
@@ -444,8 +448,8 @@ docsSubmgt3CpeCtrlLearnable OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I26-150305, Subscriber Management
-         Control section in the Common Radio Frequency Interface
-         Encodings Annex."
+         Control section in the Encodings for Configuration and MAC-Layer
+         Messaging Annex."
      ::= { docsSubmgt3CpeCtrlEntry 4 }
 
 docsSubmgt3CpeCtrlReset OBJECT-TYPE
@@ -528,6 +532,10 @@ docsSubmgt3CpeIpId OBJECT-TYPE
         the included CPE IP addresses in the provisioning
         object, or CPEs learned from traffic sourced from the
         CM."
+     REFERENCE
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv3.0-I26-150305, Encodings for
+         Configuration and MAC-Layer Messaging Annex."
      ::= { docsSubmgt3CpeIpEntry 1 }
 
 docsSubmgt3CpeIpAddrType OBJECT-TYPE
@@ -614,8 +622,8 @@ docsSubmgt3GrpTable OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I26-150305, Subscriber
-         Management TLVs section in the Common Radio Frequency
-         Interface Encodings Annex."
+         Management TLVs section in the Encodings for Configuration
+         and MAC-Layer Messaging  Annex."
      ::= { docsSubmgt3MibObjects 4}
 
 docsSubmgt3GrpEntry OBJECT-TYPE
@@ -977,7 +985,7 @@ DocsSubmgt3FilterGrpEntry ::= SEQUENCE {
      docsSubmgt3FilterGrpFlowLabel
                   Unsigned32,
      docsSubmgt3FilterGrpCmInterfaceMask
-                  DocsL2vpnIfList,
+                  CpeInterfaceMaskType,
      docsSubmgt3FilterGrpRowStatus
                   RowStatus
      }
@@ -1381,7 +1389,7 @@ docsSubmgt3FilterGrpFlowLabel OBJECT-TYPE
      ::= { docsSubmgt3FilterGrpEntry 27 }
 
 docsSubmgt3FilterGrpCmInterfaceMask OBJECT-TYPE
-     SYNTAX      DocsL2vpnIfList
+     SYNTAX      CpeInterfaceMaskType
      MAX-ACCESS  read-create
      STATUS      current
      DESCRIPTION

@@ -16,8 +16,8 @@ IMPORTS
     FROM SCTE-HMS-HEADENDIDENT-TC-MIB;
 
 
-heMpegCommonMIB MODULE-IDENTITY
-  LAST-UPDATED "200810031700Z" -- Oct 3, 2008
+scteHmsMpegMIB MODULE-IDENTITY
+  LAST-UPDATED "200811171700Z" -- Nov 17, 2008
   ORGANIZATION 
     "SCTE HMS Subcommittee"
   CONTACT-INFO 
@@ -34,103 +34,10 @@ heMpegCommonMIB MODULE-IDENTITY
     All the tables, except mpegProgramMappingTable and 
     mpegVideoSessionTable, capture and store the information
     related to active transport streams only. Optional
-    MIB objects will have default values defined in this MIB file."
-  REVISION "200810031700Z"
+    MIB objects will have default values defined in this MIB file."    
+  REVISION "200811171700Z"
   DESCRIPTION 
-	"Resolved compile errors:
-	1. LAST-UPDATED date matches last REVISION date.
-	2. Removed illegal characters such as line feed (ascii 0xa0).
-	3. Added mpegInputTSActiveConnection to at least one conformance
-	   group.
-	4. Removed extra mpegSessionsGroup in compliance statement."
-  REVISION "200810030649Z" -- Oct 3, 2008
-  DESCRIPTION 
-	"1. Added mpegInputTSActiveConnection entry.
-	2. Added mpegInputTSOutputSessionCreateTime.
-	3. Added mpegInputUdpOriginationInputTSIndex.
-	4. Added mpegOutputUdpDestinationOutputTSIndex." 
-  REVISION "200810030135Z" -- Oct 3, 2008
-  DESCRIPTION 
-      "Fixed spelling mistakes." 
-  REVISION "200810030000Z" -- Oct 3, 2008 
-  DESCRIPTION 
-      "Changes included in the SCTE F2F meetings 
-      July 9-10 and Sept 24-25
-      1. mpegInputTSEntry, mpegOutputTSEntry, mpegProgESEntry  are no
-      longer indexed by ifIndex.
-      2. mpegInputTSTransportType and mpegInputTSPacketsDetected 
-      removed from mpegInputTSEntry to accomodate the Input 
-      extensibility such as udpOrigination.
-      3. Added to mpegInputTSEntry  mpegInputTSConnectionType and 
-      mpegInputTSConnection.
-      4. mpegInputTSPatVersion and mpegInputTSCatVersion value -1 
-      added to indicate unknown or not supported.
-      5. MpegProgESEntry  sequence elements names updates to align 
-      with mpegProgES* prefix.
-      6. mpegStatsStreamTable renamed to mpegInputStatsTable. 
-      7. mpegInputStatsPcrJitter and mpegInputStatsMaxPacketJitter
-      support value -1 to indicate not supported measurement. 
-      8. Added mpegInputUdpOriginationTable and 
-      mpegOutputUdpOriginationTable to generalize the input/output TS 
-      construct.
-      9. Updated parent OID of mpegInsertPacketTable to reflect the
-      output nature of the construct.
-      10. Renamed mpegInsertPacketDeviceIndex as 
-      mpegInsertPacketDeviceIfIndex.
-      11. mpegOutputStatsTotalPackets set to 64 bits counter.  
-      12.mpegOutputStatsChannelUtilization units set to 1 tenth of 
-      percent.
-      13. Added to mpegOutputTSEntry  mpegOutputTSConnectionType 
-      and mpegOutputTSConnection.
-      14. mpegOutputProgNo changed ACCESS to read-only.
-      15. mpegOutputProgESPid renamed to mpegOutputProgElemStatsPid
-      to preserve the construct prefix MpegOutputProgElemStats*. 
-      16. Added mpegOutputUdpDestinationTable. 
-      17. Deleted mpegProgramMappingDeviceChannelId and 
-      mpegProgramMappingInputIfIndex from MpegProgramMappingEntry.
-      18. MpegVideoSessionEntry  Added:
-        mpegVideoSessionPIDRemap, mpegVideoSessionMode, 
-        mpegVideoSessionEncryptionType, mpegVideoSessionEncryptionInfo,
-        mpegVideoSessionBitRate, mpegVideoSessionSelectedInput.
-      19. MpegVideoSessionEntry  Deleted:  
-        mpegVideoSessionUdpPort, mpegVideoSessionDestAddrType,
-        mpegVideoSessionDestAddr, mpegVideoSessionSrcAddrType,
-        mpegVideoSessionSrcAddr.
-      20. Added mpegVideoSessionPtrTable.
-      21. Updated mpegInputProgESGroup and mpegOutputProgElemStatsGroup
-        description.
-      22. Updated OBJECT-GROUP mpegInputGroup, mpegInputProgESGroup,
-      mpegOutputGroup, mpegMappingsGroup, mpegSessionsGroup.   
-      23. Added mpegInputStatsPcrIntervalExceeds to the MPEG input 
-      statistics.
-      24. Added the table mpegInputUdpOriginationSessionTable."
-  REVISION "200802041700Z"
-  DESCRIPTION 
-    " Changes due to voting comments
-    1. Changed description of mpegInputTSPsiDetected.
-    2. Changed mpegInputTSRate, mpegInputTXMaxRate, mpegInsertPacketIndex, 
-    and mpegInsertPacketListId be Unsigned32 instead of Integer32.
-    3. Unit clause added to mpegOutputStatsAvailableBandwidth specifying bps.
-    4. Modified all references to QAM and used the word Device instead.
-    5. mpegOutputTSPmtInsertRate description changed, mpegOutputTSPmtInsertRate
-    value changed to tables/ms.
-    6. mpegProgramMappingInputProgIndex in description changed
-    rfDeviceInputProgIndex to mpegInputProgIndex.
-    7. mpegProgramMappingInputTSIndex in description changed
-    rfDeviceInputTSIndex to mpgetInputTSIndex."
-
-      REVISION "200712171700Z"
-  DESCRIPTION 
-    " Changes due to voting comments
-    1. Removed TEXTUAL-CONVENTION import
-    2. Reworded the last sentence of the Module definition.
-    3. Reordered MIB tree to fit under the heDigital branch."
-
-      REVISION "200710031700Z"
-  DESCRIPTION 
-    " Added SCTE-HMS-HEADENDIDENT-TC name for HePidValue, remove name from
-              this file. Created TC ProgDataType so it can be used everywhere. Removed
-              0 from enumerated types just for convention."     
+    " Finalized MPEG mib for release"      
 ::= { enterprises scteRoot(5591) scteHmsTree(1) insidePlantIdent(11) heDigital(5) heDigitalMPEG(4) 1 }
 
 
@@ -146,7 +53,7 @@ mpegMIBObjects  OBJECT-IDENTITY
   DESCRIPTION 
     "This branch specifies the MPEG Common MIB objects that can be common
     to any device using MPEG."
-  ::= { heMpegCommonMIB 1 }
+  ::= { scteHmsMpegMIB 1 }
 
 mpegDigitalInputs  OBJECT-IDENTITY
   STATUS     current
@@ -167,7 +74,7 @@ mpegMIBConformance  OBJECT-IDENTITY
   DESCRIPTION 
     "This branch describes the different MPEG MIB object groups and
     the different levels of compliance."
-  ::= { heMpegCommonMIB 2 }
+  ::= { scteHmsMpegMIB 2 }
 
 mpegMIBCompliances  OBJECT-IDENTITY
   STATUS     current
@@ -287,8 +194,9 @@ mpegInputTSConnection  OBJECT-TYPE
   MAX-ACCESS read-only
   STATUS     current
   DESCRIPTION 
-    "The reference to the start of the data source table that
-    feeds content to the input stream.
+    "The reference to the first entry in the set of data 
+    sources that are capable of providing content for the
+    input stream.
     For the Connection Type 'udp' this object contains the
     pointer to the first entry of the UDP Origination table
     
@@ -319,8 +227,12 @@ mpegInputTSActiveConnection  OBJECT-TYPE
   MAX-ACCESS read-only
   STATUS     current
   DESCRIPTION 
-    "The reference to the instance of the data source that is
-    feeding the input stream.
+    "The reference to the selected data source for the input 
+    stream.
+    For devices or sessions that do not support redundant 
+    connections this object will return the same value as
+    mpegInputTSConnection.
+
     For the Connection Type 'udp' this object contains the
     pointer to the UDP Origination table that the input Stream is
     using.
@@ -1305,7 +1217,7 @@ mpegOutputTSConnection  OBJECT-TYPE
   MAX-ACCESS read-only
   STATUS     current
   DESCRIPTION 
-    "The reference to the instance of the output connection fpr the 
+    "The reference to the instance of the output connection for the 
     output stream.
     For the Connection Type 'qam' this object contains the ifIndex object
     identifier of the QAM channel for the output stream.

@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
--- * Module Name: HMS063R6.MIB (SCTE 38-8)
+-- * Module Name:   HMS063R5.MIB
 -- *
--- * SCTE Status: ADOPTED JANUARY 11, 2002
+-- * Description:   Implements SCTE-HMS-DOWNLOAD-MIB definitions
 -- *
 -- *  Introduction:
 -- *  ============
@@ -237,7 +237,9 @@
 -- *  The hmsDownloadStatus trap is generated at the same time that
 -- *  dlDownloadErrorStatus is set internally to record an error. If an
 -- *  error has already been recorded, then subsequent errors are not
--- *  recorded, and subsequent traps are dropped. 
+-- *  recorded, and subsequent traps are dropped. Upon the successful
+-- *  completion of a download, then an hmsDownloadStatus trap is also
+-- *  generated, which will report no error.
 -- *
 -- *  Only one hmsDownloadStatus trap is to be pending at any one time.
 -- *  If the MAC TALK command is not used to retrieve traps, then it
@@ -459,11 +461,127 @@
 -- *  does not restart the transponder. The transponder can be reset remotely
 -- *  using the commonReset object.
 -- *
+-- *
+-- * Revision History:
+-- *
+-- * Date        Person       Company      Notes
+-- * ==========================================================================
+-- * 2001-Mar-01 Paul Vail    Silcom Tech  ProcessingLine in the download state 
+-- *                                       .. machine now treats a set of
+-- *                                       .. dlDownloadControl as an error.
+-- *                                       Revised dlDownloadOption, supported
+-- *                                       .. values are setStartupAndReset(1)
+-- *                                       .. and noAction(2). Default is always
+-- *                                       .. setStartupAndReset(1).
+-- *                                       The "Additional Notes" section now
+-- *                                       .. describes impact of download on
+-- *                                       .. non-download features more clearly
+-- *                                       The "Additional Notes" section now
+-- *                                       .. describes how to transfer control
+-- *                                       .. to previously downloaded image.
+-- *                                       Added T0 keyword, usage shown in
+-- *                                       .. the download example.
+-- *
+-- * 2001-Feb-27 Paul Vail    Silcom Tech  Syntax corrections for MIB compiler.
+-- *                                       Add commonLogicalID to trap.
+-- *                                       Trap only generated on an error. 
+-- *                                       dlDownloadTimeout minimum now 60.
+-- *                                       dlDownloadOption default is now
+-- *                                       .. vendor specific.
+-- *                                       Revised dlDownloadLine format.
+-- *                                       Removed dlMaximumLineLength.
+-- *                                       Table indices restored to read-only.
+-- *                                       Added 'Additional Notes' section,
+-- *                                       .. which was missed in the R4 edit.
+-- *
+-- * 2001-Jan-12 Paul Vail    Silcom Tech  Single distribution file now used,
+-- *                                       using only S-Records. Keywords for
+-- *                                       header revised.
+-- *                                       State diagram added to module header.
+-- *                                       Revised dlDownloadDevice, 
+-- *                                       .. dlDownloadImage, dlDownloadKey,
+-- *                                       .. dlDownloadControl,dlDownloadLine,
+-- *                                       .. and dlDownloadErrorStatus.
+-- *                                       Added comments to dlDownloadStatus.
+-- *                                       Changed dlDownloadLineTimeout to
+-- *                                       .. dlDownloadTimeout. Value can only
+-- *                                       .. be changed while dlDownloadStatus
+-- *                                       .. is done(6).
+-- *                                       dlDownloadLine only supports S-Records.
+-- *                                       dlImageAccess enumerated types revised.
+-- *                                       hfcDownloadFault trap redefined as
+-- *                                       .. hmsDownloadStatus trap.
+-- *                                       Replaced rs485 references with TIB.
+-- *                                       downloadIdent now imported.
+-- *                                       Changed dlTransponderIndex to
+-- *                                       .. dlTransponderDevice.
+-- *
+-- * 2001-Jan-11 Paul Vail    Silcom Tech  HMS063 adopted as part of HMS standard.
+-- *
+-- * 2000-Nov-15 Paul Vail    Silcom Tech  dlDownloadKey now states that sets
+-- *                                       .. clear dlDownloadStatus. 
+-- *                                       dlDownloadOption types revised.
+-- *
+-- * 2000-Nov-13 Paul Vail    Silcom Tech  Revised KEY description, and renamed
+-- *                                       .. keyword to DEVICE-KEY.
+-- *                                       Revised examples.
+-- *                                       Change dlDownloadLineTimeout range.
+-- *                                       dlDownloadOption now optional.
+-- *                                       dlDownloadLine now states 1 S-Record
+-- *                                       .. line to dlDownloadLine.
+-- *                                       Revised dlDownloadErrorStatus.
+-- *                                       Revised dlDownloadDevice.
+-- *                                       Table indices now not-accessible.
+-- *
+-- * 2000-Nov-08 Paul Vail    Silcom Tech  Major revision to concepts described
+-- *                                       .. document header.
+-- *                                       Added dlActiveImageVersion to the
+-- *                                       .. TransponderTable, and changed
+-- *                                       .. order of objects in the table
+-- *                                       Revised dlImageTable object order.
+-- *                                       Revised dlDownloadLine,dlDownloadKey,
+-- *                                       .. and dlDownloadControl.
+-- *
+-- * 2000-Oct-17 Paul Vail    Silcom Tech  Revised the examples.
+-- *                                       Numerous typing mistakes fixed.
+-- *                                       Added dlDownloadDevice to the
+-- *                                       .. hfcDownloadFault trap.
+-- *                                       dlDownloadStatus now read-only.
+-- *                                       Removed DEVICE keyword.
+-- *                                       Permitted state changes for
+-- *                                       .. dlDownloadControl changed.
+-- *                                       T1, T2, T3 units of milliseconds.
+-- *                                       Moved dlDownloadLineTimeout to
+-- *                                       .. the transponderTable.
+-- *                                       Added dlDownloadOption to
+-- *                                       .. the transponderTable.
+-- *                                       Ranges changed for dlImageDevice,
+-- *                                       .. dlActiveImageDescription
+-- *                                       .. dlTransponderIndex, dlDownloadKey,
+-- *                                       .. dlMaximumLineLength,dlDeviceKey,
+-- *                                       .. dlDownloadDevice, dlDownloadLine.
+-- *
+-- * 2000-Jul-17 Paul Vail    Silcom Tech  Organized objects into groups.
+-- *                                       Added support for RS485 devices.
+-- *                                       Revised dlDownloadControl,
+-- *                                       ..dlDownloadImage, dlDownloadLine,
+-- *                                       ..and dlImageStatus definitions.
+-- *                                       Added dlDeviceKey for access control.
+-- *                                       Added dlDownloadKey.
+-- *                                       Added dlDownloadDevice for support
+-- *                                       of RS485 devices.
+-- *                                       Added dlDownloadLineTimeout.
+-- *                                       Added further download examples.
+-- *                                       Added file format proposal.
+-- *
+-- * 2000-May-24 Paul Vail    Silcom Tech  Initial version.
+-- *
 -- ****************************************************************************
 
 SCTE-HMS-DOWNLOAD-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
+     enterprises        FROM RFC1155-SMI
      OBJECT-TYPE        FROM RFC-1212
      TRAP-TYPE          FROM RFC-1215
      DisplayString      FROM RFC1213-MIB     
@@ -731,7 +849,7 @@ dlDownloadLine  OBJECT-TYPE
 
           S1050260EA812D     -> 53 31 05 02 60 EA 81 2D
 
-          S30700000260EA812B -> 53 33 07 00 00 02 60 EA 81 2B
+          S30700000260EA812B -> 53 31 07 00 00 02 60 EA 81 2B
 
          In the example characters to the left of '->' represent the S-Record
          line. The characters to the right of '->' indicate the dlDownloadLine

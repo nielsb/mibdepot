@@ -31,7 +31,7 @@ DOCS-SEC-MIB DEFINITIONS ::= BEGIN
              FROM DOCS-IETF-BPI2-MIB;
 
 docsSecMib MODULE-IDENTITY
-     LAST-UPDATED    "202203310000Z" -- March 31, 2022
+     LAST-UPDATED    "202306010000Z" -- June 1, 2023
      ORGANIZATION    "Cable Television Laboratories, Inc."
      CONTACT-INFO
          "
@@ -46,9 +46,12 @@ docsSecMib MODULE-IDENTITY
         "This MIB module contains the management objects for the
         management of the security requirements in the DOCSIS
         Security Specification.
-        Copyright 2006-2022 Cable Television Laboratories, Inc.
+        Copyright 2006-2023 Cable Television Laboratories, Inc.
         All rights reserved."
    
+     REVISION    "202306010000Z" -- June 1, 2023
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-23.2309-1"
      REVISION    "202203310000Z" -- March 31, 2022
      DESCRIPTION
              "Modified per DOCS-SEC-MIB-N-22.2246-1"
@@ -337,7 +340,8 @@ docsSecSavCmAuthTable OBJECT-TYPE
          CM-SP-SECv3.0-I01-060804, Secure Provisioning Section.
          DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I01-060804,
-         Common Radio Frequency Interface Encodings Annex."
+         Encodings for Configuration and MAC-Layer Messaging
+         Annex."
      ::= { docsSecMibObjects 5}
 
 docsSecSavCmAuthEntry OBJECT-TYPE
@@ -383,7 +387,7 @@ docsSecSavCmAuthGrpName OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I01-060804,
-         Common Radio Frequency Interface Encodings Annex."
+         Encodings for Configuration and MAC-Layer Messaging Annex."
      ::= { docsSecSavCmAuthEntry 1 }
 
 docsSecSavCmAuthStaticPrefixListId OBJECT-TYPE
@@ -523,7 +527,8 @@ docsSecSavStaticListTable OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I01-060804,
-        Common Radio Frequency Interface Encodings Annex."
+        Encodings for Configuration and MAC-Layer Messaging
+        Annex."
      ::= { docsSecMibObjects 7}
 
 docsSecSavStaticListEntry OBJECT-TYPE

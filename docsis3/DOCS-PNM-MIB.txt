@@ -40,7 +40,7 @@ IMPORTS
 
 
 docsPnmMIB MODULE-IDENTITY
-    LAST-UPDATED    "202302020000Z" -- February 2, 2023
+    LAST-UPDATED    "202306010000Z" -- June 1, 2023
     ORGANIZATION    "Cable Television Laboratories, Inc."
     CONTACT-INFO
        "Postal: Cable Television Laboratories, Inc.
@@ -56,6 +56,9 @@ docsPnmMIB MODULE-IDENTITY
         Copyright 2015-2023 Cable Television Laboratories, Inc.
         All rights reserved."
 
+    REVISION    "202306010000Z" -- June 1, 2023
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-PNM-MIB-N-23.2308-1."
     REVISION    "202302020000Z" -- February 2, 2023
     DESCRIPTION
         "Revised Version includes ECN DOCS-PNM-MIB-N-23.2298-1."
@@ -3558,7 +3561,7 @@ docsPnmCmtsDsOfdmSymCapTable OBJECT-TYPE
         obtained by reading the value of the 'docsPnmCmDsOfdmSymMeasStatus'
         object.
         
-        The CCAP should create a row in this table for each IfIndex of a 
+        The CCAP should create a row in this table for each ifIndex of a 
         downstream channel.
         The CCAP MAY support simultaneous Downstream Symbol Capture tests on more 
         than one OFDM channel at a time.
@@ -3828,7 +3831,7 @@ docsPnmCmtsDsOfdmNoisePwrRatioTable OBJECT-TYPE
         all profiles, causing possible link downtime, this feature is intended
         for infrequent maintenance.
         The CCAP creates a row in the CmtsDsOfdmNoisePwrRatioTable for each
-        IfIndex of a downstream channel.
+        ifIndex of a downstream channel.
         The CCAP MAY support simultaneous Downstream NPR Measurement tests on 
         more than one OFDM channel at a time." 
      REFERENCE
@@ -4002,7 +4005,7 @@ docsPnmCmtsUsOfdmaAQProbeTable OBJECT-TYPE
         corresponding DestinationIndex attribute of the DataTransferCfg instance.
         
         The CCAP should create a row in the CmtsUsOfdmaAQProbeTable 
-        for each IfIndex of an upstream channel."
+        for each ifIndex of an upstream channel."
      REFERENCE
         "Information Model Mapping: CM-SP-CCAP-OSSI    
          UsOfdmaActiveAndQuietProbes"
@@ -4332,8 +4335,8 @@ docsPnmCmtsUsImpNoiseTable OBJECT-TYPE
         state operation, a ring buffer provides the measurements of the last 1024
         events that occurred while the measurement was enabled. 
         
-        The CCAP should create a row in the CmtsUsImpNoiseTable for each IfIndex 
-        of an upstream RF Port.
+        The CCAP should create a row in the docsPnmCmtsUsImpNoiseTable for each
+        ifIndex of an upstream RF Port.
         
         Initiation and termination of impulse noise samples collection is controlled by 
         UsImpulseNoise attributes FreeRunDuration, StartTriggerLevel, and EndTriggerLevel. 
@@ -4722,8 +4725,8 @@ docsPnmCmtsUsHistTable OBJECT-TYPE
          value, the CCAP will save the current set of histogram values and reset
          the histogram, so that in a steady-state condition a complete measurement
          is always available. 
-         The CCAP creates a row in the CmtsUsHistTablefor each IfIndex of an 
-         upstream RF port. The CCAP MAY support simultaneous Upstream Histogram 
+         The CCAP creates a row in the docsPnmCmtsUsHistTable for each ifIndex of
+         an upstream RF port. The CCAP MAY support simultaneous Upstream Histogram 
          tests on more than one RF port at a time.
          The CCAP should reject configuring a value for the DestinationIndex 
          of the UpstreamHistogram object if that value does not exist in the 
@@ -4948,8 +4951,8 @@ docsPnmCmtsUsOfdmaRxPwrTable OBJECT-TYPE
         The CCAP may support simultaneous Upstream OFDMA Rx Power tests on more than 
         one OFDMA channel at a time.
         
-        The CCAP should create a row in the UsOfdmaRxPwr table for each IfIndex
-        of an upstream channel."
+        The CCAP should create a row in the docsPnmCmtsUsOfdmaRxPwrTable table for
+        each ifIndex of an upstream channel."
      REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
          UsOfdmaRxPower"
@@ -5118,7 +5121,7 @@ docsPnmCmtsUsOfdmaRxMerTable OBJECT-TYPE
         The CCAP should provide probe opportunities and make measurements over 
         the number of averages specified for the Upstream OFDMA RxMER per Subcarrier test.
         
-        The CCAP should create a row in the UsOfdmaRxMerTable for each IfIndex 
+        The CCAP should create a row in the docsPnmCmtsUsOfdmaRxMerTable for each ifIndex 
         of an upstream channel."
      REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
@@ -5732,7 +5735,7 @@ docsPnmCmtsOptReqDsOfdmChanCfgIndex OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This key is the IfIndex of a Downstream OFDM channel 
+        "This key is the ifIndex of a Downstream OFDM channel 
          assigned to the modem."
      REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
@@ -7866,7 +7869,7 @@ docsCmLatencyRptCfgMeasStatus OBJECT-TYPE
      ::= { docsCmLatencyRptCfgEntry 4 }
 
 docsCmLatencyRptCfgFileName  OBJECT-TYPE
-     SYNTAX      SnmpAdminString
+     SYNTAX      SnmpAdminString (SIZE (0..231))
      MAX-ACCESS  read-write
      STATUS      current
      DESCRIPTION
@@ -7883,10 +7886,12 @@ docsCmLatencyRptCfgFileName  OBJECT-TYPE
         as described below.
 
         The CM stores the test results in a file with a name consisting of the
-        FileName plus the CM MAC Address plus the 'epoch time', using the format 
-        <FileName><CM MAC address><epoch>. The epoch time (also known as 'unix time') 
-        is defined as the number of seconds that have elapsed since midnight 
-        Coordinated Universal Time (UTC), Thursday, 1 January 1970.
+        Filename plus the CM MAC Address plus the 'epoch time', using the format 
+        <Filename><CM MAC address><epoch>, with underscores between <Filename>
+        and <CM MAC address> and <epoch> having significance. The epoch time
+        (also known as 'unix time') is defined as the number of seconds that have
+        elapsed since midnight Coordinated Universal Time (UTC), Thursday, 1
+        January 1970.
 
         Hence, the default format would be:
 
@@ -7925,7 +7930,9 @@ docsCmtsLatencyRptCfgEntry OBJECT-TYPE
      DESCRIPTION
         "The conceptual row of the docsCmtsLatencyRptCfgTable. An instance
         is dynamically created and exists for an associated ifIndex upon
-        which the test defined by this table can take place.
+        which the test defined by this table can take place. ifIndex
+        represents an identifier assigned to the MAC Domain in which the
+        cable modem associated with attribute CmMac is registered.
 
         The conceptual rows do not persist across device resets."
      INDEX { ifIndex,
@@ -7940,7 +7947,8 @@ DocsCmtsLatencyRptCfgEntry ::=
         docsCmtsLatencyRptCfgNumSnapshots       Unsigned32,
         docsCmtsLatencyRptCfgNumFiles           Unsigned32,
         docsCmtsLatencyRptCfgMeasStatus         MeasStatusType,
-        docsCmtsLatencyRptCfgFileName           SnmpAdminString
+        docsCmtsLatencyRptCfgFileName           SnmpAdminString,
+        docsCmtsLatencyRptCfgDestinationIndex   Unsigned32
      }
 
 docsCmtsLatencyRptCfgCmMac OBJECT-TYPE
@@ -8021,7 +8029,7 @@ docsCmtsLatencyRptCfgMeasStatus OBJECT-TYPE
      ::= { docsCmtsLatencyRptCfgEntry 5 }
 
 docsCmtsLatencyRptCfgFileName  OBJECT-TYPE
-     SYNTAX      SnmpAdminString 
+     SYNTAX      SnmpAdminString (SIZE (0..231))
      MAX-ACCESS  read-write
      STATUS      current
      DESCRIPTION
@@ -8048,9 +8056,20 @@ docsCmtsLatencyRptCfgFileName  OBJECT-TYPE
              For example: DSLatencySum_0010181A2D11_1403405123 "
      REFERENCE
          "Information Model Mapping: CM-SP-CCAP-OSSI    
-          CmtsLatencyRpt::FileName"
+          CmtsLatencyRpt::Filename"
      ::= { docsCmtsLatencyRptCfgEntry 6 }
      
+     docsCmtsLatencyRptCfgDestinationIndex  OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the index of the configured
+        destination for the file upload."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CCAP-OSSI    
+          CmtsLatencyRpt::DestinationIndex"
+     ::= { docsCmtsLatencyRptCfgEntry 7 }
 -- ---------------------------------------------------------------------
 -- Notification Objects
 -- ---------------------------------------------------------------------
@@ -8423,6 +8442,7 @@ docsLatencyGroup OBJECT-GROUP
         docsCmtsLatencyRptCfgNumFiles,
         docsCmtsLatencyRptCfgMeasStatus,
         docsCmtsLatencyRptCfgFileName,
+        docsCmtsLatencyRptCfgDestinationIndex,
 
         docsCmLatencyRptCfgSnapshotDuration,
         docsCmLatencyRptCfgNumSnapshots,

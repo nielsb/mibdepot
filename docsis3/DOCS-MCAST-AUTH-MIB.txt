@@ -23,7 +23,7 @@ DOCS-MCAST-AUTH-MIB DEFINITIONS ::= BEGIN
              FROM CLAB-DEF-MIB;
 
 docsMcastAuthMib MODULE-IDENTITY
-     LAST-UPDATED    "200712060000Z" -- December 6, 2007
+     LAST-UPDATED    "202306010000Z" -- June 1, 2023
      ORGANIZATION    "Cable Television Laboratories, Inc."
      CONTACT-INFO
          "
@@ -37,8 +37,12 @@ docsMcastAuthMib MODULE-IDENTITY
      DESCRIPTION
         "This MIB module contains the management objects for the
         management of the CMTS Multicast Authorization Module.
-        Copyright 1999-2007 Cable Television Laboratories, Inc.
+        Copyright 1999-2023 Cable Television Laboratories, Inc.
         All rights reserved."
+     REVISION        "202306010000Z" -- June 1, 2023
+     DESCRIPTION
+        "Revised version includes ECN
+         DOCS-MCAST-AUTH-MIB-N-23.2313."
      REVISION        "200712060000Z" -- December 6, 2007
      DESCRIPTION
         "Revised version includes ECN
@@ -220,7 +224,7 @@ docsMcastAuthCmtsCmStatusCfgListId OBJECT-TYPE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I01-060804,IP Multicast Join 
          Authorization Static Session Rule Subtype section in the 
-         Common Radio Frequency Interface Encodings Annex."
+         Encodings for Configuration and MAC-Layer Messaging Annex."
      ::= { docsMcastAuthCmtsCmStatusEntry 2 }
 
 docsMcastAuthCmtsCmStatusMaxNumSess OBJECT-TYPE
@@ -522,8 +526,8 @@ docsMcastAuthStaticSessRulePriority OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I01-060804, RulePriority
-         section in the Common Radio Frequency Interface Encodings
-         Annex."
+         section in the Encodings for Configuration and MAC-Layer
+         Messaging Annex."
      ::= { docsMcastAuthStaticSessRuleEntry 3 }
 
 docsMcastAuthStaticSessRulePrefixAddrType OBJECT-TYPE

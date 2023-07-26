@@ -1,13 +1,13 @@
 SCTE-HMS-ROOTS DEFINITIONS ::= BEGIN
 
 IMPORTS
-    MODULE-IDENTITY
+    enterprises,  MODULE-IDENTITY, OBJECT-TYPE
         FROM SNMPv2-SMI
     scteHmsTree
           FROM SCTE-ROOT;
 
 hmsScteRootMIB MODULE-IDENTITY
-    LAST-UPDATED "200803040000Z"  -- March 04, 2008
+    LAST-UPDATED "200708150000Z"  -- Aug 15, 2007
     ORGANIZATION "SCTE HMS Working Group"
     CONTACT-INFO
             "SCTE HMS Subcommittee, Chairman
@@ -16,18 +16,7 @@ hmsScteRootMIB MODULE-IDENTITY
         DESCRIPTION		         
                 "This MIB module is defining objects under the SCTE HMS tree."
  
-	REVISION "200803040000Z"  -- March 04, 2008
-	DESCRIPTION 
-	"Updated the revision information of the file"
-
-	REVISION "200802040000Z"  -- Feb 04, 2008
-	DESCRIPTION 
-	"Modified with comments from Meeting 1-11-08
-	1. Removed import of enterprises and OBJECT-TYPE which was never used.
-	2. Added word Over, in Voice Over IP description.
-	3. Standard Module Identity was added since released version."
-
-  REVISION "200708150000Z"  -- Aug 15, 2007
+   REVISION "200708150000Z"  -- Aug 15, 2007
     DESCRIPTION 
         "Added Multi Media to the list "
 
@@ -108,7 +97,7 @@ insidePlantIdent OBJECT IDENTIFIER ::= { scteHmsTree 11}
 voipIdent OBJECT IDENTIFIER ::= { scteHmsTree 12}
 
 --     DESCRIPTION
---     "Defines the base OID for all Voice Over IP mibs"
+--     "Defines the base OID for all Voice IP mibs"
 
 multiMediaIdent OBJECT IDENTIFIER ::= { scteHmsTree 13}
 

@@ -21,7 +21,7 @@ IMPORTS
 
 
 docsIfExt2Mib MODULE-IDENTITY 
-    LAST-UPDATED    "202011050000Z" -- November 5, 2020
+    LAST-UPDATED    "202306010000Z" -- June 1, 2023
     ORGANIZATION    "Cable Television Laboratories, Inc." 
     CONTACT-INFO 
          "
@@ -39,6 +39,9 @@ docsIfExt2Mib MODULE-IDENTITY
          assigned to a CM over the total active codes, referred as 
          Maximum Scheduled Codes (MSC)."
 
+    REVISION "202306010000Z" -- June 1, 2023
+    DESCRIPTION
+        "Revised version includes ECN DOCS-IFEXT2-MIB-N-23.2312-1."
     REVISION "202011050000Z" -- November 5, 2020
     DESCRIPTION
         "Revised version includes ECN DOCS-IFEXT2-MIB-N-20.2126-1."
@@ -604,7 +607,8 @@ docsIfExt2CmtsUpChannelEntry OBJECT-TYPE
 
 DocsIfExt2CmtsUpChannelEntry ::= SEQUENCE
        {
-       docsIfExt2CmtsUpChannelTotalCMs      Gauge32
+       docsIfExt2CmtsUpChannelTotalCMs          Gauge32,
+       docsIfExt2CmtsUpChannelTargetMapInterval Unsigned32
        }
 
 
@@ -613,10 +617,23 @@ docsIfExt2CmtsUpChannelTotalCMs OBJECT-TYPE
         MAX-ACCESS  read-only
         STATUS      current 
         DESCRIPTION 
-            "Total number of CMs with docsIfCmtsCmStatusValue of 
-             registrationComplete." 
+            "This attribute reports the total number of CMs with channels
+             in the CM Transmit Channel Set (TCS) with CmtsCmRegState
+             (docsIfCmtsCmStatusValue) of 'registrationComplete'." 
         ::= { docsIfExt2CmtsUpChannelEntry 1 }
 
+docsIfExt2CmtsUpChannelTargetMapInterval OBJECT-TYPE
+        SYNTAX      Unsigned32 (0..65535)
+        UNITS       "microseconds"
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "This attribute reports the target MAP interval for
+             the selected channel."
+        REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         UsChExt2::TargetMapInterval"
+        ::= { docsIfExt2CmtsUpChannelEntry 2 }
 
 -- ---------------------------------------------------------
 -- Conformance definitions 
@@ -686,7 +703,8 @@ docsIfExt2CmtsGroup OBJECT-GROUP
                  docsIfExt2CmtsUpChannelMSCTotalCMs,
                  docsIfExt2CmtsUpChannelMSCLimitIUC1,
                  docsIfExt2CmtsUpChannelMSCMinimumValue,
-                 docsIfExt2CmtsUpChannelTotalCMs
+                 docsIfExt2CmtsUpChannelTotalCMs,
+                 docsIfExt2CmtsUpChannelTargetMapInterval
         }
         STATUS      current
         DESCRIPTION

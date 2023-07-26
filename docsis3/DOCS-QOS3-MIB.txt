@@ -36,11 +36,11 @@ DOCS-QOS3-MIB DEFINITIONS ::= BEGIN
     Dsid
              FROM DOCS-IF3-MIB
     clabProjDocsis,
-    DocsL2vpnIfList
+    CpeInterfaceMaskType
              FROM CLAB-DEF-MIB;
 
 docsQosMib MODULE-IDENTITY
-     LAST-UPDATED    "202203310000Z" -- March 31, 2022
+     LAST-UPDATED    "202306010000Z" -- June 1, 2023
      ORGANIZATION    "Cable Television Laboratories, Inc."
      CONTACT-INFO
         "Postal: Cable Television Laboratories, Inc.
@@ -54,8 +54,12 @@ docsQosMib MODULE-IDENTITY
         "This MIB module contains the management objects for the
         management of DOCSIS 3.0, 3.1 and 4.0 features, primarily for the
         management of QOS for channel bonding.
-        Copyright 1999-2022 Cable Television Laboratories, Inc.
+        Copyright 1999-2023 Cable Television Laboratories, Inc.
         All rights reserved."
+    REVISION    "202306010000Z" -- June 1, 2023
+    DESCRIPTION
+            "Revised Version includes ECN
+             DOCS-QOS3-MIB-N-23.2316-1."
     REVISION    "202203310000Z" -- March 31, 2022
     DESCRIPTION
             "Revised Version includes ECN
@@ -332,7 +336,7 @@ DocsQosPktClassEntry ::= SEQUENCE {
      docsQosPktClassFlowLabel
                   Unsigned32,
      docsQosPktClassCmInterfaceMask
-                  DocsL2vpnIfList,
+                  CpeInterfaceMaskType,
      docsQosPktClassIcmpTypeLow
                   Unsigned32,
      docsQosPktClassIcmpTypeHigh
@@ -350,8 +354,11 @@ docsQosPktClassId OBJECT-TYPE
         For UDCs this corresponds to the Service Flow Reference
         of the classifier."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::Id"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Classifier Identifier section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::Id"
      ::= { docsQosPktClassEntry 1 }
 
 docsQosPktClassDirection OBJECT-TYPE
@@ -382,9 +389,12 @@ docsQosPktClassPriority OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the default
         value as defined above."
-     REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::Priority"
+     REFERENCE
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Rule Priority section  in the
+        Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::Priority"
      ::= { docsQosPktClassEntry 3 }
 
 docsQosPktClassIpTosLow OBJECT-TYPE
@@ -403,9 +413,13 @@ docsQosPktClassIpTosLow OBJECT-TYPE
         Congestion Notification Field (ECN field, RFC 3168).
         This object is defined as an 8-bit octet as per the DOCSIS
         Specification for packet classification."
-     REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpTosLow"
+     REFERENCE
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Type of Service Range and
+        Mask and IPv6 Traffic Class Range and Mask sections in the
+        Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpTosLow"
      ::= { docsQosPktClassEntry 4 }
 
 docsQosPktClassIpTosHigh OBJECT-TYPE
@@ -424,8 +438,12 @@ docsQosPktClassIpTosHigh OBJECT-TYPE
         This object is defined as an 8-bit octet as defined by
         the DOCSIS Specification for packet classification."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpTosHigh"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Type of Service Range and Mask
+        and IPv6 Traffic Class Range and Mask sections in  section in
+        the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpTosHigh"
      ::= { docsQosPktClassEntry 5 }
 
 docsQosPktClassIpTosMask OBJECT-TYPE
@@ -446,9 +464,13 @@ docsQosPktClassIpTosMask OBJECT-TYPE
         Notification Field (ECN field, RFC 3168).
         This object is defined as an 8-bit octet per the DOCSIS
         Specification for packet classification."
-     REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpTosMask"
+     REFERENCE
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Type of Service Range and Mask
+        and IPv6 Traffic Class Range and Mask sections in  section in
+        the Encodings for Configuration and MAC-Layer Messaging Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI  
+        PktClass::IpTosMask"
      ::= { docsQosPktClassEntry 6 }
 
 docsQosPktClassIpProtocol OBJECT-TYPE
@@ -465,8 +487,12 @@ docsQosPktClassIpProtocol OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 258."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpProtocol"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IP Protocol and IPv6 Next Header
+        Type sections in the Encodings for Configuration and
+        MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpProtocol"
      ::= { docsQosPktClassEntry 7 }
 
 docsQosPktClassIpSourceAddr OBJECT-TYPE
@@ -484,8 +510,12 @@ docsQosPktClassIpSourceAddr OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this object reports the value of '00000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpSourceAddr"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Source Address and IPv6
+        Source Address sections in the Encodings for Configuration
+        and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpSourceAddr"
      ::= { docsQosPktClassEntry 8 }
 
 docsQosPktClassIpSourceMask OBJECT-TYPE
@@ -503,8 +533,12 @@ docsQosPktClassIpSourceMask OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 'FFFFFFFF'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpSourceMask"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Source Mask and IPv6 Source
+        Prefix Length (bits) sections in the Encodings for
+        Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpSourceMask"
      ::= { docsQosPktClassEntry 9 }
 
 docsQosPktClassIpDestAddr OBJECT-TYPE
@@ -524,8 +558,12 @@ docsQosPktClassIpDestAddr OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of '00000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpDestAddr"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Destination Address and
+        IPv6 Destination Address sections in the Encodings for
+        Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpDestAddr"
      ::= { docsQosPktClassEntry 10 }
 
 docsQosPktClassIpDestMask OBJECT-TYPE
@@ -544,8 +582,12 @@ docsQosPktClassIpDestMask OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 'FFFFFFFF'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IpDestMask"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv4 Destination Mask and
+        IPv6 Destination Prefix Length (bits) sections in the
+        Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IpDestMask"
      ::= { docsQosPktClassEntry 11 }
 
 docsQosPktClassSourcePortStart OBJECT-TYPE
@@ -560,8 +602,11 @@ docsQosPktClassSourcePortStart OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::SourcePortStart"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, TCP/UDP Source Port Start section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::SourcePortStart"
      ::= { docsQosPktClassEntry 12 }
 
 docsQosPktClassSourcePortEnd OBJECT-TYPE
@@ -576,8 +621,11 @@ docsQosPktClassSourcePortEnd OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 65535."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::SourcePortEnd"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, TCP/UDP Source Port End section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::SourcePortEnd"
      ::= { docsQosPktClassEntry 13 }
 
 docsQosPktClassDestPortStart OBJECT-TYPE
@@ -591,8 +639,12 @@ docsQosPktClassDestPortStart OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::DestPortStart"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, TCP/UDP Destination Port Start
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::DestPortStart"
      ::= { docsQosPktClassEntry 14 }
 
 docsQosPktClassDestPortEnd OBJECT-TYPE
@@ -606,8 +658,12 @@ docsQosPktClassDestPortEnd OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 65535."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::DestPortEnd"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, TCP/UDP Destination Port End
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::DestPortEnd"
      ::= { docsQosPktClassEntry 15 }
 
 docsQosPktClassDestMacAddr OBJECT-TYPE
@@ -621,8 +677,11 @@ docsQosPktClassDestMacAddr OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of '000000000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::DestMacAddr"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Destination MAC Address section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::DestMacAddr"
      ::= { docsQosPktClassEntry 16 }
 
 docsQosPktClassDestMacMask OBJECT-TYPE
@@ -636,8 +695,11 @@ docsQosPktClassDestMacMask OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of '000000000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::DestMacMask"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Destination MAC Address section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::DestMacMask"
      ::= { docsQosPktClassEntry 17 }
 
 docsQosPktClassSourceMacAddr OBJECT-TYPE
@@ -650,8 +712,11 @@ docsQosPktClassSourceMacAddr OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 'FFFFFFFFFFFF'"
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::SourceMacAddr"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Source MAC Address section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::SourceMacAddr"
      ::= { docsQosPktClassEntry 18 }
 
 docsQosPktClassEnetProtocolType OBJECT-TYPE
@@ -692,8 +757,11 @@ docsQosPktClassEnetProtocolType OBJECT-TYPE
         If the referenced parameter is not present in a classifier,
         this attribute reports the value of 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::EnetProtocolType"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Ethertype/DSAP/MacType section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::EnetProtocolType"
      ::= { docsQosPktClassEntry 19 }
 
 docsQosPktClassEnetProtocol OBJECT-TYPE
@@ -724,8 +792,11 @@ docsQosPktClassEnetProtocol OBJECT-TYPE
         If the referenced parameter is not present in the classifier,
         the value of this attribute is reported as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::EnetProtocol"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Ethertype/DSAP/MacType section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::EnetProtocol"
      ::= { docsQosPktClassEntry 20 }
 
 docsQosPktClassUserPriLow OBJECT-TYPE
@@ -744,8 +815,11 @@ docsQosPktClassUserPriLow OBJECT-TYPE
         If the referenced parameter is not present in the classifier,
         the value of this attribute is reported as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::UserPriLow"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IEEE 802.1P User_Priority section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::UserPriLow"
      ::= { docsQosPktClassEntry 22 }
 
 docsQosPktClassUserPriHigh OBJECT-TYPE
@@ -764,8 +838,11 @@ docsQosPktClassUserPriHigh OBJECT-TYPE
         If the referenced parameter is not present in the classifier,
         the value of this attribute is reported as 7."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::UserPriHigh"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IEEE 802.1P User_Priority section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::UserPriHigh"
      ::= { docsQosPktClassEntry 23 }
 
 docsQosPktClassVlanId OBJECT-TYPE
@@ -780,8 +857,11 @@ docsQosPktClassVlanId OBJECT-TYPE
         If the referenced parameter is not present in the classifier,
         the value of this attribute is reported as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::VlanId"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IEEE 802.1Q VLAN_ID section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::VlanId"
      ::= { docsQosPktClassEntry 24 }
 
 docsQosPktClassState OBJECT-TYPE
@@ -798,8 +878,11 @@ docsQosPktClassState OBJECT-TYPE
         If the referenced parameter is not present in the classifier,
         the value of this attribute is reported as inactive(2)."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::State"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Classifier Activation State section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::State"
      ::= { docsQosPktClassEntry 25 }
 
 docsQosPktClassPkts OBJECT-TYPE
@@ -891,12 +974,15 @@ docsQosPktClassFlowLabel OBJECT-TYPE
         as part of the classifier and is not matched against
         the packets."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::FlowLabel"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, IPv6 Flow Label section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::FlowLabel"
      ::= { docsQosPktClassEntry 29 }
 
 docsQosPktClassCmInterfaceMask OBJECT-TYPE
-     SYNTAX      DocsL2vpnIfList
+     SYNTAX      CpeInterfaceMaskType
      MAX-ACCESS  read-only
      STATUS      current
      DESCRIPTION
@@ -907,8 +993,12 @@ docsQosPktClassCmInterfaceMask OBJECT-TYPE
         classifiers this object reports the zero-length
         string."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::CmInterfaceMask"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, CM Interface Mask (CMIM) Encoding
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::CmInterfaceMask"
      ::= { docsQosPktClassEntry 30 }
 
 docsQosPktClassIcmpTypeLow OBJECT-TYPE
@@ -921,8 +1011,11 @@ docsQosPktClassIcmpTypeLow OBJECT-TYPE
         referenced parameter is not present in a classifier, this
         attribute reports the value of 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IcmpTypeLow"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, TypeLow encodings section of the
+        Encodings for Configuration and MAC-Layer Messaging  Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        PktClass::IcmpTypeLow"
      ::= { docsQosPktClassEntry 31 }
 
 docsQosPktClassIcmpTypeHigh OBJECT-TYPE
@@ -935,8 +1028,11 @@ docsQosPktClassIcmpTypeHigh OBJECT-TYPE
         referenced parameter is not present in a classifier, this
         attribute reports the value of 255."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         PktClass::IcmpTypeHigh"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, TypeHigh encodings section of the
+        Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI
+        PktClass::IcmpTypeHigh"
      ::= { docsQosPktClassEntry 32 }
      
 -- ---------------------------------------------------------------------
@@ -983,8 +1079,11 @@ docsQosParamSetTable OBJECT-TYPE
         The CCAP reports the active service flow parameter set values. 
         The CCAP may report the admitted and provisioned service flow parameter sets."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Encodings section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet"
      ::= { docsQosMibObjects 2}
 
 docsQosParamSetEntry OBJECT-TYPE
@@ -1117,8 +1216,11 @@ docsQosParamSetServiceClassName OBJECT-TYPE
         DOCSIS QOS Parameter Set, this attribute returns the
         zero-length string."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ServiceClassName"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Service Class Name section 
+        in the Encodings for Configuration and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ServiceClassName"
      ::= { docsQosParamSetEntry 4 }
 
 docsQosParamSetPriority OBJECT-TYPE
@@ -1135,8 +1237,12 @@ docsQosParamSetPriority OBJECT-TYPE
         is not present in the corresponding DOCSIS QOS Parameter
         Set or if the parameter is not applicable."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::Priority"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Traffic Priority section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::Priority"
      ::= { docsQosParamSetEntry 5 }
 
 docsQosParamSetMaxTrafficRate OBJECT-TYPE
@@ -1158,8 +1264,12 @@ docsQosParamSetMaxTrafficRate OBJECT-TYPE
         is not present in the corresponding DOCSIS QOS Parameter
         Set, or if the parameter is not applicable."
      REFERENCE      
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MaxTrafficRate"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Maximum Sustained Traffic Rate
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxTrafficRate"
      ::= { docsQosParamSetEntry 6 }
 
 docsQosParamSetMaxTrafficBurst OBJECT-TYPE
@@ -1182,8 +1292,12 @@ docsQosParamSetMaxTrafficBurst OBJECT-TYPE
         If this parameter is not applicable, it is reported as
         0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MaxTrafficBurst"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Maximum Traffic Burst section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxTrafficBurst"
      ::= { docsQosParamSetEntry 7 }
 
 docsQosParamSetMinReservedRate OBJECT-TYPE
@@ -1202,8 +1316,12 @@ docsQosParamSetMinReservedRate OBJECT-TYPE
         reported as 0. The value of the DataRateUnitSetting attribute
         defines the units of MinReservedRate."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MinReservedRate"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Minimum Reserved Traffic Rate
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MinReservedRate"
      ::= { docsQosParamSetEntry 8 }
 
 docsQosParamSetMinReservedPkt OBJECT-TYPE
@@ -1223,8 +1341,12 @@ docsQosParamSetMinReservedPkt OBJECT-TYPE
         scheduling type of the Service Flow, both CMTS and CM
         report the value 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MinReservedPkt"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Assumed Minimum Reserved Rate
+        Packet Size section in the Encodings for Configuration
+        and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MinReservedPkt"
      ::= { docsQosParamSetEntry 9 }
 
 docsQosParamSetActiveTimeout OBJECT-TYPE
@@ -1242,8 +1364,12 @@ docsQosParamSetActiveTimeout OBJECT-TYPE
         DOCSIS QOS Parameter Set, this attribute
         returns 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ActiveTimeout"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Timeout for Active QoS Parameters
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ActiveTimeout"
      ::= { docsQosParamSetEntry 10 }
 
 docsQosParamSetAdmittedTimeout OBJECT-TYPE
@@ -1259,8 +1385,12 @@ docsQosParamSetAdmittedTimeout OBJECT-TYPE
         is not present in the corresponding DOCSIS QOS
         Parameter Set, this attribute returns 200."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::AdmittedTimeout"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Timeout for Admitted QoS
+        Parameters section in the Encodings for Configuration
+        and MAC-Layer Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::AdmittedTimeout"
      ::= { docsQosParamSetEntry 11 }
 
 docsQosParamSetMaxConcatBurst OBJECT-TYPE
@@ -1283,8 +1413,12 @@ docsQosParamSetMaxConcatBurst OBJECT-TYPE
         If the parameter is not applicable,
         it is reported as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MaxConcatBurst"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Maximum Concatenated Burst
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxConcatBurst"
      ::= { docsQosParamSetEntry 12 }
 
 docsQosParamSetSchedulingType OBJECT-TYPE
@@ -1300,8 +1434,12 @@ docsQosParamSetSchedulingType OBJECT-TYPE
         For QOS parameter sets of downstream Service
         Flows, this attribute's value is reported as 'undefined'."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::SchedulingType"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Scheduling Type
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::SchedulingType"
      ::= { docsQosParamSetEntry 13 }
 
 docsQosParamSetNomPollInterval OBJECT-TYPE
@@ -1331,8 +1469,12 @@ docsQosParamSetNomPollInterval OBJECT-TYPE
         QOS Parameter Set, both CMTS and CM report this
         attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::NomPollInterval"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Polling Interval section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::NomPollInterval"
      ::= { docsQosParamSetEntry 14 }
 
 docsQosParamSetTolPollJitter OBJECT-TYPE
@@ -1357,8 +1499,12 @@ docsQosParamSetTolPollJitter OBJECT-TYPE
         upstream scheduling type of the Service Flow, both
         CMTS and CM report this attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::TolPolJitter"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Tolerated Poll Jitter section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::TolPolJitter"
      ::= { docsQosParamSetEntry 15 }
 
 docsQosParamSetUnsolicitGrantSize OBJECT-TYPE
@@ -1382,8 +1528,12 @@ docsQosParamSetUnsolicitGrantSize OBJECT-TYPE
         QOS Parameter Set, both CMTS and CM report this
         attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::UnsolicitGrantSize"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Unsolicited Grant Size section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::UnsolicitGrantSize"
      ::= { docsQosParamSetEntry 16 }
 
 docsQosParamSetNomGrantInterval OBJECT-TYPE
@@ -1406,8 +1556,12 @@ docsQosParamSetNomGrantInterval OBJECT-TYPE
         QOS Parameter Set, both CMTS and CM report this
         attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::NomGrantInterval"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Nominal Grant Interval section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::NomGrantInterval"
      ::= { docsQosParamSetEntry 17 }
 
 docsQosParamSetTolGrantJitter OBJECT-TYPE
@@ -1430,8 +1584,12 @@ docsQosParamSetTolGrantJitter OBJECT-TYPE
         QOS Parameter Set, both CMTS and CM report this
         attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::TolGrantJitter"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Tolerated Grant Jitter section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI  
+        ParamSet::TolGrantJitter"
      ::= { docsQosParamSetEntry 18 }
 
 docsQosParamSetGrantsPerInterval OBJECT-TYPE
@@ -1453,8 +1611,12 @@ docsQosParamSetGrantsPerInterval OBJECT-TYPE
         QOS Parameter Set, both CMTS and CM report this
         attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::GrantsPerInterval"
+        "MAC and Upper Layer Protocols Interface Specification, 
+        CM-SP-MULPIv4.0-I06-221019, Grants per Interval section 
+        in the Encodings for Configuration and MAC-Layer Messaging
+        Annex. 
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::GrantsPerInterval"
      ::= { docsQosParamSetEntry 19 }
 
 docsQosParamSetTosAndMask OBJECT-TYPE
@@ -1491,8 +1653,12 @@ docsQosParamSetTosAndMask OBJECT-TYPE
         the CM reports the value as signaled in the referenced
         parameter."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::TosAndMask"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, IP Type Of Service (DSCP)
+        Overwrite section in the Encodings for Configuration
+        and MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::TosAndMask"
      ::= { docsQosParamSetEntry 20 }
 
 docsQosParamSetTosOrMask OBJECT-TYPE
@@ -1512,9 +1678,13 @@ docsQosParamSetTosOrMask OBJECT-TYPE
         Network operators should avoid specifying values of
         TosAndMask and TosORMask that would result in the modification
         of the ECN bits."
-     REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::TosOrMask"
+     REFERENCE
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, IP Type Of Service (DSCP)
+        Overwrite section in the Encodings for Configuration
+        and MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::TosOrMask"
      ::= { docsQosParamSetEntry 21 }
 
 docsQosParamSetMaxLatency OBJECT-TYPE
@@ -1535,8 +1705,12 @@ docsQosParamSetMaxLatency OBJECT-TYPE
         to upstream DOCSIS QOS Parameter Sets, so its value
         is reported as 0 in that case."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MaxLatency"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Maximum Downstream Latency
+        section in the Encodings for Configuration and MAC-Layer
+        Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI  
+        ParamSet::MaxLatency"
      ::= { docsQosParamSetEntry 22 }
 
 docsQosParamSetType OBJECT-TYPE
@@ -1567,8 +1741,11 @@ docsQosParamSetType OBJECT-TYPE
         be reported.  The  'admitted ' and  'provisioned'sets are not 
         required to be reported."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::Type"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Scheduling Type
+        section in the Encodings for Configuration and MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::Type"
      ::= { docsQosParamSetEntry 23 }
 
 docsQosParamSetRequestPolicyOct OBJECT-TYPE
@@ -1619,8 +1796,11 @@ docsQosParamSetRequestPolicyOct OBJECT-TYPE
         If the referenced parameter is not present in a QOS Parameter
         Set, the value of this object is reported as '00000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::RequestPolicyOct"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Request/ Transmission Policy
+        section in the Encodings for Configuration and MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::RequestPolicyOct"
      ::= { docsQosParamSetEntry 24 }
 
 docsQosParamSetBitMap OBJECT-TYPE
@@ -1730,8 +1910,12 @@ docsQosParamSetBitMap OBJECT-TYPE
           that default values be used. These default values are reported as the corresponding 
           attribute."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::BitMap"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Encodings
+        section in the Encodings for Configuration and
+        MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::BitMap"
      ::= { docsQosParamSetEntry 25 }
 
 docsQosParamSetServiceFlowId OBJECT-TYPE
@@ -1742,8 +1926,12 @@ docsQosParamSetServiceFlowId OBJECT-TYPE
         "This key represents the Service Flow ID for the service
         flow."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ServiceFlowId"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Service Identifier
+        section in the Encodings for Configuration and
+        MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ServiceFlowId"
      ::= { docsQosParamSetEntry 26 }
 
 docsQosParamSetRequiredAttrMask OBJECT-TYPE
@@ -1758,8 +1946,12 @@ docsQosParamSetRequiredAttrMask OBJECT-TYPE
         If the referenced parameter is not present in the corresponding
         DOCSIS QOS Parameter Set, this attribute returns '00000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::RequiredAttrMask"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Required Attribute
+        Mask section in the Encodings for Configuration and
+        MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::RequiredAttrMask"
      ::= { docsQosParamSetEntry 27 }
 
 docsQosParamSetForbiddenAttrMask OBJECT-TYPE
@@ -1774,8 +1966,12 @@ docsQosParamSetForbiddenAttrMask OBJECT-TYPE
         If the referenced parameter is not present in the corresponding
         DOCSIS QOS Parameter Set, this attribute returns '00000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ForbiddenAttrMask"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Forbidden Attribute
+        Mask section in the Encodings for Configuration and
+        MAC-Layer Annex
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ForbiddenAttrMask"
      ::= { docsQosParamSetEntry 28 }
 
 docsQosParamSetAttrAggrRuleMask OBJECT-TYPE
@@ -1791,8 +1987,12 @@ docsQosParamSetAttrAggrRuleMask OBJECT-TYPE
         If the referenced parameter is not present in the corresponding
         DOCSIS QOS Parameter Set, this attribute returns '00000000'H."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::AttrAggrRuleMask"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Service Flow Attribute Aggregation
+        Mask  section in the Encodings for Configuration and
+        MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::AttrAggrRuleMask"
      ::= { docsQosParamSetEntry 29 }
 
 docsQosParamSetAppId OBJECT-TYPE
@@ -1806,8 +2006,12 @@ docsQosParamSetAppId OBJECT-TYPE
         If the referenced parameter is not present in the corresponding
         DOCSIS QOS Parameter Set, this attribute returns 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::AppId"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Application Identifier
+        section in the Encodings for Configuration and
+        MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::AppId"
      ::= { docsQosParamSetEntry 30 }
 
 docsQosParamSetMultiplierContentionReqWindow OBJECT-TYPE
@@ -1823,8 +2027,12 @@ docsQosParamSetMultiplierContentionReqWindow OBJECT-TYPE
         upstream DOCSIS QOS Parameter Set or is not applicable, this
         attribute returns 8."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MultiplierContentionReqWindow"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Multiplier to Contention Request
+        Backoff Window section in the Encodings for Configuration
+        and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI  
+        ParamSet::MultiplierContentionReqWindow"
      ::= { docsQosParamSetEntry 31 }
 
 docsQosParamSetMultiplierBytesReq OBJECT-TYPE
@@ -1839,8 +2047,12 @@ docsQosParamSetMultiplierBytesReq OBJECT-TYPE
         present in the upstream DOCSIS QOS Parameter Set, or is not
         applicable, this attribute returns 4."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MultiplierBytesReq"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Multiplier to Number of Bytes
+        Requested section in the Encodings for Configuration
+        and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MultiplierBytesReq"
      ::= { docsQosParamSetEntry 32 }
 
 docsQosParamSetMaxReqPerSidCluster OBJECT-TYPE
@@ -1863,10 +2075,12 @@ docsQosParamSetMaxReqPerSidCluster OBJECT-TYPE
         docsQosServiceFlowMaxReqPerSidCluster in the
         docsQosServiceFlowTable."
      REFERENCE
-        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Requests
-        per SID Cluster section in the Common Radio Frequency
-        Interface Encodings Annex."
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Maximum Requests per SID
+        Cluster section in the Encodings for Configuration
+        and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxReqPerSidCluster"
      ::= { docsQosParamSetEntry 33 }
 
 docsQosParamSetMaxOutstandingBytesPerSidCluster OBJECT-TYPE
@@ -1891,10 +2105,12 @@ docsQosParamSetMaxOutstandingBytesPerSidCluster OBJECT-TYPE
         docsQosServiceFlowMaxOutstandingBytesPerSidCluster in the
         docsQosServiceFlowTable."
      REFERENCE
-        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum
-        Outstanding Bytes per SID Cluster section in the Common
-        Radio Frequency Interface Encodings Annex."
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Maximum Outstanding Bytes per
+        SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxOutstandingBytesPerSidCluster"
      ::= { docsQosParamSetEntry 34 }
 
 docsQosParamSetMaxTotBytesReqPerSidCluster OBJECT-TYPE
@@ -1917,10 +2133,12 @@ docsQosParamSetMaxTotBytesReqPerSidCluster OBJECT-TYPE
         docsQosServiceFlowMaxTotBytesReqPerSidCluster in the
         docsQosServiceFlowTable."
      REFERENCE
-        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Total Bytes
-        Requested per SID Cluster section in the Common Radio
-        Frequency Interface Encodings Annex."
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Maximum Total Bytes Requested
+        per SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxTotBytesReqPerSidCluster"
      ::= { docsQosParamSetEntry 35 }
 
 docsQosParamSetMaxTimeInSidCluster OBJECT-TYPE
@@ -1943,10 +2161,12 @@ docsQosParamSetMaxTimeInSidCluster OBJECT-TYPE
         docsQosServiceFlowMaxTimeInSidCluster in the
         docsQosServiceFlowTable."
      REFERENCE
-        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Time in
-        the SID Cluster section in the Common Radio Frequency
-        Interface Encodings Annex."
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Maximum Time in the SID
+        Cluster section in the Encodings for Configuration
+        and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaxTimeInSidCluster"
      ::= { docsQosParamSetEntry 36 }
 
 docsQosParamSetPeakTrafficRate OBJECT-TYPE
@@ -1965,8 +2185,11 @@ docsQosParamSetPeakTrafficRate OBJECT-TYPE
         The value of the DataRateUnitSetting attribute defines
         the units of PeakTrafficRate."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::PeakTrafficRate"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Peak Traffic Rate section
+        in the Encodings for Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::PeakTrafficRate"
      ::= { docsQosParamSetEntry 37 }
 
 docsQosParamSetDsResequencing OBJECT-TYPE
@@ -1995,8 +2218,12 @@ docsQosParamSetDsResequencing OBJECT-TYPE
         upstream DOCSIS QOS Parameter Sets, so the value 'notApplicable' is reported
         in that case."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::DsResequencing"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Downstream Resequencing
+        section in the Encodings for Configuration and
+        MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::DsResequencing"
      ::= { docsQosParamSetEntry 38 }
 
 docsQosParamSetMinimumBuffer OBJECT-TYPE
@@ -2008,8 +2235,11 @@ docsQosParamSetMinimumBuffer OBJECT-TYPE
         "This attribute represents the configured minimum buffer size
         for the service flow."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MinimumBuffer"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Buffer Control section in
+        the Encodings for Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MinimumBuffer"
      ::= { docsQosParamSetEntry 39 }
 
 docsQosParamSetTargetBuffer OBJECT-TYPE
@@ -2023,8 +2253,11 @@ docsQosParamSetTargetBuffer OBJECT-TYPE
         size was configured, and the device will use a vendor specific
         value."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::TargetBuffer"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Buffer Control section in
+        the Encodings for Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::TargetBuffer"
      ::= { docsQosParamSetEntry 40 }
 
 docsQosParamSetMaximumBuffer OBJECT-TYPE
@@ -2037,8 +2270,11 @@ docsQosParamSetMaximumBuffer OBJECT-TYPE
         for the service flow. The value 4294967295 indicates that no maximum buffer
         size was configured, and thus there is no limit to the buffer size."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::MaximumBuffer"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, Buffer Control section in
+        the Encodings for Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::MaximumBuffer"
      ::= { docsQosParamSetEntry 41 }
 
 docsQosParamSetAqmDisabled OBJECT-TYPE
@@ -2050,8 +2286,11 @@ docsQosParamSetAqmDisabled OBJECT-TYPE
          upstream or downstream service flow specified by
          docsQosParamSetServiceFlowId."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::AqmDisabled"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, AQM Encodings section in
+        the Encodings for Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::AqmDisabled"
      ::= { docsQosParamSetEntry 42 }
 
 docsQosParamSetAqmLatencyTarget OBJECT-TYPE
@@ -2066,8 +2305,11 @@ docsQosParamSetAqmLatencyTarget OBJECT-TYPE
          Service Flow is ImmediateAqm. For downstream service flows, the value
          256 indicates an unknown latency target. The units are in milliseconds."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ClassicAqmLatencyTarget"
+        "MAC and Upper Layer Protocols Interface Specification,
+        CM-SP-MULPIv4.0-I06-221019, AQM Encodings section in
+        the Encodings for Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ClassicAqmLatencyTarget"
      ::= { docsQosParamSetEntry 43 }
 
 docsQosParamSetHCMaxTrafficRate OBJECT-TYPE
@@ -2090,8 +2332,10 @@ docsQosParamSetHCMaxTrafficRate OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Maximum Sustained
-        Traffic Rate section in the Common Radio Frequency Interface
-        Encodings Annex."
+        Traffic Rate section in the  Encodings for Configuration and
+        MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::HCMaxTrafficRate"
      ::= { docsQosParamSetEntry 44 }
 
 docsQosParamSetHCMinReservedRate OBJECT-TYPE
@@ -2112,8 +2356,10 @@ docsQosParamSetHCMinReservedRate OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Minimum Reserved
-        Traffic Rate section of the Common Radio Frequency Interface
-        Encodings Annex."
+        Traffic Rate section of the  Encodings for Configuration and
+        MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::HCMinReservedRate"
      ::= { docsQosParamSetEntry 45 }
 
 docsQosParamSetHCPeakTrafficRate OBJECT-TYPE
@@ -2133,8 +2379,10 @@ docsQosParamSetHCPeakTrafficRate OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522,
-        Peak Traffic Rate section in the Common Radio Frequency
-        Interface Encodings Annex."
+        Peak Traffic Rate section in the  Encodings for
+        Configuration and MAC-Layer Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::HCPeakTrafficRate"
      ::= { docsQosParamSetEntry 46 }
 
 docsQosParamSetAqmAlgInUse OBJECT-TYPE
@@ -2155,8 +2403,12 @@ docsQosParamSetAqmAlgInUse OBJECT-TYPE
          The value immediateAqm(4) indicates the Immediate Active Queue Management 
          algorithm."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::AqmAlgInUse"
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I08-080522,
+        Proportional-Integral-Enhanced Active Queue Management
+        Algorithm Annex.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::AqmAlgInUse"
      ::= { docsQosParamSetEntry 47 }
 
 docsQosParamSetGuaranteedGrantInterval OBJECT-TYPE
@@ -2172,8 +2424,11 @@ docsQosParamSetGuaranteedGrantInterval OBJECT-TYPE
         or scheduling type of the corresponding DOCSIS QoS Parameter Set, 
         both CMTS and CM report this attribute's value as 0."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::GuaranteedGrantInterval"
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I08-080522, Guaranteed Grant
+        Interval section of Annex C.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::GuaranteedGrantInterval"
      ::= { docsQosParamSetEntry 48 }
 
 docsQosParamSetGuaranteedGrantRate OBJECT-TYPE
@@ -2186,8 +2441,11 @@ docsQosParamSetGuaranteedGrantRate OBJECT-TYPE
          is specific to the CMTS. The value of the DataRateUnitSetting
          attribute defines the units of GuaranteedGrantRate."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::GuaranteedGrantRate"    
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I08-080522, Guaranteed Grant
+        Rate section of Annex C.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::GuaranteedGrantRate"    
      ::= { docsQosParamSetEntry 49 }
 
 docsQosParamSetGuaranteedRequestInterval OBJECT-TYPE
@@ -2203,8 +2461,11 @@ docsQosParamSetGuaranteedRequestInterval OBJECT-TYPE
         16-bit representation of the request interval in units of microseconds. 
         The value zero represents polling disabled. "
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::GuaranteedRequestInterval"
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I08-080522, Guaranteed Request
+        Interval section of Annex C.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::GuaranteedRequestInterval"
      ::= { docsQosParamSetEntry 50 }
 
 docsQosParamSetImmedAqmMaxThreshold OBJECT-TYPE
@@ -2218,8 +2479,11 @@ docsQosParamSetImmedAqmMaxThreshold OBJECT-TYPE
         algorithm and the Queue Protection algorithm. This attribute reports
         the actual ImmedAqmMaxThreshold rather than the configured value."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ImmedAqmMaxThreshold"
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I08-080522, Active Queue
+        Management Algorithm Annexes.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ImmedAqmMaxThreshold"
      DEFVAL { 1000 }
      ::= { docsQosParamSetEntry 51 }
 
@@ -2234,8 +2498,11 @@ docsQosParamSetImmedAqmRangeExponentRampFunc OBJECT-TYPE
         algorithm.  It is expressed as an exponent of 2, e.g. a value of 19 means
         the range of the ramp will be 2^19 = 524288 ns (roughly 524 microseconds)."
      REFERENCE 
-        "Information Model Mapping: CM-SP-CCAP-OSSI 
-         ParamSet::ImmedAqmRangeExponentRampFunc"
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I08-080522, Active Queue
+        Management Algorithm Annexes.
+        Information Model Mapping: CM-SP-CCAP-OSSI 
+        ParamSet::ImmedAqmRangeExponentRampFunc"
      ::= { docsQosParamSetEntry 52 }
      
 docsQosParamSetDataRateUnitSetting OBJECT-TYPE
@@ -2292,7 +2559,7 @@ docsQosServiceFlowTable OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522,  Service
-        lows and Classifiers section."
+        Flows and Classifiers section."
      ::= { docsQosMibObjects 3}
 
 docsQosServiceFlowEntry OBJECT-TYPE
@@ -2342,7 +2609,7 @@ DocsQosServiceFlowEntry ::= SEQUENCE {
      }
 
 docsQosServiceFlowId OBJECT-TYPE
-     SYNTAX      Unsigned32 
+     SYNTAX      Unsigned32
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
@@ -2355,8 +2622,8 @@ docsQosServiceFlowId OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Service Flow
-        Identifier section in the Common Radio Frequency Interface
-        Encodings Annex."
+        Identifier section in the Encodings for Configuration
+        and MAC-Layer Messaging Annex."
      ::= { docsQosServiceFlowEntry 1 }
 
 docsQosServiceFlowSID OBJECT-TYPE
@@ -2372,9 +2639,9 @@ docsQosServiceFlowSID OBJECT-TYPE
         ID (SID)."
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Service
-        Identifier section in the Common Radio Frequency Interface
-        Encodings Annex."
+        Specification CM-SP-MULPIv3.0-I08-080522, Service Flow
+        Identifier section in the Encodings for Configuration
+        and MAC-Layer Messaging Annex."
      ::= { docsQosServiceFlowEntry 6 }
 
 docsQosServiceFlowDirection OBJECT-TYPE
@@ -2474,8 +2741,8 @@ docsQosServiceFlowMaxReqPerSidCluster OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Maximum Requests
-        per SID Cluster section in the Common Radio Frequency
-        Interface Encodings Annex."
+        per SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Messaging  Annex."
      ::= { docsQosServiceFlowEntry 13 }
 
 docsQosServiceFlowMaxOutstandingBytesPerSidCluster OBJECT-TYPE
@@ -2494,9 +2761,9 @@ docsQosServiceFlowMaxOutstandingBytesPerSidCluster OBJECT-TYPE
         in 3.0 operation, in other cases it is reported as 0."
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum
-        Outstanding Bytes per SID Cluster section in the Common
-        Radio Frequency Interface Encodings Annex."
+        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Requests
+        per SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Messaging  Annex."
      ::= { docsQosServiceFlowEntry 14 }
 
 docsQosServiceFlowMaxTotBytesReqPerSidCluster OBJECT-TYPE
@@ -2514,9 +2781,9 @@ docsQosServiceFlowMaxTotBytesReqPerSidCluster OBJECT-TYPE
         in 3.0 operation, in other cases it is reported as 0."
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Total
-        Bytes Requested per SID Cluster section in the
-        Common Radio Frequency Interface Encodings Annex."
+        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Requests
+        per SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Messaging  Annex."
      ::= { docsQosServiceFlowEntry 15 }
 
 docsQosServiceFlowMaxTimeInSidCluster OBJECT-TYPE
@@ -2534,9 +2801,9 @@ docsQosServiceFlowMaxTimeInSidCluster OBJECT-TYPE
         in 3.0 operation, in other cases it is reported as 0."
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Time in
-        the SID Cluster section in the Common Radio Frequency
-        Interface Encodings Annex."
+        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Requests
+        per SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Messaging  Annex."
      ::= { docsQosServiceFlowEntry 16 }
 
 docsQosServiceFlowBufferSize OBJECT-TYPE
@@ -2552,9 +2819,9 @@ docsQosServiceFlowBufferSize OBJECT-TYPE
         0."
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I15-110210, Buffer Control
-        section in the Common Radio Frequency Interface Encodings
-        Annex."
+        Specification CM-SP-MULPIv3.0-I08-080522, Maximum Requests
+        per SID Cluster section in the Encodings for Configuration
+        and MAC-Layer Messaging  Annex."
      ::= { docsQosServiceFlowEntry 17 }
 
 docsQosServiceFlowIatcProfileName OBJECT-TYPE
@@ -3892,8 +4159,8 @@ docsQosServiceClassName OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Service Class
-        Name section in the Common Radio Frequency Interface
-        Encodings Annex."
+        Name section in the Encodings for Configuration and
+        MAC-Layer Messaging  Annex."
      ::= { docsQosServiceClassEntry 1 }
 
 docsQosServiceClassStatus OBJECT-TYPE
@@ -3989,7 +4256,8 @@ docsQosServiceClassMaxConcatBurst OBJECT-TYPE
      STATUS      current
      DESCRIPTION
         "This attribute is the template for the MaxConcatBurst
-        attribute of the QoS Parameter Set."
+        attribute of the QoS Parameter Set. MaxConcatBurst only
+        applies to pre-DOCSIS 3.1 devices."
      DEFVAL { 1522 }
      ::= { docsQosServiceClassEntry 9 }
 
@@ -4366,7 +4634,7 @@ docsQosServiceClassAqmDisabled OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.1 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.1-I04-141218, AQM Encodings section
-        in the Common Radio Frequency Interface Encodings Annex."
+        in the Encodings for Configuration and MAC-Layer Messaging Annex."
      ::= { docsQosServiceClassEntry 42 }
 
 docsQosServiceClassAqmLatencyTarget OBJECT-TYPE
@@ -4387,7 +4655,7 @@ docsQosServiceClassAqmLatencyTarget OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.1 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.1-I04-141218, AQM Encodings section
-        in the Common Radio Frequency Interface Encodings Annex."
+        in the Encodings for Configuration and MAC-Layer Messaging Annex."
      DEFVAL {0}
      ::= { docsQosServiceClassEntry 43 }
 
@@ -4850,9 +5118,9 @@ docsQosServiceFlowSidClusterTable OBJECT-TYPE
         an upstream service flow."
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
-        Specification CM-SP-MULPIv3.0-I08-080522,  Service Flow SID
-        Cluster Assignments section in the Common Radio Frequency
-        Interface Encodings Annex."
+        Specification CM-SP-MULPIv3.0-I08-080522, Service Flow SID
+        Cluster Assignments section in the Encodings for
+        Configuration and MAC-Layer Messaging Annex."
      ::= { docsQosMibObjects 12}
 
 docsQosServiceFlowSidClusterEntry OBJECT-TYPE
@@ -4888,8 +5156,8 @@ docsQosServiceFlowSidClusterId OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, SID Cluster ID
-        section in the Common Radio Frequency Interface Encodings
-        Annex."
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex."
      ::= { docsQosServiceFlowSidClusterEntry 1 }
 
 docsQosServiceFlowSidClusterUcid OBJECT-TYPE
@@ -5513,7 +5781,7 @@ docsQosCmtsDsidUsage OBJECT-TYPE
         CM-SP-OSSIv3.0-I07-080522, Multicast Requirements Annex.
         DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, DSID Encodings section
-        in the Common Radio Frequency Interface Encodings Annex."
+        in the Encodings for Configuration and MAC-Layer Messaging Annex."
      ::= { docsQosCmtsDsidEntry 2 }
 
 docsQosCmtsDsidDsChSet OBJECT-TYPE
@@ -5629,7 +5897,7 @@ docsQosCmtsDebugDsidDsid OBJECT-TYPE
      STATUS      current
      DESCRIPTION
         "This attribute represents the DSID value to be debugged,
-        identified by the IfIndex attribute of this object."
+        identified by the ifIndex attribute of this table."
      ::= { docsQosCmtsDebugDsidEntry 1 }
 
 docsQosCmtsDebugDsidRowStatus OBJECT-TYPE
@@ -5768,9 +6036,9 @@ DocsQosCmDsidEntry ::= SEQUENCE {
      docsQosCmDsidNextExpectedSeqNum
                   Unsigned32,
      docsQosCmDsidCmInterfaceMask
-                  DocsL2vpnIfList,
+                  CpeInterfaceMaskType,
      docsQosCmDsidFwdCmInterfaceMask
-                  DocsL2vpnIfList
+                  CpeInterfaceMaskType
      }
 
 docsQosCmDsidDsid OBJECT-TYPE
@@ -5889,7 +6157,7 @@ docsQosCmDsidNextExpectedSeqNum OBJECT-TYPE
      ::= { docsQosCmDsidEntry 9 }
 
 docsQosCmDsidCmInterfaceMask OBJECT-TYPE
-     SYNTAX      DocsL2vpnIfList
+     SYNTAX      CpeInterfaceMaskType
      MAX-ACCESS  read-only
      STATUS      current
      DESCRIPTION
@@ -5898,7 +6166,7 @@ docsQosCmDsidCmInterfaceMask OBJECT-TYPE
      ::= { docsQosCmDsidEntry 10 }
 
 docsQosCmDsidFwdCmInterfaceMask OBJECT-TYPE
-     SYNTAX      DocsL2vpnIfList
+     SYNTAX      CpeInterfaceMaskType
      MAX-ACCESS  read-only
      STATUS      current
      DESCRIPTION
@@ -6031,8 +6299,8 @@ docsQosCmDsidClientTable OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, DSID Encodings
-        section in the Common Radio Frequency Interface Encodings
-        Annex."
+        section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex."
      ::= { docsQosMibObjects 23}
 
 docsQosCmDsidClientEntry OBJECT-TYPE
@@ -6248,7 +6516,7 @@ docsQosAggregateServiceFlowEntry OBJECT-TYPE
      DESCRIPTION
         "The conceptual row of docsQosAggregateServiceFlowTable.
          The ifIndex key corresponds to the MAC Domain interface of the
-         aggregate service flow."
+         Aggregate Service Flow."
      INDEX { ifIndex,
              docsQosAggregateServiceFlowId
            }

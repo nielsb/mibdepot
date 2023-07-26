@@ -48,7 +48,7 @@ DOCS-IF3-MIB DEFINITIONS ::= BEGIN
               FROM CLAB-DEF-MIB;
 
 docsIf3Mib MODULE-IDENTITY
-    LAST-UPDATED    "202203310000Z" -- March 31, 2022
+    LAST-UPDATED    "202306010000Z" -- June 1, 2023
     ORGANIZATION    "Cable Television Laboratories, Inc."
     CONTACT-INFO
          "Postal: Cable Television Laboratories, Inc.
@@ -77,8 +77,11 @@ docsIf3Mib MODULE-IDENTITY
          management of DOCSIS 3.0 features, primarily channel bonding,
          interface topology and enhanced signal quality monitoring.
 
-         Copyright 1999-2022 Cable Television Laboratories, Inc.
+         Copyright 1999-2023 Cable Television Laboratories, Inc.
          All rights reserved."
+    REVISION    "202306010000Z" -- June 1, 2022
+    DESCRIPTION
+        "Revised per ECN DOCS-IF3-MIB-N-23.2310-1."
     REVISION    "202203310000Z" -- March 31, 2022
     DESCRIPTION
         "Revised per ECN DOCS-IF3-MIB-N-22.2241-1."
@@ -526,8 +529,7 @@ ChId ::= TEXTUAL-CONVENTION
         "This data type is an 8-bit number that represents a provisioned
         Downstream Channel ID (DCID) or a provisioned Upstream Channel
         ID (UCID). A Channel Id is unique per direction within a MAC
-        Domain. The value zero is reserved for use when the channel ID
-        is unknown."
+        Domain."
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Upstream Channel
@@ -631,7 +633,7 @@ RcpId ::= TEXTUAL-CONVENTION
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, RCP-ID section in
-         the Common Radio Frequency Interface Encodings Annex."
+         the Encodings for Configuration and MAC-Layer Messaging Annex."
      SYNTAX      OCTET STRING (SIZE (5))
 
 Dsid ::= TEXTUAL-CONVENTION
@@ -773,8 +775,8 @@ docsIf3CmStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object defines attributes of the CM connectivity
-        status. This object provides CM connectivity status
+        "This table defines attributes of the CM connectivity
+        status. This table provides CM connectivity status
         information of the CM previously available in
         the SNMP table docsIfCmStatusTable."
      REFERENCE
@@ -1039,10 +1041,10 @@ docsIf3CmStatusUsTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object defines PHY and MAC information about
+        "This table defines PHY and MAC information about
         the CM's upstream channels operating in Multiple Transmit
         Channel (MTC) mode or in a Pre-3.0 DOSCIS transmit
-        channel mode. This object provides per-CM Upstream
+        channel mode. This table provides per-CM Upstream
         channel information previously available in the
         SNMP table docsIfCmStatusTable."
      ::= { docsIf3MibObjects 2}
@@ -1224,7 +1226,7 @@ docsIf3CmtsCmRegStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object defines attributes that represent the CM's
+        "This table defines attributes that represent the CM's
         registration status as tracked by the CMTS.
         Refer to the individual attribute definitions for
         applicability to 3.0 and 3.1 Cable Modems."
@@ -1409,8 +1411,8 @@ docsIf3CmtsCmRegStatusRcsId OBJECT-TYPE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Cable Modem
          Physical Receive Channel Configuration section and the
-         Receive Channels section in the Common Radio Frequency
-         Interface Encodings Annex."
+         Receive Channels section in the Encodings for Configuration
+         and MAC-Layer Messaging Annex."
      ::= { docsIf3CmtsCmRegStatusEntry 11 }
 
 docsIf3CmtsCmRegStatusTcsId OBJECT-TYPE
@@ -1737,7 +1739,7 @@ docsIf3MdChCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object configures the association of downstream
+        "This table configures the association of downstream
         and upstream channels to a particular MAC Domain
         (MD) on a CMTS.  The creation of channels and MAC domain
         object interface instances is vendor-specific.
@@ -1750,9 +1752,9 @@ docsIf3MdChCfgTable OBJECT-TYPE
         be configured in the same MAC Domain.  For example, it
         could require the upstream channels to be from the same
         line card.
-        This object supports the creation and deletion of multiple
+        This table supports the creation and deletion of multiple
         instances.
-        Creation of a new instance of this object requires the
+        Creation of a new entry in this table requires the
         ChId attribute to be set."
      ::= { docsIf3MibObjects 5}
 
@@ -1850,12 +1852,12 @@ docsIf3RccCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      obsolete
      DESCRIPTION
-        "This object identifies the scope of the Receive Channel
+        "This table identifies the scope of the Receive Channel
         Configuration (RCC) and provides a top level container
         for the Receive Module and Receive Channel
-        objects.  The CMTS selects an instance of this object
+        objects.  The CMTS selects an instance of this table
         to assign to a CM when it registers.
-        This object supports the creation and deletion of multiple
+        This table supports the creation and deletion of multiple
         instances."
      ::= { docsIf3MibObjects 6}
 
@@ -1924,7 +1926,8 @@ docsIf3RccCfgVendorSpecific OBJECT-TYPE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Receive Channel
          Profile/Configuration Vendor Specific Parameters section
-         in the Common Radio Frequency Interface Encodings Annex."
+         in the Encodings for Configuration and MAC-Layer
+         Messaging  Annex."
      DEFVAL { ''H }
      ::= { docsIf3RccCfgEntry 3 }
 
@@ -1955,7 +1958,7 @@ docsIf3RccStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "The RCC Status object provides a read-only view of
+        "The RCC Status table provides a read-only view of
         the statically-configured (from the RccCfg object)
         and dynamically-created RCCs.
         The CMTS creates an RCC Status instance for each unique
@@ -2008,7 +2011,7 @@ docsIf3RccStatusRccStatusId OBJECT-TYPE
         "This key represents an RCC combination for a particular
         RcpId either from an RCC configuration object
         or a CMTS-determined RCC and is unique per combination
-        of MAC Domain IfIndex and RcpId."
+        of MAC Domain ifIndex and RcpId."
      ::= { docsIf3RccStatusEntry 2 }
 
 docsIf3RccStatusRccCfgId OBJECT-TYPE
@@ -2062,7 +2065,7 @@ docsIf3RxChCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      obsolete
      DESCRIPTION
-        "The Receive Channel Configuration object permits
+        "The Receive Channel Configuration table permits
         an operator to configure how CMs registered with certain
         Receive Channel Profiles will configure the Receive
         Channels within their profile. When a CM registers
@@ -2082,9 +2085,9 @@ docsIf3RxChCfgTable OBJECT-TYPE
         is not specified.  A CMTS is not restricted to assigning
         Receive Modules based only on the contents of this
         object.
-        This object supports the creation and deletion of multiple
+        This table supports the creation and deletion of multiple
         instances.
-        Creation of a new instance of this object requires the
+        Creation of a new entry in this table requires the
         ChIfIndex attribute to be set and a valid reference of
         a RccCfg instance."
      ::= { docsIf3MibObjects 8}
@@ -2131,8 +2134,8 @@ docsIf3RxChCfgRcId OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Receive
-        Channel Index section in the Common Radio Frequency
-        Interface Encodings Annex."
+        Channel Index section in the Encodings for Configuration
+        and MAC-Layer Messaging Annex."
      ::= { docsIf3RxChCfgEntry 1 }
 
 docsIf3RxChCfgChIfIndex OBJECT-TYPE
@@ -2199,7 +2202,7 @@ docsIf3RxChStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "The Receive Channel Status object reports the status
+        "The Receive Channel Status table reports the status
         of the statically-configured and dynamically-created
         Receive Channels within an RCC."
      ::= { docsIf3MibObjects 9}
@@ -2284,7 +2287,7 @@ docsIf3RxModuleCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      obsolete
      DESCRIPTION
-        "The Receive Module Configuration object permits
+        "The Receive Module Configuration table permits
         an operator to configure how CMs with certain Receive
         Channel Profiles (RCPs) will configure the Receive
         Modules within their profile upon CM registration.
@@ -2303,11 +2306,11 @@ docsIf3RxModuleCfgTable OBJECT-TYPE
         MIB table entries) for more than one RCP reported by
         the CM, the particular RCP selected by the CMTS is not
         specified.  A CMTS is not restricted to assigning Receive
-        Modules based only on the contents of this object.
+        Modules based only on the contents of this table.
 
         This object supports the creation and deletion of multiple
         instances.
-        Creation of a new instance of this object requires the
+        Creation of a new entry this table requires the
         reference of a valid RccCfg instance."
      ::= { docsIf3MibObjects 10}
 
@@ -2348,8 +2351,8 @@ docsIf3RxModuleCfgRmId OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I08-080522, Receive Module
-        Index in the Common Radio Frequency Interface Encodings
-        Annex."
+        Index in the Encodings for Configuration and MAC-Layer
+        Messaging Annex."
      ::= { docsIf3RxModuleCfgEntry 1 }
 
 docsIf3RxModuleCfgRmRmConnectivityId OBJECT-TYPE
@@ -2389,7 +2392,7 @@ docsIf3RxModuleCfgFirstCenterFrequency OBJECT-TYPE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Receive Module
          First Channel Center Frequency Assignment section in the
-         Common Radio Frequency Interface Encodings Annex."
+         Encodings for Configuration and MAC-Layer Messaging Annex."
      ::= { docsIf3RxModuleCfgEntry 3 }
 
 docsIf3RxModuleCfgRowStatus OBJECT-TYPE
@@ -2409,7 +2412,7 @@ docsIf3RxModuleStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "The Receive Module Status object provides a read-only
+        "The Receive Module Status table provides a read-only
         view of the statically configured and dynamically
         created Receive Modules within an RCC."
      ::= { docsIf3MibObjects 11}
@@ -2421,7 +2424,7 @@ docsIf3RxModuleStatusEntry OBJECT-TYPE
      DESCRIPTION
          "The conceptual row of docsIf3RxModuleStatusTable.
          The ifIndex key corresponds to the MAC Domain interface
-         where the RCC is configured. When this object is defined
+         where the RCC is configured. When this table is defined
          on the CM, the value of RccStatusId is always 1."
      INDEX {
              ifIndex,
@@ -2450,8 +2453,8 @@ docsIf3RxModuleStatusRmId OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Receive
-         Module Index section in the Common Radio Frequency
-         Interface Encodings Annex."
+         Module Index section in the Encodings for Configuration
+         and MAC-Layer Messaging  Annex."
      ::= { docsIf3RxModuleStatusEntry 1 }
 
 docsIf3RxModuleStatusRmRmConnectivityId OBJECT-TYPE
@@ -2486,7 +2489,7 @@ docsIf3MdNodeStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object reports the MD-DS-SG-ID and MD-US-SG-ID
+        "This table reports the MD-DS-SG-ID and MD-US-SG-ID
         associated with a MD-CM-SG-ID within a MAC Domain
         and the Fiber Nodes reached by the MD-CM-SG."
      ::= { docsIf3MibObjects 12}
@@ -2565,7 +2568,7 @@ docsIf3MdDsSgStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object returns the list of downstream channel
+        "This table returns the list of downstream channel
         associated with a MAC Domain MD-DS-SG-ID."
      ::= { docsIf3MibObjects 13}
 
@@ -2618,7 +2621,7 @@ docsIf3MdUsSgStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object returns the list of upstream channels
+        "This table returns the list of upstream channels
         associated with a MAC Domain MD-US-SG-ID."
      ::= { docsIf3MibObjects 14}
 
@@ -2671,7 +2674,7 @@ docsIf3MdUsToDsChMappingTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object returns the set of downstream channels
+        "This table returns the set of downstream channels
         that carry UCDs and MAPs for a particular upstream channel
         in a MAC Domain."
      ::= { docsIf3MibObjects 15}
@@ -2735,7 +2738,7 @@ docsIf3MdCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object contains MAC domain level control and
+        "This table contains MAC domain level control and
         configuration attributes."
      ::= { docsIf3MibObjects 16}
 
@@ -3012,8 +3015,8 @@ docsIf3MdCfgCmUdcEnabled OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Subscriber Management
-         TLVs section in the Common Radio Frequency Interface Encodings
-         Annex."
+         TLVs section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex."
      DEFVAL { false }
      ::= { docsIf3MdCfgEntry 12 }
 
@@ -3041,8 +3044,8 @@ docsIf3MdCfgSendUdcRulesEnabled OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Subscriber Management
-         TLVs section in the Common Radio Frequency Interface Encodings
-         Annex."
+         TLVs section in the Encodings for Configuration and MAC-Layer
+        Messaging Annex."
      DEFVAL { false }
      ::= { docsIf3MdCfgEntry 13 }
 
@@ -3059,8 +3062,8 @@ docsIf3MdCfgServiceTypeIdList OBJECT-TYPE
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Service Type
-         Identifier section in the Common Radio Frequency Interface
-         Encodings Annex."
+         Identifier section in the Encodings for Configuration and
+         MAC-Layer Messaging  Annex."
      DEFVAL { "" }
      ::= { docsIf3MdCfgEntry 14 }
 
@@ -3133,12 +3136,12 @@ docsIf3BondingGrpCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object defines statically configured Downstream
+        "This table defines statically configured Downstream
         Bonding Groups and Upstream Bonding Groups on
         the CMTS.
-        This object supports the creation and deletion of multiple
+        This table supports the creation and deletion of multiple
         instances.
-        Creation of a new instance of this object requires the
+        Creation of a new entry in this table requires the
         ChList attribute to be set."
      ::= { docsIf3MibObjects 17}
 
@@ -3273,7 +3276,7 @@ docsIf3DsBondingGrpStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object returns administratively-configured
+        "This table returns administratively-configured
         and CMTS defined downstream bonding groups."
      ::= { docsIf3MibObjects 18}
 
@@ -3343,7 +3346,7 @@ docsIf3UsBondingGrpStatusTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object returns administratively-configured
+        "This table returns administratively-configured
         and CMTS-defined upstream bonding groups."
      ::= { docsIf3MibObjects 19}
 
@@ -3405,22 +3408,22 @@ docsIf3UsBondingGrpStatusCfgId OBJECT-TYPE
      ::= { docsIf3UsBondingGrpStatusEntry 3 }
      
 -- ---------------------------------------------------------------------
--- Upstream Channel Ext Table
+-- Upstream Channel Ext Table - DEPRECATED
 -- ---------------------------------------------------------------------
 
 docsIf3UsChExtTable OBJECT-TYPE
-     SYNTAX      SEQUENCE OF DocsIf3UsChExtEntry
+SYNTAX      SEQUENCE OF DocsIf3UsChExtEntry
      MAX-ACCESS  not-accessible
-     STATUS      current
+     STATUS      deprecated
      DESCRIPTION
-        "This object defines management extensions for upstream
+        "This table defines management extensions for upstream
         channels, in particular SCDMA parameters."
      ::= { docsIf3MibObjects 20}
 
 docsIf3UsChExtEntry OBJECT-TYPE
      SYNTAX      DocsIf3UsChExtEntry
      MAX-ACCESS  not-accessible
-     STATUS      current
+     STATUS      deprecated
      DESCRIPTION
          "The conceptual row of docsIf3UsChExtTable.
          The ifIndex key corresponds to each of the upstream
@@ -3446,7 +3449,7 @@ docsIf3UsChExtSacCodeHoppingSelectionMode OBJECT-TYPE
                            sac2NoCodeHopping(4)
                          }
      MAX-ACCESS  read-only
-     STATUS      current
+     STATUS      deprecated
      DESCRIPTION
         "This attribute indicates the selection mode for active
         codes and code hopping.
@@ -3472,7 +3475,7 @@ docsIf3UsChExtSacCodeHoppingSelectionMode OBJECT-TYPE
 docsIf3UsChExtScdmaSelectionStringActiveCodes OBJECT-TYPE
      SYNTAX      ScdmaSelectionString
      MAX-ACCESS  read-only
-     STATUS      current
+     STATUS      deprecated
      DESCRIPTION
         "This attribute represents the active codes of the
         upstream channel and it is applicable only when
@@ -3524,7 +3527,7 @@ docsIf3UsChSetTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object defines a set of upstream channels. These
+        "This table defines a set of upstream channels. These
         channel sets may be associated with channel bonding
         groups, MD-US-SGs, MD-CM-SGs, or any other channel
         set that the CMTS may derive from other CMTS processes."
@@ -3532,8 +3535,8 @@ docsIf3UsChSetTable OBJECT-TYPE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Partial
          Service Encoding section and Cable Modem Attribute
-         Masks section in the Common Radio Frequency Interface
-         Encodings Annex."
+         Masks section in the Encodings for Configuration and
+         MAC-Layer Messaging  Annex."
      ::= { docsIf3MibObjects 22}
 
 docsIf3UsChSetEntry OBJECT-TYPE
@@ -3584,7 +3587,7 @@ docsIf3DsChSetTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object defines a set of downstream channels.
+        "This table defines a set of downstream channels.
         These channel sets may be associated with channel bonding
         groups, MD-DS-SGs, MD-CM-SGs, or any other channel
         set that the CMTS may derive from other CMTS processes."
@@ -3592,8 +3595,8 @@ docsIf3DsChSetTable OBJECT-TYPE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
          Specification CM-SP-MULPIv3.0-I08-080522, Partial
          Service Encoding section and Cable Modem Attribute
-         Masks section in the Common Radio Frequency Interface
-         Encodings Annex."
+         Masks section in the Encodings for Configuration and
+         MAC-Layer Messaging  Annex."
      ::= { docsIf3MibObjects 23}
 
 docsIf3DsChSetEntry OBJECT-TYPE
@@ -3644,7 +3647,7 @@ docsIf3SignalQualityExtTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object provides an in-channel received modulation
+        "This table provides an in-channel received modulation
         error ratio metric for CM and CMTS."
      ::= { docsIf3MibObjects 24}
 
@@ -3740,7 +3743,7 @@ docsIf3CmtsSignalQualityExtTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object provides metrics and parameters associated
+        "This table provides metrics and parameters associated
         with received carrier, noise and interference
         power levels in the upstream channels of the CMTS."
      ::= { docsIf3MibObjects 25}
@@ -3807,9 +3810,9 @@ docsIf3CmtsSpectrumAnalysisMeasTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      deprecated
      DESCRIPTION
-        "This object is used to configure the logical upstream
+        "This table is used to configure the logical upstream
         interfaces to perform the spectrum measurements.
-        This object supports creation and deletion of instances."
+        This table supports creation and deletion of instances."
      ::= { docsIf3MibObjects 26}
 
 docsIf3CmtsSpectrumAnalysisMeasEntry OBJECT-TYPE
@@ -3985,7 +3988,7 @@ docsIf3CmDpvStatsTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object represents the DOCSIS Path Verify Statistics
+        "This table represents the DOCSIS Path Verify Statistics
         collected in the cable modem device.
         The CMTS controls the logging of DPV statistics in the
         cable modem. Therefore the context and nature of the
@@ -4126,18 +4129,18 @@ docsIf3CmEventCtrlTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object represents the control mechanism to enable the
+        "This table represents the control mechanism to enable the
         dispatching of events based on the event Id. The following
         rules define the event control behavior:
 
-        - The CmEventCtrl object has no instances or contains an
+        - The CmEventCtrl table has no instances or contains an
           instance with Event ID 0. All events matching the Local Log
           settings of docsDevEvReporting are sent to local log ONLY.
 
-        - The CmEventCtrl object contains configured instances
-          Only events matching the Event Ids configured in the object
+        - The CmEventCtrl table contains configured instances
+          Only events matching the Event Ids configured in the table
           are sent according to the settings of the docsDevEvReporting
-          object.
+          table.
 
           The CM does not persist instances of CmEventCtrl across
           reinitializations."
@@ -4195,18 +4198,18 @@ docsIf3CmtsEventCtrlTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object represents the control mechanism to enable the
+        "This table represents the control mechanism to enable the
         dispatching of  events based on the event Id. The following
         rules define the event control behavior:
 
-        - The CmtsEventCtrl object has no instances or contains an
+        - The CmtsEventCtrl table has no instances or contains an
           instance with Event ID 0. All events matching the Local Log
           settings of docsDevEvReporting are sent to local log ONLY.
 
-        - The CmtsEventCtrl object contains configured instances
-          Only events matching the Event Ids configured in the object
+        - The CmtsEventCtrl table contains configured instances
+          Only events matching the Event Ids configured in the table
           are sent according to the settings of the docsDevEvReporting
-          object.
+          table.
 
         - The CMTS persists all instances of CmtsEventCtrl across
           reinitializations."
@@ -4263,7 +4266,7 @@ docsIf3CmMdCfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object contains CM MAC domain level control and
+        "This table contains CM MAC domain level control and
         configuration attributes."
      ::= { docsIf3MibObjects 31}
 
@@ -4435,7 +4438,7 @@ docsIf3CmEnergyMgt1x1CfgTable OBJECT-TYPE
      MAX-ACCESS  not-accessible
      STATUS      current
      DESCRIPTION
-        "This object provides configuration state information
+        "This table provides configuration state information
          on the CM for the Energy Management 1x1 Mode feature."
      REFERENCE
          "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
@@ -4909,7 +4912,7 @@ docsIf3CmEm1x1StatsTable OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "This object defines Energy Management 1x1 mode statistics on
+        "This table defines Energy Management 1x1 mode statistics on
          the CM to provide insight into configuration of appropriate EM
          1x1 Mode Activity Detection thresholds and/or to get feedback
          on how/if the current thresholds are working well or are
@@ -5026,7 +5029,11 @@ docsIf3UsChExt2Table OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "This table defines management extensions for upstream local channels."    
+        "The UsChExt2 table is optional and defines management extensions
+        for upstream local channels."
+    REFERENCE
+        "docsIfExt2CmtsUpChannelTable in DOCSIS Interface Extension 2 MIB
+        Module, DOCS-IFEXT2-MIB"
     ::= { docsIf3MibObjects 38 }
 
 docsIf3UsChExt2Entry OBJECT-TYPE
@@ -5050,8 +5057,9 @@ docsIf3UsChExt2CmtsUpChannelTotalCms  OBJECT-TYPE
      MAX-ACCESS  read-only
      STATUS      current
      DESCRIPTION
-         "This attribute reports the total number of CMs on the selected channel 
-          with CmtsCmRegState (docsIfCmtsCmStatusValue) of 'registrationComplete'."
+         "This attribute reports the total number of CMs with channels in the CM 
+         Transmit Channel Set (TCS) and CmtsCmRegState (docsIfCmtsCmStatusValue)
+         of 'registrationComplete'."
      ::= { docsIf3UsChExt2Entry 1 }
      
 docsIf3UsChExt2TargetMapInterval  OBJECT-TYPE
@@ -5153,8 +5161,6 @@ docsIf3CmtsGroup OBJECT-GROUP
      docsIf3CmtsCmUsStatusHighResolutionTimingOffset,
      docsIf3CmtsCmUsStatusIsMuted,
      docsIf3CmtsCmUsStatusRangingStatus,
-     docsIf3UsChExtSacCodeHoppingSelectionMode,
-     docsIf3UsChExtScdmaSelectionStringActiveCodes,
      docsIf3MdCfgMddInterval,
      docsIf3MdCfgIpProvMode,
      docsIf3MdCfgCmStatusEvCtlEnabled,
@@ -5236,8 +5242,6 @@ docsIf3CmGroup OBJECT-GROUP
      docsIf3CmStatusUsRangingStatus,
      docsIf3CmCapabilitiesReq,
      docsIf3CmCapabilitiesRsp,
-     docsIf3UsChExtSacCodeHoppingSelectionMode,
-     docsIf3UsChExtScdmaSelectionStringActiveCodes,
      docsIf3RxChStatusChIfIndex,
      docsIf3RxChStatusPrimaryDsIndicator,
      docsIf3RxChStatusRcRmConnectivityId,
@@ -5326,7 +5330,9 @@ docsIf3DeprecatedGroup OBJECT-GROUP
     OBJECTS {
      docsIf3CmtsSpectrumAnalysisMeasAmplitudeData,
      docsIf3CmtsSpectrumAnalysisMeasTimeInterval,
-     docsIf3CmtsSpectrumAnalysisMeasRowStatus
+     docsIf3CmtsSpectrumAnalysisMeasRowStatus,
+     docsIf3UsChExtSacCodeHoppingSelectionMode,
+     docsIf3UsChExtScdmaSelectionStringActiveCodes
      }
     STATUS      deprecated
     DESCRIPTION

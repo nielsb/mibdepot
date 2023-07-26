@@ -1,6 +1,7 @@
-diff -ru new/scte/HMS154-1R6.txt ../scte/HMS154-1R6.txt
---- new/scte/HMS154-1R6.txt	2012-01-30 16:10:50.000000000 +0100
-+++ ../scte/HMS154-1R6.txt	2018-10-18 13:26:06.953960107 +0200
+Kun i new/scte/: HMS026R16-1575478188239.txt
+diff -ru tmp/scte/HMS154-1R6.mib new/scte/HMS154-1R6.mib
+--- tmp/scte/HMS154-1R6.mib	2023-07-26 16:47:03.519364437 +0200
++++ new/scte/HMS154-1R6.mib	2023-07-26 16:50:36.147018794 +0200
 @@ -15,7 +15,7 @@
  	  FROM SCTE-HMS-HEADENDIDENT-TC-MIB; 
  
@@ -10,9 +11,41 @@ diff -ru new/scte/HMS154-1R6.txt ../scte/HMS154-1R6.txt
      ORGANIZATION    "SCTE HMS Working Group"
      CONTACT-INFO    "SCTE HMS Subcommittee, Chairman 
                       mail to:  standards@scte.org "
-diff -ru new/scte/HMS154-3R15.txt ../scte/HMS154-3R15.txt
---- new/scte/HMS154-3R15.txt	2012-01-30 16:10:54.000000000 +0100
-+++ ../scte/HMS154-3R15.txt	2018-10-18 13:25:52.594585848 +0200
+diff -ru tmp/scte/HMS154-2R1.mib new/scte/HMS154-2R1.mib
+--- tmp/scte/HMS154-2R1.mib	2023-07-26 16:47:06.018336856 +0200
++++ new/scte/HMS154-2R1.mib	2023-07-26 16:50:36.147018794 +0200
+@@ -12,8 +12,8 @@
+ 		FROM IF-MIB
+ 	InetAddressType, InetAddress
+ 		FROM INET-ADDRESS-MIB
+-	QAMModulationFormat
+-	    FROM SCTE-HMS-HEADENDIDENT-TC;
++	QAMChannelModulationFormat
++	    FROM SCTE-HMS-HEADENDIDENT-TC-MIB;
+ 
+ heDigitalQamMIB MODULE-IDENTITY
+ 	LAST-UPDATED "200710021200Z"
+@@ -97,7 +97,7 @@
+ 	qamChannelFrequency
+ 		Unsigned32,
+ 	qamChannelModulationFormat
+-		QAMModulationFormat,
++		QAMChannelModulationFormat,
+ 	qamChannelInterleaverLevel
+ 		INTEGER,
+ 	qamChannelInterleaverMode
+@@ -122,7 +122,7 @@
+ 	::= { qamChannelEntry 1 }
+ 
+ qamChannelModulationFormat  OBJECT-TYPE
+-	SYNTAX     QAMModulationFormat
++	SYNTAX     QAMChannelModulationFormat
+ 	MAX-ACCESS read-only
+ 	STATUS     current
+ 	DESCRIPTION 
+diff -ru tmp/scte/HMS154-3R15.mib new/scte/HMS154-3R15.mib
+--- tmp/scte/HMS154-3R15.mib	2023-07-26 16:47:08.717307067 +0200
++++ new/scte/HMS154-3R15.mib	2023-07-26 16:50:36.147018794 +0200
 @@ -17,7 +17,7 @@
  		FROM ENTITY-MIB   
  	DeviceEnableDisableValues, MpegErrorStatus, 

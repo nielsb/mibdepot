@@ -34,7 +34,7 @@ DOCS-IF31-MIB DEFINITIONS ::= BEGIN
              FROM DOCS-IF3-MIB;
 
 docsIf31Mib MODULE-IDENTITY
-     LAST-UPDATED    "202302020000Z"  -- February 2, 2023
+     LAST-UPDATED    "202306010000Z"  -- June 1, 2023
      ORGANIZATION    "Cable Television Laboratories, Inc."
      CONTACT-INFO
          "
@@ -52,6 +52,9 @@ docsIf31Mib MODULE-IDENTITY
         Copyright 2015-2023 Cable Television Laboratories, Inc.
         All rights reserved."
 
+     REVISION "202306010000Z"  -- June 1, 2023
+     DESCRIPTION
+ 	"Revised per ECN DOCS-IF31-MIB-N-23.2311-1."
      REVISION "202302020000Z"  -- February 2, 2023
      DESCRIPTION
  	"Revised per ECN DOCS-IF31-MIB-N-23.2297-1." 
@@ -217,6 +220,11 @@ PrimaryDsIndicatorType ::= TEXTUAL-CONVENTION
      DESCRIPTION
         "This data type is defined to represent the channel indicator
         type for the downstream channel."
+     REFERENCE
+         "MAC and Upper Layer Protocols Interface Specification,
+         CM-SP-MULPIv4.0-I06-221019, Common TLV Encodings Annex, Receive
+         Channel Primary Downstream Channel Indicator section Encodings
+         for Configuration and MAC-Layer Messaging"
      SYNTAX      INTEGER {
                           other(1),
                           primary(2),
@@ -545,14 +553,8 @@ docsIf31RxChStatusTable OBJECT-TYPE
          "The Receive Channel Status object reports the status
          of the statically-configured and dynamically-created
          Receive Channels within an RCC.
-         
-         This table provides the ability for the CCAP to report a DOCSIS 3.1 
-         CM receive channel configuration and is applicable for cases where a 
-         DOCSIS 3.1 CM registers with a DOCSIS 3.1 CCAP.
-         
-         Pre-DOCSIS 3.1, this table provides the ability for the CCAP to report a 
-         DOCSIS 3.0 CM receive channel configuration and is applicable
-         for cases where a DOCSIS 3.0 CM registers with a DOCSIS 3.1 CCAP."
+         This table provides the ability for the CCAP to report a DOCSIS CM
+         OFDM receive channel configuration."
      ::= { docsIf31MibObjects 2 }
 
 docsIf31RxChStatusEntry OBJECT-TYPE
@@ -761,10 +763,10 @@ docsIf31CmtsCmRegStatusTcsPhigh OBJECT-TYPE
      STATUS      current
      DESCRIPTION
          "This attribute reports the P1.6hi value for the CM's Transmit
-         Channel Set.
-         This object is applicable to DOCSIS 3.1 modems but not to prior
-         versions of DOCSIS modems. If the CM is a pre-DOCSIS 3.1 modem,
-         the CMTS returns zero."
+         Channel Set. It is a positive integer count of quarter-dBmV
+         increments. This object is applicable to DOCSIS 3.1 modems but
+         not to prior versions of DOCSIS modems. If the CM is a
+         pre-DOCSIS 3.1 modem, the CMTS returns zero."
      REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
          CmtsCmRegStatus::TcsPhigh"
@@ -777,8 +779,8 @@ docsIf31CmtsCmRegStatusTcsDrwTop OBJECT-TYPE
      STATUS      current
      DESCRIPTION
          "This attribute reports the level of the top of the Dynamic Range
-         Window. The value is expressed in dBmV and is the result of a
-         calculation equal to P1.6hi - P1.6load_min_set.
+         Window. It is a positive integer count of quarter-dBmV increments. 
+         It is the result of a calculation equal to P1.6hi - P1.6load_min_set.
          This object is applicable to DOCSIS 3.1 modems but not to prior
          versions of DOCSIS modems. If the CM is a pre-DOCSIS 3.1 modem,
          the CMTS returns zero."
@@ -3815,7 +3817,8 @@ DocsIf31CmtsUsOfdmaChanEntry ::= SEQUENCE {
      docsIf31CmtsUsOfdmaChanUtilization              Unsigned32,
      docsIf31CmtsUsOfdmaChanId                       Integer32,
      docsIf31CmtsUsOfdmaChanSubcarrierZeroFreq       Unsigned32,
-     docsIf31CmtsUsOfdmaChanTargetMapInterval        Unsigned32
+     docsIf31CmtsUsOfdmaChanTargetMapInterval        Unsigned32,
+     docsIf31CmtsUsOfdmaChanUpChannelTotalCms        Gauge32
      }
 
 docsIf31CmtsUsOfdmaChanTemplateIndex OBJECT-TYPE
@@ -4187,6 +4190,19 @@ docsIf31CmtsUsOfdmaChanTargetMapInterval OBJECT-TYPE
             "Information Model Mapping: CM-SP-CCAP-OSSI
              UsOfdmaChannelStatus::TargetMapInterval"
         ::= { docsIf31CmtsUsOfdmaChanEntry 25 }     
+
+docsIf31CmtsUsOfdmaChanUpChannelTotalCms OBJECT-TYPE
+        SYNTAX      Gauge32
+        MAX-ACCESS  read-only
+        STATUS      current
+        DESCRIPTION
+            "This attribute reports the total number of CMs with channels
+             in the CM Transmit Channel Set (TCS) and CmtsCmRegState
+             (docsIfCmtsCmStatusValue) of 'registrationComplete'."
+        REFERENCE
+            "Information Model Mapping: CM-SP-CCAP-OSSI
+             UsOfdmaChannelStatus::CmtsUpChannelTotalCms"
+        ::= { docsIf31CmtsUsOfdmaChanEntry 26 }    
              
 docsIf31CmtsUsOfdmaDataIucStatsTable OBJECT-TYPE
     SYNTAX      SEQUENCE OF DocsIf31CmtsUsOfdmaDataIucStatsEntry
@@ -4434,7 +4450,7 @@ docsIf31CmtsUsOfdmaDataIucDetailStatusLowerFreq OBJECT-TYPE
         minislots will use the pilot pattern and modulation."
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataIucDetailStatus::LowerFreq"
+         UsOfdmaDataIucDetailStatus::LowerFreq"
     ::= { docsIf31CmtsUsOfdmaDataIucDetailStatusEntry 1 }
 
 docsIf31CmtsUsOfdmaDataIucDetailStatusUpperFreq OBJECT-TYPE
@@ -4447,7 +4463,7 @@ docsIf31CmtsUsOfdmaDataIucDetailStatusUpperFreq OBJECT-TYPE
         minislots will use the pilot pattern and modulation"
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataIucDetailStatus::UpperFreq"
+         UsOfdmaDataIucDetailStatus::UpperFreq"
     ::= { docsIf31CmtsUsOfdmaDataIucDetailStatusEntry 2 }
 
 docsIf31CmtsUsOfdmaDataIucDetailStatusMinislotPilotPattern OBJECT-TYPE
@@ -4459,7 +4475,7 @@ docsIf31CmtsUsOfdmaDataIucDetailStatusMinislotPilotPattern OBJECT-TYPE
         All minislots in the frequency range have this pilot pattern."
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataIucDetailStatus::MinislotPilotPattern"
+         UsOfdmaDataIucDetailStatus::MinislotPilotPattern"
     ::= { docsIf31CmtsUsOfdmaDataIucDetailStatusEntry 3 }
 
 docsIf31CmtsUsOfdmaDataIucDetailStatusMinislotModulation OBJECT-TYPE
@@ -4472,7 +4488,7 @@ docsIf31CmtsUsOfdmaDataIucDetailStatusMinislotModulation OBJECT-TYPE
         this modulation."
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataIucDetailStatus::MinislotModulation"
+         UsOfdmaDataIucDetailStatus::MinislotModulation"
     ::= { docsIf31CmtsUsOfdmaDataIucDetailStatusEntry 4 }
 
  docsIf31CmtsUsOfdmaDataIucDetailStatusLowerSubcarrierId OBJECT-TYPE
@@ -4484,7 +4500,7 @@ docsIf31CmtsUsOfdmaDataIucDetailStatusMinislotModulation OBJECT-TYPE
             subcarrier of the minislot using the pilot pattern and modulation."
         REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataIucDetailStatus::LowerSubcarrierId"
+         UsOfdmaDataIucDetailStatus::LowerSubcarrierId"
         ::= { docsIf31CmtsUsOfdmaDataIucDetailStatusEntry 5 }
 
 docsIf31CmtsUsOfdmaDataIucDetailStatusUpperSubcarrierId OBJECT-TYPE
@@ -4496,7 +4512,7 @@ docsIf31CmtsUsOfdmaDataIucDetailStatusUpperSubcarrierId OBJECT-TYPE
             subcarrier of the minislot using the pilot pattern and modulation."
         REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataIucDetailStatus::UpperSubcarrierId"
+         UsOfdmaDataIucDetailStatus::UpperSubcarrierId"
         ::= { docsIf31CmtsUsOfdmaDataIucDetailStatusEntry 6 }
 
 docsIf31CmtsUsOfdmaRangingIucStatusTable OBJECT-TYPE
@@ -4537,7 +4553,7 @@ docsIf31CmtsUsOfdmaRangingIucStatusIuc OBJECT-TYPE
         status information corresponds."
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataRangingIucStatus::Iuc"
+         UsOfdmaRangingIucStatus::Iuc"
     ::= { docsIf31CmtsUsOfdmaRangingIucStatusEntry 1 }
 
 docsIf31CmtsUsOfdmaRangingIucStatusGuardband OBJECT-TYPE
@@ -4550,7 +4566,7 @@ docsIf31CmtsUsOfdmaRangingIucStatusGuardband OBJECT-TYPE
         for this ranging IUC in Hz."
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataRangingIucStatus::Guardband"
+         UsOfdmaRangingIucStatus::Guardband"
     ::= { docsIf31CmtsUsOfdmaRangingIucStatusEntry 2 }
 
 docsIf31CmtsUsOfdmaRangingIucStatusNumSubcarriers OBJECT-TYPE
@@ -4562,7 +4578,7 @@ docsIf31CmtsUsOfdmaRangingIucStatusNumSubcarriers OBJECT-TYPE
         for this ranging IUC."
     REFERENCE 
         "Information Model Mapping: CM-SP-CCAP-OSSI 
-         UsOfdmaChannelDataRangingIucStatus::NumSubcarriers"
+         UsOfdmaRangingIucStatus::NumSubcarriers"
     ::= { docsIf31CmtsUsOfdmaRangingIucStatusEntry 3 }
 
 docsIf31CmtsDsOfdmSubcarrierTypeTable OBJECT-TYPE
@@ -5027,6 +5043,7 @@ docsIf31CmtsGroup OBJECT-GROUP
      docsIf31CmtsDsOfdmChanPlcFreq,
      docsIf31CmtsDsOfdmChanSubcarrierZeroFreq,
      docsIf31CmtsUsOfdmaChanTargetMapInterval,
+     docsIf31CmtsUsOfdmaChanUpChannelTotalCms,
      docsIf31CmtsDsOfdmChanFirstActiveSubcarrierNum,
      docsIf31CmtsDsOfdmChanLastActiveSubcarrierNum,
      docsIf31CmtsDsOfdmChanNumActiveSubcarriers,

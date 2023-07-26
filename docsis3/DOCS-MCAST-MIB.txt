@@ -33,9 +33,9 @@ DOCS-MCAST-MIB DEFINITIONS ::= BEGIN
              FROM CLAB-DEF-MIB;
 
 docsMcastMib MODULE-IDENTITY
-     LAST-UPDATED    "201504220000Z" -- April 22, 2015
-     ORGANIZATION    "Cable Television Laboratories, Inc."
-     CONTACT-INFO
+    LAST-UPDATED    "202306010000Z" -- June 1, 2023
+    ORGANIZATION    "Cable Television Laboratories, Inc."
+    CONTACT-INFO
          "Postal: Cable Television Laboratories, Inc.
          858 Coal Creek Circle
          Louisville, Colorado 80027-9750
@@ -43,12 +43,16 @@ docsMcastMib MODULE-IDENTITY
          Phone: +1 303-661-9100
          Fax:   +1 303-661-9199
          E-mail: mibs@cablelabs.com"
-     DESCRIPTION
+    DESCRIPTION
         "This MIB module contains the management objects for the
         management of Multicast over DOCSIS to support Multicast
         DSID forwarding and or bonded multicast.
-        Copyright 1999-2014 Cable Television Laboratories, Inc.
+        Copyright 1999-2023 Cable Television Laboratories, Inc.
         All rights reserved."
+    REVISION    "202306010000Z" -- June 1, 2023
+    DESCRIPTION
+            "Revised Version includes ECN
+            DOCS-MCAST-MIB-N-23.2314-1"
     REVISION    "201504220000Z" -- April 22, 2015
     DESCRIPTION
             "Revised Version includes ECN
@@ -788,7 +792,8 @@ docsMcastCmtsGrpQosCfgAppId OBJECT-TYPE
      REFERENCE
         "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
         Specification CM-SP-MULPIv3.0-I04-070518, Application
-        Identifier section in the Common TLV Encodings Annex;
+        Identifier section in the Encodings for Configuration and
+        MAC-Layer Messaging Annex;
         PacketCable Multimedia Specification PKT-SP-MM-I03-051221,
         Policy Server and CMTS Interface section."
      DEFVAL { 0 }

@@ -38,7 +38,7 @@ LAST-UPDATED    "202206300000Z" -- June 30, 2022
          Copyright 2017-2022 Cable Television Laboratories, Inc.
          All rights reserved."
          
-    REVISION "20220630000Z" -- June 30, 20222
+    REVISION "202206300000Z" -- June 30, 20222
     DESCRIPTION
         "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-22.2262-1."
     REVISION "202111021000Z" -- October 21, 2021

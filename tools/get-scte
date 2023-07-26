@@ -2,17 +2,26 @@
 
 set -e
 
+OWD=$PWD
 TMP=tmp/scte
-DIR=`pwd`/new/scte
+DIR=$PWD/new/scte
 
-mkdir -p tmp new
-cd tmp
-rm -f "SCTE Standards HMS MIB Codes.zip"
-wget http://www.scte.org/documents/pdf/Standards/SCTE%20Standards%20HMS%20MIB%20Codes.zip
 
-rm -fr $DIR
-mkdir -p $DIR
-cd $DIR
-unzip -j "../../tmp/SCTE Standards HMS MIB Codes.zip"
+rm -fr $TMP $DIR
+mkdir -p $TMP $DIR
 
-patch <../../scte.patch
+cd $TMP
+
+curl -sS 'https://www.scte.org/standards/library/catalog/?index_search_query=mib' | \
+    grep href | \
+    grep -E -- -mib\|management-information-base | \
+    grep -Ev framework\|requirement | \
+    while read url; do
+	furl=$(echo $url | sed s/href=//)
+	murl=$(curl -sS https://www.scte.org$furl | grep href= | grep -E '\.mib|\.txt' | sed s/href=//)
+	curl -LOsS $murl || echo $url
+    done
+
+cp -p * $DIR
+
+patch -d $DIR <$OWD/scte.patch
