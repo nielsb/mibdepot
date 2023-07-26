@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- COMPUTE management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -174,7 +174,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsComputeObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -4025,10 +4025,10 @@ CucsComputeIOHubEnvStatsEntry ::= SEQUENCE {
     cucsComputeIOHubEnvStatsRn                                       SnmpAdminString,
     cucsComputeIOHubEnvStatsIntervals                                Gauge32,
     cucsComputeIOHubEnvStatsSuspect                                  TruthValue,
-    cucsComputeIOHubEnvStatsTemperature                              SnmpAdminString,
-    cucsComputeIOHubEnvStatsTemperatureAvg                           SnmpAdminString,
-    cucsComputeIOHubEnvStatsTemperatureMax                           SnmpAdminString,
-    cucsComputeIOHubEnvStatsTemperatureMin                           SnmpAdminString,
+    cucsComputeIOHubEnvStatsTemperature                              INTEGER,
+    cucsComputeIOHubEnvStatsTemperatureAvg                           INTEGER,
+    cucsComputeIOHubEnvStatsTemperatureMax                           INTEGER,
+    cucsComputeIOHubEnvStatsTemperatureMin                           INTEGER,
     cucsComputeIOHubEnvStatsThresholded                              CucsComputeIOHubEnvStatsThresholded,
     cucsComputeIOHubEnvStatsTimeCollected                            DateAndTime,
     cucsComputeIOHubEnvStatsUpdate                                   Gauge32
@@ -4076,7 +4076,7 @@ cucsComputeIOHubEnvStatsSuspect OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsEntry 5 }
 
 cucsComputeIOHubEnvStatsTemperature OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4085,7 +4085,7 @@ cucsComputeIOHubEnvStatsTemperature OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsEntry 6 }
 
 cucsComputeIOHubEnvStatsTemperatureAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4094,7 +4094,7 @@ cucsComputeIOHubEnvStatsTemperatureAvg OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsEntry 7 }
 
 cucsComputeIOHubEnvStatsTemperatureMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4103,7 +4103,7 @@ cucsComputeIOHubEnvStatsTemperatureMax OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsEntry 8 }
 
 cucsComputeIOHubEnvStatsTemperatureMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4161,10 +4161,10 @@ CucsComputeIOHubEnvStatsHistEntry ::= SEQUENCE {
     cucsComputeIOHubEnvStatsHistId                                   Unsigned64,
     cucsComputeIOHubEnvStatsHistMostRecent                           TruthValue,
     cucsComputeIOHubEnvStatsHistSuspect                              TruthValue,
-    cucsComputeIOHubEnvStatsHistTemperature                          SnmpAdminString,
-    cucsComputeIOHubEnvStatsHistTemperatureAvg                       SnmpAdminString,
-    cucsComputeIOHubEnvStatsHistTemperatureMax                       SnmpAdminString,
-    cucsComputeIOHubEnvStatsHistTemperatureMin                       SnmpAdminString,
+    cucsComputeIOHubEnvStatsHistTemperature                          INTEGER,
+    cucsComputeIOHubEnvStatsHistTemperatureAvg                       INTEGER,
+    cucsComputeIOHubEnvStatsHistTemperatureMax                       INTEGER,
+    cucsComputeIOHubEnvStatsHistTemperatureMin                       INTEGER,
     cucsComputeIOHubEnvStatsHistThresholded                          CucsComputeIOHubEnvStatsHistThresholded,
     cucsComputeIOHubEnvStatsHistTimeCollected                        DateAndTime
 }
@@ -4220,7 +4220,7 @@ cucsComputeIOHubEnvStatsHistSuspect OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsHistEntry 6 }
 
 cucsComputeIOHubEnvStatsHistTemperature OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4229,7 +4229,7 @@ cucsComputeIOHubEnvStatsHistTemperature OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsHistEntry 7 }
 
 cucsComputeIOHubEnvStatsHistTemperatureAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4238,7 +4238,7 @@ cucsComputeIOHubEnvStatsHistTemperatureAvg OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsHistEntry 8 }
 
 cucsComputeIOHubEnvStatsHistTemperatureMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4247,7 +4247,7 @@ cucsComputeIOHubEnvStatsHistTemperatureMax OBJECT-TYPE
     ::= { cucsComputeIOHubEnvStatsHistEntry 9 }
 
 cucsComputeIOHubEnvStatsHistTemperatureMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4463,18 +4463,18 @@ CucsComputeMbPowerStatsEntry ::= SEQUENCE {
     cucsComputeMbPowerStatsInstanceId                                CucsManagedObjectId,
     cucsComputeMbPowerStatsDn                                        CucsManagedObjectDn,
     cucsComputeMbPowerStatsRn                                        SnmpAdminString,
-    cucsComputeMbPowerStatsConsumedPower                             SnmpAdminString,
-    cucsComputeMbPowerStatsConsumedPowerAvg                          SnmpAdminString,
-    cucsComputeMbPowerStatsConsumedPowerMax                          SnmpAdminString,
-    cucsComputeMbPowerStatsConsumedPowerMin                          SnmpAdminString,
-    cucsComputeMbPowerStatsInputCurrent                              SnmpAdminString,
-    cucsComputeMbPowerStatsInputCurrentAvg                           SnmpAdminString,
-    cucsComputeMbPowerStatsInputCurrentMax                           SnmpAdminString,
-    cucsComputeMbPowerStatsInputCurrentMin                           SnmpAdminString,
-    cucsComputeMbPowerStatsInputVoltage                              SnmpAdminString,
-    cucsComputeMbPowerStatsInputVoltageAvg                           SnmpAdminString,
-    cucsComputeMbPowerStatsInputVoltageMax                           SnmpAdminString,
-    cucsComputeMbPowerStatsInputVoltageMin                           SnmpAdminString,
+    cucsComputeMbPowerStatsConsumedPower                             INTEGER,
+    cucsComputeMbPowerStatsConsumedPowerAvg                          INTEGER,
+    cucsComputeMbPowerStatsConsumedPowerMax                          INTEGER,
+    cucsComputeMbPowerStatsConsumedPowerMin                          INTEGER,
+    cucsComputeMbPowerStatsInputCurrent                              INTEGER,
+    cucsComputeMbPowerStatsInputCurrentAvg                           INTEGER,
+    cucsComputeMbPowerStatsInputCurrentMax                           INTEGER,
+    cucsComputeMbPowerStatsInputCurrentMin                           INTEGER,
+    cucsComputeMbPowerStatsInputVoltage                              INTEGER,
+    cucsComputeMbPowerStatsInputVoltageAvg                           INTEGER,
+    cucsComputeMbPowerStatsInputVoltageMax                           INTEGER,
+    cucsComputeMbPowerStatsInputVoltageMin                           INTEGER,
     cucsComputeMbPowerStatsIntervals                                 Gauge32,
     cucsComputeMbPowerStatsSuspect                                   TruthValue,
     cucsComputeMbPowerStatsThresholded                               CucsComputeMbPowerStatsThresholded,
@@ -4507,7 +4507,7 @@ cucsComputeMbPowerStatsRn OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 3 }
 
 cucsComputeMbPowerStatsConsumedPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4516,7 +4516,7 @@ cucsComputeMbPowerStatsConsumedPower OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 4 }
 
 cucsComputeMbPowerStatsConsumedPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4525,7 +4525,7 @@ cucsComputeMbPowerStatsConsumedPowerAvg OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 5 }
 
 cucsComputeMbPowerStatsConsumedPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4534,7 +4534,7 @@ cucsComputeMbPowerStatsConsumedPowerMax OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 6 }
 
 cucsComputeMbPowerStatsConsumedPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4543,7 +4543,7 @@ cucsComputeMbPowerStatsConsumedPowerMin OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 7 }
 
 cucsComputeMbPowerStatsInputCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4552,7 +4552,7 @@ cucsComputeMbPowerStatsInputCurrent OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 8 }
 
 cucsComputeMbPowerStatsInputCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4561,7 +4561,7 @@ cucsComputeMbPowerStatsInputCurrentAvg OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 9 }
 
 cucsComputeMbPowerStatsInputCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4570,7 +4570,7 @@ cucsComputeMbPowerStatsInputCurrentMax OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 10 }
 
 cucsComputeMbPowerStatsInputCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4579,7 +4579,7 @@ cucsComputeMbPowerStatsInputCurrentMin OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 11 }
 
 cucsComputeMbPowerStatsInputVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4588,7 +4588,7 @@ cucsComputeMbPowerStatsInputVoltage OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 12 }
 
 cucsComputeMbPowerStatsInputVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4597,7 +4597,7 @@ cucsComputeMbPowerStatsInputVoltageAvg OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 13 }
 
 cucsComputeMbPowerStatsInputVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4606,7 +4606,7 @@ cucsComputeMbPowerStatsInputVoltageMax OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsEntry 14 }
 
 cucsComputeMbPowerStatsInputVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4677,19 +4677,19 @@ CucsComputeMbPowerStatsHistEntry ::= SEQUENCE {
     cucsComputeMbPowerStatsHistInstanceId                            CucsManagedObjectId,
     cucsComputeMbPowerStatsHistDn                                    CucsManagedObjectDn,
     cucsComputeMbPowerStatsHistRn                                    SnmpAdminString,
-    cucsComputeMbPowerStatsHistConsumedPower                         SnmpAdminString,
-    cucsComputeMbPowerStatsHistConsumedPowerAvg                      SnmpAdminString,
-    cucsComputeMbPowerStatsHistConsumedPowerMax                      SnmpAdminString,
-    cucsComputeMbPowerStatsHistConsumedPowerMin                      SnmpAdminString,
+    cucsComputeMbPowerStatsHistConsumedPower                         INTEGER,
+    cucsComputeMbPowerStatsHistConsumedPowerAvg                      INTEGER,
+    cucsComputeMbPowerStatsHistConsumedPowerMax                      INTEGER,
+    cucsComputeMbPowerStatsHistConsumedPowerMin                      INTEGER,
     cucsComputeMbPowerStatsHistId                                    Unsigned64,
-    cucsComputeMbPowerStatsHistInputCurrent                          SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputCurrentAvg                       SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputCurrentMax                       SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputCurrentMin                       SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputVoltage                          SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputVoltageAvg                       SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputVoltageMax                       SnmpAdminString,
-    cucsComputeMbPowerStatsHistInputVoltageMin                       SnmpAdminString,
+    cucsComputeMbPowerStatsHistInputCurrent                          INTEGER,
+    cucsComputeMbPowerStatsHistInputCurrentAvg                       INTEGER,
+    cucsComputeMbPowerStatsHistInputCurrentMax                       INTEGER,
+    cucsComputeMbPowerStatsHistInputCurrentMin                       INTEGER,
+    cucsComputeMbPowerStatsHistInputVoltage                          INTEGER,
+    cucsComputeMbPowerStatsHistInputVoltageAvg                       INTEGER,
+    cucsComputeMbPowerStatsHistInputVoltageMax                       INTEGER,
+    cucsComputeMbPowerStatsHistInputVoltageMin                       INTEGER,
     cucsComputeMbPowerStatsHistMostRecent                            TruthValue,
     cucsComputeMbPowerStatsHistSuspect                               TruthValue,
     cucsComputeMbPowerStatsHistThresholded                           CucsComputeMbPowerStatsHistThresholded,
@@ -4721,7 +4721,7 @@ cucsComputeMbPowerStatsHistRn OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 3 }
 
 cucsComputeMbPowerStatsHistConsumedPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4730,7 +4730,7 @@ cucsComputeMbPowerStatsHistConsumedPower OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 4 }
 
 cucsComputeMbPowerStatsHistConsumedPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4739,7 +4739,7 @@ cucsComputeMbPowerStatsHistConsumedPowerAvg OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 5 }
 
 cucsComputeMbPowerStatsHistConsumedPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4748,7 +4748,7 @@ cucsComputeMbPowerStatsHistConsumedPowerMax OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 6 }
 
 cucsComputeMbPowerStatsHistConsumedPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4765,7 +4765,7 @@ cucsComputeMbPowerStatsHistId OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 8 }
 
 cucsComputeMbPowerStatsHistInputCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4774,7 +4774,7 @@ cucsComputeMbPowerStatsHistInputCurrent OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 9 }
 
 cucsComputeMbPowerStatsHistInputCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4783,7 +4783,7 @@ cucsComputeMbPowerStatsHistInputCurrentAvg OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 10 }
 
 cucsComputeMbPowerStatsHistInputCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4792,7 +4792,7 @@ cucsComputeMbPowerStatsHistInputCurrentMax OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 11 }
 
 cucsComputeMbPowerStatsHistInputCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4801,7 +4801,7 @@ cucsComputeMbPowerStatsHistInputCurrentMin OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 12 }
 
 cucsComputeMbPowerStatsHistInputVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4810,7 +4810,7 @@ cucsComputeMbPowerStatsHistInputVoltage OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 13 }
 
 cucsComputeMbPowerStatsHistInputVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4819,7 +4819,7 @@ cucsComputeMbPowerStatsHistInputVoltageAvg OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 14 }
 
 cucsComputeMbPowerStatsHistInputVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4828,7 +4828,7 @@ cucsComputeMbPowerStatsHistInputVoltageMax OBJECT-TYPE
     ::= { cucsComputeMbPowerStatsHistEntry 15 }
 
 cucsComputeMbPowerStatsHistInputVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4893,22 +4893,22 @@ CucsComputeMbTempStatsEntry ::= SEQUENCE {
     cucsComputeMbTempStatsInstanceId                                 CucsManagedObjectId,
     cucsComputeMbTempStatsDn                                         CucsManagedObjectDn,
     cucsComputeMbTempStatsRn                                         SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenIo                                SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenIoAvg                             SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenIoMax                             SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenIoMin                             SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRear                              SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearAvg                           SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearL                             SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearLAvg                          SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearLMax                          SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearLMin                          SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearMax                           SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearMin                           SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearR                             SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearRAvg                          SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearRMax                          SnmpAdminString,
-    cucsComputeMbTempStatsFmTempSenRearRMin                          SnmpAdminString,
+    cucsComputeMbTempStatsFmTempSenIo                                INTEGER,
+    cucsComputeMbTempStatsFmTempSenIoAvg                             INTEGER,
+    cucsComputeMbTempStatsFmTempSenIoMax                             INTEGER,
+    cucsComputeMbTempStatsFmTempSenIoMin                             INTEGER,
+    cucsComputeMbTempStatsFmTempSenRear                              INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearAvg                           INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearL                             INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearLAvg                          INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearLMax                          INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearLMin                          INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearMax                           INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearMin                           INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearR                             INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearRAvg                          INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearRMax                          INTEGER,
+    cucsComputeMbTempStatsFmTempSenRearRMin                          INTEGER,
     cucsComputeMbTempStatsIntervals                                  Gauge32,
     cucsComputeMbTempStatsSuspect                                    TruthValue,
     cucsComputeMbTempStatsThresholded                                CucsComputeMbTempStatsThresholded,
@@ -4941,7 +4941,7 @@ cucsComputeMbTempStatsRn OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 3 }
 
 cucsComputeMbTempStatsFmTempSenIo OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4950,7 +4950,7 @@ cucsComputeMbTempStatsFmTempSenIo OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 4 }
 
 cucsComputeMbTempStatsFmTempSenIoAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4959,7 +4959,7 @@ cucsComputeMbTempStatsFmTempSenIoAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 5 }
 
 cucsComputeMbTempStatsFmTempSenIoMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4968,7 +4968,7 @@ cucsComputeMbTempStatsFmTempSenIoMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 6 }
 
 cucsComputeMbTempStatsFmTempSenIoMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4977,7 +4977,7 @@ cucsComputeMbTempStatsFmTempSenIoMin OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 7 }
 
 cucsComputeMbTempStatsFmTempSenRear OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4986,7 +4986,7 @@ cucsComputeMbTempStatsFmTempSenRear OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 8 }
 
 cucsComputeMbTempStatsFmTempSenRearAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4995,7 +4995,7 @@ cucsComputeMbTempStatsFmTempSenRearAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 9 }
 
 cucsComputeMbTempStatsFmTempSenRearL OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5004,7 +5004,7 @@ cucsComputeMbTempStatsFmTempSenRearL OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 10 }
 
 cucsComputeMbTempStatsFmTempSenRearLAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5013,7 +5013,7 @@ cucsComputeMbTempStatsFmTempSenRearLAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 11 }
 
 cucsComputeMbTempStatsFmTempSenRearLMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5022,7 +5022,7 @@ cucsComputeMbTempStatsFmTempSenRearLMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 12 }
 
 cucsComputeMbTempStatsFmTempSenRearLMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5031,7 +5031,7 @@ cucsComputeMbTempStatsFmTempSenRearLMin OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 13 }
 
 cucsComputeMbTempStatsFmTempSenRearMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5040,7 +5040,7 @@ cucsComputeMbTempStatsFmTempSenRearMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 14 }
 
 cucsComputeMbTempStatsFmTempSenRearMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5049,7 +5049,7 @@ cucsComputeMbTempStatsFmTempSenRearMin OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 15 }
 
 cucsComputeMbTempStatsFmTempSenRearR OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5058,7 +5058,7 @@ cucsComputeMbTempStatsFmTempSenRearR OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 16 }
 
 cucsComputeMbTempStatsFmTempSenRearRAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5067,7 +5067,7 @@ cucsComputeMbTempStatsFmTempSenRearRAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 17 }
 
 cucsComputeMbTempStatsFmTempSenRearRMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5076,7 +5076,7 @@ cucsComputeMbTempStatsFmTempSenRearRMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsEntry 18 }
 
 cucsComputeMbTempStatsFmTempSenRearRMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5147,22 +5147,22 @@ CucsComputeMbTempStatsHistEntry ::= SEQUENCE {
     cucsComputeMbTempStatsHistInstanceId                             CucsManagedObjectId,
     cucsComputeMbTempStatsHistDn                                     CucsManagedObjectDn,
     cucsComputeMbTempStatsHistRn                                     SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenIo                            SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenIoAvg                         SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenIoMax                         SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenIoMin                         SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRear                          SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearAvg                       SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearL                         SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearLAvg                      SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearLMax                      SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearLMin                      SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearMax                       SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearMin                       SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearR                         SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearRAvg                      SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearRMax                      SnmpAdminString,
-    cucsComputeMbTempStatsHistFmTempSenRearRMin                      SnmpAdminString,
+    cucsComputeMbTempStatsHistFmTempSenIo                            INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenIoAvg                         INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenIoMax                         INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenIoMin                         INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRear                          INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearAvg                       INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearL                         INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearLAvg                      INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearLMax                      INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearLMin                      INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearMax                       INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearMin                       INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearR                         INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearRAvg                      INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearRMax                      INTEGER,
+    cucsComputeMbTempStatsHistFmTempSenRearRMin                      INTEGER,
     cucsComputeMbTempStatsHistId                                     Unsigned64,
     cucsComputeMbTempStatsHistMostRecent                             TruthValue,
     cucsComputeMbTempStatsHistSuspect                                TruthValue,
@@ -5195,7 +5195,7 @@ cucsComputeMbTempStatsHistRn OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 3 }
 
 cucsComputeMbTempStatsHistFmTempSenIo OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5204,7 +5204,7 @@ cucsComputeMbTempStatsHistFmTempSenIo OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 4 }
 
 cucsComputeMbTempStatsHistFmTempSenIoAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5213,7 +5213,7 @@ cucsComputeMbTempStatsHistFmTempSenIoAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 5 }
 
 cucsComputeMbTempStatsHistFmTempSenIoMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5222,7 +5222,7 @@ cucsComputeMbTempStatsHistFmTempSenIoMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 6 }
 
 cucsComputeMbTempStatsHistFmTempSenIoMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5231,7 +5231,7 @@ cucsComputeMbTempStatsHistFmTempSenIoMin OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 7 }
 
 cucsComputeMbTempStatsHistFmTempSenRear OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5240,7 +5240,7 @@ cucsComputeMbTempStatsHistFmTempSenRear OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 8 }
 
 cucsComputeMbTempStatsHistFmTempSenRearAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5249,7 +5249,7 @@ cucsComputeMbTempStatsHistFmTempSenRearAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 9 }
 
 cucsComputeMbTempStatsHistFmTempSenRearL OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5258,7 +5258,7 @@ cucsComputeMbTempStatsHistFmTempSenRearL OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 10 }
 
 cucsComputeMbTempStatsHistFmTempSenRearLAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5267,7 +5267,7 @@ cucsComputeMbTempStatsHistFmTempSenRearLAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 11 }
 
 cucsComputeMbTempStatsHistFmTempSenRearLMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5276,7 +5276,7 @@ cucsComputeMbTempStatsHistFmTempSenRearLMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 12 }
 
 cucsComputeMbTempStatsHistFmTempSenRearLMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5285,7 +5285,7 @@ cucsComputeMbTempStatsHistFmTempSenRearLMin OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 13 }
 
 cucsComputeMbTempStatsHistFmTempSenRearMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5294,7 +5294,7 @@ cucsComputeMbTempStatsHistFmTempSenRearMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 14 }
 
 cucsComputeMbTempStatsHistFmTempSenRearMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5303,7 +5303,7 @@ cucsComputeMbTempStatsHistFmTempSenRearMin OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 15 }
 
 cucsComputeMbTempStatsHistFmTempSenRearR OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5312,7 +5312,7 @@ cucsComputeMbTempStatsHistFmTempSenRearR OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 16 }
 
 cucsComputeMbTempStatsHistFmTempSenRearRAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5321,7 +5321,7 @@ cucsComputeMbTempStatsHistFmTempSenRearRAvg OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 17 }
 
 cucsComputeMbTempStatsHistFmTempSenRearRMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5330,7 +5330,7 @@ cucsComputeMbTempStatsHistFmTempSenRearRMax OBJECT-TYPE
     ::= { cucsComputeMbTempStatsHistEntry 18 }
 
 cucsComputeMbTempStatsHistFmTempSenRearRMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10798,27 +10798,27 @@ CucsComputeRackUnitMbTempStatsEntry ::= SEQUENCE {
     cucsComputeRackUnitMbTempStatsInstanceId                         CucsManagedObjectId,
     cucsComputeRackUnitMbTempStatsDn                                 CucsManagedObjectDn,
     cucsComputeRackUnitMbTempStatsRn                                 SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsAmbientTemp                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsAmbientTempAvg                     SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsAmbientTempMax                     SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsAmbientTempMin                     SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsFrontTemp                          SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsFrontTempAvg                       SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsFrontTempMax                       SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsFrontTempMin                       SnmpAdminString,
+    cucsComputeRackUnitMbTempStatsAmbientTemp                        INTEGER,
+    cucsComputeRackUnitMbTempStatsAmbientTempAvg                     INTEGER,
+    cucsComputeRackUnitMbTempStatsAmbientTempMax                     INTEGER,
+    cucsComputeRackUnitMbTempStatsAmbientTempMin                     INTEGER,
+    cucsComputeRackUnitMbTempStatsFrontTemp                          INTEGER,
+    cucsComputeRackUnitMbTempStatsFrontTempAvg                       INTEGER,
+    cucsComputeRackUnitMbTempStatsFrontTempMax                       INTEGER,
+    cucsComputeRackUnitMbTempStatsFrontTempMin                       INTEGER,
     cucsComputeRackUnitMbTempStatsIntervals                          Gauge32,
-    cucsComputeRackUnitMbTempStatsIoh1Temp                           SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh1TempAvg                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh1TempMax                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh1TempMin                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh2Temp                           SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh2TempAvg                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh2TempMax                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsIoh2TempMin                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsRearTemp                           SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsRearTempAvg                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsRearTempMax                        SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsRearTempMin                        SnmpAdminString,
+    cucsComputeRackUnitMbTempStatsIoh1Temp                           INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh1TempAvg                        INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh1TempMax                        INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh1TempMin                        INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh2Temp                           INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh2TempAvg                        INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh2TempMax                        INTEGER,
+    cucsComputeRackUnitMbTempStatsIoh2TempMin                        INTEGER,
+    cucsComputeRackUnitMbTempStatsRearTemp                           INTEGER,
+    cucsComputeRackUnitMbTempStatsRearTempAvg                        INTEGER,
+    cucsComputeRackUnitMbTempStatsRearTempMax                        INTEGER,
+    cucsComputeRackUnitMbTempStatsRearTempMin                        INTEGER,
     cucsComputeRackUnitMbTempStatsSuspect                            TruthValue,
     cucsComputeRackUnitMbTempStatsThresholded                        CucsComputeRackUnitMbTempStatsThresholded,
     cucsComputeRackUnitMbTempStatsTimeCollected                      DateAndTime,
@@ -10850,7 +10850,7 @@ cucsComputeRackUnitMbTempStatsRn OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 3 }
 
 cucsComputeRackUnitMbTempStatsAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10859,7 +10859,7 @@ cucsComputeRackUnitMbTempStatsAmbientTemp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 4 }
 
 cucsComputeRackUnitMbTempStatsAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10868,7 +10868,7 @@ cucsComputeRackUnitMbTempStatsAmbientTempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 5 }
 
 cucsComputeRackUnitMbTempStatsAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10877,7 +10877,7 @@ cucsComputeRackUnitMbTempStatsAmbientTempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 6 }
 
 cucsComputeRackUnitMbTempStatsAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10886,7 +10886,7 @@ cucsComputeRackUnitMbTempStatsAmbientTempMin OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 7 }
 
 cucsComputeRackUnitMbTempStatsFrontTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10895,7 +10895,7 @@ cucsComputeRackUnitMbTempStatsFrontTemp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 8 }
 
 cucsComputeRackUnitMbTempStatsFrontTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10904,7 +10904,7 @@ cucsComputeRackUnitMbTempStatsFrontTempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 9 }
 
 cucsComputeRackUnitMbTempStatsFrontTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10913,7 +10913,7 @@ cucsComputeRackUnitMbTempStatsFrontTempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 10 }
 
 cucsComputeRackUnitMbTempStatsFrontTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10931,7 +10931,7 @@ cucsComputeRackUnitMbTempStatsIntervals OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 12 }
 
 cucsComputeRackUnitMbTempStatsIoh1Temp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10940,7 +10940,7 @@ cucsComputeRackUnitMbTempStatsIoh1Temp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 13 }
 
 cucsComputeRackUnitMbTempStatsIoh1TempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10949,7 +10949,7 @@ cucsComputeRackUnitMbTempStatsIoh1TempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 14 }
 
 cucsComputeRackUnitMbTempStatsIoh1TempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10958,7 +10958,7 @@ cucsComputeRackUnitMbTempStatsIoh1TempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 15 }
 
 cucsComputeRackUnitMbTempStatsIoh1TempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10967,7 +10967,7 @@ cucsComputeRackUnitMbTempStatsIoh1TempMin OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 16 }
 
 cucsComputeRackUnitMbTempStatsIoh2Temp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10976,7 +10976,7 @@ cucsComputeRackUnitMbTempStatsIoh2Temp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 17 }
 
 cucsComputeRackUnitMbTempStatsIoh2TempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10985,7 +10985,7 @@ cucsComputeRackUnitMbTempStatsIoh2TempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 18 }
 
 cucsComputeRackUnitMbTempStatsIoh2TempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10994,7 +10994,7 @@ cucsComputeRackUnitMbTempStatsIoh2TempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 19 }
 
 cucsComputeRackUnitMbTempStatsIoh2TempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11003,7 +11003,7 @@ cucsComputeRackUnitMbTempStatsIoh2TempMin OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 20 }
 
 cucsComputeRackUnitMbTempStatsRearTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11012,7 +11012,7 @@ cucsComputeRackUnitMbTempStatsRearTemp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 21 }
 
 cucsComputeRackUnitMbTempStatsRearTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11021,7 +11021,7 @@ cucsComputeRackUnitMbTempStatsRearTempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 22 }
 
 cucsComputeRackUnitMbTempStatsRearTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11030,7 +11030,7 @@ cucsComputeRackUnitMbTempStatsRearTempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsEntry 23 }
 
 cucsComputeRackUnitMbTempStatsRearTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11095,28 +11095,28 @@ CucsComputeRackUnitMbTempStatsHistEntry ::= SEQUENCE {
     cucsComputeRackUnitMbTempStatsHistInstanceId                     CucsManagedObjectId,
     cucsComputeRackUnitMbTempStatsHistDn                             CucsManagedObjectDn,
     cucsComputeRackUnitMbTempStatsHistRn                             SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistAmbientTemp                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistAmbientTempAvg                 SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistAmbientTempMax                 SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistAmbientTempMin                 SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistFrontTemp                      SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistFrontTempAvg                   SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistFrontTempMax                   SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistFrontTempMin                   SnmpAdminString,
+    cucsComputeRackUnitMbTempStatsHistAmbientTemp                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistAmbientTempAvg                 INTEGER,
+    cucsComputeRackUnitMbTempStatsHistAmbientTempMax                 INTEGER,
+    cucsComputeRackUnitMbTempStatsHistAmbientTempMin                 INTEGER,
+    cucsComputeRackUnitMbTempStatsHistFrontTemp                      INTEGER,
+    cucsComputeRackUnitMbTempStatsHistFrontTempAvg                   INTEGER,
+    cucsComputeRackUnitMbTempStatsHistFrontTempMax                   INTEGER,
+    cucsComputeRackUnitMbTempStatsHistFrontTempMin                   INTEGER,
     cucsComputeRackUnitMbTempStatsHistId                             Unsigned64,
-    cucsComputeRackUnitMbTempStatsHistIoh1Temp                       SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh1TempAvg                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh1TempMax                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh1TempMin                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh2Temp                       SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh2TempAvg                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh2TempMax                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistIoh2TempMin                    SnmpAdminString,
+    cucsComputeRackUnitMbTempStatsHistIoh1Temp                       INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh1TempAvg                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh1TempMax                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh1TempMin                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh2Temp                       INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh2TempAvg                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh2TempMax                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistIoh2TempMin                    INTEGER,
     cucsComputeRackUnitMbTempStatsHistMostRecent                     TruthValue,
-    cucsComputeRackUnitMbTempStatsHistRearTemp                       SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistRearTempAvg                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistRearTempMax                    SnmpAdminString,
-    cucsComputeRackUnitMbTempStatsHistRearTempMin                    SnmpAdminString,
+    cucsComputeRackUnitMbTempStatsHistRearTemp                       INTEGER,
+    cucsComputeRackUnitMbTempStatsHistRearTempAvg                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistRearTempMax                    INTEGER,
+    cucsComputeRackUnitMbTempStatsHistRearTempMin                    INTEGER,
     cucsComputeRackUnitMbTempStatsHistSuspect                        TruthValue,
     cucsComputeRackUnitMbTempStatsHistThresholded                    CucsComputeRackUnitMbTempStatsHistThresholded,
     cucsComputeRackUnitMbTempStatsHistTimeCollected                  DateAndTime
@@ -11149,7 +11149,7 @@ cucsComputeRackUnitMbTempStatsHistRn OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 3 }
 
 cucsComputeRackUnitMbTempStatsHistAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11158,7 +11158,7 @@ cucsComputeRackUnitMbTempStatsHistAmbientTemp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 4 }
 
 cucsComputeRackUnitMbTempStatsHistAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11167,7 +11167,7 @@ cucsComputeRackUnitMbTempStatsHistAmbientTempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 5 }
 
 cucsComputeRackUnitMbTempStatsHistAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11176,7 +11176,7 @@ cucsComputeRackUnitMbTempStatsHistAmbientTempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 6 }
 
 cucsComputeRackUnitMbTempStatsHistAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11185,7 +11185,7 @@ cucsComputeRackUnitMbTempStatsHistAmbientTempMin OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 7 }
 
 cucsComputeRackUnitMbTempStatsHistFrontTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11194,7 +11194,7 @@ cucsComputeRackUnitMbTempStatsHistFrontTemp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 8 }
 
 cucsComputeRackUnitMbTempStatsHistFrontTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11203,7 +11203,7 @@ cucsComputeRackUnitMbTempStatsHistFrontTempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 9 }
 
 cucsComputeRackUnitMbTempStatsHistFrontTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11212,7 +11212,7 @@ cucsComputeRackUnitMbTempStatsHistFrontTempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 10 }
 
 cucsComputeRackUnitMbTempStatsHistFrontTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11230,7 +11230,7 @@ cucsComputeRackUnitMbTempStatsHistId OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 12 }
 
 cucsComputeRackUnitMbTempStatsHistIoh1Temp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11239,7 +11239,7 @@ cucsComputeRackUnitMbTempStatsHistIoh1Temp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 13 }
 
 cucsComputeRackUnitMbTempStatsHistIoh1TempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11248,7 +11248,7 @@ cucsComputeRackUnitMbTempStatsHistIoh1TempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 14 }
 
 cucsComputeRackUnitMbTempStatsHistIoh1TempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11257,7 +11257,7 @@ cucsComputeRackUnitMbTempStatsHistIoh1TempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 15 }
 
 cucsComputeRackUnitMbTempStatsHistIoh1TempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11266,7 +11266,7 @@ cucsComputeRackUnitMbTempStatsHistIoh1TempMin OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 16 }
 
 cucsComputeRackUnitMbTempStatsHistIoh2Temp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11275,7 +11275,7 @@ cucsComputeRackUnitMbTempStatsHistIoh2Temp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 17 }
 
 cucsComputeRackUnitMbTempStatsHistIoh2TempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11284,7 +11284,7 @@ cucsComputeRackUnitMbTempStatsHistIoh2TempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 18 }
 
 cucsComputeRackUnitMbTempStatsHistIoh2TempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11293,7 +11293,7 @@ cucsComputeRackUnitMbTempStatsHistIoh2TempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 19 }
 
 cucsComputeRackUnitMbTempStatsHistIoh2TempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11311,7 +11311,7 @@ cucsComputeRackUnitMbTempStatsHistMostRecent OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 21 }
 
 cucsComputeRackUnitMbTempStatsHistRearTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11320,7 +11320,7 @@ cucsComputeRackUnitMbTempStatsHistRearTemp OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 22 }
 
 cucsComputeRackUnitMbTempStatsHistRearTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11329,7 +11329,7 @@ cucsComputeRackUnitMbTempStatsHistRearTempAvg OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 23 }
 
 cucsComputeRackUnitMbTempStatsHistRearTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -11338,7 +11338,7 @@ cucsComputeRackUnitMbTempStatsHistRearTempMax OBJECT-TYPE
     ::= { cucsComputeRackUnitMbTempStatsHistEntry 24 }
 
 cucsComputeRackUnitMbTempStatsHistRearTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

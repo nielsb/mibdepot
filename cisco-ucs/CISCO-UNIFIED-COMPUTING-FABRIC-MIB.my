@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- FABRIC management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -358,7 +358,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsFabricObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -1183,7 +1183,7 @@ CucsFabricCartridgeSlotEpEntry ::= SEQUENCE {
     cucsFabricCartridgeSlotEpFsmStamp                                DateAndTime,
     cucsFabricCartridgeSlotEpFsmStatus                               SnmpAdminString,
     cucsFabricCartridgeSlotEpFsmTry                                  Gauge32,
-    cucsFabricCartridgeSlotEpIfRole                                  CucsFabricEquipmentEpIfRole,
+    cucsFabricCartridgeSlotEpIfRole                                  CucsFabricComputeEpIfRole,
     cucsFabricCartridgeSlotEpIfType                                  CucsFabricPIoEpIfType,
     cucsFabricCartridgeSlotEpLicGP                                   Unsigned64,
     cucsFabricCartridgeSlotEpLicState                                CucsLicenseState,
@@ -1205,7 +1205,7 @@ CucsFabricCartridgeSlotEpEntry ::= SEQUENCE {
     cucsFabricCartridgeSlotEpSlotId                                  CucsFabricCartridgeSlotEpSlotId,
     cucsFabricCartridgeSlotEpSwitchId                                CucsNetworkSwitchId,
     cucsFabricCartridgeSlotEpTransport                               CucsNetworkTransport,
-    cucsFabricCartridgeSlotEpType                                    CucsFabricEquipmentEpType,
+    cucsFabricCartridgeSlotEpType                                    CucsFabricComputeEpType,
     cucsFabricCartridgeSlotEpVendor                                  SnmpAdminString,
     cucsFabricCartridgeSlotEpAggrPortId                              Gauge32,
     cucsFabricCartridgeSlotEpAutoNegotiate                           TruthValue,
@@ -1405,7 +1405,7 @@ cucsFabricCartridgeSlotEpFsmTry OBJECT-TYPE
     ::= { cucsFabricCartridgeSlotEpEntry 22 }
 
 cucsFabricCartridgeSlotEpIfRole OBJECT-TYPE
-    SYNTAX       CucsFabricEquipmentEpIfRole
+    SYNTAX       CucsFabricComputeEpIfRole
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1593,7 +1593,7 @@ cucsFabricCartridgeSlotEpTransport OBJECT-TYPE
     ::= { cucsFabricCartridgeSlotEpEntry 44 }
 
 cucsFabricCartridgeSlotEpType OBJECT-TYPE
-    SYNTAX       CucsFabricEquipmentEpType
+    SYNTAX       CucsFabricComputeEpType
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -3380,7 +3380,7 @@ CucsFabricComputePhEpEntry ::= SEQUENCE {
     cucsFabricComputePhEpProfileDn                                   SnmpAdminString,
     cucsFabricComputePhEpRevision                                    SnmpAdminString,
     cucsFabricComputePhEpSerial                                      SnmpAdminString,
-    cucsFabricComputePhEpSlotId                                      CucsFabricPIoEpSlotId,
+    cucsFabricComputePhEpSlotId                                      CucsFabricComputePhEpSlotId,
     cucsFabricComputePhEpSwitchId                                    CucsNetworkSwitchId,
     cucsFabricComputePhEpTransport                                   CucsNetworkTransport,
     cucsFabricComputePhEpType                                        CucsFabricComputeEpType,
@@ -3577,7 +3577,7 @@ cucsFabricComputePhEpSerial OBJECT-TYPE
     ::= { cucsFabricComputePhEpEntry 22 }
 
 cucsFabricComputePhEpSlotId OBJECT-TYPE
-    SYNTAX       CucsFabricPIoEpSlotId
+    SYNTAX       CucsFabricComputePhEpSlotId
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10432,8 +10432,8 @@ CucsFabricFcEstcEpEntry ::= SEQUENCE {
     cucsFabricFcEstcEpPortId                                         CucsFabricFcEstcEpPortId,
     cucsFabricFcEstcEpSlotId                                         CucsFabricFcEstcEpSlotId,
     cucsFabricFcEstcEpSwitchId                                       CucsNetworkSwitchId,
-    cucsFabricFcEstcEpTransport                                      CucsFabricAFcEstcEpTransport,
-    cucsFabricFcEstcEpType                                           CucsFabricAFcEstcEpType,
+    cucsFabricFcEstcEpTransport                                      CucsNetworkTransport,
+    cucsFabricFcEstcEpType                                           CucsNetworkConnectionType,
     cucsFabricFcEstcEpUsrLbl                                         SnmpAdminString,
     cucsFabricFcEstcEpPeerChassisId                                  Gauge32,
     cucsFabricFcEstcEpFltAggr                                        Unsigned64,
@@ -10599,7 +10599,7 @@ cucsFabricFcEstcEpSwitchId OBJECT-TYPE
     ::= { cucsFabricFcEstcEpEntry 19 }
 
 cucsFabricFcEstcEpTransport OBJECT-TYPE
-    SYNTAX       CucsFabricAFcEstcEpTransport
+    SYNTAX       CucsNetworkTransport
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10607,7 +10607,7 @@ cucsFabricFcEstcEpTransport OBJECT-TYPE
     ::= { cucsFabricFcEstcEpEntry 20 }
 
 cucsFabricFcEstcEpType OBJECT-TYPE
-    SYNTAX       CucsFabricAFcEstcEpType
+    SYNTAX       CucsNetworkConnectionType
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

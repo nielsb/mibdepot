@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- CPMAINT management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -62,7 +62,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsCpmaintObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -106,13 +106,13 @@ CucsCpmaintAckEntry ::= SEQUENCE {
     cucsCpmaintAckAdminState                                         CucsTrigAdminState,
     cucsCpmaintAckAutoDelete                                         TruthValue,
     cucsCpmaintAckChangeBy                                           SnmpAdminString,
-    cucsCpmaintAckChangeDetails                                      CucsCpmaintAckChangeDetails,
+    cucsCpmaintAckChangeDetails                                      CucsTrigAckChangeDetails,
     cucsCpmaintAckChangeMode                                         CucsCpmaintChangeMode,
-    cucsCpmaintAckChanges                                            CucsCpmaintAckChanges,
+    cucsCpmaintAckChanges                                            CucsTrigAckChanges,
     cucsCpmaintAckConfigIssues                                       CucsEquipmentChassisConfigIssues,
     cucsCpmaintAckDeploymentMode                                     CucsTrigChassisAckMode,
     cucsCpmaintAckDescr                                              SnmpAdminString,
-    cucsCpmaintAckDisr                                               CucsCpmaintAckDisr,
+    cucsCpmaintAckDisr                                               CucsTrigAckDisr,
     cucsCpmaintAckIgnoreCap                                          TruthValue,
     cucsCpmaintAckIntId                                              SnmpAdminString,
     cucsCpmaintAckModified                                           DateAndTime,
@@ -122,7 +122,7 @@ CucsCpmaintAckEntry ::= SEQUENCE {
     cucsCpmaintAckOperState                                          CucsTrigAckOperState,
     cucsCpmaintAckPolicyLevel                                        Gauge32,
     cucsCpmaintAckPolicyOwner                                        CucsPolicyPolicyOwner,
-    cucsCpmaintAckPrevOperState                                      CucsTrigAckPrevOperState,
+    cucsCpmaintAckPrevOperState                                      CucsTrigAckOperState,
     cucsCpmaintAckScheduler                                          SnmpAdminString,
     cucsCpmaintAckTriggerConfigState                                 CucsTrigTrigState,
     cucsCpmaintAckPropAcl                                            Unsigned64
@@ -193,7 +193,7 @@ cucsCpmaintAckChangeBy OBJECT-TYPE
     ::= { cucsCpmaintAckEntry 8 }
 
 cucsCpmaintAckChangeDetails OBJECT-TYPE
-    SYNTAX       CucsCpmaintAckChangeDetails
+    SYNTAX       CucsTrigAckChangeDetails
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -209,7 +209,7 @@ cucsCpmaintAckChangeMode OBJECT-TYPE
     ::= { cucsCpmaintAckEntry 10 }
 
 cucsCpmaintAckChanges OBJECT-TYPE
-    SYNTAX       CucsCpmaintAckChanges
+    SYNTAX       CucsTrigAckChanges
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -241,7 +241,7 @@ cucsCpmaintAckDescr OBJECT-TYPE
     ::= { cucsCpmaintAckEntry 14 }
 
 cucsCpmaintAckDisr OBJECT-TYPE
-    SYNTAX       CucsCpmaintAckDisr
+    SYNTAX       CucsTrigAckDisr
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -321,7 +321,7 @@ cucsCpmaintAckPolicyOwner OBJECT-TYPE
     ::= { cucsCpmaintAckEntry 24 }
 
 cucsCpmaintAckPrevOperState OBJECT-TYPE
-    SYNTAX       CucsTrigAckPrevOperState
+    SYNTAX       CucsTrigAckOperState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

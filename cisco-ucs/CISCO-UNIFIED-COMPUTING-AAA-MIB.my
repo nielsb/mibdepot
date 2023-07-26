@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- AAA management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -97,7 +97,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsAaaObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -3149,8 +3149,8 @@ CucsAaaModLREntry ::= SEQUENCE {
     cucsAaaModLRCode                                                 CucsConditionCode,
     cucsAaaModLRCreated                                              DateAndTime,
     cucsAaaModLRDescr                                                SnmpAdminString,
-    cucsAaaModLRId                                                   Gauge32,
-    cucsAaaModLRInd                                                  CucsConditionActionIndicator,
+    cucsAaaModLRId                                                   Unsigned64,
+    cucsAaaModLRInd                                                  Gauge32,
     cucsAaaModLRSeverity                                             CucsConditionSeverity,
     cucsAaaModLRTrig                                                 Gauge32,
     cucsAaaModLRTxId                                                 Unsigned64,
@@ -3231,7 +3231,7 @@ cucsAaaModLRDescr OBJECT-TYPE
     ::= { cucsAaaModLREntry 9 }
 
 cucsAaaModLRId OBJECT-TYPE
-    SYNTAX       Gauge32
+    SYNTAX       Unsigned64
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -3239,7 +3239,7 @@ cucsAaaModLRId OBJECT-TYPE
     ::= { cucsAaaModLREntry 10 }
 
 cucsAaaModLRInd OBJECT-TYPE
-    SYNTAX       CucsConditionActionIndicator
+    SYNTAX       Gauge32
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5218,8 +5218,8 @@ CucsAaaSessionLREntry ::= SEQUENCE {
     cucsAaaSessionLRCode                                             CucsConditionCode,
     cucsAaaSessionLRCreated                                          DateAndTime,
     cucsAaaSessionLRDescr                                            SnmpAdminString,
-    cucsAaaSessionLRId                                               Gauge32,
-    cucsAaaSessionLRInd                                              CucsConditionActionIndicator,
+    cucsAaaSessionLRId                                               Unsigned64,
+    cucsAaaSessionLRInd                                              Gauge32,
     cucsAaaSessionLRSeverity                                         CucsConditionSeverity,
     cucsAaaSessionLRTrig                                             Gauge32,
     cucsAaaSessionLRTxId                                             Unsigned64,
@@ -5300,7 +5300,7 @@ cucsAaaSessionLRDescr OBJECT-TYPE
     ::= { cucsAaaSessionLREntry 9 }
 
 cucsAaaSessionLRId OBJECT-TYPE
-    SYNTAX       Gauge32
+    SYNTAX       Unsigned64
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5308,7 +5308,7 @@ cucsAaaSessionLRId OBJECT-TYPE
     ::= { cucsAaaSessionLREntry 10 }
 
 cucsAaaSessionLRInd OBJECT-TYPE
-    SYNTAX       CucsConditionActionIndicator
+    SYNTAX       Gauge32
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- POWER management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -71,7 +71,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsPowerObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -1087,10 +1087,10 @@ CucsPowerGroupStatsEntry ::= SEQUENCE {
     cucsPowerGroupStatsDn                                            CucsManagedObjectDn,
     cucsPowerGroupStatsRn                                            SnmpAdminString,
     cucsPowerGroupStatsIntervals                                     Gauge32,
-    cucsPowerGroupStatsPower                                         SnmpAdminString,
-    cucsPowerGroupStatsPowerAvg                                      SnmpAdminString,
-    cucsPowerGroupStatsPowerMax                                      SnmpAdminString,
-    cucsPowerGroupStatsPowerMin                                      SnmpAdminString,
+    cucsPowerGroupStatsPower                                         INTEGER,
+    cucsPowerGroupStatsPowerAvg                                      INTEGER,
+    cucsPowerGroupStatsPowerMax                                      INTEGER,
+    cucsPowerGroupStatsPowerMin                                      INTEGER,
     cucsPowerGroupStatsSuspect                                       TruthValue,
     cucsPowerGroupStatsThresholded                                   CucsPowerGroupStatsThresholded,
     cucsPowerGroupStatsTimeCollected                                 DateAndTime,
@@ -1130,7 +1130,7 @@ cucsPowerGroupStatsIntervals OBJECT-TYPE
     ::= { cucsPowerGroupStatsEntry 4 }
 
 cucsPowerGroupStatsPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1138,7 +1138,7 @@ cucsPowerGroupStatsPower OBJECT-TYPE
     ::= { cucsPowerGroupStatsEntry 5 }
 
 cucsPowerGroupStatsPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1146,7 +1146,7 @@ cucsPowerGroupStatsPowerAvg OBJECT-TYPE
     ::= { cucsPowerGroupStatsEntry 6 }
 
 cucsPowerGroupStatsPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1154,7 +1154,7 @@ cucsPowerGroupStatsPowerMax OBJECT-TYPE
     ::= { cucsPowerGroupStatsEntry 7 }
 
 cucsPowerGroupStatsPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1216,10 +1216,10 @@ CucsPowerGroupStatsHistEntry ::= SEQUENCE {
     cucsPowerGroupStatsHistRn                                        SnmpAdminString,
     cucsPowerGroupStatsHistId                                        Unsigned64,
     cucsPowerGroupStatsHistMostRecent                                TruthValue,
-    cucsPowerGroupStatsHistPower                                     SnmpAdminString,
-    cucsPowerGroupStatsHistPowerAvg                                  SnmpAdminString,
-    cucsPowerGroupStatsHistPowerMax                                  SnmpAdminString,
-    cucsPowerGroupStatsHistPowerMin                                  SnmpAdminString,
+    cucsPowerGroupStatsHistPower                                     INTEGER,
+    cucsPowerGroupStatsHistPowerAvg                                  INTEGER,
+    cucsPowerGroupStatsHistPowerMax                                  INTEGER,
+    cucsPowerGroupStatsHistPowerMin                                  INTEGER,
     cucsPowerGroupStatsHistSuspect                                   TruthValue,
     cucsPowerGroupStatsHistThresholded                               CucsPowerGroupStatsHistThresholded,
     cucsPowerGroupStatsHistTimeCollected                             DateAndTime
@@ -1267,7 +1267,7 @@ cucsPowerGroupStatsHistMostRecent OBJECT-TYPE
     ::= { cucsPowerGroupStatsHistEntry 5 }
 
 cucsPowerGroupStatsHistPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1275,7 +1275,7 @@ cucsPowerGroupStatsHistPower OBJECT-TYPE
     ::= { cucsPowerGroupStatsHistEntry 6 }
 
 cucsPowerGroupStatsHistPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1283,7 +1283,7 @@ cucsPowerGroupStatsHistPowerAvg OBJECT-TYPE
     ::= { cucsPowerGroupStatsHistEntry 7 }
 
 cucsPowerGroupStatsHistPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1291,7 +1291,7 @@ cucsPowerGroupStatsHistPowerMax OBJECT-TYPE
     ::= { cucsPowerGroupStatsHistEntry 8 }
 
 cucsPowerGroupStatsHistPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

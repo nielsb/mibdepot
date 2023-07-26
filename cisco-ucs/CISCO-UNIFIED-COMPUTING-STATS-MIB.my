@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- STATS management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -70,7 +70,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsStatsObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -1254,7 +1254,7 @@ CucsStatsThrFloatDefinitionEntry ::= SEQUENCE {
     cucsStatsThrFloatDefinitionDescr                                 SnmpAdminString,
     cucsStatsThrFloatDefinitionIntId                                 SnmpAdminString,
     cucsStatsThrFloatDefinitionName                                  SnmpAdminString,
-    cucsStatsThrFloatDefinitionNormalValue                           SnmpAdminString,
+    cucsStatsThrFloatDefinitionNormalValue                           INTEGER,
     cucsStatsThrFloatDefinitionPropId                                SnmpAdminString,
     cucsStatsThrFloatDefinitionPropType                              CucsStatsThrFloatDefinitionPropType,
     cucsStatsThrFloatDefinitionPolicyLevel                           Gauge32,
@@ -1313,7 +1313,7 @@ cucsStatsThrFloatDefinitionName OBJECT-TYPE
     ::= { cucsStatsThrFloatDefinitionEntry 6 }
 
 cucsStatsThrFloatDefinitionNormalValue OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1405,10 +1405,10 @@ CucsStatsThrFloatValueEntry ::= SEQUENCE {
     cucsStatsThrFloatValueInstanceId                                 CucsManagedObjectId,
     cucsStatsThrFloatValueDn                                         CucsManagedObjectDn,
     cucsStatsThrFloatValueRn                                         SnmpAdminString,
-    cucsStatsThrFloatValueDeescalating                               SnmpAdminString,
+    cucsStatsThrFloatValueDeescalating                               INTEGER,
     cucsStatsThrFloatValueDescr                                      SnmpAdminString,
     cucsStatsThrFloatValueDirection                                  CucsStatsThresholdDirection,
-    cucsStatsThrFloatValueEscalating                                 SnmpAdminString,
+    cucsStatsThrFloatValueEscalating                                 INTEGER,
     cucsStatsThrFloatValueIntId                                      SnmpAdminString,
     cucsStatsThrFloatValueName                                       SnmpAdminString,
     cucsStatsThrFloatValuePropType                                   CucsStatsThrFloatValuePropType,
@@ -1442,7 +1442,7 @@ cucsStatsThrFloatValueRn OBJECT-TYPE
     ::= { cucsStatsThrFloatValueEntry 3 }
 
 cucsStatsThrFloatValueDeescalating OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1467,7 +1467,7 @@ cucsStatsThrFloatValueDirection OBJECT-TYPE
     ::= { cucsStatsThrFloatValueEntry 6 }
 
 cucsStatsThrFloatValueEscalating OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

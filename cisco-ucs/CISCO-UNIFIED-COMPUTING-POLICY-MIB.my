@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- POLICY management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -82,7 +82,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsPolicyObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -516,7 +516,7 @@ CucsPolicyControlEpEntry ::= SEQUENCE {
     cucsPolicyControlEpFsmStatus                                     SnmpAdminString,
     cucsPolicyControlEpFsmTry                                        Gauge32,
     cucsPolicyControlEpName                                          SnmpAdminString,
-    cucsPolicyControlEpRegistrationState                             CucsPolicyRegistrationStateType,
+    cucsPolicyControlEpRegistrationState                             CucsPolicyDomainRegistrationStateType,
     cucsPolicyControlEpRepairState                                   CucsPolicyRepairStateType,
     cucsPolicyControlEpSecret                                        SnmpAdminString,
     cucsPolicyControlEpState                                         CucsPolicyState,
@@ -658,7 +658,7 @@ cucsPolicyControlEpName OBJECT-TYPE
     ::= { cucsPolicyControlEpEntry 16 }
 
 cucsPolicyControlEpRegistrationState OBJECT-TYPE
-    SYNTAX       CucsPolicyRegistrationStateType
+    SYNTAX       CucsPolicyDomainRegistrationStateType
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- EXTPOL management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -69,7 +69,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsExtpolObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -125,7 +125,7 @@ CucsExtpolClientEntry ::= SEQUENCE {
     cucsExtpolClientVersion                                          SnmpAdminString,
     cucsExtpolClientGracePeriodUsed                                  Unsigned64,
     cucsExtpolClientLicState                                         CucsExtpolState,
-    cucsExtpolClientConnProtocol                                     CucsExtpolConnProtocol,
+    cucsExtpolClientConnProtocol                                     CucsExtpolConnectionProtocol,
     cucsExtpolClientIpv6                                             InetAddressIPv6
 }
 
@@ -290,7 +290,7 @@ cucsExtpolClientLicState OBJECT-TYPE
     ::= { cucsExtpolClientEntry 20 }
 
 cucsExtpolClientConnProtocol OBJECT-TYPE
-    SYNTAX       CucsExtpolConnProtocol
+    SYNTAX       CucsExtpolConnectionProtocol
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -392,7 +392,7 @@ CucsExtpolControllerEntry ::= SEQUENCE {
     cucsExtpolControllerOperState                                    CucsExtpolConnectorOperState,
     cucsExtpolControllerType                                         CucsExtpolConnType,
     cucsExtpolControllerVersion                                      SnmpAdminString,
-    cucsExtpolControllerConnProtocol                                 CucsExtpolConnProtocol,
+    cucsExtpolControllerConnProtocol                                 CucsExtpolConnectionProtocol,
     cucsExtpolControllerIpv6                                         InetAddressIPv6
 }
 
@@ -501,7 +501,7 @@ cucsExtpolControllerVersion OBJECT-TYPE
     ::= { cucsExtpolControllerEntry 13 }
 
 cucsExtpolControllerConnProtocol OBJECT-TYPE
-    SYNTAX       CucsExtpolConnProtocol
+    SYNTAX       CucsExtpolConnectionProtocol
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1054,7 +1054,7 @@ CucsExtpolProviderEntry ::= SEQUENCE {
     cucsExtpolProviderFsmStamp                                       DateAndTime,
     cucsExtpolProviderFsmStatus                                      SnmpAdminString,
     cucsExtpolProviderFsmTry                                         Gauge32,
-    cucsExtpolProviderConnProtocol                                   CucsExtpolConnProtocol,
+    cucsExtpolProviderConnProtocol                                   CucsExtpolConnectionProtocol,
     cucsExtpolProviderIpv6                                           InetAddressIPv6
 }
 
@@ -1245,7 +1245,7 @@ cucsExtpolProviderFsmTry OBJECT-TYPE
     ::= { cucsExtpolProviderEntry 23 }
 
 cucsExtpolProviderConnProtocol OBJECT-TYPE
-    SYNTAX       CucsExtpolConnProtocol
+    SYNTAX       CucsExtpolConnectionProtocol
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1667,7 +1667,7 @@ CucsExtpolRegistryEntry ::= SEQUENCE {
     cucsExtpolRegistryOperState                                      CucsExtpolConnectorOperState,
     cucsExtpolRegistryType                                           CucsExtpolConnType,
     cucsExtpolRegistryVersion                                        SnmpAdminString,
-    cucsExtpolRegistryConnProtocol                                   CucsExtpolConnProtocol,
+    cucsExtpolRegistryConnProtocol                                   CucsExtpolConnectionProtocol,
     cucsExtpolRegistryIpv6                                           InetAddressIPv6
 }
 
@@ -1882,7 +1882,7 @@ cucsExtpolRegistryVersion OBJECT-TYPE
     ::= { cucsExtpolRegistryEntry 26 }
 
 cucsExtpolRegistryConnProtocol OBJECT-TYPE
-    SYNTAX       CucsExtpolConnProtocol
+    SYNTAX       CucsExtpolConnectionProtocol
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

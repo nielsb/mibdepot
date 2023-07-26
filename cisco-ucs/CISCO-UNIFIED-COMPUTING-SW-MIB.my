@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- SW management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -248,7 +248,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsSwObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -1041,18 +1041,18 @@ CucsSwCardEnvStatsEntry ::= SEQUENCE {
     cucsSwCardEnvStatsInstanceId                                     CucsManagedObjectId,
     cucsSwCardEnvStatsDn                                             CucsManagedObjectDn,
     cucsSwCardEnvStatsRn                                             SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet1                                    SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet1Avg                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet1Max                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet1Min                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet2                                    SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet2Avg                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet2Max                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet2Min                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet3                                    SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet3Avg                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet3Max                                 SnmpAdminString,
-    cucsSwCardEnvStatsSlotOutlet3Min                                 SnmpAdminString,
+    cucsSwCardEnvStatsSlotOutlet1                                    INTEGER,
+    cucsSwCardEnvStatsSlotOutlet1Avg                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet1Max                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet1Min                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet2                                    INTEGER,
+    cucsSwCardEnvStatsSlotOutlet2Avg                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet2Max                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet2Min                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet3                                    INTEGER,
+    cucsSwCardEnvStatsSlotOutlet3Avg                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet3Max                                 INTEGER,
+    cucsSwCardEnvStatsSlotOutlet3Min                                 INTEGER,
     cucsSwCardEnvStatsIntervals                                      Gauge32,
     cucsSwCardEnvStatsSuspect                                        TruthValue,
     cucsSwCardEnvStatsThresholded                                    CucsSwCardEnvStatsThresholded,
@@ -1085,7 +1085,7 @@ cucsSwCardEnvStatsRn OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 3 }
 
 cucsSwCardEnvStatsSlotOutlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1093,7 +1093,7 @@ cucsSwCardEnvStatsSlotOutlet1 OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 4 }
 
 cucsSwCardEnvStatsSlotOutlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1101,7 +1101,7 @@ cucsSwCardEnvStatsSlotOutlet1Avg OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 5 }
 
 cucsSwCardEnvStatsSlotOutlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1109,7 +1109,7 @@ cucsSwCardEnvStatsSlotOutlet1Max OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 6 }
 
 cucsSwCardEnvStatsSlotOutlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1117,7 +1117,7 @@ cucsSwCardEnvStatsSlotOutlet1Min OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 7 }
 
 cucsSwCardEnvStatsSlotOutlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1125,7 +1125,7 @@ cucsSwCardEnvStatsSlotOutlet2 OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 8 }
 
 cucsSwCardEnvStatsSlotOutlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1133,7 +1133,7 @@ cucsSwCardEnvStatsSlotOutlet2Avg OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 9 }
 
 cucsSwCardEnvStatsSlotOutlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1141,7 +1141,7 @@ cucsSwCardEnvStatsSlotOutlet2Max OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 10 }
 
 cucsSwCardEnvStatsSlotOutlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1149,7 +1149,7 @@ cucsSwCardEnvStatsSlotOutlet2Min OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 11 }
 
 cucsSwCardEnvStatsSlotOutlet3 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1157,7 +1157,7 @@ cucsSwCardEnvStatsSlotOutlet3 OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 12 }
 
 cucsSwCardEnvStatsSlotOutlet3Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1165,7 +1165,7 @@ cucsSwCardEnvStatsSlotOutlet3Avg OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 13 }
 
 cucsSwCardEnvStatsSlotOutlet3Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1173,7 +1173,7 @@ cucsSwCardEnvStatsSlotOutlet3Max OBJECT-TYPE
     ::= { cucsSwCardEnvStatsEntry 14 }
 
 cucsSwCardEnvStatsSlotOutlet3Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1241,18 +1241,18 @@ CucsSwCardEnvStatsHistEntry ::= SEQUENCE {
     cucsSwCardEnvStatsHistInstanceId                                 CucsManagedObjectId,
     cucsSwCardEnvStatsHistDn                                         CucsManagedObjectDn,
     cucsSwCardEnvStatsHistRn                                         SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet1                                SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet1Avg                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet1Max                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet1Min                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet2                                SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet2Avg                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet2Max                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet2Min                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet3                                SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet3Avg                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet3Max                             SnmpAdminString,
-    cucsSwCardEnvStatsHistSlotOutlet3Min                             SnmpAdminString,
+    cucsSwCardEnvStatsHistSlotOutlet1                                INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet1Avg                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet1Max                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet1Min                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet2                                INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet2Avg                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet2Max                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet2Min                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet3                                INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet3Avg                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet3Max                             INTEGER,
+    cucsSwCardEnvStatsHistSlotOutlet3Min                             INTEGER,
     cucsSwCardEnvStatsHistId                                         Unsigned64,
     cucsSwCardEnvStatsHistMostRecent                                 TruthValue,
     cucsSwCardEnvStatsHistSuspect                                    TruthValue,
@@ -1285,7 +1285,7 @@ cucsSwCardEnvStatsHistRn OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 3 }
 
 cucsSwCardEnvStatsHistSlotOutlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1294,7 +1294,7 @@ cucsSwCardEnvStatsHistSlotOutlet1 OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 4 }
 
 cucsSwCardEnvStatsHistSlotOutlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1303,7 +1303,7 @@ cucsSwCardEnvStatsHistSlotOutlet1Avg OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 5 }
 
 cucsSwCardEnvStatsHistSlotOutlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1312,7 +1312,7 @@ cucsSwCardEnvStatsHistSlotOutlet1Max OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 6 }
 
 cucsSwCardEnvStatsHistSlotOutlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1321,7 +1321,7 @@ cucsSwCardEnvStatsHistSlotOutlet1Min OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 7 }
 
 cucsSwCardEnvStatsHistSlotOutlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1330,7 +1330,7 @@ cucsSwCardEnvStatsHistSlotOutlet2 OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 8 }
 
 cucsSwCardEnvStatsHistSlotOutlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1339,7 +1339,7 @@ cucsSwCardEnvStatsHistSlotOutlet2Avg OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 9 }
 
 cucsSwCardEnvStatsHistSlotOutlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1348,7 +1348,7 @@ cucsSwCardEnvStatsHistSlotOutlet2Max OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 10 }
 
 cucsSwCardEnvStatsHistSlotOutlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1357,7 +1357,7 @@ cucsSwCardEnvStatsHistSlotOutlet2Min OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 11 }
 
 cucsSwCardEnvStatsHistSlotOutlet3 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1366,7 +1366,7 @@ cucsSwCardEnvStatsHistSlotOutlet3 OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 12 }
 
 cucsSwCardEnvStatsHistSlotOutlet3Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1375,7 +1375,7 @@ cucsSwCardEnvStatsHistSlotOutlet3Avg OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 13 }
 
 cucsSwCardEnvStatsHistSlotOutlet3Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1384,7 +1384,7 @@ cucsSwCardEnvStatsHistSlotOutlet3Max OBJECT-TYPE
     ::= { cucsSwCardEnvStatsHistEntry 14 }
 
 cucsSwCardEnvStatsHistSlotOutlet3Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1592,39 +1592,39 @@ CucsSwEnvStatsEntry ::= SEQUENCE {
     cucsSwEnvStatsInstanceId                                         CucsManagedObjectId,
     cucsSwEnvStatsDn                                                 CucsManagedObjectDn,
     cucsSwEnvStatsRn                                                 SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet1                                     SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet1Avg                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet1Max                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet1Min                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet2                                     SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet2Avg                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet2Max                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet2Min                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet3                                     SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet3Avg                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet3Max                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet3Min                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet4                                     SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet4Avg                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet4Max                                  SnmpAdminString,
-    cucsSwEnvStatsFanCtrlrInlet4Min                                  SnmpAdminString,
+    cucsSwEnvStatsFanCtrlrInlet1                                     INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet1Avg                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet1Max                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet1Min                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet2                                     INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet2Avg                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet2Max                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet2Min                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet3                                     INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet3Avg                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet3Max                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet3Min                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet4                                     INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet4Avg                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet4Max                                  INTEGER,
+    cucsSwEnvStatsFanCtrlrInlet4Min                                  INTEGER,
     cucsSwEnvStatsIntervals                                          Gauge32,
-    cucsSwEnvStatsMainBoardOutlet1                                   SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet1Avg                                SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet1Max                                SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet1Min                                SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet2                                   SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet2Avg                                SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet2Max                                SnmpAdminString,
-    cucsSwEnvStatsMainBoardOutlet2Min                                SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet1                                     SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet1Avg                                  SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet1Max                                  SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet1Min                                  SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet2                                     SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet2Avg                                  SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet2Max                                  SnmpAdminString,
-    cucsSwEnvStatsPsuCtrlrInlet2Min                                  SnmpAdminString,
+    cucsSwEnvStatsMainBoardOutlet1                                   INTEGER,
+    cucsSwEnvStatsMainBoardOutlet1Avg                                INTEGER,
+    cucsSwEnvStatsMainBoardOutlet1Max                                INTEGER,
+    cucsSwEnvStatsMainBoardOutlet1Min                                INTEGER,
+    cucsSwEnvStatsMainBoardOutlet2                                   INTEGER,
+    cucsSwEnvStatsMainBoardOutlet2Avg                                INTEGER,
+    cucsSwEnvStatsMainBoardOutlet2Max                                INTEGER,
+    cucsSwEnvStatsMainBoardOutlet2Min                                INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet1                                     INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet1Avg                                  INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet1Max                                  INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet1Min                                  INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet2                                     INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet2Avg                                  INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet2Max                                  INTEGER,
+    cucsSwEnvStatsPsuCtrlrInlet2Min                                  INTEGER,
     cucsSwEnvStatsSuspect                                            TruthValue,
     cucsSwEnvStatsThresholded                                        CucsSwEnvStatsThresholded,
     cucsSwEnvStatsTimeCollected                                      DateAndTime,
@@ -1668,7 +1668,7 @@ cucsSwEnvStatsRn OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 3 }
 
 cucsSwEnvStatsFanCtrlrInlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1676,7 +1676,7 @@ cucsSwEnvStatsFanCtrlrInlet1 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 4 }
 
 cucsSwEnvStatsFanCtrlrInlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1684,7 +1684,7 @@ cucsSwEnvStatsFanCtrlrInlet1Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 5 }
 
 cucsSwEnvStatsFanCtrlrInlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1692,7 +1692,7 @@ cucsSwEnvStatsFanCtrlrInlet1Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 6 }
 
 cucsSwEnvStatsFanCtrlrInlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1700,7 +1700,7 @@ cucsSwEnvStatsFanCtrlrInlet1Min OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 7 }
 
 cucsSwEnvStatsFanCtrlrInlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1708,7 +1708,7 @@ cucsSwEnvStatsFanCtrlrInlet2 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 8 }
 
 cucsSwEnvStatsFanCtrlrInlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1716,7 +1716,7 @@ cucsSwEnvStatsFanCtrlrInlet2Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 9 }
 
 cucsSwEnvStatsFanCtrlrInlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1724,7 +1724,7 @@ cucsSwEnvStatsFanCtrlrInlet2Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 10 }
 
 cucsSwEnvStatsFanCtrlrInlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1732,7 +1732,7 @@ cucsSwEnvStatsFanCtrlrInlet2Min OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 11 }
 
 cucsSwEnvStatsFanCtrlrInlet3 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1740,7 +1740,7 @@ cucsSwEnvStatsFanCtrlrInlet3 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 12 }
 
 cucsSwEnvStatsFanCtrlrInlet3Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1748,7 +1748,7 @@ cucsSwEnvStatsFanCtrlrInlet3Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 13 }
 
 cucsSwEnvStatsFanCtrlrInlet3Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1756,7 +1756,7 @@ cucsSwEnvStatsFanCtrlrInlet3Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 14 }
 
 cucsSwEnvStatsFanCtrlrInlet3Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1764,7 +1764,7 @@ cucsSwEnvStatsFanCtrlrInlet3Min OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 15 }
 
 cucsSwEnvStatsFanCtrlrInlet4 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1772,7 +1772,7 @@ cucsSwEnvStatsFanCtrlrInlet4 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 16 }
 
 cucsSwEnvStatsFanCtrlrInlet4Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1780,7 +1780,7 @@ cucsSwEnvStatsFanCtrlrInlet4Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 17 }
 
 cucsSwEnvStatsFanCtrlrInlet4Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1788,7 +1788,7 @@ cucsSwEnvStatsFanCtrlrInlet4Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 18 }
 
 cucsSwEnvStatsFanCtrlrInlet4Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1804,7 +1804,7 @@ cucsSwEnvStatsIntervals OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 20 }
 
 cucsSwEnvStatsMainBoardOutlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1812,7 +1812,7 @@ cucsSwEnvStatsMainBoardOutlet1 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 21 }
 
 cucsSwEnvStatsMainBoardOutlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1821,7 +1821,7 @@ cucsSwEnvStatsMainBoardOutlet1Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 22 }
 
 cucsSwEnvStatsMainBoardOutlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1830,7 +1830,7 @@ cucsSwEnvStatsMainBoardOutlet1Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 23 }
 
 cucsSwEnvStatsMainBoardOutlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1839,7 +1839,7 @@ cucsSwEnvStatsMainBoardOutlet1Min OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 24 }
 
 cucsSwEnvStatsMainBoardOutlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1847,7 +1847,7 @@ cucsSwEnvStatsMainBoardOutlet2 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 25 }
 
 cucsSwEnvStatsMainBoardOutlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1856,7 +1856,7 @@ cucsSwEnvStatsMainBoardOutlet2Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 26 }
 
 cucsSwEnvStatsMainBoardOutlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1865,7 +1865,7 @@ cucsSwEnvStatsMainBoardOutlet2Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 27 }
 
 cucsSwEnvStatsMainBoardOutlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1874,7 +1874,7 @@ cucsSwEnvStatsMainBoardOutlet2Min OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 28 }
 
 cucsSwEnvStatsPsuCtrlrInlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1882,7 +1882,7 @@ cucsSwEnvStatsPsuCtrlrInlet1 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 29 }
 
 cucsSwEnvStatsPsuCtrlrInlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1890,7 +1890,7 @@ cucsSwEnvStatsPsuCtrlrInlet1Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 30 }
 
 cucsSwEnvStatsPsuCtrlrInlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1898,7 +1898,7 @@ cucsSwEnvStatsPsuCtrlrInlet1Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 31 }
 
 cucsSwEnvStatsPsuCtrlrInlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1906,7 +1906,7 @@ cucsSwEnvStatsPsuCtrlrInlet1Min OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 32 }
 
 cucsSwEnvStatsPsuCtrlrInlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1914,7 +1914,7 @@ cucsSwEnvStatsPsuCtrlrInlet2 OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 33 }
 
 cucsSwEnvStatsPsuCtrlrInlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1922,7 +1922,7 @@ cucsSwEnvStatsPsuCtrlrInlet2Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 34 }
 
 cucsSwEnvStatsPsuCtrlrInlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -1930,7 +1930,7 @@ cucsSwEnvStatsPsuCtrlrInlet2Max OBJECT-TYPE
     ::= { cucsSwEnvStatsEntry 35 }
 
 cucsSwEnvStatsPsuCtrlrInlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2086,40 +2086,40 @@ CucsSwEnvStatsHistEntry ::= SEQUENCE {
     cucsSwEnvStatsHistInstanceId                                     CucsManagedObjectId,
     cucsSwEnvStatsHistDn                                             CucsManagedObjectDn,
     cucsSwEnvStatsHistRn                                             SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet1                                 SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet1Avg                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet1Max                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet1Min                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet2                                 SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet2Avg                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet2Max                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet2Min                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet3                                 SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet3Avg                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet3Max                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet3Min                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet4                                 SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet4Avg                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet4Max                              SnmpAdminString,
-    cucsSwEnvStatsHistFanCtrlrInlet4Min                              SnmpAdminString,
+    cucsSwEnvStatsHistFanCtrlrInlet1                                 INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet1Avg                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet1Max                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet1Min                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet2                                 INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet2Avg                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet2Max                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet2Min                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet3                                 INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet3Avg                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet3Max                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet3Min                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet4                                 INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet4Avg                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet4Max                              INTEGER,
+    cucsSwEnvStatsHistFanCtrlrInlet4Min                              INTEGER,
     cucsSwEnvStatsHistId                                             Unsigned64,
-    cucsSwEnvStatsHistMainBoardOutlet1                               SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet1Avg                            SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet1Max                            SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet1Min                            SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet2                               SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet2Avg                            SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet2Max                            SnmpAdminString,
-    cucsSwEnvStatsHistMainBoardOutlet2Min                            SnmpAdminString,
+    cucsSwEnvStatsHistMainBoardOutlet1                               INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet1Avg                            INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet1Max                            INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet1Min                            INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet2                               INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet2Avg                            INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet2Max                            INTEGER,
+    cucsSwEnvStatsHistMainBoardOutlet2Min                            INTEGER,
     cucsSwEnvStatsHistMostRecent                                     TruthValue,
-    cucsSwEnvStatsHistPsuCtrlrInlet1                                 SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet1Avg                              SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet1Max                              SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet1Min                              SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet2                                 SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet2Avg                              SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet2Max                              SnmpAdminString,
-    cucsSwEnvStatsHistPsuCtrlrInlet2Min                              SnmpAdminString,
+    cucsSwEnvStatsHistPsuCtrlrInlet1                                 INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet1Avg                              INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet1Max                              INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet1Min                              INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet2                                 INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet2Avg                              INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet2Max                              INTEGER,
+    cucsSwEnvStatsHistPsuCtrlrInlet2Min                              INTEGER,
     cucsSwEnvStatsHistSuspect                                        TruthValue,
     cucsSwEnvStatsHistThresholded                                    CucsSwEnvStatsHistThresholded,
     cucsSwEnvStatsHistTimeCollected                                  DateAndTime,
@@ -2162,7 +2162,7 @@ cucsSwEnvStatsHistRn OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 3 }
 
 cucsSwEnvStatsHistFanCtrlrInlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2170,7 +2170,7 @@ cucsSwEnvStatsHistFanCtrlrInlet1 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 4 }
 
 cucsSwEnvStatsHistFanCtrlrInlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2179,7 +2179,7 @@ cucsSwEnvStatsHistFanCtrlrInlet1Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 5 }
 
 cucsSwEnvStatsHistFanCtrlrInlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2188,7 +2188,7 @@ cucsSwEnvStatsHistFanCtrlrInlet1Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 6 }
 
 cucsSwEnvStatsHistFanCtrlrInlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2197,7 +2197,7 @@ cucsSwEnvStatsHistFanCtrlrInlet1Min OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 7 }
 
 cucsSwEnvStatsHistFanCtrlrInlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2205,7 +2205,7 @@ cucsSwEnvStatsHistFanCtrlrInlet2 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 8 }
 
 cucsSwEnvStatsHistFanCtrlrInlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2214,7 +2214,7 @@ cucsSwEnvStatsHistFanCtrlrInlet2Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 9 }
 
 cucsSwEnvStatsHistFanCtrlrInlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2223,7 +2223,7 @@ cucsSwEnvStatsHistFanCtrlrInlet2Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 10 }
 
 cucsSwEnvStatsHistFanCtrlrInlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2232,7 +2232,7 @@ cucsSwEnvStatsHistFanCtrlrInlet2Min OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 11 }
 
 cucsSwEnvStatsHistFanCtrlrInlet3 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2240,7 +2240,7 @@ cucsSwEnvStatsHistFanCtrlrInlet3 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 12 }
 
 cucsSwEnvStatsHistFanCtrlrInlet3Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2249,7 +2249,7 @@ cucsSwEnvStatsHistFanCtrlrInlet3Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 13 }
 
 cucsSwEnvStatsHistFanCtrlrInlet3Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2258,7 +2258,7 @@ cucsSwEnvStatsHistFanCtrlrInlet3Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 14 }
 
 cucsSwEnvStatsHistFanCtrlrInlet3Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2267,7 +2267,7 @@ cucsSwEnvStatsHistFanCtrlrInlet3Min OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 15 }
 
 cucsSwEnvStatsHistFanCtrlrInlet4 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2275,7 +2275,7 @@ cucsSwEnvStatsHistFanCtrlrInlet4 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 16 }
 
 cucsSwEnvStatsHistFanCtrlrInlet4Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2284,7 +2284,7 @@ cucsSwEnvStatsHistFanCtrlrInlet4Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 17 }
 
 cucsSwEnvStatsHistFanCtrlrInlet4Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2293,7 +2293,7 @@ cucsSwEnvStatsHistFanCtrlrInlet4Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 18 }
 
 cucsSwEnvStatsHistFanCtrlrInlet4Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2310,7 +2310,7 @@ cucsSwEnvStatsHistId OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 20 }
 
 cucsSwEnvStatsHistMainBoardOutlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2319,7 +2319,7 @@ cucsSwEnvStatsHistMainBoardOutlet1 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 21 }
 
 cucsSwEnvStatsHistMainBoardOutlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2328,7 +2328,7 @@ cucsSwEnvStatsHistMainBoardOutlet1Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 22 }
 
 cucsSwEnvStatsHistMainBoardOutlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2337,7 +2337,7 @@ cucsSwEnvStatsHistMainBoardOutlet1Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 23 }
 
 cucsSwEnvStatsHistMainBoardOutlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2346,7 +2346,7 @@ cucsSwEnvStatsHistMainBoardOutlet1Min OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 24 }
 
 cucsSwEnvStatsHistMainBoardOutlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2355,7 +2355,7 @@ cucsSwEnvStatsHistMainBoardOutlet2 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 25 }
 
 cucsSwEnvStatsHistMainBoardOutlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2364,7 +2364,7 @@ cucsSwEnvStatsHistMainBoardOutlet2Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 26 }
 
 cucsSwEnvStatsHistMainBoardOutlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2373,7 +2373,7 @@ cucsSwEnvStatsHistMainBoardOutlet2Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 27 }
 
 cucsSwEnvStatsHistMainBoardOutlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2390,7 +2390,7 @@ cucsSwEnvStatsHistMostRecent OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 29 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2398,7 +2398,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet1 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 30 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2407,7 +2407,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet1Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 31 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2416,7 +2416,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet1Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 32 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2425,7 +2425,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet1Min OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 33 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2433,7 +2433,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet2 OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 34 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2442,7 +2442,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet2Avg OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 35 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -2451,7 +2451,7 @@ cucsSwEnvStatsHistPsuCtrlrInlet2Max OBJECT-TYPE
     ::= { cucsSwEnvStatsHistEntry 36 }
 
 cucsSwEnvStatsHistPsuCtrlrInlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -12838,10 +12838,10 @@ CucsSwSystemStatsEntry ::= SEQUENCE {
     cucsSwSystemStatsDn                                              CucsManagedObjectDn,
     cucsSwSystemStatsRn                                              SnmpAdminString,
     cucsSwSystemStatsIntervals                                       Gauge32,
-    cucsSwSystemStatsLoad                                            SnmpAdminString,
-    cucsSwSystemStatsLoadAvg                                         SnmpAdminString,
-    cucsSwSystemStatsLoadMax                                         SnmpAdminString,
-    cucsSwSystemStatsLoadMin                                         SnmpAdminString,
+    cucsSwSystemStatsLoad                                            INTEGER,
+    cucsSwSystemStatsLoadAvg                                         INTEGER,
+    cucsSwSystemStatsLoadMax                                         INTEGER,
+    cucsSwSystemStatsLoadMin                                         INTEGER,
     cucsSwSystemStatsMemAvailable                                    Gauge32,
     cucsSwSystemStatsMemAvailableAvg                                 Gauge32,
     cucsSwSystemStatsMemAvailableMax                                 Gauge32,
@@ -12901,7 +12901,7 @@ cucsSwSystemStatsIntervals OBJECT-TYPE
     ::= { cucsSwSystemStatsEntry 4 }
 
 cucsSwSystemStatsLoad OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -12909,7 +12909,7 @@ cucsSwSystemStatsLoad OBJECT-TYPE
     ::= { cucsSwSystemStatsEntry 5 }
 
 cucsSwSystemStatsLoadAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -12917,7 +12917,7 @@ cucsSwSystemStatsLoadAvg OBJECT-TYPE
     ::= { cucsSwSystemStatsEntry 6 }
 
 cucsSwSystemStatsLoadMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -12925,7 +12925,7 @@ cucsSwSystemStatsLoadMax OBJECT-TYPE
     ::= { cucsSwSystemStatsEntry 7 }
 
 cucsSwSystemStatsLoadMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -13156,10 +13156,10 @@ CucsSwSystemStatsHistEntry ::= SEQUENCE {
     cucsSwSystemStatsHistDn                                          CucsManagedObjectDn,
     cucsSwSystemStatsHistRn                                          SnmpAdminString,
     cucsSwSystemStatsHistId                                          Unsigned64,
-    cucsSwSystemStatsHistLoad                                        SnmpAdminString,
-    cucsSwSystemStatsHistLoadAvg                                     SnmpAdminString,
-    cucsSwSystemStatsHistLoadMax                                     SnmpAdminString,
-    cucsSwSystemStatsHistLoadMin                                     SnmpAdminString,
+    cucsSwSystemStatsHistLoad                                        INTEGER,
+    cucsSwSystemStatsHistLoadAvg                                     INTEGER,
+    cucsSwSystemStatsHistLoadMax                                     INTEGER,
+    cucsSwSystemStatsHistLoadMin                                     INTEGER,
     cucsSwSystemStatsHistMemAvailable                                Gauge32,
     cucsSwSystemStatsHistMemAvailableAvg                             Gauge32,
     cucsSwSystemStatsHistMemAvailableMax                             Gauge32,
@@ -13219,7 +13219,7 @@ cucsSwSystemStatsHistId OBJECT-TYPE
     ::= { cucsSwSystemStatsHistEntry 4 }
 
 cucsSwSystemStatsHistLoad OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -13227,7 +13227,7 @@ cucsSwSystemStatsHistLoad OBJECT-TYPE
     ::= { cucsSwSystemStatsHistEntry 5 }
 
 cucsSwSystemStatsHistLoadAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -13235,7 +13235,7 @@ cucsSwSystemStatsHistLoadAvg OBJECT-TYPE
     ::= { cucsSwSystemStatsHistEntry 6 }
 
 cucsSwSystemStatsHistLoadMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -13243,7 +13243,7 @@ cucsSwSystemStatsHistLoadMax OBJECT-TYPE
     ::= { cucsSwSystemStatsHistEntry 7 }
 
 cucsSwSystemStatsHistLoadMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- EQUIPMENT management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -246,7 +246,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsEquipmentObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -5583,15 +5583,15 @@ CucsEquipmentChassisStatsEntry ::= SEQUENCE {
     cucsEquipmentChassisStatsInstanceId                              CucsManagedObjectId,
     cucsEquipmentChassisStatsDn                                      CucsManagedObjectDn,
     cucsEquipmentChassisStatsRn                                      SnmpAdminString,
-    cucsEquipmentChassisStatsInputPower                              SnmpAdminString,
-    cucsEquipmentChassisStatsInputPowerAvg                           SnmpAdminString,
-    cucsEquipmentChassisStatsInputPowerMax                           SnmpAdminString,
-    cucsEquipmentChassisStatsInputPowerMin                           SnmpAdminString,
+    cucsEquipmentChassisStatsInputPower                              INTEGER,
+    cucsEquipmentChassisStatsInputPowerAvg                           INTEGER,
+    cucsEquipmentChassisStatsInputPowerMax                           INTEGER,
+    cucsEquipmentChassisStatsInputPowerMin                           INTEGER,
     cucsEquipmentChassisStatsIntervals                               Gauge32,
-    cucsEquipmentChassisStatsOutputPower                             SnmpAdminString,
-    cucsEquipmentChassisStatsOutputPowerAvg                          SnmpAdminString,
-    cucsEquipmentChassisStatsOutputPowerMax                          SnmpAdminString,
-    cucsEquipmentChassisStatsOutputPowerMin                          SnmpAdminString,
+    cucsEquipmentChassisStatsOutputPower                             INTEGER,
+    cucsEquipmentChassisStatsOutputPowerAvg                          INTEGER,
+    cucsEquipmentChassisStatsOutputPowerMax                          INTEGER,
+    cucsEquipmentChassisStatsOutputPowerMin                          INTEGER,
     cucsEquipmentChassisStatsSuspect                                 TruthValue,
     cucsEquipmentChassisStatsThresholded                             CucsEquipmentChassisStatsThresholded,
     cucsEquipmentChassisStatsTimeCollected                           DateAndTime,
@@ -5627,7 +5627,7 @@ cucsEquipmentChassisStatsRn OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 3 }
 
 cucsEquipmentChassisStatsInputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5636,7 +5636,7 @@ cucsEquipmentChassisStatsInputPower OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 4 }
 
 cucsEquipmentChassisStatsInputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5645,7 +5645,7 @@ cucsEquipmentChassisStatsInputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 5 }
 
 cucsEquipmentChassisStatsInputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5654,7 +5654,7 @@ cucsEquipmentChassisStatsInputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 6 }
 
 cucsEquipmentChassisStatsInputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5672,7 +5672,7 @@ cucsEquipmentChassisStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 8 }
 
 cucsEquipmentChassisStatsOutputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5681,7 +5681,7 @@ cucsEquipmentChassisStatsOutputPower OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 9 }
 
 cucsEquipmentChassisStatsOutputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5690,7 +5690,7 @@ cucsEquipmentChassisStatsOutputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 10 }
 
 cucsEquipmentChassisStatsOutputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5699,7 +5699,7 @@ cucsEquipmentChassisStatsOutputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsEntry 11 }
 
 cucsEquipmentChassisStatsOutputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5799,15 +5799,15 @@ CucsEquipmentChassisStatsHistEntry ::= SEQUENCE {
     cucsEquipmentChassisStatsHistDn                                  CucsManagedObjectDn,
     cucsEquipmentChassisStatsHistRn                                  SnmpAdminString,
     cucsEquipmentChassisStatsHistId                                  Unsigned64,
-    cucsEquipmentChassisStatsHistInputPower                          SnmpAdminString,
-    cucsEquipmentChassisStatsHistInputPowerAvg                       SnmpAdminString,
-    cucsEquipmentChassisStatsHistInputPowerMax                       SnmpAdminString,
-    cucsEquipmentChassisStatsHistInputPowerMin                       SnmpAdminString,
+    cucsEquipmentChassisStatsHistInputPower                          INTEGER,
+    cucsEquipmentChassisStatsHistInputPowerAvg                       INTEGER,
+    cucsEquipmentChassisStatsHistInputPowerMax                       INTEGER,
+    cucsEquipmentChassisStatsHistInputPowerMin                       INTEGER,
     cucsEquipmentChassisStatsHistMostRecent                          TruthValue,
-    cucsEquipmentChassisStatsHistOutputPower                         SnmpAdminString,
-    cucsEquipmentChassisStatsHistOutputPowerAvg                      SnmpAdminString,
-    cucsEquipmentChassisStatsHistOutputPowerMax                      SnmpAdminString,
-    cucsEquipmentChassisStatsHistOutputPowerMin                      SnmpAdminString,
+    cucsEquipmentChassisStatsHistOutputPower                         INTEGER,
+    cucsEquipmentChassisStatsHistOutputPowerAvg                      INTEGER,
+    cucsEquipmentChassisStatsHistOutputPowerMax                      INTEGER,
+    cucsEquipmentChassisStatsHistOutputPowerMin                      INTEGER,
     cucsEquipmentChassisStatsHistSuspect                             TruthValue,
     cucsEquipmentChassisStatsHistThresholded                         CucsEquipmentChassisStatsHistThresholded,
     cucsEquipmentChassisStatsHistTimeCollected                       DateAndTime,
@@ -5850,7 +5850,7 @@ cucsEquipmentChassisStatsHistId OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 4 }
 
 cucsEquipmentChassisStatsHistInputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5859,7 +5859,7 @@ cucsEquipmentChassisStatsHistInputPower OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 5 }
 
 cucsEquipmentChassisStatsHistInputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5868,7 +5868,7 @@ cucsEquipmentChassisStatsHistInputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 6 }
 
 cucsEquipmentChassisStatsHistInputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5877,7 +5877,7 @@ cucsEquipmentChassisStatsHistInputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 7 }
 
 cucsEquipmentChassisStatsHistInputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5895,7 +5895,7 @@ cucsEquipmentChassisStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 9 }
 
 cucsEquipmentChassisStatsHistOutputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5904,7 +5904,7 @@ cucsEquipmentChassisStatsHistOutputPower OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 10 }
 
 cucsEquipmentChassisStatsHistOutputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5913,7 +5913,7 @@ cucsEquipmentChassisStatsHistOutputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 11 }
 
 cucsEquipmentChassisStatsHistOutputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5922,7 +5922,7 @@ cucsEquipmentChassisStatsHistOutputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentChassisStatsHistEntry 12 }
 
 cucsEquipmentChassisStatsHistOutputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -7792,10 +7792,10 @@ CucsEquipmentFanModuleStatsEntry ::= SEQUENCE {
     cucsEquipmentFanModuleStatsInstanceId                            CucsManagedObjectId,
     cucsEquipmentFanModuleStatsDn                                    CucsManagedObjectDn,
     cucsEquipmentFanModuleStatsRn                                    SnmpAdminString,
-    cucsEquipmentFanModuleStatsAmbientTemp                           SnmpAdminString,
-    cucsEquipmentFanModuleStatsAmbientTempAvg                        SnmpAdminString,
-    cucsEquipmentFanModuleStatsAmbientTempMax                        SnmpAdminString,
-    cucsEquipmentFanModuleStatsAmbientTempMin                        SnmpAdminString,
+    cucsEquipmentFanModuleStatsAmbientTemp                           INTEGER,
+    cucsEquipmentFanModuleStatsAmbientTempAvg                        INTEGER,
+    cucsEquipmentFanModuleStatsAmbientTempMax                        INTEGER,
+    cucsEquipmentFanModuleStatsAmbientTempMin                        INTEGER,
     cucsEquipmentFanModuleStatsIntervals                             Gauge32,
     cucsEquipmentFanModuleStatsSuspect                               TruthValue,
     cucsEquipmentFanModuleStatsThresholded                           CucsEquipmentFanModuleStatsThresholded,
@@ -7832,7 +7832,7 @@ cucsEquipmentFanModuleStatsRn OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsEntry 3 }
 
 cucsEquipmentFanModuleStatsAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -7841,7 +7841,7 @@ cucsEquipmentFanModuleStatsAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsEntry 4 }
 
 cucsEquipmentFanModuleStatsAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -7850,7 +7850,7 @@ cucsEquipmentFanModuleStatsAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsEntry 5 }
 
 cucsEquipmentFanModuleStatsAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -7859,7 +7859,7 @@ cucsEquipmentFanModuleStatsAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsEntry 6 }
 
 cucsEquipmentFanModuleStatsAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -7969,10 +7969,10 @@ CucsEquipmentFanModuleStatsHistEntry ::= SEQUENCE {
     cucsEquipmentFanModuleStatsHistInstanceId                        CucsManagedObjectId,
     cucsEquipmentFanModuleStatsHistDn                                CucsManagedObjectDn,
     cucsEquipmentFanModuleStatsHistRn                                SnmpAdminString,
-    cucsEquipmentFanModuleStatsHistAmbientTemp                       SnmpAdminString,
-    cucsEquipmentFanModuleStatsHistAmbientTempAvg                    SnmpAdminString,
-    cucsEquipmentFanModuleStatsHistAmbientTempMax                    SnmpAdminString,
-    cucsEquipmentFanModuleStatsHistAmbientTempMin                    SnmpAdminString,
+    cucsEquipmentFanModuleStatsHistAmbientTemp                       INTEGER,
+    cucsEquipmentFanModuleStatsHistAmbientTempAvg                    INTEGER,
+    cucsEquipmentFanModuleStatsHistAmbientTempMax                    INTEGER,
+    cucsEquipmentFanModuleStatsHistAmbientTempMin                    INTEGER,
     cucsEquipmentFanModuleStatsHistId                                Unsigned64,
     cucsEquipmentFanModuleStatsHistMostRecent                        TruthValue,
     cucsEquipmentFanModuleStatsHistSuspect                           TruthValue,
@@ -8011,7 +8011,7 @@ cucsEquipmentFanModuleStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsHistEntry 3 }
 
 cucsEquipmentFanModuleStatsHistAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8020,7 +8020,7 @@ cucsEquipmentFanModuleStatsHistAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsHistEntry 4 }
 
 cucsEquipmentFanModuleStatsHistAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8029,7 +8029,7 @@ cucsEquipmentFanModuleStatsHistAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsHistEntry 5 }
 
 cucsEquipmentFanModuleStatsHistAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8038,7 +8038,7 @@ cucsEquipmentFanModuleStatsHistAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentFanModuleStatsHistEntry 6 }
 
 cucsEquipmentFanModuleStatsHistAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8914,28 +8914,28 @@ CucsEquipmentFexEnvStatsEntry ::= SEQUENCE {
     cucsEquipmentFexEnvStatsInstanceId                               CucsManagedObjectId,
     cucsEquipmentFexEnvStatsDn                                       CucsManagedObjectDn,
     cucsEquipmentFexEnvStatsRn                                       SnmpAdminString,
-    cucsEquipmentFexEnvStatsDie1                                     SnmpAdminString,
-    cucsEquipmentFexEnvStatsDie1Avg                                  SnmpAdminString,
-    cucsEquipmentFexEnvStatsDie1Max                                  SnmpAdminString,
-    cucsEquipmentFexEnvStatsDie1Min                                  SnmpAdminString,
-    cucsEquipmentFexEnvStatsInlet                                    SnmpAdminString,
-    cucsEquipmentFexEnvStatsInlet1                                   SnmpAdminString,
-    cucsEquipmentFexEnvStatsInlet1Avg                                SnmpAdminString,
-    cucsEquipmentFexEnvStatsInlet1Max                                SnmpAdminString,
-    cucsEquipmentFexEnvStatsInlet1Min                                SnmpAdminString,
-    cucsEquipmentFexEnvStatsInletAvg                                 SnmpAdminString,
-    cucsEquipmentFexEnvStatsInletMax                                 SnmpAdminString,
-    cucsEquipmentFexEnvStatsInletMin                                 SnmpAdminString,
+    cucsEquipmentFexEnvStatsDie1                                     INTEGER,
+    cucsEquipmentFexEnvStatsDie1Avg                                  INTEGER,
+    cucsEquipmentFexEnvStatsDie1Max                                  INTEGER,
+    cucsEquipmentFexEnvStatsDie1Min                                  INTEGER,
+    cucsEquipmentFexEnvStatsInlet                                    INTEGER,
+    cucsEquipmentFexEnvStatsInlet1                                   INTEGER,
+    cucsEquipmentFexEnvStatsInlet1Avg                                INTEGER,
+    cucsEquipmentFexEnvStatsInlet1Max                                INTEGER,
+    cucsEquipmentFexEnvStatsInlet1Min                                INTEGER,
+    cucsEquipmentFexEnvStatsInletAvg                                 INTEGER,
+    cucsEquipmentFexEnvStatsInletMax                                 INTEGER,
+    cucsEquipmentFexEnvStatsInletMin                                 INTEGER,
     cucsEquipmentFexEnvStatsInputStatus                              SnmpAdminString,
     cucsEquipmentFexEnvStatsIntervals                                Gauge32,
-    cucsEquipmentFexEnvStatsOutlet1                                  SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet1Avg                               SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet1Max                               SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet1Min                               SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet2                                  SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet2Avg                               SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet2Max                               SnmpAdminString,
-    cucsEquipmentFexEnvStatsOutlet2Min                               SnmpAdminString,
+    cucsEquipmentFexEnvStatsOutlet1                                  INTEGER,
+    cucsEquipmentFexEnvStatsOutlet1Avg                               INTEGER,
+    cucsEquipmentFexEnvStatsOutlet1Max                               INTEGER,
+    cucsEquipmentFexEnvStatsOutlet1Min                               INTEGER,
+    cucsEquipmentFexEnvStatsOutlet2                                  INTEGER,
+    cucsEquipmentFexEnvStatsOutlet2Avg                               INTEGER,
+    cucsEquipmentFexEnvStatsOutlet2Max                               INTEGER,
+    cucsEquipmentFexEnvStatsOutlet2Min                               INTEGER,
     cucsEquipmentFexEnvStatsSuspect                                  TruthValue,
     cucsEquipmentFexEnvStatsThresholded                              CucsEquipmentFexEnvStatsThresholded,
     cucsEquipmentFexEnvStatsTimeCollected                            DateAndTime,
@@ -8967,7 +8967,7 @@ cucsEquipmentFexEnvStatsRn OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 3 }
 
 cucsEquipmentFexEnvStatsDie1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8975,7 +8975,7 @@ cucsEquipmentFexEnvStatsDie1 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 4 }
 
 cucsEquipmentFexEnvStatsDie1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8983,7 +8983,7 @@ cucsEquipmentFexEnvStatsDie1Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 5 }
 
 cucsEquipmentFexEnvStatsDie1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8991,7 +8991,7 @@ cucsEquipmentFexEnvStatsDie1Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 6 }
 
 cucsEquipmentFexEnvStatsDie1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -8999,7 +8999,7 @@ cucsEquipmentFexEnvStatsDie1Min OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 7 }
 
 cucsEquipmentFexEnvStatsInlet OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9007,7 +9007,7 @@ cucsEquipmentFexEnvStatsInlet OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 8 }
 
 cucsEquipmentFexEnvStatsInlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9015,7 +9015,7 @@ cucsEquipmentFexEnvStatsInlet1 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 9 }
 
 cucsEquipmentFexEnvStatsInlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9024,7 +9024,7 @@ cucsEquipmentFexEnvStatsInlet1Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 10 }
 
 cucsEquipmentFexEnvStatsInlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9033,7 +9033,7 @@ cucsEquipmentFexEnvStatsInlet1Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 11 }
 
 cucsEquipmentFexEnvStatsInlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9042,7 +9042,7 @@ cucsEquipmentFexEnvStatsInlet1Min OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 12 }
 
 cucsEquipmentFexEnvStatsInletAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9050,7 +9050,7 @@ cucsEquipmentFexEnvStatsInletAvg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 13 }
 
 cucsEquipmentFexEnvStatsInletMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9058,7 +9058,7 @@ cucsEquipmentFexEnvStatsInletMax OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 14 }
 
 cucsEquipmentFexEnvStatsInletMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9084,7 +9084,7 @@ cucsEquipmentFexEnvStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 17 }
 
 cucsEquipmentFexEnvStatsOutlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9092,7 +9092,7 @@ cucsEquipmentFexEnvStatsOutlet1 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 18 }
 
 cucsEquipmentFexEnvStatsOutlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9101,7 +9101,7 @@ cucsEquipmentFexEnvStatsOutlet1Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 19 }
 
 cucsEquipmentFexEnvStatsOutlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9110,7 +9110,7 @@ cucsEquipmentFexEnvStatsOutlet1Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 20 }
 
 cucsEquipmentFexEnvStatsOutlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9119,7 +9119,7 @@ cucsEquipmentFexEnvStatsOutlet1Min OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 21 }
 
 cucsEquipmentFexEnvStatsOutlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9127,7 +9127,7 @@ cucsEquipmentFexEnvStatsOutlet2 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 22 }
 
 cucsEquipmentFexEnvStatsOutlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9136,7 +9136,7 @@ cucsEquipmentFexEnvStatsOutlet2Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 23 }
 
 cucsEquipmentFexEnvStatsOutlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9145,7 +9145,7 @@ cucsEquipmentFexEnvStatsOutlet2Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsEntry 24 }
 
 cucsEquipmentFexEnvStatsOutlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9208,28 +9208,28 @@ CucsEquipmentFexEnvStatsHistEntry ::= SEQUENCE {
     cucsEquipmentFexEnvStatsHistInstanceId                           CucsManagedObjectId,
     cucsEquipmentFexEnvStatsHistDn                                   CucsManagedObjectDn,
     cucsEquipmentFexEnvStatsHistRn                                   SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistDie1                                 SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistDie1Avg                              SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistDie1Max                              SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistDie1Min                              SnmpAdminString,
+    cucsEquipmentFexEnvStatsHistDie1                                 INTEGER,
+    cucsEquipmentFexEnvStatsHistDie1Avg                              INTEGER,
+    cucsEquipmentFexEnvStatsHistDie1Max                              INTEGER,
+    cucsEquipmentFexEnvStatsHistDie1Min                              INTEGER,
     cucsEquipmentFexEnvStatsHistId                                   Unsigned64,
-    cucsEquipmentFexEnvStatsHistInlet                                SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInlet1                               SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInlet1Avg                            SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInlet1Max                            SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInlet1Min                            SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInletAvg                             SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInletMax                             SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistInletMin                             SnmpAdminString,
+    cucsEquipmentFexEnvStatsHistInlet                                INTEGER,
+    cucsEquipmentFexEnvStatsHistInlet1                               INTEGER,
+    cucsEquipmentFexEnvStatsHistInlet1Avg                            INTEGER,
+    cucsEquipmentFexEnvStatsHistInlet1Max                            INTEGER,
+    cucsEquipmentFexEnvStatsHistInlet1Min                            INTEGER,
+    cucsEquipmentFexEnvStatsHistInletAvg                             INTEGER,
+    cucsEquipmentFexEnvStatsHistInletMax                             INTEGER,
+    cucsEquipmentFexEnvStatsHistInletMin                             INTEGER,
     cucsEquipmentFexEnvStatsHistMostRecent                           TruthValue,
-    cucsEquipmentFexEnvStatsHistOutlet1                              SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet1Avg                           SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet1Max                           SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet1Min                           SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet2                              SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet2Avg                           SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet2Max                           SnmpAdminString,
-    cucsEquipmentFexEnvStatsHistOutlet2Min                           SnmpAdminString,
+    cucsEquipmentFexEnvStatsHistOutlet1                              INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet1Avg                           INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet1Max                           INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet1Min                           INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet2                              INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet2Avg                           INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet2Max                           INTEGER,
+    cucsEquipmentFexEnvStatsHistOutlet2Min                           INTEGER,
     cucsEquipmentFexEnvStatsHistSuspect                              TruthValue,
     cucsEquipmentFexEnvStatsHistThresholded                          CucsEquipmentFexEnvStatsHistThresholded,
     cucsEquipmentFexEnvStatsHistTimeCollected                        DateAndTime
@@ -9260,7 +9260,7 @@ cucsEquipmentFexEnvStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 3 }
 
 cucsEquipmentFexEnvStatsHistDie1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9268,7 +9268,7 @@ cucsEquipmentFexEnvStatsHistDie1 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 4 }
 
 cucsEquipmentFexEnvStatsHistDie1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9277,7 +9277,7 @@ cucsEquipmentFexEnvStatsHistDie1Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 5 }
 
 cucsEquipmentFexEnvStatsHistDie1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9286,7 +9286,7 @@ cucsEquipmentFexEnvStatsHistDie1Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 6 }
 
 cucsEquipmentFexEnvStatsHistDie1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9303,7 +9303,7 @@ cucsEquipmentFexEnvStatsHistId OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 8 }
 
 cucsEquipmentFexEnvStatsHistInlet OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9312,7 +9312,7 @@ cucsEquipmentFexEnvStatsHistInlet OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 9 }
 
 cucsEquipmentFexEnvStatsHistInlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9321,7 +9321,7 @@ cucsEquipmentFexEnvStatsHistInlet1 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 10 }
 
 cucsEquipmentFexEnvStatsHistInlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9330,7 +9330,7 @@ cucsEquipmentFexEnvStatsHistInlet1Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 11 }
 
 cucsEquipmentFexEnvStatsHistInlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9339,7 +9339,7 @@ cucsEquipmentFexEnvStatsHistInlet1Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 12 }
 
 cucsEquipmentFexEnvStatsHistInlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9348,7 +9348,7 @@ cucsEquipmentFexEnvStatsHistInlet1Min OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 13 }
 
 cucsEquipmentFexEnvStatsHistInletAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9357,7 +9357,7 @@ cucsEquipmentFexEnvStatsHistInletAvg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 14 }
 
 cucsEquipmentFexEnvStatsHistInletMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9366,7 +9366,7 @@ cucsEquipmentFexEnvStatsHistInletMax OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 15 }
 
 cucsEquipmentFexEnvStatsHistInletMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9384,7 +9384,7 @@ cucsEquipmentFexEnvStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 17 }
 
 cucsEquipmentFexEnvStatsHistOutlet1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9393,7 +9393,7 @@ cucsEquipmentFexEnvStatsHistOutlet1 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 18 }
 
 cucsEquipmentFexEnvStatsHistOutlet1Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9402,7 +9402,7 @@ cucsEquipmentFexEnvStatsHistOutlet1Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 19 }
 
 cucsEquipmentFexEnvStatsHistOutlet1Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9411,7 +9411,7 @@ cucsEquipmentFexEnvStatsHistOutlet1Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 20 }
 
 cucsEquipmentFexEnvStatsHistOutlet1Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9420,7 +9420,7 @@ cucsEquipmentFexEnvStatsHistOutlet1Min OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 21 }
 
 cucsEquipmentFexEnvStatsHistOutlet2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9429,7 +9429,7 @@ cucsEquipmentFexEnvStatsHistOutlet2 OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 22 }
 
 cucsEquipmentFexEnvStatsHistOutlet2Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9438,7 +9438,7 @@ cucsEquipmentFexEnvStatsHistOutlet2Avg OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 23 }
 
 cucsEquipmentFexEnvStatsHistOutlet2Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9447,7 +9447,7 @@ cucsEquipmentFexEnvStatsHistOutlet2Max OBJECT-TYPE
     ::= { cucsEquipmentFexEnvStatsHistEntry 24 }
 
 cucsEquipmentFexEnvStatsHistOutlet2Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9810,26 +9810,26 @@ CucsEquipmentFexPowerSummaryEntry ::= SEQUENCE {
     cucsEquipmentFexPowerSummaryInstanceId                           CucsManagedObjectId,
     cucsEquipmentFexPowerSummaryDn                                   CucsManagedObjectDn,
     cucsEquipmentFexPowerSummaryRn                                   SnmpAdminString,
-    cucsEquipmentFexPowerSummaryModulePower                          SnmpAdminString,
-    cucsEquipmentFexPowerSummaryModulePowerAvg                       SnmpAdminString,
-    cucsEquipmentFexPowerSummaryModulePowerMax                       SnmpAdminString,
-    cucsEquipmentFexPowerSummaryModulePowerMin                       SnmpAdminString,
-    cucsEquipmentFexPowerSummaryAvailablePower                       SnmpAdminString,
-    cucsEquipmentFexPowerSummaryAvailablePowerAvg                    SnmpAdminString,
-    cucsEquipmentFexPowerSummaryAvailablePowerMax                    SnmpAdminString,
-    cucsEquipmentFexPowerSummaryAvailablePowerMin                    SnmpAdminString,
+    cucsEquipmentFexPowerSummaryModulePower                          INTEGER,
+    cucsEquipmentFexPowerSummaryModulePowerAvg                       INTEGER,
+    cucsEquipmentFexPowerSummaryModulePowerMax                       INTEGER,
+    cucsEquipmentFexPowerSummaryModulePowerMin                       INTEGER,
+    cucsEquipmentFexPowerSummaryAvailablePower                       INTEGER,
+    cucsEquipmentFexPowerSummaryAvailablePowerAvg                    INTEGER,
+    cucsEquipmentFexPowerSummaryAvailablePowerMax                    INTEGER,
+    cucsEquipmentFexPowerSummaryAvailablePowerMin                    INTEGER,
     cucsEquipmentFexPowerSummaryIntervals                            Gauge32,
-    cucsEquipmentFexPowerSummaryReservedPower                        SnmpAdminString,
-    cucsEquipmentFexPowerSummaryReservedPowerAvg                     SnmpAdminString,
-    cucsEquipmentFexPowerSummaryReservedPowerMax                     SnmpAdminString,
-    cucsEquipmentFexPowerSummaryReservedPowerMin                     SnmpAdminString,
+    cucsEquipmentFexPowerSummaryReservedPower                        INTEGER,
+    cucsEquipmentFexPowerSummaryReservedPowerAvg                     INTEGER,
+    cucsEquipmentFexPowerSummaryReservedPowerMax                     INTEGER,
+    cucsEquipmentFexPowerSummaryReservedPowerMin                     INTEGER,
     cucsEquipmentFexPowerSummarySuspect                              TruthValue,
     cucsEquipmentFexPowerSummaryThresholded                          CucsEquipmentFexPowerSummaryThresholded,
     cucsEquipmentFexPowerSummaryTimeCollected                        DateAndTime,
-    cucsEquipmentFexPowerSummaryTotalPower                           SnmpAdminString,
-    cucsEquipmentFexPowerSummaryTotalPowerAvg                        SnmpAdminString,
-    cucsEquipmentFexPowerSummaryTotalPowerMax                        SnmpAdminString,
-    cucsEquipmentFexPowerSummaryTotalPowerMin                        SnmpAdminString,
+    cucsEquipmentFexPowerSummaryTotalPower                           INTEGER,
+    cucsEquipmentFexPowerSummaryTotalPowerAvg                        INTEGER,
+    cucsEquipmentFexPowerSummaryTotalPowerMax                        INTEGER,
+    cucsEquipmentFexPowerSummaryTotalPowerMin                        INTEGER,
     cucsEquipmentFexPowerSummaryUpdate                               Gauge32
 }
 
@@ -9858,7 +9858,7 @@ cucsEquipmentFexPowerSummaryRn OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 3 }
 
 cucsEquipmentFexPowerSummaryModulePower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9867,7 +9867,7 @@ cucsEquipmentFexPowerSummaryModulePower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 4 }
 
 cucsEquipmentFexPowerSummaryModulePowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9876,7 +9876,7 @@ cucsEquipmentFexPowerSummaryModulePowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 5 }
 
 cucsEquipmentFexPowerSummaryModulePowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9885,7 +9885,7 @@ cucsEquipmentFexPowerSummaryModulePowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 6 }
 
 cucsEquipmentFexPowerSummaryModulePowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9894,7 +9894,7 @@ cucsEquipmentFexPowerSummaryModulePowerMin OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 7 }
 
 cucsEquipmentFexPowerSummaryAvailablePower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9903,7 +9903,7 @@ cucsEquipmentFexPowerSummaryAvailablePower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 8 }
 
 cucsEquipmentFexPowerSummaryAvailablePowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9912,7 +9912,7 @@ cucsEquipmentFexPowerSummaryAvailablePowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 9 }
 
 cucsEquipmentFexPowerSummaryAvailablePowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9921,7 +9921,7 @@ cucsEquipmentFexPowerSummaryAvailablePowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 10 }
 
 cucsEquipmentFexPowerSummaryAvailablePowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9939,7 +9939,7 @@ cucsEquipmentFexPowerSummaryIntervals OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 12 }
 
 cucsEquipmentFexPowerSummaryReservedPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9948,7 +9948,7 @@ cucsEquipmentFexPowerSummaryReservedPower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 13 }
 
 cucsEquipmentFexPowerSummaryReservedPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9957,7 +9957,7 @@ cucsEquipmentFexPowerSummaryReservedPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 14 }
 
 cucsEquipmentFexPowerSummaryReservedPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -9966,7 +9966,7 @@ cucsEquipmentFexPowerSummaryReservedPowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 15 }
 
 cucsEquipmentFexPowerSummaryReservedPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10002,7 +10002,7 @@ cucsEquipmentFexPowerSummaryTimeCollected OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 19 }
 
 cucsEquipmentFexPowerSummaryTotalPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10011,7 +10011,7 @@ cucsEquipmentFexPowerSummaryTotalPower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 20 }
 
 cucsEquipmentFexPowerSummaryTotalPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10020,7 +10020,7 @@ cucsEquipmentFexPowerSummaryTotalPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 21 }
 
 cucsEquipmentFexPowerSummaryTotalPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10029,7 +10029,7 @@ cucsEquipmentFexPowerSummaryTotalPowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryEntry 22 }
 
 cucsEquipmentFexPowerSummaryTotalPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10067,27 +10067,27 @@ CucsEquipmentFexPowerSummaryHistEntry ::= SEQUENCE {
     cucsEquipmentFexPowerSummaryHistInstanceId                       CucsManagedObjectId,
     cucsEquipmentFexPowerSummaryHistDn                               CucsManagedObjectDn,
     cucsEquipmentFexPowerSummaryHistRn                               SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistModulePower                      SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistModulePowerAvg                   SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistModulePowerMax                   SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistModulePowerMin                   SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistAvailablePower                   SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistAvailablePowerAvg                SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistAvailablePowerMax                SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistAvailablePowerMin                SnmpAdminString,
+    cucsEquipmentFexPowerSummaryHistModulePower                      INTEGER,
+    cucsEquipmentFexPowerSummaryHistModulePowerAvg                   INTEGER,
+    cucsEquipmentFexPowerSummaryHistModulePowerMax                   INTEGER,
+    cucsEquipmentFexPowerSummaryHistModulePowerMin                   INTEGER,
+    cucsEquipmentFexPowerSummaryHistAvailablePower                   INTEGER,
+    cucsEquipmentFexPowerSummaryHistAvailablePowerAvg                INTEGER,
+    cucsEquipmentFexPowerSummaryHistAvailablePowerMax                INTEGER,
+    cucsEquipmentFexPowerSummaryHistAvailablePowerMin                INTEGER,
     cucsEquipmentFexPowerSummaryHistId                               Unsigned64,
     cucsEquipmentFexPowerSummaryHistMostRecent                       TruthValue,
-    cucsEquipmentFexPowerSummaryHistReservedPower                    SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistReservedPowerAvg                 SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistReservedPowerMax                 SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistReservedPowerMin                 SnmpAdminString,
+    cucsEquipmentFexPowerSummaryHistReservedPower                    INTEGER,
+    cucsEquipmentFexPowerSummaryHistReservedPowerAvg                 INTEGER,
+    cucsEquipmentFexPowerSummaryHistReservedPowerMax                 INTEGER,
+    cucsEquipmentFexPowerSummaryHistReservedPowerMin                 INTEGER,
     cucsEquipmentFexPowerSummaryHistSuspect                          TruthValue,
     cucsEquipmentFexPowerSummaryHistThresholded                      CucsEquipmentFexPowerSummaryHistThresholded,
     cucsEquipmentFexPowerSummaryHistTimeCollected                    DateAndTime,
-    cucsEquipmentFexPowerSummaryHistTotalPower                       SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistTotalPowerAvg                    SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistTotalPowerMax                    SnmpAdminString,
-    cucsEquipmentFexPowerSummaryHistTotalPowerMin                    SnmpAdminString
+    cucsEquipmentFexPowerSummaryHistTotalPower                       INTEGER,
+    cucsEquipmentFexPowerSummaryHistTotalPowerAvg                    INTEGER,
+    cucsEquipmentFexPowerSummaryHistTotalPowerMax                    INTEGER,
+    cucsEquipmentFexPowerSummaryHistTotalPowerMin                    INTEGER
 }
 
 cucsEquipmentFexPowerSummaryHistInstanceId OBJECT-TYPE
@@ -10117,7 +10117,7 @@ cucsEquipmentFexPowerSummaryHistRn OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 3 }
 
 cucsEquipmentFexPowerSummaryHistModulePower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10126,7 +10126,7 @@ cucsEquipmentFexPowerSummaryHistModulePower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 4 }
 
 cucsEquipmentFexPowerSummaryHistModulePowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10135,7 +10135,7 @@ cucsEquipmentFexPowerSummaryHistModulePowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 5 }
 
 cucsEquipmentFexPowerSummaryHistModulePowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10144,7 +10144,7 @@ cucsEquipmentFexPowerSummaryHistModulePowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 6 }
 
 cucsEquipmentFexPowerSummaryHistModulePowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10153,7 +10153,7 @@ cucsEquipmentFexPowerSummaryHistModulePowerMin OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 7 }
 
 cucsEquipmentFexPowerSummaryHistAvailablePower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10162,7 +10162,7 @@ cucsEquipmentFexPowerSummaryHistAvailablePower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 8 }
 
 cucsEquipmentFexPowerSummaryHistAvailablePowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10171,7 +10171,7 @@ cucsEquipmentFexPowerSummaryHistAvailablePowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 9 }
 
 cucsEquipmentFexPowerSummaryHistAvailablePowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10180,7 +10180,7 @@ cucsEquipmentFexPowerSummaryHistAvailablePowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 10 }
 
 cucsEquipmentFexPowerSummaryHistAvailablePowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10207,7 +10207,7 @@ cucsEquipmentFexPowerSummaryHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 13 }
 
 cucsEquipmentFexPowerSummaryHistReservedPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10216,7 +10216,7 @@ cucsEquipmentFexPowerSummaryHistReservedPower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 14 }
 
 cucsEquipmentFexPowerSummaryHistReservedPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10225,7 +10225,7 @@ cucsEquipmentFexPowerSummaryHistReservedPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 15 }
 
 cucsEquipmentFexPowerSummaryHistReservedPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10234,7 +10234,7 @@ cucsEquipmentFexPowerSummaryHistReservedPowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 16 }
 
 cucsEquipmentFexPowerSummaryHistReservedPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10270,7 +10270,7 @@ cucsEquipmentFexPowerSummaryHistTimeCollected OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 20 }
 
 cucsEquipmentFexPowerSummaryHistTotalPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10279,7 +10279,7 @@ cucsEquipmentFexPowerSummaryHistTotalPower OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 21 }
 
 cucsEquipmentFexPowerSummaryHistTotalPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10288,7 +10288,7 @@ cucsEquipmentFexPowerSummaryHistTotalPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 22 }
 
 cucsEquipmentFexPowerSummaryHistTotalPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10297,7 +10297,7 @@ cucsEquipmentFexPowerSummaryHistTotalPowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPowerSummaryHistEntry 23 }
 
 cucsEquipmentFexPowerSummaryHistTotalPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10326,24 +10326,24 @@ CucsEquipmentFexPsuInputStatsEntry ::= SEQUENCE {
     cucsEquipmentFexPsuInputStatsInstanceId                          CucsManagedObjectId,
     cucsEquipmentFexPsuInputStatsDn                                  CucsManagedObjectDn,
     cucsEquipmentFexPsuInputStatsRn                                  SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsCurrent                             SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsCurrentAvg                          SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsCurrentMax                          SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsCurrentMin                          SnmpAdminString,
+    cucsEquipmentFexPsuInputStatsCurrent                             INTEGER,
+    cucsEquipmentFexPsuInputStatsCurrentAvg                          INTEGER,
+    cucsEquipmentFexPsuInputStatsCurrentMax                          INTEGER,
+    cucsEquipmentFexPsuInputStatsCurrentMin                          INTEGER,
     cucsEquipmentFexPsuInputStatsInputStatus                         SnmpAdminString,
     cucsEquipmentFexPsuInputStatsIntervals                           Gauge32,
-    cucsEquipmentFexPsuInputStatsPower                               SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsPowerAvg                            SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsPowerMax                            SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsPowerMin                            SnmpAdminString,
+    cucsEquipmentFexPsuInputStatsPower                               INTEGER,
+    cucsEquipmentFexPsuInputStatsPowerAvg                            INTEGER,
+    cucsEquipmentFexPsuInputStatsPowerMax                            INTEGER,
+    cucsEquipmentFexPsuInputStatsPowerMin                            INTEGER,
     cucsEquipmentFexPsuInputStatsSuspect                             TruthValue,
     cucsEquipmentFexPsuInputStatsThresholded                         CucsEquipmentFexPsuInputStatsThresholded,
     cucsEquipmentFexPsuInputStatsTimeCollected                       DateAndTime,
     cucsEquipmentFexPsuInputStatsUpdate                              Gauge32,
-    cucsEquipmentFexPsuInputStatsVoltage                             SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsVoltageAvg                          SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsVoltageMax                          SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsVoltageMin                          SnmpAdminString
+    cucsEquipmentFexPsuInputStatsVoltage                             INTEGER,
+    cucsEquipmentFexPsuInputStatsVoltageAvg                          INTEGER,
+    cucsEquipmentFexPsuInputStatsVoltageMax                          INTEGER,
+    cucsEquipmentFexPsuInputStatsVoltageMin                          INTEGER
 }
 
 cucsEquipmentFexPsuInputStatsInstanceId OBJECT-TYPE
@@ -10371,7 +10371,7 @@ cucsEquipmentFexPsuInputStatsRn OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 3 }
 
 cucsEquipmentFexPsuInputStatsCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10380,7 +10380,7 @@ cucsEquipmentFexPsuInputStatsCurrent OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 4 }
 
 cucsEquipmentFexPsuInputStatsCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10389,7 +10389,7 @@ cucsEquipmentFexPsuInputStatsCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 5 }
 
 cucsEquipmentFexPsuInputStatsCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10398,7 +10398,7 @@ cucsEquipmentFexPsuInputStatsCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 6 }
 
 cucsEquipmentFexPsuInputStatsCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10425,7 +10425,7 @@ cucsEquipmentFexPsuInputStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 9 }
 
 cucsEquipmentFexPsuInputStatsPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10434,7 +10434,7 @@ cucsEquipmentFexPsuInputStatsPower OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 10 }
 
 cucsEquipmentFexPsuInputStatsPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10443,7 +10443,7 @@ cucsEquipmentFexPsuInputStatsPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 11 }
 
 cucsEquipmentFexPsuInputStatsPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10452,7 +10452,7 @@ cucsEquipmentFexPsuInputStatsPowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 12 }
 
 cucsEquipmentFexPsuInputStatsPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10497,7 +10497,7 @@ cucsEquipmentFexPsuInputStatsUpdate OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 17 }
 
 cucsEquipmentFexPsuInputStatsVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10506,7 +10506,7 @@ cucsEquipmentFexPsuInputStatsVoltage OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 18 }
 
 cucsEquipmentFexPsuInputStatsVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10515,7 +10515,7 @@ cucsEquipmentFexPsuInputStatsVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 19 }
 
 cucsEquipmentFexPsuInputStatsVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10524,7 +10524,7 @@ cucsEquipmentFexPsuInputStatsVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsEntry 20 }
 
 cucsEquipmentFexPsuInputStatsVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10553,23 +10553,23 @@ CucsEquipmentFexPsuInputStatsHistEntry ::= SEQUENCE {
     cucsEquipmentFexPsuInputStatsHistInstanceId                      CucsManagedObjectId,
     cucsEquipmentFexPsuInputStatsHistDn                              CucsManagedObjectDn,
     cucsEquipmentFexPsuInputStatsHistRn                              SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistCurrent                         SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistCurrentAvg                      SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistCurrentMax                      SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistCurrentMin                      SnmpAdminString,
+    cucsEquipmentFexPsuInputStatsHistCurrent                         INTEGER,
+    cucsEquipmentFexPsuInputStatsHistCurrentAvg                      INTEGER,
+    cucsEquipmentFexPsuInputStatsHistCurrentMax                      INTEGER,
+    cucsEquipmentFexPsuInputStatsHistCurrentMin                      INTEGER,
     cucsEquipmentFexPsuInputStatsHistId                              Unsigned64,
     cucsEquipmentFexPsuInputStatsHistMostRecent                      TruthValue,
-    cucsEquipmentFexPsuInputStatsHistPower                           SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistPowerAvg                        SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistPowerMax                        SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistPowerMin                        SnmpAdminString,
+    cucsEquipmentFexPsuInputStatsHistPower                           INTEGER,
+    cucsEquipmentFexPsuInputStatsHistPowerAvg                        INTEGER,
+    cucsEquipmentFexPsuInputStatsHistPowerMax                        INTEGER,
+    cucsEquipmentFexPsuInputStatsHistPowerMin                        INTEGER,
     cucsEquipmentFexPsuInputStatsHistSuspect                         TruthValue,
     cucsEquipmentFexPsuInputStatsHistThresholded                     CucsEquipmentFexPsuInputStatsHistThresholded,
     cucsEquipmentFexPsuInputStatsHistTimeCollected                   DateAndTime,
-    cucsEquipmentFexPsuInputStatsHistVoltage                         SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistVoltageAvg                      SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistVoltageMax                      SnmpAdminString,
-    cucsEquipmentFexPsuInputStatsHistVoltageMin                      SnmpAdminString
+    cucsEquipmentFexPsuInputStatsHistVoltage                         INTEGER,
+    cucsEquipmentFexPsuInputStatsHistVoltageAvg                      INTEGER,
+    cucsEquipmentFexPsuInputStatsHistVoltageMax                      INTEGER,
+    cucsEquipmentFexPsuInputStatsHistVoltageMin                      INTEGER
 }
 
 cucsEquipmentFexPsuInputStatsHistInstanceId OBJECT-TYPE
@@ -10599,7 +10599,7 @@ cucsEquipmentFexPsuInputStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 3 }
 
 cucsEquipmentFexPsuInputStatsHistCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10608,7 +10608,7 @@ cucsEquipmentFexPsuInputStatsHistCurrent OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 4 }
 
 cucsEquipmentFexPsuInputStatsHistCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10617,7 +10617,7 @@ cucsEquipmentFexPsuInputStatsHistCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 5 }
 
 cucsEquipmentFexPsuInputStatsHistCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10626,7 +10626,7 @@ cucsEquipmentFexPsuInputStatsHistCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 6 }
 
 cucsEquipmentFexPsuInputStatsHistCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10653,7 +10653,7 @@ cucsEquipmentFexPsuInputStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 9 }
 
 cucsEquipmentFexPsuInputStatsHistPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10662,7 +10662,7 @@ cucsEquipmentFexPsuInputStatsHistPower OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 10 }
 
 cucsEquipmentFexPsuInputStatsHistPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10671,7 +10671,7 @@ cucsEquipmentFexPsuInputStatsHistPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 11 }
 
 cucsEquipmentFexPsuInputStatsHistPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10680,7 +10680,7 @@ cucsEquipmentFexPsuInputStatsHistPowerMax OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 12 }
 
 cucsEquipmentFexPsuInputStatsHistPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10716,7 +10716,7 @@ cucsEquipmentFexPsuInputStatsHistTimeCollected OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 16 }
 
 cucsEquipmentFexPsuInputStatsHistVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10725,7 +10725,7 @@ cucsEquipmentFexPsuInputStatsHistVoltage OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 17 }
 
 cucsEquipmentFexPsuInputStatsHistVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10734,7 +10734,7 @@ cucsEquipmentFexPsuInputStatsHistVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 18 }
 
 cucsEquipmentFexPsuInputStatsHistVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -10743,7 +10743,7 @@ cucsEquipmentFexPsuInputStatsHistVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentFexPsuInputStatsHistEntry 19 }
 
 cucsEquipmentFexPsuInputStatsHistVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -12985,7 +12985,7 @@ CucsEquipmentIOCardEntry ::= SEQUENCE {
     cucsEquipmentIOCardFsmFlags                                      SnmpAdminString,
     cucsEquipmentIOCardProcessorThermalState                         CucsEquipmentSensorThresholdStatus,
     cucsEquipmentIOCardAdminState                                    CucsEquipmentChassisAdminState,
-    cucsEquipmentIOCardOperEvacState                                 CucsEquipmentEvacState,
+    cucsEquipmentIOCardOperEvacState                                 CucsNetworkEvacState,
     cucsEquipmentIOCardAdminPeerPowerState                           CucsEquipmentAdminPowerState,
     cucsEquipmentIOCardAssetTag                                      SnmpAdminString
 }
@@ -13389,7 +13389,7 @@ cucsEquipmentIOCardAdminState OBJECT-TYPE
     ::= { cucsEquipmentIOCardEntry 49 }
 
 cucsEquipmentIOCardOperEvacState OBJECT-TYPE
-    SYNTAX       CucsEquipmentEvacState
+    SYNTAX       CucsNetworkEvacState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14231,16 +14231,16 @@ CucsEquipmentIOCardStatsEntry ::= SEQUENCE {
     cucsEquipmentIOCardStatsInstanceId                               CucsManagedObjectId,
     cucsEquipmentIOCardStatsDn                                       CucsManagedObjectDn,
     cucsEquipmentIOCardStatsRn                                       SnmpAdminString,
-    cucsEquipmentIOCardStatsAmbientTemp                              SnmpAdminString,
-    cucsEquipmentIOCardStatsAmbientTempAvg                           SnmpAdminString,
-    cucsEquipmentIOCardStatsAmbientTempMax                           SnmpAdminString,
-    cucsEquipmentIOCardStatsAmbientTempMin                           SnmpAdminString,
+    cucsEquipmentIOCardStatsAmbientTemp                              INTEGER,
+    cucsEquipmentIOCardStatsAmbientTempAvg                           INTEGER,
+    cucsEquipmentIOCardStatsAmbientTempMax                           INTEGER,
+    cucsEquipmentIOCardStatsAmbientTempMin                           INTEGER,
     cucsEquipmentIOCardStatsIntervals                                Gauge32,
     cucsEquipmentIOCardStatsSuspect                                  TruthValue,
-    cucsEquipmentIOCardStatsTemp                                     SnmpAdminString,
-    cucsEquipmentIOCardStatsTempAvg                                  SnmpAdminString,
-    cucsEquipmentIOCardStatsTempMax                                  SnmpAdminString,
-    cucsEquipmentIOCardStatsTempMin                                  SnmpAdminString,
+    cucsEquipmentIOCardStatsTemp                                     INTEGER,
+    cucsEquipmentIOCardStatsTempAvg                                  INTEGER,
+    cucsEquipmentIOCardStatsTempMax                                  INTEGER,
+    cucsEquipmentIOCardStatsTempMin                                  INTEGER,
     cucsEquipmentIOCardStatsThresholded                              CucsEquipmentIOCardStatsThresholded,
     cucsEquipmentIOCardStatsTimeCollected                            DateAndTime,
     cucsEquipmentIOCardStatsUpdate                                   Gauge32,
@@ -14283,7 +14283,7 @@ cucsEquipmentIOCardStatsRn OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 3 }
 
 cucsEquipmentIOCardStatsAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14292,7 +14292,7 @@ cucsEquipmentIOCardStatsAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 4 }
 
 cucsEquipmentIOCardStatsAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14301,7 +14301,7 @@ cucsEquipmentIOCardStatsAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 5 }
 
 cucsEquipmentIOCardStatsAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14310,7 +14310,7 @@ cucsEquipmentIOCardStatsAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 6 }
 
 cucsEquipmentIOCardStatsAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14336,7 +14336,7 @@ cucsEquipmentIOCardStatsSuspect OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 9 }
 
 cucsEquipmentIOCardStatsTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14344,7 +14344,7 @@ cucsEquipmentIOCardStatsTemp OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 10 }
 
 cucsEquipmentIOCardStatsTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14352,7 +14352,7 @@ cucsEquipmentIOCardStatsTempAvg OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 11 }
 
 cucsEquipmentIOCardStatsTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14360,7 +14360,7 @@ cucsEquipmentIOCardStatsTempMax OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsEntry 12 }
 
 cucsEquipmentIOCardStatsTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14520,17 +14520,17 @@ CucsEquipmentIOCardStatsHistEntry ::= SEQUENCE {
     cucsEquipmentIOCardStatsHistInstanceId                           CucsManagedObjectId,
     cucsEquipmentIOCardStatsHistDn                                   CucsManagedObjectDn,
     cucsEquipmentIOCardStatsHistRn                                   SnmpAdminString,
-    cucsEquipmentIOCardStatsHistAmbientTemp                          SnmpAdminString,
-    cucsEquipmentIOCardStatsHistAmbientTempAvg                       SnmpAdminString,
-    cucsEquipmentIOCardStatsHistAmbientTempMax                       SnmpAdminString,
-    cucsEquipmentIOCardStatsHistAmbientTempMin                       SnmpAdminString,
+    cucsEquipmentIOCardStatsHistAmbientTemp                          INTEGER,
+    cucsEquipmentIOCardStatsHistAmbientTempAvg                       INTEGER,
+    cucsEquipmentIOCardStatsHistAmbientTempMax                       INTEGER,
+    cucsEquipmentIOCardStatsHistAmbientTempMin                       INTEGER,
     cucsEquipmentIOCardStatsHistId                                   Unsigned64,
     cucsEquipmentIOCardStatsHistMostRecent                           TruthValue,
     cucsEquipmentIOCardStatsHistSuspect                              TruthValue,
-    cucsEquipmentIOCardStatsHistTemp                                 SnmpAdminString,
-    cucsEquipmentIOCardStatsHistTempAvg                              SnmpAdminString,
-    cucsEquipmentIOCardStatsHistTempMax                              SnmpAdminString,
-    cucsEquipmentIOCardStatsHistTempMin                              SnmpAdminString,
+    cucsEquipmentIOCardStatsHistTemp                                 INTEGER,
+    cucsEquipmentIOCardStatsHistTempAvg                              INTEGER,
+    cucsEquipmentIOCardStatsHistTempMax                              INTEGER,
+    cucsEquipmentIOCardStatsHistTempMin                              INTEGER,
     cucsEquipmentIOCardStatsHistThresholded                          CucsEquipmentIOCardStatsHistThresholded,
     cucsEquipmentIOCardStatsHistTimeCollected                        DateAndTime,
     cucsEquipmentIOCardStatsHistDimmTemp                             SnmpAdminString,
@@ -14572,7 +14572,7 @@ cucsEquipmentIOCardStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 3 }
 
 cucsEquipmentIOCardStatsHistAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14581,7 +14581,7 @@ cucsEquipmentIOCardStatsHistAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 4 }
 
 cucsEquipmentIOCardStatsHistAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14590,7 +14590,7 @@ cucsEquipmentIOCardStatsHistAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 5 }
 
 cucsEquipmentIOCardStatsHistAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14599,7 +14599,7 @@ cucsEquipmentIOCardStatsHistAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 6 }
 
 cucsEquipmentIOCardStatsHistAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14634,7 +14634,7 @@ cucsEquipmentIOCardStatsHistSuspect OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 10 }
 
 cucsEquipmentIOCardStatsHistTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14642,7 +14642,7 @@ cucsEquipmentIOCardStatsHistTemp OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 11 }
 
 cucsEquipmentIOCardStatsHistTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14651,7 +14651,7 @@ cucsEquipmentIOCardStatsHistTempAvg OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 12 }
 
 cucsEquipmentIOCardStatsHistTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -14660,7 +14660,7 @@ cucsEquipmentIOCardStatsHistTempMax OBJECT-TYPE
     ::= { cucsEquipmentIOCardStatsHistEntry 13 }
 
 cucsEquipmentIOCardStatsHistTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -15823,7 +15823,7 @@ CucsEquipmentLocalDiskControllerCapProviderEntry ::= SEQUENCE {
     cucsEquipmentLocalDiskControllerCapProviderVendor                SnmpAdminString,
     cucsEquipmentLocalDiskControllerCapProviderPromCardType          Gauge32,
     cucsEquipmentLocalDiskControllerCapProviderDeleted               TruthValue,
-    cucsEquipmentLocalDiskControllerCapProviderForm                  CucsStorageControllerForm,
+    cucsEquipmentLocalDiskControllerCapProviderForm                  CucsEquipmentControllerForm,
     cucsEquipmentLocalDiskControllerCapProviderElementLoadFailures   Gauge32,
     cucsEquipmentLocalDiskControllerCapProviderElementsLoaded        Gauge32,
     cucsEquipmentLocalDiskControllerCapProviderInternalports         Gauge32,
@@ -15936,7 +15936,7 @@ cucsEquipmentLocalDiskControllerCapProviderDeleted OBJECT-TYPE
     ::= { cucsEquipmentLocalDiskControllerCapProviderEntry 11 }
 
 cucsEquipmentLocalDiskControllerCapProviderForm OBJECT-TYPE
-    SYNTAX       CucsStorageControllerForm
+    SYNTAX       CucsEquipmentControllerForm
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -16438,7 +16438,7 @@ CucsEquipmentLocalDiskDefEntry ::= SEQUENCE {
     cucsEquipmentLocalDiskDefIntId                                   SnmpAdminString,
     cucsEquipmentLocalDiskDefName                                    SnmpAdminString,
     cucsEquipmentLocalDiskDefNumberOfBlocks                          Unsigned64,
-    cucsEquipmentLocalDiskDefRotationalSpeed                         SnmpAdminString,
+    cucsEquipmentLocalDiskDefRotationalSpeed                         INTEGER,
     cucsEquipmentLocalDiskDefCacheSize                               SnmpAdminString,
     cucsEquipmentLocalDiskDefSeekAverageReadWrite                    SnmpAdminString,
     cucsEquipmentLocalDiskDefSeekTrackToTrackReadWrite               SnmpAdminString,
@@ -16519,7 +16519,7 @@ cucsEquipmentLocalDiskDefNumberOfBlocks OBJECT-TYPE
     ::= { cucsEquipmentLocalDiskDefEntry 8 }
 
 cucsEquipmentLocalDiskDefRotationalSpeed OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22797,24 +22797,24 @@ CucsEquipmentPsuInputStatsEntry ::= SEQUENCE {
     cucsEquipmentPsuInputStatsInstanceId                             CucsManagedObjectId,
     cucsEquipmentPsuInputStatsDn                                     CucsManagedObjectDn,
     cucsEquipmentPsuInputStatsRn                                     SnmpAdminString,
-    cucsEquipmentPsuInputStatsCurrent                                SnmpAdminString,
-    cucsEquipmentPsuInputStatsCurrentAvg                             SnmpAdminString,
-    cucsEquipmentPsuInputStatsCurrentMax                             SnmpAdminString,
-    cucsEquipmentPsuInputStatsCurrentMin                             SnmpAdminString,
+    cucsEquipmentPsuInputStatsCurrent                                INTEGER,
+    cucsEquipmentPsuInputStatsCurrentAvg                             INTEGER,
+    cucsEquipmentPsuInputStatsCurrentMax                             INTEGER,
+    cucsEquipmentPsuInputStatsCurrentMin                             INTEGER,
     cucsEquipmentPsuInputStatsInputStatus                            SnmpAdminString,
     cucsEquipmentPsuInputStatsIntervals                              Gauge32,
-    cucsEquipmentPsuInputStatsPower                                  SnmpAdminString,
-    cucsEquipmentPsuInputStatsPowerAvg                               SnmpAdminString,
-    cucsEquipmentPsuInputStatsPowerMax                               SnmpAdminString,
-    cucsEquipmentPsuInputStatsPowerMin                               SnmpAdminString,
+    cucsEquipmentPsuInputStatsPower                                  INTEGER,
+    cucsEquipmentPsuInputStatsPowerAvg                               INTEGER,
+    cucsEquipmentPsuInputStatsPowerMax                               INTEGER,
+    cucsEquipmentPsuInputStatsPowerMin                               INTEGER,
     cucsEquipmentPsuInputStatsSuspect                                TruthValue,
     cucsEquipmentPsuInputStatsThresholded                            CucsEquipmentPsuInputStatsThresholded,
     cucsEquipmentPsuInputStatsTimeCollected                          DateAndTime,
     cucsEquipmentPsuInputStatsUpdate                                 Gauge32,
-    cucsEquipmentPsuInputStatsVoltage                                SnmpAdminString,
-    cucsEquipmentPsuInputStatsVoltageAvg                             SnmpAdminString,
-    cucsEquipmentPsuInputStatsVoltageMax                             SnmpAdminString,
-    cucsEquipmentPsuInputStatsVoltageMin                             SnmpAdminString
+    cucsEquipmentPsuInputStatsVoltage                                INTEGER,
+    cucsEquipmentPsuInputStatsVoltageAvg                             INTEGER,
+    cucsEquipmentPsuInputStatsVoltageMax                             INTEGER,
+    cucsEquipmentPsuInputStatsVoltageMin                             INTEGER
 }
 
 cucsEquipmentPsuInputStatsInstanceId OBJECT-TYPE
@@ -22842,7 +22842,7 @@ cucsEquipmentPsuInputStatsRn OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 3 }
 
 cucsEquipmentPsuInputStatsCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22851,7 +22851,7 @@ cucsEquipmentPsuInputStatsCurrent OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 4 }
 
 cucsEquipmentPsuInputStatsCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22860,7 +22860,7 @@ cucsEquipmentPsuInputStatsCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 5 }
 
 cucsEquipmentPsuInputStatsCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22869,7 +22869,7 @@ cucsEquipmentPsuInputStatsCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 6 }
 
 cucsEquipmentPsuInputStatsCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22896,7 +22896,7 @@ cucsEquipmentPsuInputStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 9 }
 
 cucsEquipmentPsuInputStatsPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22904,7 +22904,7 @@ cucsEquipmentPsuInputStatsPower OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 10 }
 
 cucsEquipmentPsuInputStatsPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22913,7 +22913,7 @@ cucsEquipmentPsuInputStatsPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 11 }
 
 cucsEquipmentPsuInputStatsPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22922,7 +22922,7 @@ cucsEquipmentPsuInputStatsPowerMax OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 12 }
 
 cucsEquipmentPsuInputStatsPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22966,7 +22966,7 @@ cucsEquipmentPsuInputStatsUpdate OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 17 }
 
 cucsEquipmentPsuInputStatsVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22975,7 +22975,7 @@ cucsEquipmentPsuInputStatsVoltage OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 18 }
 
 cucsEquipmentPsuInputStatsVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22984,7 +22984,7 @@ cucsEquipmentPsuInputStatsVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 19 }
 
 cucsEquipmentPsuInputStatsVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -22993,7 +22993,7 @@ cucsEquipmentPsuInputStatsVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsEntry 20 }
 
 cucsEquipmentPsuInputStatsVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23022,23 +23022,23 @@ CucsEquipmentPsuInputStatsHistEntry ::= SEQUENCE {
     cucsEquipmentPsuInputStatsHistInstanceId                         CucsManagedObjectId,
     cucsEquipmentPsuInputStatsHistDn                                 CucsManagedObjectDn,
     cucsEquipmentPsuInputStatsHistRn                                 SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistCurrent                            SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistCurrentAvg                         SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistCurrentMax                         SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistCurrentMin                         SnmpAdminString,
+    cucsEquipmentPsuInputStatsHistCurrent                            INTEGER,
+    cucsEquipmentPsuInputStatsHistCurrentAvg                         INTEGER,
+    cucsEquipmentPsuInputStatsHistCurrentMax                         INTEGER,
+    cucsEquipmentPsuInputStatsHistCurrentMin                         INTEGER,
     cucsEquipmentPsuInputStatsHistId                                 Unsigned64,
     cucsEquipmentPsuInputStatsHistMostRecent                         TruthValue,
-    cucsEquipmentPsuInputStatsHistPower                              SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistPowerAvg                           SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistPowerMax                           SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistPowerMin                           SnmpAdminString,
+    cucsEquipmentPsuInputStatsHistPower                              INTEGER,
+    cucsEquipmentPsuInputStatsHistPowerAvg                           INTEGER,
+    cucsEquipmentPsuInputStatsHistPowerMax                           INTEGER,
+    cucsEquipmentPsuInputStatsHistPowerMin                           INTEGER,
     cucsEquipmentPsuInputStatsHistSuspect                            TruthValue,
     cucsEquipmentPsuInputStatsHistThresholded                        CucsEquipmentPsuInputStatsHistThresholded,
     cucsEquipmentPsuInputStatsHistTimeCollected                      DateAndTime,
-    cucsEquipmentPsuInputStatsHistVoltage                            SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistVoltageAvg                         SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistVoltageMax                         SnmpAdminString,
-    cucsEquipmentPsuInputStatsHistVoltageMin                         SnmpAdminString
+    cucsEquipmentPsuInputStatsHistVoltage                            INTEGER,
+    cucsEquipmentPsuInputStatsHistVoltageAvg                         INTEGER,
+    cucsEquipmentPsuInputStatsHistVoltageMax                         INTEGER,
+    cucsEquipmentPsuInputStatsHistVoltageMin                         INTEGER
 }
 
 cucsEquipmentPsuInputStatsHistInstanceId OBJECT-TYPE
@@ -23066,7 +23066,7 @@ cucsEquipmentPsuInputStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 3 }
 
 cucsEquipmentPsuInputStatsHistCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23075,7 +23075,7 @@ cucsEquipmentPsuInputStatsHistCurrent OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 4 }
 
 cucsEquipmentPsuInputStatsHistCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23084,7 +23084,7 @@ cucsEquipmentPsuInputStatsHistCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 5 }
 
 cucsEquipmentPsuInputStatsHistCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23093,7 +23093,7 @@ cucsEquipmentPsuInputStatsHistCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 6 }
 
 cucsEquipmentPsuInputStatsHistCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23119,7 +23119,7 @@ cucsEquipmentPsuInputStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 9 }
 
 cucsEquipmentPsuInputStatsHistPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23128,7 +23128,7 @@ cucsEquipmentPsuInputStatsHistPower OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 10 }
 
 cucsEquipmentPsuInputStatsHistPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23137,7 +23137,7 @@ cucsEquipmentPsuInputStatsHistPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 11 }
 
 cucsEquipmentPsuInputStatsHistPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23146,7 +23146,7 @@ cucsEquipmentPsuInputStatsHistPowerMax OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 12 }
 
 cucsEquipmentPsuInputStatsHistPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23182,7 +23182,7 @@ cucsEquipmentPsuInputStatsHistTimeCollected OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 16 }
 
 cucsEquipmentPsuInputStatsHistVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23191,7 +23191,7 @@ cucsEquipmentPsuInputStatsHistVoltage OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 17 }
 
 cucsEquipmentPsuInputStatsHistVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23200,7 +23200,7 @@ cucsEquipmentPsuInputStatsHistVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 18 }
 
 cucsEquipmentPsuInputStatsHistVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23209,7 +23209,7 @@ cucsEquipmentPsuInputStatsHistVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentPsuInputStatsHistEntry 19 }
 
 cucsEquipmentPsuInputStatsHistVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23238,24 +23238,24 @@ CucsEquipmentPsuOutputStatsEntry ::= SEQUENCE {
     cucsEquipmentPsuOutputStatsInstanceId                            CucsManagedObjectId,
     cucsEquipmentPsuOutputStatsDn                                    CucsManagedObjectDn,
     cucsEquipmentPsuOutputStatsRn                                    SnmpAdminString,
-    cucsEquipmentPsuOutputStatsCurrent                               SnmpAdminString,
-    cucsEquipmentPsuOutputStatsCurrentAvg                            SnmpAdminString,
-    cucsEquipmentPsuOutputStatsCurrentMax                            SnmpAdminString,
-    cucsEquipmentPsuOutputStatsCurrentMin                            SnmpAdminString,
+    cucsEquipmentPsuOutputStatsCurrent                               INTEGER,
+    cucsEquipmentPsuOutputStatsCurrentAvg                            INTEGER,
+    cucsEquipmentPsuOutputStatsCurrentMax                            INTEGER,
+    cucsEquipmentPsuOutputStatsCurrentMin                            INTEGER,
     cucsEquipmentPsuOutputStatsIntervals                             Gauge32,
     cucsEquipmentPsuOutputStatsOutputStatus                          SnmpAdminString,
-    cucsEquipmentPsuOutputStatsPower                                 SnmpAdminString,
-    cucsEquipmentPsuOutputStatsPowerAvg                              SnmpAdminString,
-    cucsEquipmentPsuOutputStatsPowerMax                              SnmpAdminString,
-    cucsEquipmentPsuOutputStatsPowerMin                              SnmpAdminString,
+    cucsEquipmentPsuOutputStatsPower                                 INTEGER,
+    cucsEquipmentPsuOutputStatsPowerAvg                              INTEGER,
+    cucsEquipmentPsuOutputStatsPowerMax                              INTEGER,
+    cucsEquipmentPsuOutputStatsPowerMin                              INTEGER,
     cucsEquipmentPsuOutputStatsSuspect                               TruthValue,
     cucsEquipmentPsuOutputStatsThresholded                           CucsEquipmentPsuOutputStatsThresholded,
     cucsEquipmentPsuOutputStatsTimeCollected                         DateAndTime,
     cucsEquipmentPsuOutputStatsUpdate                                Gauge32,
-    cucsEquipmentPsuOutputStatsVoltage                               SnmpAdminString,
-    cucsEquipmentPsuOutputStatsVoltageAvg                            SnmpAdminString,
-    cucsEquipmentPsuOutputStatsVoltageMax                            SnmpAdminString,
-    cucsEquipmentPsuOutputStatsVoltageMin                            SnmpAdminString
+    cucsEquipmentPsuOutputStatsVoltage                               INTEGER,
+    cucsEquipmentPsuOutputStatsVoltageAvg                            INTEGER,
+    cucsEquipmentPsuOutputStatsVoltageMax                            INTEGER,
+    cucsEquipmentPsuOutputStatsVoltageMin                            INTEGER
 }
 
 cucsEquipmentPsuOutputStatsInstanceId OBJECT-TYPE
@@ -23283,7 +23283,7 @@ cucsEquipmentPsuOutputStatsRn OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 3 }
 
 cucsEquipmentPsuOutputStatsCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23292,7 +23292,7 @@ cucsEquipmentPsuOutputStatsCurrent OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 4 }
 
 cucsEquipmentPsuOutputStatsCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23301,7 +23301,7 @@ cucsEquipmentPsuOutputStatsCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 5 }
 
 cucsEquipmentPsuOutputStatsCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23310,7 +23310,7 @@ cucsEquipmentPsuOutputStatsCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 6 }
 
 cucsEquipmentPsuOutputStatsCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23337,7 +23337,7 @@ cucsEquipmentPsuOutputStatsOutputStatus OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 9 }
 
 cucsEquipmentPsuOutputStatsPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23345,7 +23345,7 @@ cucsEquipmentPsuOutputStatsPower OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 10 }
 
 cucsEquipmentPsuOutputStatsPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23354,7 +23354,7 @@ cucsEquipmentPsuOutputStatsPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 11 }
 
 cucsEquipmentPsuOutputStatsPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23363,7 +23363,7 @@ cucsEquipmentPsuOutputStatsPowerMax OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 12 }
 
 cucsEquipmentPsuOutputStatsPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23408,7 +23408,7 @@ cucsEquipmentPsuOutputStatsUpdate OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 17 }
 
 cucsEquipmentPsuOutputStatsVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23417,7 +23417,7 @@ cucsEquipmentPsuOutputStatsVoltage OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 18 }
 
 cucsEquipmentPsuOutputStatsVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23426,7 +23426,7 @@ cucsEquipmentPsuOutputStatsVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 19 }
 
 cucsEquipmentPsuOutputStatsVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23435,7 +23435,7 @@ cucsEquipmentPsuOutputStatsVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsEntry 20 }
 
 cucsEquipmentPsuOutputStatsVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23464,23 +23464,23 @@ CucsEquipmentPsuOutputStatsHistEntry ::= SEQUENCE {
     cucsEquipmentPsuOutputStatsHistInstanceId                        CucsManagedObjectId,
     cucsEquipmentPsuOutputStatsHistDn                                CucsManagedObjectDn,
     cucsEquipmentPsuOutputStatsHistRn                                SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistCurrent                           SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistCurrentAvg                        SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistCurrentMax                        SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistCurrentMin                        SnmpAdminString,
+    cucsEquipmentPsuOutputStatsHistCurrent                           INTEGER,
+    cucsEquipmentPsuOutputStatsHistCurrentAvg                        INTEGER,
+    cucsEquipmentPsuOutputStatsHistCurrentMax                        INTEGER,
+    cucsEquipmentPsuOutputStatsHistCurrentMin                        INTEGER,
     cucsEquipmentPsuOutputStatsHistId                                Unsigned64,
     cucsEquipmentPsuOutputStatsHistMostRecent                        TruthValue,
-    cucsEquipmentPsuOutputStatsHistPower                             SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistPowerAvg                          SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistPowerMax                          SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistPowerMin                          SnmpAdminString,
+    cucsEquipmentPsuOutputStatsHistPower                             INTEGER,
+    cucsEquipmentPsuOutputStatsHistPowerAvg                          INTEGER,
+    cucsEquipmentPsuOutputStatsHistPowerMax                          INTEGER,
+    cucsEquipmentPsuOutputStatsHistPowerMin                          INTEGER,
     cucsEquipmentPsuOutputStatsHistSuspect                           TruthValue,
     cucsEquipmentPsuOutputStatsHistThresholded                       CucsEquipmentPsuOutputStatsHistThresholded,
     cucsEquipmentPsuOutputStatsHistTimeCollected                     DateAndTime,
-    cucsEquipmentPsuOutputStatsHistVoltage                           SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistVoltageAvg                        SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistVoltageMax                        SnmpAdminString,
-    cucsEquipmentPsuOutputStatsHistVoltageMin                        SnmpAdminString
+    cucsEquipmentPsuOutputStatsHistVoltage                           INTEGER,
+    cucsEquipmentPsuOutputStatsHistVoltageAvg                        INTEGER,
+    cucsEquipmentPsuOutputStatsHistVoltageMax                        INTEGER,
+    cucsEquipmentPsuOutputStatsHistVoltageMin                        INTEGER
 }
 
 cucsEquipmentPsuOutputStatsHistInstanceId OBJECT-TYPE
@@ -23510,7 +23510,7 @@ cucsEquipmentPsuOutputStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 3 }
 
 cucsEquipmentPsuOutputStatsHistCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23519,7 +23519,7 @@ cucsEquipmentPsuOutputStatsHistCurrent OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 4 }
 
 cucsEquipmentPsuOutputStatsHistCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23528,7 +23528,7 @@ cucsEquipmentPsuOutputStatsHistCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 5 }
 
 cucsEquipmentPsuOutputStatsHistCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23537,7 +23537,7 @@ cucsEquipmentPsuOutputStatsHistCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 6 }
 
 cucsEquipmentPsuOutputStatsHistCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23564,7 +23564,7 @@ cucsEquipmentPsuOutputStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 9 }
 
 cucsEquipmentPsuOutputStatsHistPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23573,7 +23573,7 @@ cucsEquipmentPsuOutputStatsHistPower OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 10 }
 
 cucsEquipmentPsuOutputStatsHistPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23582,7 +23582,7 @@ cucsEquipmentPsuOutputStatsHistPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 11 }
 
 cucsEquipmentPsuOutputStatsHistPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23591,7 +23591,7 @@ cucsEquipmentPsuOutputStatsHistPowerMax OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 12 }
 
 cucsEquipmentPsuOutputStatsHistPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23627,7 +23627,7 @@ cucsEquipmentPsuOutputStatsHistTimeCollected OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 16 }
 
 cucsEquipmentPsuOutputStatsHistVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23636,7 +23636,7 @@ cucsEquipmentPsuOutputStatsHistVoltage OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 17 }
 
 cucsEquipmentPsuOutputStatsHistVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23645,7 +23645,7 @@ cucsEquipmentPsuOutputStatsHistVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 18 }
 
 cucsEquipmentPsuOutputStatsHistVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23654,7 +23654,7 @@ cucsEquipmentPsuOutputStatsHistVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentPsuOutputStatsHistEntry 19 }
 
 cucsEquipmentPsuOutputStatsHistVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23683,37 +23683,37 @@ CucsEquipmentPsuStatsEntry ::= SEQUENCE {
     cucsEquipmentPsuStatsInstanceId                                  CucsManagedObjectId,
     cucsEquipmentPsuStatsDn                                          CucsManagedObjectDn,
     cucsEquipmentPsuStatsRn                                          SnmpAdminString,
-    cucsEquipmentPsuStatsAmbientTemp                                 SnmpAdminString,
-    cucsEquipmentPsuStatsAmbientTempAvg                              SnmpAdminString,
-    cucsEquipmentPsuStatsAmbientTempMax                              SnmpAdminString,
-    cucsEquipmentPsuStatsAmbientTempMin                              SnmpAdminString,
-    cucsEquipmentPsuStatsInput210v                                   SnmpAdminString,
-    cucsEquipmentPsuStatsInput210vAvg                                SnmpAdminString,
-    cucsEquipmentPsuStatsInput210vMax                                SnmpAdminString,
-    cucsEquipmentPsuStatsInput210vMin                                SnmpAdminString,
+    cucsEquipmentPsuStatsAmbientTemp                                 INTEGER,
+    cucsEquipmentPsuStatsAmbientTempAvg                              INTEGER,
+    cucsEquipmentPsuStatsAmbientTempMax                              INTEGER,
+    cucsEquipmentPsuStatsAmbientTempMin                              INTEGER,
+    cucsEquipmentPsuStatsInput210v                                   INTEGER,
+    cucsEquipmentPsuStatsInput210vAvg                                INTEGER,
+    cucsEquipmentPsuStatsInput210vMax                                INTEGER,
+    cucsEquipmentPsuStatsInput210vMin                                INTEGER,
     cucsEquipmentPsuStatsIntervals                                   Gauge32,
-    cucsEquipmentPsuStatsOutput12v                                   SnmpAdminString,
-    cucsEquipmentPsuStatsOutput12vAvg                                SnmpAdminString,
-    cucsEquipmentPsuStatsOutput12vMax                                SnmpAdminString,
-    cucsEquipmentPsuStatsOutput12vMin                                SnmpAdminString,
-    cucsEquipmentPsuStatsOutput3v3                                   SnmpAdminString,
-    cucsEquipmentPsuStatsOutput3v3Avg                                SnmpAdminString,
-    cucsEquipmentPsuStatsOutput3v3Max                                SnmpAdminString,
-    cucsEquipmentPsuStatsOutput3v3Min                                SnmpAdminString,
-    cucsEquipmentPsuStatsOutputCurrent                               SnmpAdminString,
-    cucsEquipmentPsuStatsOutputCurrentAvg                            SnmpAdminString,
-    cucsEquipmentPsuStatsOutputCurrentMax                            SnmpAdminString,
-    cucsEquipmentPsuStatsOutputCurrentMin                            SnmpAdminString,
-    cucsEquipmentPsuStatsOutputPower                                 SnmpAdminString,
-    cucsEquipmentPsuStatsOutputPowerAvg                              SnmpAdminString,
-    cucsEquipmentPsuStatsOutputPowerMax                              SnmpAdminString,
-    cucsEquipmentPsuStatsOutputPowerMin                              SnmpAdminString,
+    cucsEquipmentPsuStatsOutput12v                                   INTEGER,
+    cucsEquipmentPsuStatsOutput12vAvg                                INTEGER,
+    cucsEquipmentPsuStatsOutput12vMax                                INTEGER,
+    cucsEquipmentPsuStatsOutput12vMin                                INTEGER,
+    cucsEquipmentPsuStatsOutput3v3                                   INTEGER,
+    cucsEquipmentPsuStatsOutput3v3Avg                                INTEGER,
+    cucsEquipmentPsuStatsOutput3v3Max                                INTEGER,
+    cucsEquipmentPsuStatsOutput3v3Min                                INTEGER,
+    cucsEquipmentPsuStatsOutputCurrent                               INTEGER,
+    cucsEquipmentPsuStatsOutputCurrentAvg                            INTEGER,
+    cucsEquipmentPsuStatsOutputCurrentMax                            INTEGER,
+    cucsEquipmentPsuStatsOutputCurrentMin                            INTEGER,
+    cucsEquipmentPsuStatsOutputPower                                 INTEGER,
+    cucsEquipmentPsuStatsOutputPowerAvg                              INTEGER,
+    cucsEquipmentPsuStatsOutputPowerMax                              INTEGER,
+    cucsEquipmentPsuStatsOutputPowerMin                              INTEGER,
     cucsEquipmentPsuStatsSuspect                                     TruthValue,
     cucsEquipmentPsuStatsThresholded                                 CucsEquipmentPsuStatsThresholded,
     cucsEquipmentPsuStatsTimeCollected                               DateAndTime,
     cucsEquipmentPsuStatsUpdate                                      Gauge32,
-    cucsEquipmentPsuStatsPsuTemp1                                    SnmpAdminString,
-    cucsEquipmentPsuStatsPsuTemp2                                    SnmpAdminString,
+    cucsEquipmentPsuStatsPsuTemp1                                    INTEGER,
+    cucsEquipmentPsuStatsPsuTemp2                                    INTEGER,
     cucsEquipmentPsuStatsInputPower                                  SnmpAdminString,
     cucsEquipmentPsuStatsInputPowerAvg                               SnmpAdminString,
     cucsEquipmentPsuStatsInputPowerMax                               SnmpAdminString,
@@ -23749,7 +23749,7 @@ cucsEquipmentPsuStatsRn OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 3 }
 
 cucsEquipmentPsuStatsAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23757,7 +23757,7 @@ cucsEquipmentPsuStatsAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 4 }
 
 cucsEquipmentPsuStatsAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23766,7 +23766,7 @@ cucsEquipmentPsuStatsAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 5 }
 
 cucsEquipmentPsuStatsAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23775,7 +23775,7 @@ cucsEquipmentPsuStatsAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 6 }
 
 cucsEquipmentPsuStatsAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23784,7 +23784,7 @@ cucsEquipmentPsuStatsAmbientTempMin OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 7 }
 
 cucsEquipmentPsuStatsInput210v OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23792,7 +23792,7 @@ cucsEquipmentPsuStatsInput210v OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 8 }
 
 cucsEquipmentPsuStatsInput210vAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23801,7 +23801,7 @@ cucsEquipmentPsuStatsInput210vAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 9 }
 
 cucsEquipmentPsuStatsInput210vMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23810,7 +23810,7 @@ cucsEquipmentPsuStatsInput210vMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 10 }
 
 cucsEquipmentPsuStatsInput210vMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23827,7 +23827,7 @@ cucsEquipmentPsuStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 12 }
 
 cucsEquipmentPsuStatsOutput12v OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23835,7 +23835,7 @@ cucsEquipmentPsuStatsOutput12v OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 13 }
 
 cucsEquipmentPsuStatsOutput12vAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23844,7 +23844,7 @@ cucsEquipmentPsuStatsOutput12vAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 14 }
 
 cucsEquipmentPsuStatsOutput12vMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23853,7 +23853,7 @@ cucsEquipmentPsuStatsOutput12vMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 15 }
 
 cucsEquipmentPsuStatsOutput12vMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23862,7 +23862,7 @@ cucsEquipmentPsuStatsOutput12vMin OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 16 }
 
 cucsEquipmentPsuStatsOutput3v3 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23870,7 +23870,7 @@ cucsEquipmentPsuStatsOutput3v3 OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 17 }
 
 cucsEquipmentPsuStatsOutput3v3Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23879,7 +23879,7 @@ cucsEquipmentPsuStatsOutput3v3Avg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 18 }
 
 cucsEquipmentPsuStatsOutput3v3Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23888,7 +23888,7 @@ cucsEquipmentPsuStatsOutput3v3Max OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 19 }
 
 cucsEquipmentPsuStatsOutput3v3Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23897,7 +23897,7 @@ cucsEquipmentPsuStatsOutput3v3Min OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 20 }
 
 cucsEquipmentPsuStatsOutputCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23906,7 +23906,7 @@ cucsEquipmentPsuStatsOutputCurrent OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 21 }
 
 cucsEquipmentPsuStatsOutputCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23915,7 +23915,7 @@ cucsEquipmentPsuStatsOutputCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 22 }
 
 cucsEquipmentPsuStatsOutputCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23924,7 +23924,7 @@ cucsEquipmentPsuStatsOutputCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 23 }
 
 cucsEquipmentPsuStatsOutputCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23933,7 +23933,7 @@ cucsEquipmentPsuStatsOutputCurrentMin OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 24 }
 
 cucsEquipmentPsuStatsOutputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23941,7 +23941,7 @@ cucsEquipmentPsuStatsOutputPower OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 25 }
 
 cucsEquipmentPsuStatsOutputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23950,7 +23950,7 @@ cucsEquipmentPsuStatsOutputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 26 }
 
 cucsEquipmentPsuStatsOutputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -23959,7 +23959,7 @@ cucsEquipmentPsuStatsOutputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 27 }
 
 cucsEquipmentPsuStatsOutputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24001,7 +24001,7 @@ cucsEquipmentPsuStatsUpdate OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 32 }
 
 cucsEquipmentPsuStatsPsuTemp1 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24009,7 +24009,7 @@ cucsEquipmentPsuStatsPsuTemp1 OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsEntry 33 }
 
 cucsEquipmentPsuStatsPsuTemp2 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24108,32 +24108,32 @@ CucsEquipmentPsuStatsHistEntry ::= SEQUENCE {
     cucsEquipmentPsuStatsHistInstanceId                              CucsManagedObjectId,
     cucsEquipmentPsuStatsHistDn                                      CucsManagedObjectDn,
     cucsEquipmentPsuStatsHistRn                                      SnmpAdminString,
-    cucsEquipmentPsuStatsHistAmbientTemp                             SnmpAdminString,
-    cucsEquipmentPsuStatsHistAmbientTempAvg                          SnmpAdminString,
-    cucsEquipmentPsuStatsHistAmbientTempMax                          SnmpAdminString,
-    cucsEquipmentPsuStatsHistAmbientTempMin                          SnmpAdminString,
+    cucsEquipmentPsuStatsHistAmbientTemp                             INTEGER,
+    cucsEquipmentPsuStatsHistAmbientTempAvg                          INTEGER,
+    cucsEquipmentPsuStatsHistAmbientTempMax                          INTEGER,
+    cucsEquipmentPsuStatsHistAmbientTempMin                          INTEGER,
     cucsEquipmentPsuStatsHistId                                      Unsigned64,
-    cucsEquipmentPsuStatsHistInput210v                               SnmpAdminString,
-    cucsEquipmentPsuStatsHistInput210vAvg                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistInput210vMax                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistInput210vMin                            SnmpAdminString,
+    cucsEquipmentPsuStatsHistInput210v                               INTEGER,
+    cucsEquipmentPsuStatsHistInput210vAvg                            INTEGER,
+    cucsEquipmentPsuStatsHistInput210vMax                            INTEGER,
+    cucsEquipmentPsuStatsHistInput210vMin                            INTEGER,
     cucsEquipmentPsuStatsHistMostRecent                              TruthValue,
-    cucsEquipmentPsuStatsHistOutput12v                               SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput12vAvg                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput12vMax                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput12vMin                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput3v3                               SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput3v3Avg                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput3v3Max                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutput3v3Min                            SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputCurrent                           SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputCurrentAvg                        SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputCurrentMax                        SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputCurrentMin                        SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputPower                             SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputPowerAvg                          SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputPowerMax                          SnmpAdminString,
-    cucsEquipmentPsuStatsHistOutputPowerMin                          SnmpAdminString,
+    cucsEquipmentPsuStatsHistOutput12v                               INTEGER,
+    cucsEquipmentPsuStatsHistOutput12vAvg                            INTEGER,
+    cucsEquipmentPsuStatsHistOutput12vMax                            INTEGER,
+    cucsEquipmentPsuStatsHistOutput12vMin                            INTEGER,
+    cucsEquipmentPsuStatsHistOutput3v3                               INTEGER,
+    cucsEquipmentPsuStatsHistOutput3v3Avg                            INTEGER,
+    cucsEquipmentPsuStatsHistOutput3v3Max                            INTEGER,
+    cucsEquipmentPsuStatsHistOutput3v3Min                            INTEGER,
+    cucsEquipmentPsuStatsHistOutputCurrent                           INTEGER,
+    cucsEquipmentPsuStatsHistOutputCurrentAvg                        INTEGER,
+    cucsEquipmentPsuStatsHistOutputCurrentMax                        INTEGER,
+    cucsEquipmentPsuStatsHistOutputCurrentMin                        INTEGER,
+    cucsEquipmentPsuStatsHistOutputPower                             INTEGER,
+    cucsEquipmentPsuStatsHistOutputPowerAvg                          INTEGER,
+    cucsEquipmentPsuStatsHistOutputPowerMax                          INTEGER,
+    cucsEquipmentPsuStatsHistOutputPowerMin                          INTEGER,
     cucsEquipmentPsuStatsHistSuspect                                 TruthValue,
     cucsEquipmentPsuStatsHistThresholded                             CucsEquipmentPsuStatsHistThresholded,
     cucsEquipmentPsuStatsHistTimeCollected                           DateAndTime,
@@ -24172,7 +24172,7 @@ cucsEquipmentPsuStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 3 }
 
 cucsEquipmentPsuStatsHistAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24181,7 +24181,7 @@ cucsEquipmentPsuStatsHistAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 4 }
 
 cucsEquipmentPsuStatsHistAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24190,7 +24190,7 @@ cucsEquipmentPsuStatsHistAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 5 }
 
 cucsEquipmentPsuStatsHistAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24199,7 +24199,7 @@ cucsEquipmentPsuStatsHistAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 6 }
 
 cucsEquipmentPsuStatsHistAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24216,7 +24216,7 @@ cucsEquipmentPsuStatsHistId OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 8 }
 
 cucsEquipmentPsuStatsHistInput210v OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24225,7 +24225,7 @@ cucsEquipmentPsuStatsHistInput210v OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 9 }
 
 cucsEquipmentPsuStatsHistInput210vAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24234,7 +24234,7 @@ cucsEquipmentPsuStatsHistInput210vAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 10 }
 
 cucsEquipmentPsuStatsHistInput210vMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24243,7 +24243,7 @@ cucsEquipmentPsuStatsHistInput210vMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 11 }
 
 cucsEquipmentPsuStatsHistInput210vMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24261,7 +24261,7 @@ cucsEquipmentPsuStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 13 }
 
 cucsEquipmentPsuStatsHistOutput12v OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24270,7 +24270,7 @@ cucsEquipmentPsuStatsHistOutput12v OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 14 }
 
 cucsEquipmentPsuStatsHistOutput12vAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24279,7 +24279,7 @@ cucsEquipmentPsuStatsHistOutput12vAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 15 }
 
 cucsEquipmentPsuStatsHistOutput12vMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24288,7 +24288,7 @@ cucsEquipmentPsuStatsHistOutput12vMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 16 }
 
 cucsEquipmentPsuStatsHistOutput12vMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24297,7 +24297,7 @@ cucsEquipmentPsuStatsHistOutput12vMin OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 17 }
 
 cucsEquipmentPsuStatsHistOutput3v3 OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24306,7 +24306,7 @@ cucsEquipmentPsuStatsHistOutput3v3 OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 18 }
 
 cucsEquipmentPsuStatsHistOutput3v3Avg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24315,7 +24315,7 @@ cucsEquipmentPsuStatsHistOutput3v3Avg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 19 }
 
 cucsEquipmentPsuStatsHistOutput3v3Max OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24324,7 +24324,7 @@ cucsEquipmentPsuStatsHistOutput3v3Max OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 20 }
 
 cucsEquipmentPsuStatsHistOutput3v3Min OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24333,7 +24333,7 @@ cucsEquipmentPsuStatsHistOutput3v3Min OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 21 }
 
 cucsEquipmentPsuStatsHistOutputCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24342,7 +24342,7 @@ cucsEquipmentPsuStatsHistOutputCurrent OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 22 }
 
 cucsEquipmentPsuStatsHistOutputCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24351,7 +24351,7 @@ cucsEquipmentPsuStatsHistOutputCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 23 }
 
 cucsEquipmentPsuStatsHistOutputCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24360,7 +24360,7 @@ cucsEquipmentPsuStatsHistOutputCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 24 }
 
 cucsEquipmentPsuStatsHistOutputCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24369,7 +24369,7 @@ cucsEquipmentPsuStatsHistOutputCurrentMin OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 25 }
 
 cucsEquipmentPsuStatsHistOutputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24378,7 +24378,7 @@ cucsEquipmentPsuStatsHistOutputPower OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 26 }
 
 cucsEquipmentPsuStatsHistOutputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24387,7 +24387,7 @@ cucsEquipmentPsuStatsHistOutputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 27 }
 
 cucsEquipmentPsuStatsHistOutputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -24396,7 +24396,7 @@ cucsEquipmentPsuStatsHistOutputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentPsuStatsHistEntry 28 }
 
 cucsEquipmentPsuStatsHistOutputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25187,31 +25187,31 @@ CucsEquipmentRackUnitPsuStatsEntry ::= SEQUENCE {
     cucsEquipmentRackUnitPsuStatsInstanceId                          CucsManagedObjectId,
     cucsEquipmentRackUnitPsuStatsDn                                  CucsManagedObjectDn,
     cucsEquipmentRackUnitPsuStatsRn                                  SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsAmbientTemp                         SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsAmbientTempAvg                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsAmbientTempMax                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsAmbientTempMin                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputPower                          SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputPowerAvg                       SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputPowerMax                       SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputPowerMin                       SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputVoltage                        SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputVoltageAvg                     SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputVoltageMax                     SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsInputVoltageMin                     SnmpAdminString,
+    cucsEquipmentRackUnitPsuStatsAmbientTemp                         INTEGER,
+    cucsEquipmentRackUnitPsuStatsAmbientTempAvg                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsAmbientTempMax                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsAmbientTempMin                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputPower                          INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputPowerAvg                       INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputPowerMax                       INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputPowerMin                       INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputVoltage                        INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputVoltageAvg                     INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputVoltageMax                     INTEGER,
+    cucsEquipmentRackUnitPsuStatsInputVoltageMin                     INTEGER,
     cucsEquipmentRackUnitPsuStatsIntervals                           Gauge32,
-    cucsEquipmentRackUnitPsuStatsOutputCurrent                       SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputCurrentAvg                    SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputCurrentMax                    SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputCurrentMin                    SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputPower                         SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputPowerAvg                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputPowerMax                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputPowerMin                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputVoltage                       SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputVoltageAvg                    SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputVoltageMax                    SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsOutputVoltageMin                    SnmpAdminString,
+    cucsEquipmentRackUnitPsuStatsOutputCurrent                       INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputCurrentAvg                    INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputCurrentMax                    INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputCurrentMin                    INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputPower                         INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputPowerAvg                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputPowerMax                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputPowerMin                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputVoltage                       INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputVoltageAvg                    INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputVoltageMax                    INTEGER,
+    cucsEquipmentRackUnitPsuStatsOutputVoltageMin                    INTEGER,
     cucsEquipmentRackUnitPsuStatsSuspect                             TruthValue,
     cucsEquipmentRackUnitPsuStatsThresholded                         CucsEquipmentRackUnitPsuStatsThresholded,
     cucsEquipmentRackUnitPsuStatsTimeCollected                       DateAndTime,
@@ -25243,7 +25243,7 @@ cucsEquipmentRackUnitPsuStatsRn OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 3 }
 
 cucsEquipmentRackUnitPsuStatsAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25252,7 +25252,7 @@ cucsEquipmentRackUnitPsuStatsAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 4 }
 
 cucsEquipmentRackUnitPsuStatsAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25261,7 +25261,7 @@ cucsEquipmentRackUnitPsuStatsAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 5 }
 
 cucsEquipmentRackUnitPsuStatsAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25270,7 +25270,7 @@ cucsEquipmentRackUnitPsuStatsAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 6 }
 
 cucsEquipmentRackUnitPsuStatsAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25279,7 +25279,7 @@ cucsEquipmentRackUnitPsuStatsAmbientTempMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 7 }
 
 cucsEquipmentRackUnitPsuStatsInputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25288,7 +25288,7 @@ cucsEquipmentRackUnitPsuStatsInputPower OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 8 }
 
 cucsEquipmentRackUnitPsuStatsInputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25297,7 +25297,7 @@ cucsEquipmentRackUnitPsuStatsInputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 9 }
 
 cucsEquipmentRackUnitPsuStatsInputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25306,7 +25306,7 @@ cucsEquipmentRackUnitPsuStatsInputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 10 }
 
 cucsEquipmentRackUnitPsuStatsInputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25315,7 +25315,7 @@ cucsEquipmentRackUnitPsuStatsInputPowerMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 11 }
 
 cucsEquipmentRackUnitPsuStatsInputVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25324,7 +25324,7 @@ cucsEquipmentRackUnitPsuStatsInputVoltage OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 12 }
 
 cucsEquipmentRackUnitPsuStatsInputVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25333,7 +25333,7 @@ cucsEquipmentRackUnitPsuStatsInputVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 13 }
 
 cucsEquipmentRackUnitPsuStatsInputVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25342,7 +25342,7 @@ cucsEquipmentRackUnitPsuStatsInputVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 14 }
 
 cucsEquipmentRackUnitPsuStatsInputVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25360,7 +25360,7 @@ cucsEquipmentRackUnitPsuStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 16 }
 
 cucsEquipmentRackUnitPsuStatsOutputCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25369,7 +25369,7 @@ cucsEquipmentRackUnitPsuStatsOutputCurrent OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 17 }
 
 cucsEquipmentRackUnitPsuStatsOutputCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25378,7 +25378,7 @@ cucsEquipmentRackUnitPsuStatsOutputCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 18 }
 
 cucsEquipmentRackUnitPsuStatsOutputCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25387,7 +25387,7 @@ cucsEquipmentRackUnitPsuStatsOutputCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 19 }
 
 cucsEquipmentRackUnitPsuStatsOutputCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25396,7 +25396,7 @@ cucsEquipmentRackUnitPsuStatsOutputCurrentMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 20 }
 
 cucsEquipmentRackUnitPsuStatsOutputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25405,7 +25405,7 @@ cucsEquipmentRackUnitPsuStatsOutputPower OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 21 }
 
 cucsEquipmentRackUnitPsuStatsOutputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25414,7 +25414,7 @@ cucsEquipmentRackUnitPsuStatsOutputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 22 }
 
 cucsEquipmentRackUnitPsuStatsOutputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25423,7 +25423,7 @@ cucsEquipmentRackUnitPsuStatsOutputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 23 }
 
 cucsEquipmentRackUnitPsuStatsOutputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25432,7 +25432,7 @@ cucsEquipmentRackUnitPsuStatsOutputPowerMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 24 }
 
 cucsEquipmentRackUnitPsuStatsOutputVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25441,7 +25441,7 @@ cucsEquipmentRackUnitPsuStatsOutputVoltage OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 25 }
 
 cucsEquipmentRackUnitPsuStatsOutputVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25450,7 +25450,7 @@ cucsEquipmentRackUnitPsuStatsOutputVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 26 }
 
 cucsEquipmentRackUnitPsuStatsOutputVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25459,7 +25459,7 @@ cucsEquipmentRackUnitPsuStatsOutputVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsEntry 27 }
 
 cucsEquipmentRackUnitPsuStatsOutputVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25524,32 +25524,32 @@ CucsEquipmentRackUnitPsuStatsHistEntry ::= SEQUENCE {
     cucsEquipmentRackUnitPsuStatsHistInstanceId                      CucsManagedObjectId,
     cucsEquipmentRackUnitPsuStatsHistDn                              CucsManagedObjectDn,
     cucsEquipmentRackUnitPsuStatsHistRn                              SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistAmbientTemp                     SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistAmbientTempAvg                  SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistAmbientTempMax                  SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistAmbientTempMin                  SnmpAdminString,
+    cucsEquipmentRackUnitPsuStatsHistAmbientTemp                     INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistAmbientTempAvg                  INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistAmbientTempMax                  INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistAmbientTempMin                  INTEGER,
     cucsEquipmentRackUnitPsuStatsHistId                              Unsigned64,
-    cucsEquipmentRackUnitPsuStatsHistInputPower                      SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputPowerAvg                   SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputPowerMax                   SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputPowerMin                   SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputVoltage                    SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputVoltageAvg                 SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputVoltageMax                 SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistInputVoltageMin                 SnmpAdminString,
+    cucsEquipmentRackUnitPsuStatsHistInputPower                      INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputPowerAvg                   INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputPowerMax                   INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputPowerMin                   INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputVoltage                    INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputVoltageAvg                 INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputVoltageMax                 INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistInputVoltageMin                 INTEGER,
     cucsEquipmentRackUnitPsuStatsHistMostRecent                      TruthValue,
-    cucsEquipmentRackUnitPsuStatsHistOutputCurrent                   SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputCurrentAvg                SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputCurrentMax                SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputCurrentMin                SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputPower                     SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputPowerAvg                  SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputPowerMax                  SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputPowerMin                  SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputVoltage                   SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputVoltageAvg                SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputVoltageMax                SnmpAdminString,
-    cucsEquipmentRackUnitPsuStatsHistOutputVoltageMin                SnmpAdminString,
+    cucsEquipmentRackUnitPsuStatsHistOutputCurrent                   INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputCurrentAvg                INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputCurrentMax                INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputCurrentMin                INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputPower                     INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputPowerAvg                  INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputPowerMax                  INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputPowerMin                  INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputVoltage                   INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputVoltageAvg                INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputVoltageMax                INTEGER,
+    cucsEquipmentRackUnitPsuStatsHistOutputVoltageMin                INTEGER,
     cucsEquipmentRackUnitPsuStatsHistSuspect                         TruthValue,
     cucsEquipmentRackUnitPsuStatsHistThresholded                     CucsEquipmentRackUnitPsuStatsHistThresholded,
     cucsEquipmentRackUnitPsuStatsHistTimeCollected                   DateAndTime
@@ -25582,7 +25582,7 @@ cucsEquipmentRackUnitPsuStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 3 }
 
 cucsEquipmentRackUnitPsuStatsHistAmbientTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25591,7 +25591,7 @@ cucsEquipmentRackUnitPsuStatsHistAmbientTemp OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 4 }
 
 cucsEquipmentRackUnitPsuStatsHistAmbientTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25600,7 +25600,7 @@ cucsEquipmentRackUnitPsuStatsHistAmbientTempAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 5 }
 
 cucsEquipmentRackUnitPsuStatsHistAmbientTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25609,7 +25609,7 @@ cucsEquipmentRackUnitPsuStatsHistAmbientTempMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 6 }
 
 cucsEquipmentRackUnitPsuStatsHistAmbientTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25627,7 +25627,7 @@ cucsEquipmentRackUnitPsuStatsHistId OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 8 }
 
 cucsEquipmentRackUnitPsuStatsHistInputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25636,7 +25636,7 @@ cucsEquipmentRackUnitPsuStatsHistInputPower OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 9 }
 
 cucsEquipmentRackUnitPsuStatsHistInputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25645,7 +25645,7 @@ cucsEquipmentRackUnitPsuStatsHistInputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 10 }
 
 cucsEquipmentRackUnitPsuStatsHistInputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25654,7 +25654,7 @@ cucsEquipmentRackUnitPsuStatsHistInputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 11 }
 
 cucsEquipmentRackUnitPsuStatsHistInputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25663,7 +25663,7 @@ cucsEquipmentRackUnitPsuStatsHistInputPowerMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 12 }
 
 cucsEquipmentRackUnitPsuStatsHistInputVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25672,7 +25672,7 @@ cucsEquipmentRackUnitPsuStatsHistInputVoltage OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 13 }
 
 cucsEquipmentRackUnitPsuStatsHistInputVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25681,7 +25681,7 @@ cucsEquipmentRackUnitPsuStatsHistInputVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 14 }
 
 cucsEquipmentRackUnitPsuStatsHistInputVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25690,7 +25690,7 @@ cucsEquipmentRackUnitPsuStatsHistInputVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 15 }
 
 cucsEquipmentRackUnitPsuStatsHistInputVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25708,7 +25708,7 @@ cucsEquipmentRackUnitPsuStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 17 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputCurrent OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25717,7 +25717,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputCurrent OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 18 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputCurrentAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25726,7 +25726,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputCurrentAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 19 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputCurrentMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25735,7 +25735,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputCurrentMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 20 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputCurrentMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25744,7 +25744,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputCurrentMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 21 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputPower OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25753,7 +25753,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputPower OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 22 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputPowerAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25762,7 +25762,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputPowerAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 23 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputPowerMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25771,7 +25771,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputPowerMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 24 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputPowerMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25780,7 +25780,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputPowerMin OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 25 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputVoltage OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25789,7 +25789,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputVoltage OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 26 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputVoltageAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25798,7 +25798,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputVoltageAvg OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 27 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputVoltageMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -25807,7 +25807,7 @@ cucsEquipmentRackUnitPsuStatsHistOutputVoltageMax OBJECT-TYPE
     ::= { cucsEquipmentRackUnitPsuStatsHistEntry 28 }
 
 cucsEquipmentRackUnitPsuStatsHistOutputVoltageMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27361,31 +27361,31 @@ CucsEquipmentSiocTempStatsEntry ::= SEQUENCE {
     cucsEquipmentSiocTempStatsInstanceId                             CucsManagedObjectId,
     cucsEquipmentSiocTempStatsDn                                     CucsManagedObjectDn,
     cucsEquipmentSiocTempStatsRn                                     SnmpAdminString,
-    cucsEquipmentSiocTempStatsCmcTemp                                SnmpAdminString,
-    cucsEquipmentSiocTempStatsCmcTempAvg                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsCmcTempMax                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsCmcTempMin                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsFrontTemp                              SnmpAdminString,
-    cucsEquipmentSiocTempStatsFrontTempAvg                           SnmpAdminString,
-    cucsEquipmentSiocTempStatsFrontTempMax                           SnmpAdminString,
-    cucsEquipmentSiocTempStatsFrontTempMin                           SnmpAdminString,
+    cucsEquipmentSiocTempStatsCmcTemp                                INTEGER,
+    cucsEquipmentSiocTempStatsCmcTempAvg                             INTEGER,
+    cucsEquipmentSiocTempStatsCmcTempMax                             INTEGER,
+    cucsEquipmentSiocTempStatsCmcTempMin                             INTEGER,
+    cucsEquipmentSiocTempStatsFrontTemp                              INTEGER,
+    cucsEquipmentSiocTempStatsFrontTempAvg                           INTEGER,
+    cucsEquipmentSiocTempStatsFrontTempMax                           INTEGER,
+    cucsEquipmentSiocTempStatsFrontTempMin                           INTEGER,
     cucsEquipmentSiocTempStatsIntervals                              Gauge32,
-    cucsEquipmentSiocTempStatsMidTemp                                SnmpAdminString,
-    cucsEquipmentSiocTempStatsMidTempAvg                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsMidTempMax                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsMidTempMin                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsRearTemp                               SnmpAdminString,
-    cucsEquipmentSiocTempStatsRearTempAvg                            SnmpAdminString,
-    cucsEquipmentSiocTempStatsRearTempMax                            SnmpAdminString,
-    cucsEquipmentSiocTempStatsRearTempMin                            SnmpAdminString,
+    cucsEquipmentSiocTempStatsMidTemp                                INTEGER,
+    cucsEquipmentSiocTempStatsMidTempAvg                             INTEGER,
+    cucsEquipmentSiocTempStatsMidTempMax                             INTEGER,
+    cucsEquipmentSiocTempStatsMidTempMin                             INTEGER,
+    cucsEquipmentSiocTempStatsRearTemp                               INTEGER,
+    cucsEquipmentSiocTempStatsRearTempAvg                            INTEGER,
+    cucsEquipmentSiocTempStatsRearTempMax                            INTEGER,
+    cucsEquipmentSiocTempStatsRearTempMin                            INTEGER,
     cucsEquipmentSiocTempStatsSuspect                                TruthValue,
     cucsEquipmentSiocTempStatsThresholded                            CucsEquipmentSiocTempStatsThresholded,
     cucsEquipmentSiocTempStatsTimeCollected                          DateAndTime,
     cucsEquipmentSiocTempStatsUpdate                                 Gauge32,
-    cucsEquipmentSiocTempStatsVicTemp                                SnmpAdminString,
-    cucsEquipmentSiocTempStatsVicTempAvg                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsVicTempMax                             SnmpAdminString,
-    cucsEquipmentSiocTempStatsVicTempMin                             SnmpAdminString
+    cucsEquipmentSiocTempStatsVicTemp                                INTEGER,
+    cucsEquipmentSiocTempStatsVicTempAvg                             INTEGER,
+    cucsEquipmentSiocTempStatsVicTempMax                             INTEGER,
+    cucsEquipmentSiocTempStatsVicTempMin                             INTEGER
 }
 
 cucsEquipmentSiocTempStatsInstanceId OBJECT-TYPE
@@ -27413,7 +27413,7 @@ cucsEquipmentSiocTempStatsRn OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 3 }
 
 cucsEquipmentSiocTempStatsCmcTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27422,7 +27422,7 @@ cucsEquipmentSiocTempStatsCmcTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 4 }
 
 cucsEquipmentSiocTempStatsCmcTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27431,7 +27431,7 @@ cucsEquipmentSiocTempStatsCmcTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 5 }
 
 cucsEquipmentSiocTempStatsCmcTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27440,7 +27440,7 @@ cucsEquipmentSiocTempStatsCmcTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 6 }
 
 cucsEquipmentSiocTempStatsCmcTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27449,7 +27449,7 @@ cucsEquipmentSiocTempStatsCmcTempMin OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 7 }
 
 cucsEquipmentSiocTempStatsFrontTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27458,7 +27458,7 @@ cucsEquipmentSiocTempStatsFrontTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 8 }
 
 cucsEquipmentSiocTempStatsFrontTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27467,7 +27467,7 @@ cucsEquipmentSiocTempStatsFrontTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 9 }
 
 cucsEquipmentSiocTempStatsFrontTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27476,7 +27476,7 @@ cucsEquipmentSiocTempStatsFrontTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 10 }
 
 cucsEquipmentSiocTempStatsFrontTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27494,7 +27494,7 @@ cucsEquipmentSiocTempStatsIntervals OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 12 }
 
 cucsEquipmentSiocTempStatsMidTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27503,7 +27503,7 @@ cucsEquipmentSiocTempStatsMidTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 13 }
 
 cucsEquipmentSiocTempStatsMidTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27512,7 +27512,7 @@ cucsEquipmentSiocTempStatsMidTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 14 }
 
 cucsEquipmentSiocTempStatsMidTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27521,7 +27521,7 @@ cucsEquipmentSiocTempStatsMidTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 15 }
 
 cucsEquipmentSiocTempStatsMidTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27530,7 +27530,7 @@ cucsEquipmentSiocTempStatsMidTempMin OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 16 }
 
 cucsEquipmentSiocTempStatsRearTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27539,7 +27539,7 @@ cucsEquipmentSiocTempStatsRearTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 18 }
 
 cucsEquipmentSiocTempStatsRearTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27548,7 +27548,7 @@ cucsEquipmentSiocTempStatsRearTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 19 }
 
 cucsEquipmentSiocTempStatsRearTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27557,7 +27557,7 @@ cucsEquipmentSiocTempStatsRearTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 20 }
 
 cucsEquipmentSiocTempStatsRearTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27601,7 +27601,7 @@ cucsEquipmentSiocTempStatsUpdate OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 26 }
 
 cucsEquipmentSiocTempStatsVicTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27610,7 +27610,7 @@ cucsEquipmentSiocTempStatsVicTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 27 }
 
 cucsEquipmentSiocTempStatsVicTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27619,7 +27619,7 @@ cucsEquipmentSiocTempStatsVicTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 28 }
 
 cucsEquipmentSiocTempStatsVicTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27628,7 +27628,7 @@ cucsEquipmentSiocTempStatsVicTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsEntry 29 }
 
 cucsEquipmentSiocTempStatsVicTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27657,31 +27657,31 @@ CucsEquipmentSiocTempStatsHistEntry ::= SEQUENCE {
     cucsEquipmentSiocTempStatsHistInstanceId                         CucsManagedObjectId,
     cucsEquipmentSiocTempStatsHistDn                                 CucsManagedObjectDn,
     cucsEquipmentSiocTempStatsHistRn                                 SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistCmcTemp                            SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistCmcTempAvg                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistCmcTempMax                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistCmcTempMin                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistFrontTemp                          SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistFrontTempAvg                       SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistFrontTempMax                       SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistFrontTempMin                       SnmpAdminString,
+    cucsEquipmentSiocTempStatsHistCmcTemp                            INTEGER,
+    cucsEquipmentSiocTempStatsHistCmcTempAvg                         INTEGER,
+    cucsEquipmentSiocTempStatsHistCmcTempMax                         INTEGER,
+    cucsEquipmentSiocTempStatsHistCmcTempMin                         INTEGER,
+    cucsEquipmentSiocTempStatsHistFrontTemp                          INTEGER,
+    cucsEquipmentSiocTempStatsHistFrontTempAvg                       INTEGER,
+    cucsEquipmentSiocTempStatsHistFrontTempMax                       INTEGER,
+    cucsEquipmentSiocTempStatsHistFrontTempMin                       INTEGER,
     cucsEquipmentSiocTempStatsHistId                                 Unsigned64,
-    cucsEquipmentSiocTempStatsHistMidTemp                            SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistMidTempAvg                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistMidTempMax                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistMidTempMin                         SnmpAdminString,
+    cucsEquipmentSiocTempStatsHistMidTemp                            INTEGER,
+    cucsEquipmentSiocTempStatsHistMidTempAvg                         INTEGER,
+    cucsEquipmentSiocTempStatsHistMidTempMax                         INTEGER,
+    cucsEquipmentSiocTempStatsHistMidTempMin                         INTEGER,
     cucsEquipmentSiocTempStatsHistMostRecent                         TruthValue,
-    cucsEquipmentSiocTempStatsHistRearTemp                           SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistRearTempAvg                        SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistRearTempMax                        SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistRearTempMin                        SnmpAdminString,
+    cucsEquipmentSiocTempStatsHistRearTemp                           INTEGER,
+    cucsEquipmentSiocTempStatsHistRearTempAvg                        INTEGER,
+    cucsEquipmentSiocTempStatsHistRearTempMax                        INTEGER,
+    cucsEquipmentSiocTempStatsHistRearTempMin                        INTEGER,
     cucsEquipmentSiocTempStatsHistSuspect                            TruthValue,
     cucsEquipmentSiocTempStatsHistThresholded                        CucsEquipmentSiocTempStatsHistThresholded,
     cucsEquipmentSiocTempStatsHistTimeCollected                      DateAndTime,
-    cucsEquipmentSiocTempStatsHistVicTemp                            SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistVicTempAvg                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistVicTempMax                         SnmpAdminString,
-    cucsEquipmentSiocTempStatsHistVicTempMin                         SnmpAdminString
+    cucsEquipmentSiocTempStatsHistVicTemp                            INTEGER,
+    cucsEquipmentSiocTempStatsHistVicTempAvg                         INTEGER,
+    cucsEquipmentSiocTempStatsHistVicTempMax                         INTEGER,
+    cucsEquipmentSiocTempStatsHistVicTempMin                         INTEGER
 }
 
 cucsEquipmentSiocTempStatsHistInstanceId OBJECT-TYPE
@@ -27709,7 +27709,7 @@ cucsEquipmentSiocTempStatsHistRn OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 3 }
 
 cucsEquipmentSiocTempStatsHistCmcTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27718,7 +27718,7 @@ cucsEquipmentSiocTempStatsHistCmcTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 4 }
 
 cucsEquipmentSiocTempStatsHistCmcTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27727,7 +27727,7 @@ cucsEquipmentSiocTempStatsHistCmcTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 5 }
 
 cucsEquipmentSiocTempStatsHistCmcTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27736,7 +27736,7 @@ cucsEquipmentSiocTempStatsHistCmcTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 6 }
 
 cucsEquipmentSiocTempStatsHistCmcTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27745,7 +27745,7 @@ cucsEquipmentSiocTempStatsHistCmcTempMin OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 7 }
 
 cucsEquipmentSiocTempStatsHistFrontTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27754,7 +27754,7 @@ cucsEquipmentSiocTempStatsHistFrontTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 8 }
 
 cucsEquipmentSiocTempStatsHistFrontTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27763,7 +27763,7 @@ cucsEquipmentSiocTempStatsHistFrontTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 9 }
 
 cucsEquipmentSiocTempStatsHistFrontTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27772,7 +27772,7 @@ cucsEquipmentSiocTempStatsHistFrontTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 10 }
 
 cucsEquipmentSiocTempStatsHistFrontTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27789,7 +27789,7 @@ cucsEquipmentSiocTempStatsHistId OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 12 }
 
 cucsEquipmentSiocTempStatsHistMidTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27798,7 +27798,7 @@ cucsEquipmentSiocTempStatsHistMidTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 13 }
 
 cucsEquipmentSiocTempStatsHistMidTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27807,7 +27807,7 @@ cucsEquipmentSiocTempStatsHistMidTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 14 }
 
 cucsEquipmentSiocTempStatsHistMidTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27816,7 +27816,7 @@ cucsEquipmentSiocTempStatsHistMidTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 15 }
 
 cucsEquipmentSiocTempStatsHistMidTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27834,7 +27834,7 @@ cucsEquipmentSiocTempStatsHistMostRecent OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 17 }
 
 cucsEquipmentSiocTempStatsHistRearTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27843,7 +27843,7 @@ cucsEquipmentSiocTempStatsHistRearTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 18 }
 
 cucsEquipmentSiocTempStatsHistRearTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27852,7 +27852,7 @@ cucsEquipmentSiocTempStatsHistRearTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 19 }
 
 cucsEquipmentSiocTempStatsHistRearTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27861,7 +27861,7 @@ cucsEquipmentSiocTempStatsHistRearTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 20 }
 
 cucsEquipmentSiocTempStatsHistRearTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27897,7 +27897,7 @@ cucsEquipmentSiocTempStatsHistTimeCollected OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 24 }
 
 cucsEquipmentSiocTempStatsHistVicTemp OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27906,7 +27906,7 @@ cucsEquipmentSiocTempStatsHistVicTemp OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 25 }
 
 cucsEquipmentSiocTempStatsHistVicTempAvg OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27915,7 +27915,7 @@ cucsEquipmentSiocTempStatsHistVicTempAvg OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 26 }
 
 cucsEquipmentSiocTempStatsHistVicTempMax OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -27924,7 +27924,7 @@ cucsEquipmentSiocTempStatsHistVicTempMax OBJECT-TYPE
     ::= { cucsEquipmentSiocTempStatsHistEntry 27 }
 
 cucsEquipmentSiocTempStatsHistVicTempMin OBJECT-TYPE
-    SYNTAX       SnmpAdminString
+    SYNTAX       INTEGER
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -29962,7 +29962,7 @@ CucsEquipmentSwitchIOCardEntry ::= SEQUENCE {
     cucsEquipmentSwitchIOCardVoltage                                 CucsEquipmentSensorThresholdStatus,
     cucsEquipmentSwitchIOCardAdminPeerPowerState                     CucsEquipmentAdminPowerState,
     cucsEquipmentSwitchIOCardAdminState                              CucsEquipmentChassisAdminState,
-    cucsEquipmentSwitchIOCardOperEvacState                           CucsEquipmentEvacState,
+    cucsEquipmentSwitchIOCardOperEvacState                           CucsNetworkEvacState,
     cucsEquipmentSwitchIOCardPartNumber                              SnmpAdminString,
     cucsEquipmentSwitchIOCardVid                                     SnmpAdminString,
     cucsEquipmentSwitchIOCardAssetTag                                SnmpAdminString
@@ -30381,7 +30381,7 @@ cucsEquipmentSwitchIOCardAdminState OBJECT-TYPE
     ::= { cucsEquipmentSwitchIOCardEntry 48 }
 
 cucsEquipmentSwitchIOCardOperEvacState OBJECT-TYPE
-    SYNTAX       CucsEquipmentEvacState
+    SYNTAX       CucsNetworkEvacState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

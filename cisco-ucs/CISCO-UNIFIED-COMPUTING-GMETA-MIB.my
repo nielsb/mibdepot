@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- GMETA management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -63,7 +63,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsGmetaObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -102,11 +102,11 @@ CucsGmetaClassEntry ::= SEQUENCE {
     cucsGmetaClassInstanceId                                         CucsManagedObjectId,
     cucsGmetaClassDn                                                 CucsManagedObjectDn,
     cucsGmetaClassRn                                                 SnmpAdminString,
-    cucsGmetaClassAdminPropMask                                      Unsigned64,
+    cucsGmetaClassAdminPropMask                                      BITS,
     cucsGmetaClassEpClassId                                          CucsMoMoClassId,
     cucsGmetaClassId                                                 Gauge32,
     cucsGmetaClassName                                               SnmpAdminString,
-    cucsGmetaClassOperPropMask                                       Unsigned64
+    cucsGmetaClassOperPropMask                                       BITS
 }
 
 cucsGmetaClassInstanceId OBJECT-TYPE
@@ -134,7 +134,7 @@ cucsGmetaClassRn OBJECT-TYPE
     ::= { cucsGmetaClassEntry 3 }
 
 cucsGmetaClassAdminPropMask OBJECT-TYPE
-    SYNTAX       Unsigned64
+    SYNTAX       BITS
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -166,7 +166,7 @@ cucsGmetaClassName OBJECT-TYPE
     ::= { cucsGmetaClassEntry 7 }
 
 cucsGmetaClassOperPropMask OBJECT-TYPE
-    SYNTAX       Unsigned64
+    SYNTAX       BITS
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

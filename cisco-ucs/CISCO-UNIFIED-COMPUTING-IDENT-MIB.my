@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- IDENT management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -65,7 +65,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsIdentObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -120,8 +120,8 @@ CucsIdentIdentCtxEntry ::= SEQUENCE {
     cucsIdentIdentCtxSupplId2                                        SnmpAdminString,
     cucsIdentIdentCtxSupplId3                                        SnmpAdminString,
     cucsIdentIdentCtxSupplId4                                        SnmpAdminString,
-    cucsIdentIdentCtxGlobalAssignedCnt                               Gauge32,
-    cucsIdentIdentCtxGlobalDefinedCnt                                Gauge32,
+    cucsIdentIdentCtxGlobalAssignedCnt                               SnmpAdminString,
+    cucsIdentIdentCtxGlobalDefinedCnt                                SnmpAdminString,
     cucsIdentIdentCtxIsAssignedLocally                               TruthValue
 }
 
@@ -278,7 +278,7 @@ cucsIdentIdentCtxSupplId4 OBJECT-TYPE
     ::= { cucsIdentIdentCtxEntry 19 }
 
 cucsIdentIdentCtxGlobalAssignedCnt OBJECT-TYPE
-    SYNTAX       Gauge32
+    SYNTAX       SnmpAdminString
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -287,7 +287,7 @@ cucsIdentIdentCtxGlobalAssignedCnt OBJECT-TYPE
     ::= { cucsIdentIdentCtxEntry 20 }
 
 cucsIdentIdentCtxGlobalDefinedCnt OBJECT-TYPE
-    SYNTAX       Gauge32
+    SYNTAX       SnmpAdminString
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -734,7 +734,7 @@ CucsIdentIdentRequestFsmTaskEntry ::= SEQUENCE {
     cucsIdentIdentRequestFsmTaskDn                                   CucsManagedObjectDn,
     cucsIdentIdentRequestFsmTaskRn                                   SnmpAdminString,
     cucsIdentIdentRequestFsmTaskCompletion                           CucsFsmCompletion,
-    cucsIdentIdentRequestFsmTaskFlags                                CucsFsmFlags,
+    cucsIdentIdentRequestFsmTaskFlags                                CucsIdentIdentRequestFsmTaskFlags,
     cucsIdentIdentRequestFsmTaskItem                                 CucsIdentIdentRequestFsmTaskItem,
     cucsIdentIdentRequestFsmTaskSeqId                                Gauge32
 }
@@ -773,7 +773,7 @@ cucsIdentIdentRequestFsmTaskCompletion OBJECT-TYPE
     ::= { cucsIdentIdentRequestFsmTaskEntry 4 }
 
 cucsIdentIdentRequestFsmTaskFlags OBJECT-TYPE
-    SYNTAX       CucsFsmFlags
+    SYNTAX       CucsIdentIdentRequestFsmTaskFlags
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

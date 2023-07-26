@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- NETWORK management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -60,7 +60,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsNetworkObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -99,7 +99,7 @@ CucsNetworkElementEntry ::= SEQUENCE {
     cucsNetworkElementInstanceId                                     CucsManagedObjectId,
     cucsNetworkElementDn                                             CucsManagedObjectDn,
     cucsNetworkElementRn                                             SnmpAdminString,
-    cucsNetworkElementAdminInbandIfState                             CucsMgmtAdminState,
+    cucsNetworkElementAdminInbandIfState                             CucsNetworkNetworkAdminState,
     cucsNetworkElementFltAggr                                        Unsigned64,
     cucsNetworkElementId                                             CucsNetworkSwitchId,
     cucsNetworkElementInbandIfGw                                     InetAddressIPv4,
@@ -116,12 +116,12 @@ CucsNetworkElementEntry ::= SEQUENCE {
     cucsNetworkElementTotalMemory                                    Gauge32,
     cucsNetworkElementVendor                                         SnmpAdminString,
     cucsNetworkElementInventoryStatus                                CucsNetworkInventoryStatus,
-    cucsNetworkElementThermal                                        CucsEquipmentSensorThresholdStatus,
+    cucsNetworkElementThermal                                        CucsNetworkSensorThresholdStatus,
     cucsNetworkElementDiffMemory                                     Gauge32,
     cucsNetworkElementExpectedMemory                                 Gauge32,
-    cucsNetworkElementAdminEvacState                                 CucsEquipmentEvacState,
+    cucsNetworkElementAdminEvacState                                 CucsNetworkEvacState,
     cucsNetworkElementForceEvac                                      TruthValue,
-    cucsNetworkElementOperEvacState                                  CucsEquipmentEvacState,
+    cucsNetworkElementOperEvacState                                  CucsNetworkEvacState,
     cucsNetworkElementOobIfMac                                       MacAddress,
     cucsNetworkElementMinActiveFan                                   Gauge32,
     cucsNetworkElementShutdownFanRemoveal                            TruthValue
@@ -152,7 +152,7 @@ cucsNetworkElementRn OBJECT-TYPE
     ::= { cucsNetworkElementEntry 3 }
 
 cucsNetworkElementAdminInbandIfState OBJECT-TYPE
-    SYNTAX       CucsMgmtAdminState
+    SYNTAX       CucsNetworkNetworkAdminState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -290,7 +290,7 @@ cucsNetworkElementInventoryStatus OBJECT-TYPE
     ::= { cucsNetworkElementEntry 20 }
 
 cucsNetworkElementThermal OBJECT-TYPE
-    SYNTAX       CucsEquipmentSensorThresholdStatus
+    SYNTAX       CucsNetworkSensorThresholdStatus
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -314,7 +314,7 @@ cucsNetworkElementExpectedMemory OBJECT-TYPE
     ::= { cucsNetworkElementEntry 23 }
 
 cucsNetworkElementAdminEvacState OBJECT-TYPE
-    SYNTAX       CucsEquipmentEvacState
+    SYNTAX       CucsNetworkEvacState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -330,7 +330,7 @@ cucsNetworkElementForceEvac OBJECT-TYPE
     ::= { cucsNetworkElementEntry 25 }
 
 cucsNetworkElementOperEvacState OBJECT-TYPE
-    SYNTAX       CucsEquipmentEvacState
+    SYNTAX       CucsNetworkEvacState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

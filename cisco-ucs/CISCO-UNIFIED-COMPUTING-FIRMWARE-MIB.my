@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- FIRMWARE management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -120,7 +120,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsFirmwareObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -176,7 +176,7 @@ CucsFirmwareAckEntry ::= SEQUENCE {
     cucsFirmwareAckOperState                                         CucsTrigAckOperState,
     cucsFirmwareAckPolicyLevel                                       Gauge32,
     cucsFirmwareAckPolicyOwner                                       CucsPolicyPolicyOwner,
-    cucsFirmwareAckPrevOperState                                     CucsTrigAckPrevOperState,
+    cucsFirmwareAckPrevOperState                                     CucsTrigAckOperState,
     cucsFirmwareAckScheduler                                         SnmpAdminString,
     cucsFirmwareAckTriggerConfigState                                CucsTrigTrigState
 }
@@ -342,7 +342,7 @@ cucsFirmwareAckPolicyOwner OBJECT-TYPE
     ::= { cucsFirmwareAckEntry 20 }
 
 cucsFirmwareAckPrevOperState OBJECT-TYPE
-    SYNTAX       CucsTrigAckPrevOperState
+    SYNTAX       CucsTrigAckOperState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -6260,7 +6260,7 @@ CucsFirmwareRunningEntry ::= SEQUENCE {
     cucsFirmwareRunningInstanceId                                    CucsManagedObjectId,
     cucsFirmwareRunningDn                                            CucsManagedObjectDn,
     cucsFirmwareRunningRn                                            SnmpAdminString,
-    cucsFirmwareRunningDeployment                                    CucsFirmwareRunningDeployment,
+    cucsFirmwareRunningDeployment                                    CucsFirmwareDeployment,
     cucsFirmwareRunningType                                          CucsFirmwareType,
     cucsFirmwareRunningVersion                                       SnmpAdminString,
     cucsFirmwareRunningPackageVersion                                SnmpAdminString,
@@ -6292,7 +6292,7 @@ cucsFirmwareRunningRn OBJECT-TYPE
     ::= { cucsFirmwareRunningEntry 3 }
 
 cucsFirmwareRunningDeployment OBJECT-TYPE
-    SYNTAX       CucsFirmwareRunningDeployment
+    SYNTAX       CucsFirmwareDeployment
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

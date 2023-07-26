@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- MGMT management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -135,7 +135,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-TC-MIB;
 
 cucsMgmtObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -415,9 +415,9 @@ CucsMgmtBackupEntry ::= SEQUENCE {
     cucsMgmtBackupIntId                                              SnmpAdminString,
     cucsMgmtBackupJob                                                CucsMgmtBackupJob,
     cucsMgmtBackupName                                               SnmpAdminString,
-    cucsMgmtBackupPostAction                                         CucsMgmtBackupPostAction,
+    cucsMgmtBackupPostAction                                         CucsMgmtAbsBackupPostAction,
     cucsMgmtBackupPreservePooledValues                               TruthValue,
-    cucsMgmtBackupProto                                              CucsMgmtBackupProto,
+    cucsMgmtBackupProto                                              CucsMgmtAbsBackupProto,
     cucsMgmtBackupPwd                                                SnmpAdminString,
     cucsMgmtBackupRemoteFile                                         SnmpAdminString,
     cucsMgmtBackupType                                               CucsMgmtBackupType,
@@ -582,7 +582,7 @@ cucsMgmtBackupName OBJECT-TYPE
     ::= { cucsMgmtBackupEntry 19 }
 
 cucsMgmtBackupPostAction OBJECT-TYPE
-    SYNTAX       CucsMgmtBackupPostAction
+    SYNTAX       CucsMgmtAbsBackupPostAction
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -599,7 +599,7 @@ cucsMgmtBackupPreservePooledValues OBJECT-TYPE
     ::= { cucsMgmtBackupEntry 21 }
 
 cucsMgmtBackupProto OBJECT-TYPE
-    SYNTAX       CucsMgmtBackupProto
+    SYNTAX       CucsMgmtAbsBackupProto
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -4438,7 +4438,7 @@ CucsMgmtIfEntry ::= SEQUENCE {
     cucsMgmtIfDn                                                     CucsManagedObjectDn,
     cucsMgmtIfRn                                                     SnmpAdminString,
     cucsMgmtIfAccess                                                 CucsMgmtAccess,
-    cucsMgmtIfAdminState                                             CucsMgmtAdminState,
+    cucsMgmtIfAdminState                                             CucsMgmtMgmtAdminState,
     cucsMgmtIfChassisId                                              Gauge32,
     cucsMgmtIfDiscovery                                              CucsEtherSatelliteConnectionDisc,
     cucsMgmtIfEpDn                                                   SnmpAdminString,
@@ -4513,7 +4513,7 @@ cucsMgmtIfAccess OBJECT-TYPE
     ::= { cucsMgmtIfEntry 4 }
 
 cucsMgmtIfAdminState OBJECT-TYPE
-    SYNTAX       CucsMgmtAdminState
+    SYNTAX       CucsMgmtMgmtAdminState
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5172,8 +5172,8 @@ CucsMgmtImporterEntry ::= SEQUENCE {
     cucsMgmtImporterHostname                                         SnmpAdminString,
     cucsMgmtImporterIntId                                            SnmpAdminString,
     cucsMgmtImporterName                                             SnmpAdminString,
-    cucsMgmtImporterPostAction                                       CucsMgmtImporterPostAction,
-    cucsMgmtImporterProto                                            CucsMgmtImporterProto,
+    cucsMgmtImporterPostAction                                       CucsMgmtAbsImporterPostAction,
+    cucsMgmtImporterProto                                            CucsMgmtAbsImporterProto,
     cucsMgmtImporterPwd                                              SnmpAdminString,
     cucsMgmtImporterRemoteFile                                       SnmpAdminString,
     cucsMgmtImporterUser                                             SnmpAdminString,
@@ -5336,7 +5336,7 @@ cucsMgmtImporterName OBJECT-TYPE
     ::= { cucsMgmtImporterEntry 19 }
 
 cucsMgmtImporterPostAction OBJECT-TYPE
-    SYNTAX       CucsMgmtImporterPostAction
+    SYNTAX       CucsMgmtAbsImporterPostAction
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION
@@ -5344,7 +5344,7 @@ cucsMgmtImporterPostAction OBJECT-TYPE
     ::= { cucsMgmtImporterEntry 20 }
 
 cucsMgmtImporterProto OBJECT-TYPE
-    SYNTAX       CucsMgmtImporterProto
+    SYNTAX       CucsMgmtAbsImporterProto
     MAX-ACCESS   read-only
     STATUS       current
     DESCRIPTION

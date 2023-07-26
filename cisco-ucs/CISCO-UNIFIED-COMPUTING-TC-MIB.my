@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Unified Computing System
 -- TEXTUALCONVENTIONS management information model package
 -- 
--- Created October 2017 by Charles Bullis
+-- Created July 2018 by Charles Bullis
 -- 
--- Copyright (c) 2005-2017 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2018 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -49,7 +49,7 @@ IMPORTS
         FROM CISCO-UNIFIED-COMPUTING-MIB;
 
 cucsTextualConventionsObjects MODULE-IDENTITY
-    LAST-UPDATED    "201710060000Z"
+    LAST-UPDATED    "201807260000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
@@ -8851,7 +8851,6 @@ CucsComputePhysicalFsmTaskFlags ::= TEXTUAL-CONVENTION
         samDmeComputePhysicalFwUpgradeConfigBmcBiosUpdate(4),
         samDmeComputePhysicalAssociateFlexflashConfig(9),
         samDmeComputePhysicalAssociatePowerForceConfig(10),
-        samDmeComputePhysicalDisassociateMaskPnuos(11),
         samDmeComputePhysicalAssociateConfigAssetTag(12),
         samDmeComputePhysicalAssociateVmediaConfig(13),
         samDmeComputePhysicalAssociateGraphicsCardConfig(14),
@@ -8859,9 +8858,7 @@ CucsComputePhysicalFsmTaskFlags ::= TEXTUAL-CONVENTION
         samDmeComputePhysicalAssociateStorageSecurity(16),
         samDmeComputePhysicalCimcSecurityConfigCertPolicy(17),
         samDmeComputePhysicalCimcSecurityConfigSaveCert(18),
-        samDmeComputePhysicalAssociateSasExpBootFw(20),
         samDmeComputePhysicalOobStorageAdminConfigOobStorageConfig(22),
-        samDmeComputePhysicalAssociatePowercapConfig(23),
         samDmeComputePhysicalAssociateRemoteStorageConfig(24),
         samDmeComputePhysicalAssociateNicParamConfig(25),
         samDmeComputePhysicalAssociatePnuosConfig(26),
@@ -40071,11 +40068,9 @@ CucsMemoryErrorStatsThresholded ::= TEXTUAL-CONVENTION
         ""
     SYNTAX        BITS
     {
-        addressParityErrors(0),
         eccMultibitErrors(1),
         eccSinglebitErrors(2),
         mismatchErrors(3),
-        addressParityErrorsRunning(4),
         eccMultibitErrorsAvg(6),
         eccMultibitErrorsMax(7),
         eccMultibitErrorsMin(8),
@@ -46669,7 +46664,6 @@ CucsProcessorErrorStatsThresholded ::= TEXTUAL-CONVENTION
     SYNTAX        BITS
     {
         mirroringInterSockErrors(0),
-        mirroringIntraSockErrors(1),
         smiLinkCorrErrors(2),
         smiLinkUncorrErrors(3),
         sparingErrors(4),
@@ -49145,7 +49139,12 @@ CucsStorageLinkSpeed ::= TEXTUAL-CONVENTION
         down(5),
         hostPowerOff(6),
         unsupportedDevice(7),
-        disabled(8)
+        disabled(8),
+        n24Gbps(9),
+        n25GT(10),
+        n50GT(11),
+        n80GT(12),
+        n160GT(13),
     }
 
 CucsStorageLocalDiskDiscoveredPath ::= TEXTUAL-CONVENTION
