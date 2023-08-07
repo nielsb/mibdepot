@@ -1,13 +1,11 @@
-diff --git a/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my b/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
-index 7696968..44545a3 100644
---- cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
-+++ cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
-@@ -1174,7 +1174,7 @@ cldcClientMobileStPolicyType OBJECT-TYPE
-                         wpa2(3),
-                         wpa2vff(4),
-                         notavailable(5),
--                        wpa2_3(6),
-+                        wpa2-3(6),
-                         wpaOsen(7),
-                         wpaOsenWithinRsn(8)
-                     }
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-03-27 16:00:52.159398393 +0200
++++ new/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-07-26 12:03:35.931715213 +0200
+@@ -1189,7 +1189,7 @@
+                          wpa2(3),
+                          wpa2vff(4),
+                          notavailable(5),
+-                         wpa2_3(6),
++                         wpa2-3(6),
+                          wpaOsen(7),
+                          wpaOsenWithinRsn(8)
+                      }
