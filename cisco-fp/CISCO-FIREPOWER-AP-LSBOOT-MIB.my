@@ -4,7 +4,7 @@
 -- MIB representation of the Cisco Firepower
 -- LSBOOT management information model package
 -- 
--- Created April 2022 by Charles Bullis
+-- Created July 2022 by Charles Bullis
 -- 
 -- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
 -- 
@@ -75,7 +75,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-TC-MIB;
 
 cfprApLsbootObjects MODULE-IDENTITY
-    LAST-UPDATED    "202204180000Z"
+    LAST-UPDATED    "202207270000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
