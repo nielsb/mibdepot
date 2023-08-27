@@ -8,11 +8,11 @@ TEXTUAL-CONVENTION, DisplayString, MacAddress, DateAndTime FROM SNMPv2-TC
 OBJECT-GROUP, NOTIFICATION-GROUP FROM SNMPv2-CONF;
 
 mikrotikExperimentalModule MODULE-IDENTITY
-  LAST-UPDATED "202112210000Z"
+  LAST-UPDATED "202305010000Z"
   ORGANIZATION "MikroTik"
   CONTACT-INFO "support@mikrotik.com"
   DESCRIPTION ""
-  REVISION "202112210000Z"
+  REVISION "202305010000Z"
   DESCRIPTION ""
   ::= { mikrotik 1 }
 
@@ -2286,7 +2286,8 @@ MtxrInterfaceStatsEntry ::= SEQUENCE {
     mtxrInterfaceStatsTxFCSError Counter64,
     mtxrInterfaceStatsTxControl Counter64,
     mtxrInterfaceStatsTxFragment Counter64,
-    mtxrInterfaceStatsLinkDowns Counter32
+    mtxrInterfaceStatsLinkDowns Counter32,
+    mtxrInterfaceStatsTxRx1024ToMax Counter64
 }
 
 mtxrInterfaceStatsIndex OBJECT-TYPE
@@ -2765,6 +2766,13 @@ mtxrInterfaceStatsLinkDowns OBJECT-TYPE
     DESCRIPTION ""
     ::= { mtxrInterfaceStatsEntry 90 }
 
+mtxrInterfaceStatsTxRx1024ToMax OBJECT-TYPE
+    SYNTAX Counter64
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION ""
+    ::= { mtxrInterfaceStatsEntry 91 }
+
 mtxrInterfaceStatsGroup OBJECT-GROUP OBJECTS {
         mtxrInterfaceStatsName,
         mtxrInterfaceStatsDriverRxBytes,
@@ -2835,7 +2843,8 @@ mtxrInterfaceStatsGroup OBJECT-GROUP OBJECTS {
         mtxrInterfaceStatsTxFCSError,
         mtxrInterfaceStatsTxControl,
         mtxrInterfaceStatsTxFragment,
-        mtxrInterfaceStatsLinkDowns
+        mtxrInterfaceStatsLinkDowns,
+        mtxrInterfaceStatsTxRx1024ToMax
     }
     STATUS current
     DESCRIPTION ""
