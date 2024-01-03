@@ -1,5 +1,30 @@
---- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-03-27 16:00:52.159398393 +0200
-+++ new/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-07-26 12:03:35.931715213 +0200
+diff --git a/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my b/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my
+index dd84157..11125bc 100644
+--- a/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my
++++ b/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my
+@@ -2437,7 +2437,7 @@ bsnMobileStationPolicyType OBJECT-TYPE
+                         wpa2vff(3),
+                         notavailable(4),
+                         unknown(5),
+-                        wpa2_3(6),
++                        wpa2-3(6),
+                         wpaOsen(7),
+                         wpaOsenWithinRsn(8)
+                     }
+@@ -4696,8 +4696,8 @@ bsnAPIfType OBJECT-TYPE
+                         dot11b(1),
+                         dot11a(2),
+                         uwb(4),
+-                        dot11_6ghz(6),
+-                        dot11_xor_5_6ghz(7)
++                        dot11-6ghz(6),
++                        dot11-xor-5-6ghz(7)
+                     }
+     MAX-ACCESS      read-only
+     STATUS          current
+diff -ruw ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my new/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
+--- ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-07-26 12:23:38.133339987 +0200
++++ new/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-03-27 16:00:52.159398393 +0200
 @@ -1189,7 +1189,7 @@
                           wpa2(3),
                           wpa2vff(4),
@@ -9,3 +34,29 @@
                           wpaOsen(7),
                           wpaOsenWithinRsn(8)
                       }
+diff --git a/cisco-lwapp/CISCO-LWAPP-AP-MIB.my b/cisco-lwapp/CISCO-LWAPP-AP-MIB.my
+index 9f51e4a..b955226 100644
+--- a/cisco-lwapp/CISCO-LWAPP-AP-MIB.my
++++ b/cisco-lwapp/CISCO-LWAPP-AP-MIB.my
+@@ -4244,7 +4244,7 @@ cLApWlanStatsOnlineUserNum OBJECT-TYPE
+ -- *  AP slot WLAN Stats.
+ -- ********************************************************************
+ 
+-cLApWlanSlotStatsTable OBJECT-TYPE
++cLApSlotWlanStatsTable OBJECT-TYPE
+     SYNTAX          SEQUENCE OF CLApSlotWlanStatsEntry
+     MAX-ACCESS      not-accessible
+     STATUS          current
+diff --git a/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my b/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my
+index 976e031..6cedef4 100644
+--- a/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my
++++ b/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my
+@@ -2029,7 +2029,7 @@ cLReapGroupPMKAPPropagation OBJECT-TYPE
+          controller to only few APs and from those AP to other APs in
+          site tag.
+          A value of 'pmkDistDCDS' specifies PMK distribution between 
+-         APs in site tag.
++         APs in site tag."
+     
+     DEFVAL          { pmkDistCntrToAp } 
+     ::= { cLReapGroupConfigEntry 57 }

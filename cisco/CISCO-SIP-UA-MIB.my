@@ -4591,12 +4591,6 @@ ciscoSipComplianceRev6 MODULE-COMPLIANCE
                not provide any timer configuration and simply adhere to
                what is prescribed in the standard."
 
-         GROUP ciscoSipRetryConfigGroupRev5
-         DESCRIPTION
-              "This group is optional. A SIP user agent can elect to
-               not provide any timer configuration and simply adhere to
-               what is prescribed in the standard."
-
          GROUP ciscoSipRetryStatsGroupRev4
          DESCRIPTION
               "This group is optional.  If implemented, the

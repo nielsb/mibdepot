@@ -2437,7 +2437,7 @@ bsnMobileStationPolicyType OBJECT-TYPE
                         wpa2vff(3),
                         notavailable(4),
                         unknown(5),
-                        wpa2_3(6),
+                        wpa2-3(6),
                         wpaOsen(7),
                         wpaOsenWithinRsn(8)
                     }
@@ -4696,8 +4696,8 @@ bsnAPIfType OBJECT-TYPE
                         dot11b(1),
                         dot11a(2),
                         uwb(4),
-                        dot11_6ghz(6),
-                        dot11_xor_5_6ghz(7)
+                        dot11-6ghz(6),
+                        dot11-xor-5-6ghz(7)
                     }
     MAX-ACCESS      read-only
     STATUS          current

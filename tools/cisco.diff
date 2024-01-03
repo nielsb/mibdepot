@@ -149,3 +149,20 @@ index 28b1b63..ddc51f1 100644
     IMPORTS
          MODULE-IDENTITY,
 
+diff --git a/cisco/CISCO-SIP-UA-MIB.my b/cisco/CISCO-SIP-UA-MIB.my
+index ccb4095..4722790 100644
+--- a/cisco/CISCO-SIP-UA-MIB.my
++++ b/cisco/CISCO-SIP-UA-MIB.my
+@@ -4591,12 +4591,6 @@ ciscoSipComplianceRev6 MODULE-COMPLIANCE
+                not provide any timer configuration and simply adhere to
+                what is prescribed in the standard."
+ 
+-         GROUP ciscoSipRetryConfigGroupRev5
+-         DESCRIPTION
+-              "This group is optional. A SIP user agent can elect to
+-               not provide any timer configuration and simply adhere to
+-               what is prescribed in the standard."
+-
+          GROUP ciscoSipRetryStatsGroupRev4
+          DESCRIPTION
+               "This group is optional.  If implemented, the

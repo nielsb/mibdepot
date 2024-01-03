@@ -4244,7 +4244,7 @@ cLApWlanStatsOnlineUserNum OBJECT-TYPE
 -- *  AP slot WLAN Stats.
 -- ********************************************************************
 
-cLApWlanSlotStatsTable OBJECT-TYPE
+cLApSlotWlanStatsTable OBJECT-TYPE
     SYNTAX          SEQUENCE OF CLApSlotWlanStatsEntry
     MAX-ACCESS      not-accessible
     STATUS          current
