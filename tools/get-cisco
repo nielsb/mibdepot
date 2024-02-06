@@ -32,7 +32,7 @@ rm $NEWDIR/cisco/*CAPABILITY*
 mv $NEWDIR/cisco/CISCO-FIREPOWER* $NEWDIR/cisco-fp
 mv $NEWDIR/cisco/CISCO-LWAPP* $NEWDIR/cisco-lwapp
 mv $TMPDIR/non-cisco/AIRESPACE* $NEWDIR/cisco-lwapp
-mv $NEWDIR/cisco/CISCO-UNIFIED-COMPUTING* $NEWDIR/cisco-ucs
+mv $TMPDIR/cisco-mibs/ucs-mibs/CISCO-UNIFIED-COMPUTING* $NEWDIR/cisco-ucs
 for m in BASIS-GENERIC-MIB.my \
     BASIS-MIB.my \
     BASIS-ONLINE-DIAG-MIB.my \
