@@ -15,6 +15,7 @@ if [ ! -d $TMPGIT ]; then
 fi
 
 cd $TMPGIT
+git checkout -f
 git pull
 cd ../..
 

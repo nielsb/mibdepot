@@ -166,3 +166,23 @@ index ccb4095..4722790 100644
           GROUP ciscoSipRetryStatsGroupRev4
           DESCRIPTION
                "This group is optional.  If implemented, the
+--- new/cisco/CISCO-FC-FE-MIB.my	2024-02-06 16:38:47.526136866 +0100
++++ ../cisco/CISCO-FC-FE-MIB.my	2024-02-06 16:53:27.126212398 +0100
+@@ -7049,7 +7049,7 @@
+     DESCRIPTION
+         "Write access is not required."
+ 
+-    OBJECT          TransceiverPowerControl
++    OBJECT          fcIfTransceiverPowerControl
+     MIN-ACCESS      read-only
+     DESCRIPTION
+         "Write access is not required."
+@@ -7651,7 +7651,7 @@
+         				fcIfTransceiverPower,
+         				fcIfTransceiverPowerControl,
+         				fcIfSysTransceiverPowerControlCapability,
+-        				fcIfSysTransceiverPowerControl,
++        				fcIfSysTransceiverPowerControl
+                     }
+     STATUS          current
+     DESCRIPTION
