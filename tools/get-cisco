@@ -53,6 +53,7 @@ mv $TMPDIR/non-cisco/NAT-MIB.my $NEWDIR/cisco/XXX-NAT-MIB.my
 
 patch -d $NEWDIR/cisco <cisco.diff
 patch -d $NEWDIR/cisco-lwapp <cisco-lwapp.diff
+patch -d $NEWDIR/cisco-fp <cisco-fp.diff
 
 mkdir $NEWDIR/altiga
 mv $TMPDIR/non-cisco/ALTIGA* $TMPDIR/non-cisco/ADMIN-AUTH-STATS-MIB.my $NEWDIR/altiga

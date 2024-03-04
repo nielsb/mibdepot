@@ -1,0 +1,113 @@
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-AAA-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-AAA-MIB.my
+index ffeed30..85460f2 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-AAA-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-AAA-MIB.my
+@@ -65,7 +65,6 @@ IMPORTS
+     CfprApAaaLdapEpFsmStageName,
+     CfprApAaaLdapGroupRuleAuthorization,
+     CfprApAaaLdapGroupRuleTraversal,
+-    CfprApAaaLdapSsl,
+     CfprApAaaLdapVendor,
+     CfprApAaaNoRolePolicy,
+     CfprApAaaPwdPolicy,
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-COMM-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-COMM-MIB.my
+index 8e6df2f..cbb515e 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-COMM-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-COMM-MIB.my
+@@ -55,7 +55,6 @@ IMPORTS
+     CfprApCommNtpProviderAdminState,
+     CfprApCommProtocol,
+     CfprApCommShellProto,
+-    CfprApCommSnmpAdminState,
+     CfprApCommSnmpAuth,
+     CfprApCommSnmpConfigState,
+     CfprApCommSnmpNotificationType,
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-EQUIPMENT-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-EQUIPMENT-MIB.my
+index 3582c06..5eb2ddb 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-EQUIPMENT-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-EQUIPMENT-MIB.my
+@@ -135,15 +135,12 @@ IMPORTS
+     CfprApEquipmentPsuInputSrc,
+     CfprApEquipmentPsuInputStatsHistThresholded,
+     CfprApEquipmentPsuInputStatsThresholded,
+-    CfprApEquipmentPsuOperability,
+     CfprApEquipmentPsuOutputStatsHistThresholded,
+     CfprApEquipmentPsuOutputStatsThresholded,
+-    CfprApEquipmentPsuPower,
+     CfprApEquipmentPsuStateQualifier,
+     CfprApEquipmentPsuStatsHistThresholded,
+     CfprApEquipmentPsuStatsThresholded,
+     CfprApEquipmentPsuType,
+-    CfprApEquipmentPsuVoltage,
+     CfprApEquipmentPsuVoltageType,
+     CfprApEquipmentRackUnitFanStatsHistThresholded,
+     CfprApEquipmentRackUnitFanStatsThresholded,
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-FABRIC-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-FABRIC-MIB.my
+index feaa6ad..bf593a4 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-FABRIC-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-FABRIC-MIB.my
+@@ -111,12 +111,10 @@ IMPORTS
+     CfprApFabricEthEstcPortMode,
+     CfprApFabricEthEstcTransport,
+     CfprApFabricEthEstcType,
+-    CfprApFabricEthLanEpAdminSpeed,
+     CfprApFabricEthLanEpAdminState,
+     CfprApFabricEthLanEpSpeedCap,
+     CfprApFabricEthLanEpVlanStatus,
+     CfprApFabricEthLanPcAdminState,
+-    CfprApFabricEthLanPcEpAdminState,
+     CfprApFabricEthLanPcLacpDetach,
+     CfprApFabricEthLanPcSpeedCap,
+     CfprApFabricEthLanPcTransport,
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-PROCESSOR-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-PROCESSOR-MIB.my
+index 9eff50d..e5ff9a3 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-PROCESSOR-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-PROCESSOR-MIB.my
+@@ -58,8 +58,7 @@ IMPORTS
+     CfprApProcessorQualArch,
+     CfprApProcessorRuntimeHistThresholded,
+     CfprApProcessorRuntimeThresholded,
+-    CfprApProcessorUnitArch,
+-    CfprApProcessorUnitId
++    CfprApProcessorUnitArch
+         FROM CISCO-FIREPOWER-AP-TC-MIB;
+ 
+ cfprApProcessorObjects MODULE-IDENTITY
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-STORAGE-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-STORAGE-MIB.my
+index 3efab8a..ac1dc4f 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-STORAGE-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-STORAGE-MIB.my
+@@ -104,7 +104,6 @@ IMPORTS
+     CfprApStorageLinkSpeed,
+     CfprApStorageLocalDiskConfigFlexFlashRAIDReportingState,
+     CfprApStorageLocalDiskConfigFlexFlashState,
+-    CfprApStorageLocalDiskId,
+     CfprApStorageLocalDiskMode,
+     CfprApStorageLocalDiskPartitionType,
+     CfprApStorageLunType,
+@@ -117,13 +116,11 @@ IMPORTS
+     CfprApStorageProtocol,
+     CfprApStorageRaidBatteryOperabilityQualifier,
+     CfprApStorageReadType,
+-    CfprApStorageSyncAction,
+     CfprApStorageSystemFsmCurrentFsm,
+     CfprApStorageSystemFsmStageName,
+     CfprApStorageSystemFsmTaskItem,
+     CfprApStorageTechnology,
+     CfprApStorageVDriveState,
+-    CfprApStorageVirtualDriveId,
+     CfprApStorageVsanRefSwitchId,
+     CfprApVnicConfigIssues
+         FROM CISCO-FIREPOWER-AP-TC-MIB;
+diff --git a/cisco-fp/CISCO-FIREPOWER-AP-SW-MIB.my b/cisco-fp/CISCO-FIREPOWER-AP-SW-MIB.my
+index 7f592f5..3078375 100644
+--- a/cisco-fp/CISCO-FIREPOWER-AP-SW-MIB.my
++++ b/cisco-fp/CISCO-FIREPOWER-AP-SW-MIB.my
+@@ -192,7 +192,6 @@ IMPORTS
+     CfprApSwSspEthLanMonTransport,
+     CfprApSwSspEthMonFsmCurrentFsm,
+     CfprApSwSspEthMonFsmStageName,
+-    CfprApSwSspEthMonFsmTaskFlags,
+     CfprApSwSspEthMonFsmTaskItem,
+     CfprApSwSspEthMonSrcPhyEpFsmCurrentFsm,
+     CfprApSwSspEthMonSrcPhyEpFsmStageName,
