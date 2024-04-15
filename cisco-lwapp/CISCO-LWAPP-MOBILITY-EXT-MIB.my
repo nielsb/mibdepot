@@ -36,7 +36,7 @@ IMPORTS
         FROM Q-BRIDGE-MIB
     cLWlanIndex,
     cLWlanProfileName
-  	    FROM CISCO-LWAPP-WLAN-MIB
+        FROM CISCO-LWAPP-WLAN-MIB
     Dscp
         FROM CISCO-QOS-PIB-MIB
     cLWlanWlanPolicyName
@@ -324,8 +324,8 @@ ciscoLwappMobilityExtMIB MODULE-IDENTITY
            Weight Access Point Protocol."
     REVISION        "202011040000Z"
     DESCRIPTION
-        " Added cLMobilityExtWlanPolicyName
-		        cLGuestWlanAllAnchorsDown
+        " Added cLGuestWlanAllAnchorsDown
+                cLMobilityExtWlanPolicyName
                 cLGuestWlanOneAnchorOnGuestLanUp notification"
     REVISION        "201906200000Z"
     DESCRIPTION
@@ -741,8 +741,8 @@ cLMobilityExtSecureCipher OBJECT-TYPE
                      to use default ciphers for mobility  tunnel.
         aes256sha1(2) - Implies that controllers will use
                         AES256_SHA cipher for mobility tunnel.
-        aes256sha2(3) - Implies that controllers will use 
-                        AES256_SHA256 cipher for mobility tunnel." 
+        aes256sha2(3) - Implies that controllers will use
+                        AES256_SHA256 cipher for mobility tunnel."
     ::= { ciscoLwappMobilityExtMCMAGlobalObjects 11 }
 
 cLMobilityExtEncryptionStatus OBJECT-TYPE
