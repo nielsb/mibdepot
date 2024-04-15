@@ -1,30 +1,800 @@
-diff --git a/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my b/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my
-index dd84157..11125bc 100644
---- a/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my
-+++ b/cisco-lwapp/AIRESPACE-WIRELESS-MIB.my
-@@ -2437,7 +2437,7 @@ bsnMobileStationPolicyType OBJECT-TYPE
-                         wpa2vff(3),
-                         notavailable(4),
-                         unknown(5),
--                        wpa2_3(6),
-+                        wpa2-3(6),
-                         wpaOsen(7),
-                         wpaOsenWithinRsn(8)
+diff -ru tmp/cisco-mibs/v2/AIRESPACE-SWITCHING-MIB.my ../cisco-lwapp/AIRESPACE-SWITCHING-MIB.my
+--- tmp/cisco-mibs/v2/AIRESPACE-SWITCHING-MIB.my	2023-03-27 16:00:51.965400601 +0200
++++ ../cisco-lwapp/AIRESPACE-SWITCHING-MIB.my	2023-03-27 16:25:33.304538288 +0200
+@@ -32,7 +32,8 @@
+     RowStatus, MacAddress, TruthValue   FROM SNMPv2-TC
+     airespace                           FROM AIRESPACE-REF-MIB
+     dot1qVlanIndex, dot1qFdbId          FROM Q-BRIDGE-MIB
+-    IANAifType                          FROM IANAifType-MIB;
++    IANAifType                          FROM IANAifType-MIB
++    InetAddressType, InetAddress        FROM INET-ADDRESS-MIB;
+ 
+ --********************************************************************
+ --*  MODULE IDENTITY
+@@ -726,6 +727,13 @@
+     productGroup4        OBJECT IDENTIFIER ::= { agentProductGroup 4 }
+ 
+ --********************************************************************
++-- productGroup5. This includes NM-AIR-WLC6-K9
++--********************************************************************
++
++    productGroup5        OBJECT IDENTIFIER ::= { agentProductGroup 5 }
++
++--********************************************************************
++
+    agentCLIConfigGroup    OBJECT IDENTIFIER ::= { agentConfigGroup 1 }
+ 
+ --********************************************************************
+@@ -1259,7 +1267,7 @@
+          STATUS      current
+          DESCRIPTION
+                      "Switch's ethernet multicast support.
+-                      disable- multicast is disabled
++                      disable- Not applicable (from 7.0 release onwards) 
+                       multicast - Multicast is enabled.
+                       unicast- Controller will convert multicast to
+                                unicast packet."
+@@ -1511,7 +1519,8 @@
+            agentInterfaceAclName                 DisplayString,
+            agentInterfaceAPManagementFeature     INTEGER,
+            agentInterfaceRowStatus               RowStatus,
+-           agentInterfaceVlanQuarantine          TruthValue
++           agentInterfaceVlanQuarantine          TruthValue,
++           agentInterfaceUrlAclName              DisplayString
+        }
+ 
+     agentInterfaceName OBJECT-TYPE
+@@ -1677,7 +1686,7 @@
+         ::= { agentInterfaceConfigEntry 15 }
+ 
+     agentInterfaceBackupPortNo OBJECT-TYPE
+-        SYNTAX Integer32(0..4)
++        SYNTAX Integer32(0..25)
+         MAX-ACCESS read-create
+         STATUS current
+         DESCRIPTION
+@@ -1710,6 +1719,19 @@
+         DEFVAL  { false }
+         ::= { agentInterfaceConfigEntry 17 }
+ 
++    agentInterfaceUrlAclName OBJECT-TYPE
++         SYNTAX      DisplayString (SIZE(0..32))
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "Name of the URL Access Control List applied to the
++                      interface. This attribute is applicable only to
++                      the management interface and other dynamic
++                      interfaces. If it is required to remove the ACL
++                      name for an interface, it should be set to an
++                      empty string."
++         ::= { agentInterfaceConfigEntry 18 }
++
+     agentInterfaceRowStatus OBJECT-TYPE
+          SYNTAX    RowStatus
+          MAX-ACCESS  read-create
+@@ -1725,7 +1747,7 @@
+    agentNtpConfigGroup   OBJECT IDENTIFIER ::= { agentConfigGroup 14 }
+ 
+     agentNtpPollingInterval OBJECT-TYPE
+-         SYNTAX      Integer32(3600..604800)
++         SYNTAX      Integer32(60..604800)
+          MAX-ACCESS  read-write
+          STATUS      current
+          DESCRIPTION
+@@ -1786,6 +1808,59 @@
+                      "NTP server entry row status."
+          ::= { agentNtpServerEntry 20 }
+ 
++--********************************************************************
++-- agentNtpDnsServerTable - Configuration of Network Time Protocol Server
++--                          that supports DNS strings.
++--********************************************************************
++
++    agentNtpDnsServerTable OBJECT-TYPE
++         SYNTAX      SEQUENCE OF AgentNtpDnsServerEntry
++         MAX-ACCESS  not-accessible
++         STATUS      current
++         DESCRIPTION
++                     "A summary table for switch's lag config entries"
++         ::= { agentNtpConfigGroup 3 }
++
++    agentNtpDnsServerEntry OBJECT-TYPE
++         SYNTAX      AgentNtpDnsServerEntry
++         MAX-ACCESS  not-accessible
++         STATUS      current
++         DESCRIPTION
++                     "Switch's NTP Server entry. Upto 4 entries may be
++                      added."
++         INDEX       { agentNtpDnsServerIndex }
++         ::= { agentNtpDnsServerTable 1 }
++
++    AgentNtpDnsServerEntry ::= SEQUENCE {
++             agentNtpDnsServerIndex      Integer32,
++             agentNtpDnsServerAddress    DisplayString,
++             agentNtpDnsServerRowStatus  RowStatus
++             }
++
++    agentNtpDnsServerIndex OBJECT-TYPE
++         SYNTAX      Integer32(1..3)
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "NTP Server priority index."
++         ::= { agentNtpDnsServerEntry 1 }
++
++
++    agentNtpDnsServerAddress OBJECT-TYPE
++         SYNTAX      DisplayString(SIZE(1..129))
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "IP Address or DNS name of the NTP Server"
++         ::= { agentNtpDnsServerEntry 2 }
++
++    agentNtpDnsServerRowStatus OBJECT-TYPE
++         SYNTAX      RowStatus
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "NTP server entry row status."
++         ::= { agentNtpDnsServerEntry 20 }
+ 
+ --********************************************************************
+ -- agentDhcpConfigGroup - Configuration of Switch DHCP Server and
+@@ -1830,6 +1905,9 @@
+              agentDhcpScopeNetbiosNameServerAddress2    IpAddress,
+              agentDhcpScopeNetbiosNameServerAddress3    IpAddress,
+              agentDhcpScopeState                        INTEGER,
++             agentDhcpScopeVlan                         Integer32,
++             agentDhcpScopeVlanNative                   INTEGER,
++             agentDhcpScopeCentralNatEnable             INTEGER,
+              agentDhcpScopeRowStatus                    RowStatus
+              }
+ 
+@@ -1989,6 +2067,36 @@
+                       "DHCP Scope's State."
+          ::= { agentDhcpScopeEntry 18 }
+ 
++    agentDhcpScopeVlan OBJECT-TYPE
++         SYNTAX      Integer32(0..4096)
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "DHCP Scope Vlan Id."
++         ::= { agentDhcpScopeEntry 19 }
++
++    agentDhcpScopeVlanNative OBJECT-TYPE
++         SYNTAX  INTEGER {
++                     disable(0),
++                     enable(1)
++                 }
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                      "DHCP Scope's Native Vlan enable/disable."
++         ::= { agentDhcpScopeEntry 20 }
++
++    agentDhcpScopeCentralNatEnable OBJECT-TYPE
++         SYNTAX  INTEGER {
++                     disable(0),
++                     enable(1)
++                 }
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                      "DHCP Scope's Central NAT Status enable/disable."
++         ::= { agentDhcpScopeEntry 21 }
++    
+     agentDhcpScopeRowStatus OBJECT-TYPE
+          SYNTAX      RowStatus
+          MAX-ACCESS  read-create
+@@ -1997,6 +2105,80 @@
+                      "Dhcp Scope entry row status."
+          ::= { agentDhcpScopeEntry 30 }
+ 
++--********************************************************************
++-- agentDhcpLeaseGroup - Switch DHCP Server Lease info 
++--********************************************************************
++    agentDhcpLeaseGroup   OBJECT IDENTIFIER ::= { agentConfigGroup 16 }
++
++    agentDhcpLeaseTable OBJECT-TYPE
++         SYNTAX      SEQUENCE OF AgentDhcpLeaseEntry
++         MAX-ACCESS  not-accessible
++         STATUS      current
++         DESCRIPTION
++                     "A table listing the Lease entry of the
++                      switch's DHCP Server."
++         ::= { agentDhcpLeaseGroup 1 }
++
++    agentDhcpLeaseEntry OBJECT-TYPE
++         SYNTAX      AgentDhcpLeaseEntry
++         MAX-ACCESS  not-accessible
++         STATUS      current
++         DESCRIPTION
++                     "Switch's DHCP Server Lease entry."
++         INDEX       { agentDhcpLeaseMacAddress }
++         ::= { agentDhcpLeaseTable 1 }
++
++    AgentDhcpLeaseEntry ::= SEQUENCE {
++             agentDhcpLeaseMacAddress                   MacAddress,
++             agentDhcpLeaseIPAddress                    IpAddress,
++             agentDhcpLeaseExpiry                       Integer32,
++             agentDhcpLeaseHostname                     DisplayString
++             }
++
++    agentDhcpLeaseMacAddress OBJECT-TYPE
++         SYNTAX      MacAddress
++         MAX-ACCESS  read-only
++         STATUS      current
++         DESCRIPTION
++                     "DHCP Client's mac address"
++         ::= { agentDhcpLeaseEntry 1 }
++
++    agentDhcpLeaseIPAddress OBJECT-TYPE
++         SYNTAX      IpAddress
++         MAX-ACCESS  read-only
++         STATUS      current
++         DESCRIPTION
++                     "DHCP Client's IP Address ."
++         ::= { agentDhcpLeaseEntry 2 }
++
++    agentDhcpLeaseExpiry OBJECT-TYPE
++         SYNTAX      Integer32(0..8640000)
++         MAX-ACCESS  read-only
++         STATUS      current
++         DESCRIPTION
++                     "DHCP Client's Pending Lease time in seconds."
++         ::= { agentDhcpLeaseEntry 3 }
++
++
++    agentDhcpLeaseHostname OBJECT-TYPE
++         SYNTAX      DisplayString (SIZE (1..255))
++         MAX-ACCESS  read-only
++         STATUS      current
++         DESCRIPTION
++                     "DHCP Client's Hostname."
++         ::= { agentDhcpLeaseEntry 4 }
++
++--********************************************************************
++ -- agentDhcpClearLeaseGroup - Switch DHCP Server Lease info
++ --********************************************************************
++ agentDhcpClearLeaseGroup   OBJECT IDENTIFIER ::= { agentConfigGroup 17 }
++     agentDhcpClearLeaseIPAddress OBJECT-TYPE
++          SYNTAX      IpAddress
++          MAX-ACCESS  read-create
++          STATUS      current
++          DESCRIPTION
++                      "DHCP Client IP Address that will be cleared"
++          ::= { agentDhcpClearLeaseGroup 1 }
+ 
+ --********************************************************************
+ -- agentServicePortConfigGroup
+@@ -2128,6 +2310,9 @@
+            agentSnmpCommunityIPMask       IpAddress,
+            agentSnmpCommunityAccessMode   INTEGER,
+            agentSnmpCommunityEnabled      INTEGER,
++           agentSnmpCommunityInetAddressType   InetAddressType,
++           agentSnmpCommunityInetAddress       InetAddress,
++           agentSnmpCommunityPrefixLength      Unsigned32,
+            agentSnmpCommunityStatus       RowStatus
+        }
+ 
+@@ -2213,6 +2398,39 @@
+     DEFVAL { no }
+          ::= { agentSnmpCommunityConfigEntry 5 }
+ 
++    agentSnmpCommunityInetAddressType OBJECT-TYPE
++         SYNTAX      InetAddressType
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                   "This object represents the type of the primary 
++               controller's address made available through
++               agentSnmpCommunityInetAddress."
++    DEFVAL { ipv6 }
++         ::= { agentSnmpCommunityConfigEntry 6 }
++
++    agentSnmpCommunityInetAddress OBJECT-TYPE
++         SYNTAX      InetAddress
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                   "This object represents the address from which this
++                     device will accept SNMP packets with the
++                     associated community. "
++         ::= { agentSnmpCommunityConfigEntry 7 }
++
++    agentSnmpCommunityPrefixLength OBJECT-TYPE
++         SYNTAX      Unsigned32 (0..128)
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                   "This object denotes the prefix length for
++                Inet address which is a mask
++                     to be logical-ANDed with the requesting entity's
++                     IPv6 address before comparison with the Client IP
++                     Address.."
++         ::= { agentSnmpCommunityConfigEntry 8 }
++
+     agentSnmpCommunityStatus OBJECT-TYPE
+          SYNTAX    RowStatus
+          MAX-ACCESS  read-create
+@@ -2277,6 +2495,8 @@
+            agentSnmpTrapReceiverName       OCTET STRING,
+            agentSnmpTrapReceiverIPAddress  IpAddress,
+            agentSnmpTrapReceiverEnabled    INTEGER,
++           agentSnmpTrapReceiverInetAddressType  InetAddressType,
++           agentSnmpTrapReceiverInetAddress      InetAddress,
+            agentSnmpTrapReceiverStatus     RowStatus
+        }
+ 
+@@ -2314,6 +2534,27 @@
+          DEFVAL{ no }
+          ::= { agentSnmpTrapReceiverConfigEntry 3 }
+ 
++    agentSnmpTrapReceiverInetAddressType OBJECT-TYPE
++         SYNTAX      InetAddressType
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "The flag to enable the trap receiver. If
++                      disabled, no traps are sent to this receiver's
++                      IP Address. "
++         DEFVAL{ ipv6 }
++         ::= { agentSnmpTrapReceiverConfigEntry 4 }
++
++    agentSnmpTrapReceiverInetAddress OBJECT-TYPE
++         SYNTAX      InetAddress
++         MAX-ACCESS  read-create
++         STATUS      current
++         DESCRIPTION
++                     "The flag to enable the trap receiver. If
++                      disabled, no traps are sent to this receiver's
++                      IP Address. "
++         ::= { agentSnmpTrapReceiverConfigEntry 5 }
++
+     agentSnmpTrapReceiverStatus OBJECT-TYPE
+          SYNTAX   RowStatus
+          MAX-ACCESS  read-create
+@@ -2496,7 +2737,8 @@
+     agentSnmpV3UserEncryptionType OBJECT-TYPE
+          SYNTAX      INTEGER {
+                      none(1),
+-                     des(2)
++                     des(2),
++                     aes128(3)
+                   }
+          MAX-ACCESS  read-create
+          STATUS      current
+@@ -2506,7 +2748,8 @@
+                      none(1).  Setting this object will set the
+                      encryption password to an empty string.
+                      none(1) - no encryption used
+-                     des(1)  - DES encryption used"
++                     des(2)  - DES encryption used
++                     aes128(3)- AES 12bit encryption used."
+          ::= { agentSnmpV3UserConfigEntry 4 }
+ 
+     agentSnmpV3UserAuthenticationPassword OBJECT-TYPE
+@@ -2669,42 +2912,48 @@
+                      zmodem(4)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer upload mode configures the mode to use
+                       when uploading from the switch. The mode is
+                       either X/Y/ZMODEM or TFTP. X/Y/ZMODEM is valid
+                       only when the file transfer is initiated by the
+-                      serial EIA 232 port."
++                      serial EIA 232 port.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferUploadGroup 1 }
+ 
+     agentTransferUploadServerIP OBJECT-TYPE
+          SYNTAX      IpAddress
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer upload tftpserverip configures the IP
+                       address of the server where the file will be
+                       uploaded. It is valid only when the Transfer
+                       Mode is TFTP. The address is 4 integer bytes
+-                      ranging from 0 to 255."
++                      ranging from 0 to 255.
++                      
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferUploadGroup 2 }
+ 
+     agentTransferUploadPath OBJECT-TYPE
+          SYNTAX      DisplayString (SIZE(0..63))
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer upload tftppath configures the
+                      directory
+                       path where the file is to be uploaded to. The
+-                      switch remembers the last file path used."
++                      switch remembers the last file path used.
++                      
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferUploadGroup 3 }
+ 
+     agentTransferUploadFilename OBJECT-TYPE
+          SYNTAX      DisplayString (SIZE(0..63))
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer upload tftpfilename configures the
+                       file name for the file being uploaded from the
+@@ -2719,7 +2968,9 @@
+                       e1r1v1.opr.
+                       Note: File Name, File Path, and TFTP Server IP
+                       Address are applicable only if the Transfer Mode
+-                      is TFTP."
++                      is TFTP.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferUploadGroup 4 }
+ 
+     agentTransferUploadDataType OBJECT-TYPE
+@@ -2733,7 +2984,7 @@
+                       unknown(99)
                      }
-@@ -4696,8 +4696,8 @@ bsnAPIfType OBJECT-TYPE
-                         dot11b(1),
-                         dot11a(2),
-                         uwb(4),
--                        dot11_6ghz(6),
--                        dot11_xor_5_6ghz(7)
-+                        dot11-6ghz(6),
-+                        dot11-xor-5-6ghz(7)
-                     }
-     MAX-ACCESS      read-only
-     STATUS          current
-diff -ruw ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my new/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
---- ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-07-26 12:23:38.133339987 +0200
-+++ new/cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-03-27 16:00:52.159398393 +0200
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer upload datatype configures the type of
+                       file to upload from the switch.
+@@ -2743,7 +2994,8 @@
+                         -   System trace
+                         -   Trap log
+                         -   Crash File
+-                     "
++                     
++                      Deprecated by clsUploadFileType"
+          ::= { agentTransferUploadGroup 5 }
+ 
+ 
+@@ -2753,12 +3005,14 @@
+                      disable(2)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer upload start will start an upload
+                       transfer. The agentTransferUploadMode object
+                       must not be set to xmodem(2), ymodem(3), or
+-                      zmodem(4) to initiate a transfer via SNMP."
++                      zmodem(4) to initiate a transfer via SNMP.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferUploadGroup 6 }
+ 
+     agentTransferUploadStatus OBJECT-TYPE
+@@ -2779,10 +3033,12 @@
+                      unknown(99)
+                   }
+          MAX-ACCESS  read-only
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Indicates the current status of an upload
+-                      transfer."
++                      transfer.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferUploadGroup 7 }
+ 
+     agentTransferConfigurationFileEncryption OBJECT-TYPE
+@@ -2791,23 +3047,27 @@
+                      enable(1)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "The configuration file can be encrypted before
+                       tftp upload from the switch and then decrypted
+                       before downloading to the switch when this
+-                      option is enabled."
++                      option is enabled.
++
++                      Deprecated by clsTransferConfigFileEncryption"
+          ::= { agentTransferConfigGroup 3 }
+ 
+     agentTransferConfigurationFileEncryptionKey OBJECT-TYPE
+          SYNTAX      DisplayString(SIZE(0..16))
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "This is the key to be used when encrypting the
+                       configuration file while upload from the switch
+                       or while decrypting the file after download to
+-                      the switch."
++                      the switch.
++
++                      Deprecated by clsTransferConfigFileEncryptionKey"
+          ::= { agentTransferConfigGroup 4 }
+ 
+ 
+@@ -2827,41 +3087,47 @@
+                      zmodem(4)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer download mode configures the mode to
+                      use when downloading to the switch. The mode is
+                      either X/Y/ZMODEM or TFTP. X/Y/ZMODEM is valid
+                      only when the file transfer is initiated by the
+-                     serial EIA 232 port."
++                     serial EIA 232 port.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferDownloadGroup 1 }
+ 
+     agentTransferDownloadServerIP OBJECT-TYPE
+          SYNTAX      IpAddress
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer download tftpserverip configures the IP
+                       address of the server where the file is located.
+                       It is valid only when the Transfer Mode is TFTP.
+                       The address is 4 integer bytes ranging from 0 to
+-                      255."
++                      255.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferDownloadGroup 2 }
+ 
+     agentTransferDownloadPath OBJECT-TYPE
+          SYNTAX      DisplayString (SIZE(0..63))
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer download tftppath configures the
+                       directory path where the file is located. The
+-                      switch remembers the last file path used."
++                      switch remembers the last file path used.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferDownloadGroup 3 }
+ 
+     agentTransferDownloadFilename OBJECT-TYPE
+          SYNTAX      DisplayString (SIZE(0..63))
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer download tftpfilename configures the
+                       file name for the file being downloaded to the
+@@ -2875,8 +3141,9 @@
+                       would be File Path set to c:\tftp\code\
+                       and File Name set to e1r1v1.opr. Note: File
+                       Name, File Path, and TFTP Server IP Address are
+-                      applicable only if the Transfer Mode is TFTP."
++                      applicable only if the Transfer Mode is TFTP.
+ 
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferDownloadGroup 4 }
+ 
+     agentTransferDownloadDataType OBJECT-TYPE
+@@ -2890,7 +3157,7 @@
+                      unknown(99)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer download datatype configures the type
+                       of file to downloaded to the switch.
+@@ -2899,7 +3166,11 @@
+                         -   Configuration
+                         -   Certificates
+                         -   Signatures
+-                        -   customWebauth- custom webauth tar ball"
++                        -   customWebauth- custom webauth tar ball
++                        -   Icons
++
++
++                      Deprecated by clsDownloadFileType"
+          ::= { agentTransferDownloadGroup 5 }
+ 
+ 
+@@ -2909,12 +3180,14 @@
+                      disable(2)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Transfer download start will start an download
+                       transfer. The agentTransferDownloadMode object
+                       must not be set to xmodem(2), ymodem(3), or
+-                      zmodem(4) to initiate a transfer via SNMP."
++                      zmodem(4) to initiate a transfer via SNMP.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferDownloadGroup 6 }
+ 
+     agentTransferDownloadStatus OBJECT-TYPE
+@@ -2937,28 +3210,34 @@
+                      unknown(99)
+                   }
+          MAX-ACCESS  read-only
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Indicates the current status of an download
+-                      transfer."
++                      transfer.
++
++                      Deprecated by clsTransferConfigTable"
+          ::= { agentTransferDownloadGroup 7 }
+ 
+     agentTransferDownloadTftpMaxRetries OBJECT-TYPE
+          SYNTAX      Unsigned32(1..254)
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "Maximum number of retries to be allowed for a
+-                      TFTP message packet."
++                      TFTP message packet.
++
++                      Deprecated by clsTransferConfigTable"
+          DEFVAL{ 10 }
+           ::= { agentTransferDownloadGroup 8 }
+ 
+     agentTransferDownloadTftpTimeout OBJECT-TYPE
+          SYNTAX      Unsigned32(1..254)
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+-                     "Timeout in seconds for a TFTP message packet."
++                     "Timeout in seconds for a TFTP message packet.
++
++                      Deprecated by clsTransferConfigTable"
+          DEFVAL{ 6 }
+           ::= { agentTransferDownloadGroup 9 }
+ 
+@@ -3137,11 +3416,12 @@
+                      full1000sx(8)
+                   }
+          MAX-ACCESS  read-write
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "The switch's Port Speed Mode.  This is the
+                       configured physical mode.This object is
+-                      read-only for gigabit ports"
++                      read-only for gigabit ports.
++                      Deprecated by clsPortModePhysicalMode."
+          ::= { agentPortConfigEntry 7 }
+ 
+     agentPortPhysicalStatus OBJECT-TYPE
+@@ -3155,10 +3435,11 @@
+                      unknown(9)
+                   }
+          MAX-ACCESS  read-only
+-         STATUS      current
++         STATUS      deprecated
+          DESCRIPTION
+                      "The switch's Port Physical Speed Status.This
+-                      is the current actual speed."
++                      is the current actual speed.
++                      Deprecated by clsPortModePhysicalStatus."
+          ::= { agentPortConfigEntry 8 }
+ 
+     agentPortLinkTrapMode OBJECT-TYPE
+@@ -3476,8 +3757,17 @@
+      agentResetSystem OBJECT-TYPE
+          SYNTAX      INTEGER {
+                      enable(1),
+-                     disable(2)
++                     disable(2),
++                     enablePeer(3),
++                     disablePeer(4),
++                     enableSelf(5),
++                     enableBoth(6),
++                     enableRestart(7),
++                     disableRestart(8),
++                     enableRestartPeer(9),
++                     disableRestartPeer(10)
+                   }
++
+          MAX-ACCESS  read-write
+          STATUS      current
+          DESCRIPTION
+@@ -3636,7 +3926,8 @@
+          "The total number of packets (including bad
+          packets) transmitted that were more than
+          1530 octets in length.
+-         (excluding framing bits but including FCS octets)."
++         (excluding framing bits but including FCS octets).
++         For 5500 controllers, the length is more than 1518 octets."
+      ::= { portStatsEntry 30 }
+ 
+ 
+@@ -3672,7 +3963,7 @@
+          OBJECTS {
+                       dot1qVlanIndex
+                  }
+-         STATUS             current
++         STATUS             obsolete
+          DESCRIPTION
+              "Vlan Request Failure Log Trap"
+          ::= { switchingTraps 5 }
+@@ -3681,7 +3972,7 @@
+          OBJECTS {
+                       dot1qVlanIndex
+                  }
+-         STATUS             current
++         STATUS             obsolete
+          DESCRIPTION
+              "Last Vlan Delete Log Trap"
+          ::= { switchingTraps 6 }
+@@ -3690,7 +3981,7 @@
+          OBJECTS {
+                       dot1qVlanIndex
+                  }
+-         STATUS             current
++         STATUS             obsolete
+          DESCRIPTION
+              "Default Vlan Config Failure Log Trap"
+          ::= { switchingTraps 7 }
+@@ -3699,7 +3990,7 @@
+          OBJECTS {
+                       dot1qVlanIndex
+                  }
+-         STATUS             current
++         STATUS             obsolete
+          DESCRIPTION
+              "Vlan Restore Failure Log Trap"
+          ::= { switchingTraps 8 }
+@@ -3868,11 +4159,15 @@
+         agentInterfaceActivePortNo,
+         agentInterfaceBackupPortNo,
+         agentInterfaceVlanQuarantine,
++        agentInterfaceUrlAclName,
+         agentInterfaceRowStatus,
+         agentNtpPollingInterval,
+         agentNtpServerIndex,
+         agentNtpServerAddress,
+         agentNtpServerRowStatus,
++	agentNtpDnsServerIndex,
++        agentNtpDnsServerAddress,
++        agentNtpDnsServerRowStatus,
+         agentDhcpScopeIndex,
+         agentDhcpScopeName,
+         agentDhcpScopeLeaseTime,
+@@ -3891,6 +4186,8 @@
+         agentDhcpScopeNetbiosNameServerAddress2,
+         agentDhcpScopeNetbiosNameServerAddress3,
+         agentDhcpScopeState,
++        agentDhcpScopeVlan,
++        agentDhcpScopeVlanNative,
+         agentDhcpScopeRowStatus,
+         agentSnmpTrapPortNumber,
+         agentSnmpVersion1Status,
+diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-CLIENT-MIB.my ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-03-27 16:00:52.159398393 +0200
++++ ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-07-26 12:23:38.133339987 +0200
 @@ -1189,7 +1189,7 @@
                           wpa2(3),
                           wpa2vff(4),
@@ -34,29 +804,237 @@ diff -ruw ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my new/cisco-lwapp/CISCO-L
                           wpaOsen(7),
                           wpaOsenWithinRsn(8)
                       }
-diff --git a/cisco-lwapp/CISCO-LWAPP-AP-MIB.my b/cisco-lwapp/CISCO-LWAPP-AP-MIB.my
-index 9f51e4a..b955226 100644
---- a/cisco-lwapp/CISCO-LWAPP-AP-MIB.my
-+++ b/cisco-lwapp/CISCO-LWAPP-AP-MIB.my
-@@ -4244,7 +4244,7 @@ cLApWlanStatsOnlineUserNum OBJECT-TYPE
- -- *  AP slot WLAN Stats.
+diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-MIB.my ../cisco-lwapp/CISCO-LWAPP-DOT11-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-MIB.my	2024-04-11 15:47:22.543116031 +0200
++++ ../cisco-lwapp/CISCO-LWAPP-DOT11-MIB.my	2024-04-15 15:30:41.503892275 +0200
+@@ -357,6 +357,7 @@
+         ciscoLwappDot11MIBNotifsGroup
+         ciscoLwappDot11MIBStatusGroup
+         Added ciscoLwappDot11MIBComplianceRev1 in 
++        OBJECT-COMPLIANCE"
+     REVISION        "201803280000Z"
+     DESCRIPTION
+         "Added the following tables in cldConfig.
+@@ -374,7 +375,6 @@
+        cld11axMbssidTable
+        Added new group ciscoLwappDot11MIBHeStatusGroup."
+  
+-        OBJECT-COMPLIANCE."
+     REVISION        "200701040000Z"
+     DESCRIPTION
+         "Initial version of this MIB module."
+@@ -1667,7 +1667,7 @@
+         "This attribute is used to configure neighbor
+         discovery mode for 802.11a radios."
+     DEFVAL          { 0 }
+-    ::= { cldDot11dpMode 2 }
++    ::= { cldDot11NdpMode 2 }
+ 
+ -- ********************************************************************
+ -- *  Begin of cldDot116GHzPhy
+diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-MOBILITY-EXT-MIB.my ../cisco-lwapp/CISCO-LWAPP-MOBILITY-EXT-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-MOBILITY-EXT-MIB.my	2023-03-27 16:00:52.164398336 +0200
++++ ../cisco-lwapp/CISCO-LWAPP-MOBILITY-EXT-MIB.my	2024-04-15 15:55:12.624991530 +0200
+@@ -50,7 +50,7 @@
  -- ********************************************************************
  
--cLApWlanSlotStatsTable OBJECT-TYPE
-+cLApSlotWlanStatsTable OBJECT-TYPE
-     SYNTAX          SEQUENCE OF CLApSlotWlanStatsEntry
-     MAX-ACCESS      not-accessible
+ ciscoLwappMobilityExtMIB MODULE-IDENTITY
+-    LAST-UPDATED    "202008130000Z"
++    LAST-UPDATED    "202011040000Z"
+     ORGANIZATION    "Cisco Systems Inc."
+     CONTACT-INFO
+             "Cisco Systems,
+@@ -322,9 +322,10 @@
+ 
+            [2] Draft-obara-capwap-lwapp-00.txt, IETF Light 
+            Weight Access Point Protocol."
+-    REVISION        "202008130000Z"
++    REVISION        "202011040000Z"
+     DESCRIPTION
+         " Added cLGuestWlanAllAnchorsDown
++                cLMobilityExtWlanPolicyName
+                 cLGuestWlanOneAnchorOnGuestLanUp notification"
+     REVISION        "201906200000Z"
+     DESCRIPTION
+@@ -754,24 +755,6 @@
+         A value of 'true' indicates encryption is enabled.
+         A value of 'false' indicates encryption is disabled." 
+     ::= { ciscoLwappMobilityExtMCMAGlobalObjects 12 }
+-
+-cLMobilityExtSecureCipherv2 OBJECT-TYPE
+-    SYNTAX          INTEGER  {
+-                        disable(1),
+-                        aes128sha2(2)
+-                    }
+-    MAX-ACCESS      read-write
+-    STATUS          current
+-    DESCRIPTION
+-        "This object specifies to configure secure ciphers, AES128+SHA
+-        or AES128+SHA2 for mobility tunnel.
+-        disable(1)    - Implies that controllers will continue 
+-                        to use default cipher AES128_SHA for mobility 
+-                        tunnel.
+-        aes128sha2(2) - Implies that controllers will use
+-                        AES128_SHA256 cipher for mobility tunnel."
+-    ::= { ciscoLwappMobilityExtMCMAGlobalObjects 13 }
+-
+ -- *******************************************************************
+ -- Switch Peer Group Table (applicable to MC only)
+ -- *******************************************************************
+@@ -2940,7 +2923,7 @@
      STATUS          current
-diff --git a/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my b/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my
-index 976e031..6cedef4 100644
---- a/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my
-+++ b/cisco-lwapp/CISCO-LWAPP-REAP-MIB.my
-@@ -2029,7 +2029,7 @@ cLReapGroupPMKAPPropagation OBJECT-TYPE
-          controller to only few APs and from those AP to other APs in
-          site tag.
-          A value of 'pmkDistDCDS' specifies PMK distribution between 
--         APs in site tag.
-+         APs in site tag."
-     
-     DEFVAL          { pmkDistCntrToAp } 
-     ::= { cLReapGroupConfigEntry 57 }
+     DESCRIPTION
+         "This object specifies one instance of a WLAN policy on the
+-         controller"
++        controller"
+     ::= { ciscoLwappMobilityExtNotifObjects 5 }
+ 
+ -- *******************************************************************
+@@ -3183,7 +3166,7 @@
+     STATUS          current
+     DESCRIPTION
+         "This  notification will be emitted by the SNMP agent
+-        when successive CAPWAP/Mobility ping attempts to all the anchors on
++        when 3 successive CAPWAP/Mobility ping attempts to all the anchors on
+         Guest Wlan, denoted by cLWlanProfileName, fail and
+         all the anchors are conclusively down."
+    ::= { ciscoLwappMobilityExtMIBNotifs 5 }
+@@ -3196,9 +3179,9 @@
+     STATUS          current
+     DESCRIPTION
+         "This  notification will be emitted by the SNMP agent
+-        when successive CAPWAP/Mobility and UDP ping to at least one anchor
+-        on the Guest Wlan, denoted by cLWlanProfileName, is
+-        restored and anchor is conclusively up."
++        when CAPWAP/Mobility and UDP pings successfully to at 
++        least one anchor on the Guest Wlan, denoted by 
++        cLWlanProfileName, is restored and anchor is conclusively up."
+    ::= { ciscoLwappMobilityExtMIBNotifs 6 }
+ 
+ -- *******************************************************************
+@@ -3280,7 +3263,8 @@
+                         ciscoLwappMobilityExtNotifyObjectsGroup,
+                         ciscoLwappMobilityExtNotifsGroupRev1,
+                         ciscoLwappMobilityExtMCMAStatsGroup,
+-                        cLMobilityExtAnchorConfigGroup
++                        cLMobilityExtAnchorConfigGroup,
++                        cLMobilityExtWlanPolicyNameGroup
+                     }
+     ::= { ciscoLwappMobilityExtMIBCompliances 5 }
+ 
+@@ -3494,7 +3478,6 @@
+                         cLMobilityExtMgrVlanId,
+                         cLMobilityExtMgrName,
+                         cLMobilityExtMgrInterfaceType,
+-                        cLMobilityExtSecureCipherv2,
+                         cLMobilityExtNewArchitectureEnableStatus,
+                         cLMobilityExtNewArchitectureAdminEnableStatus,
+                         cLMobilityExtMCClientAnchorMCPrivateAddressType,
+@@ -3656,6 +3639,14 @@
+         an Anchor WLC mapped on a WLAN."
+     ::= { ciscoLwappMobilityExtMIBGroups 7 }
+ 
++cLMobilityExtWlanPolicyNameGroup OBJECT-GROUP
++    OBJECTS         { cLMobilityExtWlanPolicyName }
++    STATUS          current
++    DESCRIPTION
++        "This object specifies one instance of a WLAN policy on the
++        controller"
++    ::= { ciscoLwappMobilityExtMIBGroups 8 }
++
+ ciscoLwappMobilityExtNotifsGroupRev1 NOTIFICATION-GROUP
+    NOTIFICATIONS    {
+                         ciscoLwappMobilityControlPathDown,
+@@ -3670,12 +3661,8 @@
+         "This collection of objects provides the information
+         about the notifications sent by the agent related
+         to mobility and guest anchor."
+-    ::= { ciscoLwappMobilityExtMIBGroups 8 }
++    ::= { ciscoLwappMobilityExtMIBGroups 9 }
+ 
+ END
+ 
+---%DNP%  MLC -Compiled MLC
+-
+---%DNP%  MTF -TRUE MTF
+ 
+---%DNP%  NO REPLACEMENT =cLMobilityExtMOClientAssociationTime 
+diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-QOS-MIB.my ../cisco-lwapp/CISCO-LWAPP-QOS-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-QOS-MIB.my	2024-04-11 15:47:22.571115728 +0200
++++ ../cisco-lwapp/CISCO-LWAPP-QOS-MIB.my	2024-04-11 16:20:19.489669297 +0200
+@@ -4476,7 +4476,7 @@
+      OBJECTS         {
+                          cLQCacIPLearnQStats,
+                          cLQCacOutstandingAAAReqQStats,
+-                         cLQCacIPCHighStats,
++                         cLQCacIPCHighStats
+                      }
+      STATUS          current
+      DESCRIPTION
+diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-RF-MIB.my ../cisco-lwapp/CISCO-LWAPP-RF-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-RF-MIB.my	2024-04-11 15:47:22.578115653 +0200
++++ ../cisco-lwapp/CISCO-LWAPP-RF-MIB.my	2024-04-11 16:17:50.687285986 +0200
+@@ -196,7 +196,7 @@
+          - cLRFProfileMultiBssidProfile
+          Added new table cLMultiBSSIDProfileTable
+          Added conformance group ciscoLwappRFConfigGroup10
+-         Added compliance group ciscoLwappRFMIBComplianceRev7".
++         Added compliance group ciscoLwappRFMIBComplianceRev7"
+     REVISION        "202009020000Z"
+     DESCRIPTION
+         "Added below object to the cLRFProfileTable
+@@ -1138,8 +1138,8 @@
+ cLRFProfile11ax6GHzFeature OBJECT-TYPE
+      SYNTAX          INTEGER  {
+                          none(0),
+-                         bcast_probe_response(1),
+-                         fils_discovery(2)
++                         bcast-probe-response(1),
++                         fils-discovery(2)
+                      }
+      MAX-ACCESS      read-write
+      STATUS          current
+@@ -1750,7 +1750,6 @@
+     DEFVAL          { false }
+     ::= { cLMultiBSSIDProfileEntry 14 }
+ 
+-cLMultiBSSIDProfileRowStatus OBJECT-TYPE
+ -- ********************************************************************
+ -- *    Compliance statements
+ -- ********************************************************************
+diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-TC-MIB.my ../cisco-lwapp/CISCO-LWAPP-TC-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-LWAPP-TC-MIB.my	2024-04-11 15:47:22.603115382 +0200
++++ ../cisco-lwapp/CISCO-LWAPP-TC-MIB.my	2024-04-11 16:11:58.748109692 +0200
+@@ -248,10 +248,10 @@
+         rlan - This value indicates that this is a RLAN
+ 	interface.
+ 
+-        dot11_6ghz - This value indicates that the radio
++        dot11-6ghz - This value indicates that the radio
+ 	interface is following 802.11 6ghz standard.
+ 
+-	dot11_xor_5_6ghz - This value indicates that the
++	dot11-xor-5-6ghz - This value indicates that the
+ 	radio interface is operating in XOR mode between
+ 	802.11a and 802.11 6ghz."
+ 
+@@ -261,8 +261,8 @@
+                         uwb(3),
+                         dot11abgn(4),
+                         rlan(5),
+-                        dot11_6ghz(6),
+-                        dot11_xor_5_6ghz(7)
++                        dot11-6ghz(6),
++                        dot11-xor-5-6ghz(7)
+                     }
+ 
+ CLDot11Channel ::= TEXTUAL-CONVENTION
+@@ -865,8 +865,6 @@
+ 
+ END
+ 
+-END
+-
+ 
+ -- %DNP%  MLC -Compiled MLC
+ 
