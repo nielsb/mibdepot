@@ -4,9 +4,9 @@
 -- MIB representation of the Cisco Firepower
 -- VERSION management information model package
 -- 
--- Created July 2022 by Charles Bullis
+-- Created January 2023 by Charles Bullis
 -- 
--- Copyright (c) 2005-2022 Cisco Systems, Inc. All rights reserved.
+-- Copyright (c) 2005-2023 Cisco Systems, Inc. All rights reserved.
 -- 
 -- *********************************************************************
 
@@ -49,7 +49,7 @@ IMPORTS
         FROM CISCO-FIREPOWER-AP-MIB;
 
 cfprApVersionObjects MODULE-IDENTITY
-    LAST-UPDATED    "202207270000Z"
+    LAST-UPDATED    "202301250000Z"
     ORGANIZATION    "Cisco Systems Inc."
     CONTACT-INFO
         "Cisco Systems
