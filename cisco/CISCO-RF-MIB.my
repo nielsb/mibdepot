@@ -6,10 +6,9 @@
 -- August 2000, Timothy Kurnik and Bo Berry
 -- December 2001, Liwei Wang
 --   
--- Copyright (c) 2000, 2001, 2003-2005, 2008, 2011, 2017 
--- by Cisco Systems Inc.
+-- Copyright (c) 2000-2006, 2023 by Cisco Systems Inc.
 -- All rights reserved.
--- *****************************************************************
+-- ****************************************************************
 
 CISCO-RF-MIB DEFINITIONS ::= BEGIN
 
@@ -29,22 +28,18 @@ IMPORTS
     TruthValue,
     DateAndTime,
     TimeStamp,
-    TimeInterval,
-    StorageType,
-    RowStatus
+    TimeInterval
         FROM SNMPv2-TC
     sysUpTime
         FROM SNMPv2-MIB
     SnmpAdminString
         FROM SNMP-FRAMEWORK-MIB
-    PhysicalIndex
-        FROM ENTITY-MIB
     ciscoMgmt
         FROM CISCO-SMI;
 
 
 ciscoRFMIB MODULE-IDENTITY
-    LAST-UPDATED    "201705100000Z"
+    LAST-UPDATED    "202307130000Z"
     ORGANIZATION    "Cisco Systems, Inc."
     CONTACT-INFO
             "Cisco Systems Customer Service
@@ -54,6 +49,9 @@ ciscoRFMIB MODULE-IDENTITY
             Tel: +1 800 553-NETS
 
             E-mail: cs-rf-mib@cisco.com"
+    DESCRIPTION
+        "Added descriptions for enums 8 and 9 in RFSwactReasonType"
+    REVISION        "202307130000Z"
     DESCRIPTION
         "This MIB provides configuration control and status for the
         Redundancy Framework (RF) subsystem. RF provides a mechanism
@@ -70,25 +68,13 @@ ciscoRFMIB MODULE-IDENTITY
 
         In the scope of this MIB definition, peer software elements
         are redundant and redundant software elements are peers."
-    REVISION        "201705100000Z"
-    DESCRIPTION
-        "Added RF domain table."
-   REVISION        "201106210000Z"
-    DESCRIPTION
-        "Added DomainInstanceTable.
-         This describes the context associated with 
-         various domains in the system."
-    REVISION        "200803180000Z"
-    DESCRIPTION
-        "Added a new state standbyWarm. This state will be used in 
-        RPR plus mode."
     REVISION        "200509010000Z"
     DESCRIPTION
         "Added a new textual convention : RFClientStatus.
 
         Added the cRFStatusRFClientTable which contains information
         about all the clients registered with the Redundancy 
-        Facility (RF)."
+        Facility (RF). "
     REVISION        "200404010000Z"
     DESCRIPTION
         "Added the new states, systemReset, loadVersionSwitchover
@@ -151,12 +137,10 @@ ciscoRFMIB MODULE-IDENTITY
         Added new transition state to ciscoRFProgressionNotif:
         activeExtraload
         Update compliance and conformance statements"
- 
     REVISION        "200104030945Z"
     DESCRIPTION
         "The initial revision of this MIB."
-    ::= { ciscoMgmt 176 }
-
+          ::= { ciscoMgmt 176 }
 
 
 -- Glossary
@@ -333,11 +317,9 @@ RFState ::= TEXTUAL-CONVENTION
         activeHandback
             - unit is active, processing calls and is in the process
               of handing some resources to the other unit in the system
-        standbyWarm
-            - unit is ready when using RPR+ mode
 
         * Sub-state of 'standbyCold'"
-    SYNTAX          INTEGER {
+    SYNTAX          INTEGER  {
                         notKnown(1),
                         disabled(2),
                         initialization(3),
@@ -353,8 +335,7 @@ RFState ::= TEXTUAL-CONVENTION
                         activePostconfig(13),
                         active(14),
                         activeExtraload(15),
-                        activeHandback(16),
-                        standbyWarm(17)
+                        activeHandback(16)
                     }
 
 RFMode ::= TEXTUAL-CONVENTION
@@ -447,7 +428,11 @@ RFSwactReasonType ::= TEXTUAL-CONVENTION
         activeUnitFailed
             - active unit failure caused an auto SWACT
         activeUnitRemoved
-            - active unit removal caused an auto SWACT"
+            - active unit removal caused an auto SWACT
+        activeGWdown
+            - SWACT due to active losing gateway connectivity
+        activeRMIportdown
+            - SWACT due to RMI port going down on active"
     SYNTAX          INTEGER  {
                         unsupported(1),
                         none(2),
@@ -455,14 +440,15 @@ RFSwactReasonType ::= TEXTUAL-CONVENTION
                         userInitiated(4),
                         userForced(5),
                         activeUnitFailed(6),
-                        activeUnitRemoved(7)
+                        activeUnitRemoved(7),
+                        activeGWdown(8),
+                        activeRMIportdown(9)
                     }
 
 RFUnitIdentifier ::= TEXTUAL-CONVENTION
     STATUS          current
-    DESCRIPTION
-        "A unique identifier for Active/Standby unit."
-    SYNTAX          Integer32 (0..2147483647)
+    DESCRIPTION     "A unique identifier for Active/Standby unit."
+    SYNTAX          Integer32 (0..2147483647 )
 
 RFIssuState ::= TEXTUAL-CONVENTION
     STATUS          deprecated
@@ -583,12 +569,10 @@ RFClientStatus ::= TEXTUAL-CONVENTION
                         clientRedundant(4)
                     }
 -- OBJECT IDENTIFIER assignments for various groups
-
 ciscoRFMIBObjects  OBJECT IDENTIFIER
     ::= { ciscoRFMIB 1 }
 
 -- sub-groups
-
 cRFStatus  OBJECT IDENTIFIER
     ::= { ciscoRFMIBObjects 1 }
 
@@ -603,7 +587,6 @@ cRFClient  OBJECT IDENTIFIER
 
 
 -- Status sub-group definitions
-
 cRFStatusUnitId OBJECT-TYPE
     SYNTAX          RFUnitIdentifier
     MAX-ACCESS      read-only
@@ -622,8 +605,7 @@ cRFStatusUnitState OBJECT-TYPE
     SYNTAX          RFState
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "The current state of RF on this unit." 
+    DESCRIPTION     "The current state of RF on this unit." 
     ::= { cRFStatus 2 }
 
 cRFStatusPeerUnitId OBJECT-TYPE
@@ -645,8 +627,7 @@ cRFStatusPeerUnitState OBJECT-TYPE
     SYNTAX          RFState
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "The current state of RF on the peer unit." 
+    DESCRIPTION     "The current state of RF on the peer unit." 
     ::= { cRFStatus 4 }
 
 cRFStatusPrimaryMode OBJECT-TYPE
@@ -713,8 +694,7 @@ cRFStatusLastSwactReasonCode OBJECT-TYPE
     SYNTAX          RFSwactReasonType
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "The reason for the last switch of activity." 
+    DESCRIPTION     "The reason for the last switch of activity." 
     ::= { cRFStatus 8 }
 
 cRFStatusFailoverTime OBJECT-TYPE
@@ -722,9 +702,9 @@ cRFStatusFailoverTime OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "The value of sysUpTime when the primary redundant unit 
-         took over as active. The value of this object will be 
-         0 till the first switchover." 
+        "The value of sysUpTime when the primary redundant unit took over
+        as active. The value of this object will be 0 till the first
+        switchover." 
     ::= { cRFStatus 9 }
 
 cRFStatusPeerStandByEntryTime OBJECT-TYPE
@@ -732,9 +712,8 @@ cRFStatusPeerStandByEntryTime OBJECT-TYPE
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-        "The value of sysUpTime when the peer redundant unit 
-         entered the standbyHot state. The value will be 0 
-         on system initialization." 
+        "The value of sysUpTime when the peer redundant unit entered the
+        standbyHot state. The value will be 0 on system initialization." 
     ::= { cRFStatus 10 }
 -- Redundancy mode capability table
 
@@ -786,139 +765,29 @@ cRFStatusIssuState OBJECT-TYPE
     SYNTAX          RFIssuState
     MAX-ACCESS      read-only
     STATUS          deprecated
-    DESCRIPTION
-        "The current ISSU state of the system." 
+    DESCRIPTION     "The current ISSU state of the system." 
     ::= { cRFStatus 12 }
 
 cRFStatusIssuStateRev1 OBJECT-TYPE
     SYNTAX          RFIssuStateRev1
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "The current ISSU state of the system." 
+    DESCRIPTION     "The current ISSU state of the system." 
     ::= { cRFStatus 13 }
 
 cRFStatusIssuFromVersion OBJECT-TYPE
     SYNTAX          SnmpAdminString
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "The IOS version from with the user is upgrading" 
+    DESCRIPTION     "The IOS version from with the user is upgrading" 
     ::= { cRFStatus 14 }
 
 cRFStatusIssuToVersion OBJECT-TYPE
     SYNTAX          SnmpAdminString
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "The IOS version to with the user is upgrading" 
+    DESCRIPTION     "The IOS version to with the user is upgrading" 
     ::= { cRFStatus 15 }
-
-cRFStatusDomainInstanceTable OBJECT-TYPE
-    SYNTAX          SEQUENCE OF CRFStatusDomainInstanceEntry 
-    MAX-ACCESS      not-accessible
-    STATUS          current
-    DESCRIPTION
-        "This table lists the redundant active-standby pairs contained
-        by the system. A traditional redundant system that only supports
-        a single active-standby pair.  However, newer systems may have 
-        more sophisticated configuration, such as: 
-           - More than one active-standby pair. 
-           - An active with multiple standby peers. 
-           - Arbitrary number of peer groups containing arbitrary number
-             of peers. 
-        If system has multiple active-standby or active-active pairs
-        they are uniquely identified through a concept of domain. A
-        domain comprises a peer group.  A system may support more than
-        one  domain, thereby allowing 1:1, 1:N, and N:N redundancy
-        between peers. Depending on a platform these domains can be 
-        called by various names, like.
-           - Default Domain.
-           - In-Chassis domain
-           - Remote In-Chassis domain.
-           - b2bDomain
-
-        Default Domain: Traditional Active-Standby pair will be
-        considered as default domain entity pair. Ex: Platform which
-        does not support domain, will be considered as default domain.
-        Platform which supports domain, will always have default domain
-        to represent traditional active-standby pair. 
-
-        In-chassis domain: Additional domain co-exist along with default
-        domain.
-
-        Remote In-Chassis Domain: Additiona domain co-exist with default
-        domain but exists on remote chassis."
-    ::= { cRFStatus 16 }
-
-cRFStatusDomainInstanceEntry OBJECT-TYPE
-    SYNTAX          CRFStatusDomainInstanceEntry
-    MAX-ACCESS      not-accessible
-    STATUS          current
-    DESCRIPTION
-        "An entry describes the relationship between an active and
-        standby. Entries will be created during run time depending on
-        what platform it is running. Platform without a domain support 
-        will have default domain created. Platform which supports
-        domain, will also have default domain created. Rest of the
-        domains either will be created via configuration or based on
-        internal platform specific notification. If domain gets created
-        via internal notification can be destroyed through internal
-        notifications only. Domains which gets created based on certain
-        configuration can be deleted through configuration only. User
-        won't have explicit way of creating or destroying these
-        domains."
-    INDEX           {
-                        cRFStatusDomainInstanceActive,
-                        cRFStatusDomainInstancePeer,
-                        cRFStatusDomainInstance
-                    } 
-    ::= { cRFStatusDomainInstanceTable 1 }
-
-CRFStatusDomainInstanceEntry ::= SEQUENCE {
-        cRFStatusDomainInstanceActive PhysicalIndex,
-        cRFStatusDomainInstancePeer   PhysicalIndex,
-        cRFStatusDomainInstance       SnmpAdminString,
-        cRFStatusDomainContext        SnmpAdminString
-}
-
-cRFStatusDomainInstanceActive OBJECT-TYPE
-    SYNTAX          PhysicalIndex
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "The value represents the physical location of an Active
-        domain." 
-    ::= { cRFStatusDomainInstanceEntry 1 }
-
-cRFStatusDomainInstancePeer OBJECT-TYPE
-    SYNTAX          PhysicalIndex
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "This object indicates the physical entity serving as the
-        standby peer in the corresponding RF domain." 
-    ::= { cRFStatusDomainInstanceEntry 2 }
-
-cRFStatusDomainInstance OBJECT-TYPE
-    SYNTAX          SnmpAdminString (SIZE  (1..64))
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "This object indicates a name that uniquely identifies 
-         the RF domain." 
-    ::= { cRFStatusDomainInstanceEntry 3 }
-
-cRFStatusDomainContext OBJECT-TYPE
-    SYNTAX          SnmpAdminString
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "This object indicates the SNMP context to query data in the
-        corresponding RF domain." 
-    ::= { cRFStatusDomainInstanceEntry 4 }
- 
-
 -- Redundancy Facility (RF) Client Table
 
 cRFStatusRFClientTable OBJECT-TYPE
@@ -960,7 +829,7 @@ CRFStatusRFClientEntry ::= SEQUENCE {
 }
 
 cRFStatusRFClientID OBJECT-TYPE
-    SYNTAX          Unsigned32 (1..4294967295)
+    SYNTAX          Unsigned32 (1..4294967295 )
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
@@ -1011,7 +880,6 @@ cRFStatusRFClientStatus OBJECT-TYPE
 
 
 -- Configuration sub-group definitions
-
 cRFCfgSplitMode OBJECT-TYPE
     SYNTAX          TruthValue
     MAX-ACCESS      read-write
@@ -1027,7 +895,8 @@ cRFCfgSplitMode OBJECT-TYPE
         occur. When split mode is disabled (false), the standby unit
         is reset to recover.
 
-        Split mode (true) is useful for maintenance operations." 
+        Split mode (true) is useful for maintenance operations.
+        " 
     ::= { cRFCfg 1 }
 
 cRFCfgKeepaliveThresh OBJECT-TYPE
@@ -1208,7 +1077,6 @@ cRFCfgRedundancyOperMode OBJECT-TYPE
     ::= { cRFCfg 16 }
 
 -- History sub-group definitions
-
 cRFHistoryTableMaxLength OBJECT-TYPE
     SYNTAX          Unsigned32 (0..50 )
     MAX-ACCESS      read-write
@@ -1254,7 +1122,7 @@ CRFHistorySwitchOverEntry ::= SEQUENCE {
 }
 
 cRFHistorySwitchOverIndex OBJECT-TYPE
-    SYNTAX          Unsigned32 (1..4294967295)
+    SYNTAX          Unsigned32 (1..4294967295 )
     MAX-ACCESS      not-accessible
     STATUS          current
     DESCRIPTION
@@ -1284,8 +1152,7 @@ cRFHistorySwitchOverReason OBJECT-TYPE
     SYNTAX          RFSwactReasonType
     MAX-ACCESS      read-only
     STATUS          current
-    DESCRIPTION
-        "Indicates the reason for the switchover." 
+    DESCRIPTION     "Indicates the reason for the switchover." 
     ::= { cRFHistorySwitchOverEntry 4 }
 
 cRFHistorySwactTime OBJECT-TYPE
@@ -1317,12 +1184,12 @@ cRFHistoryStandByAvailTime OBJECT-TYPE
         unit has been available since last system initialization." 
     ::= { cRFHistory 4 }
 -- MIB Notification definitions
-
 ciscoRFMIBNotificationsPrefix  OBJECT IDENTIFIER
     ::= { ciscoRFMIB 2 }
 
 ciscoRFMIBNotifications  OBJECT IDENTIFIER
     ::= { ciscoRFMIBNotificationsPrefix 0 }
+
 
 
 ciscoRFSwactNotif NOTIFICATION-TYPE
@@ -1341,6 +1208,7 @@ ciscoRFSwactNotif NOTIFICATION-TYPE
 
         sysUpTime is the same sysUpTime defined in the RFC-1213 MIB."
    ::= { ciscoRFMIBNotifications 1 }
+
 
 ciscoRFProgressionNotif NOTIFICATION-TYPE
     OBJECTS         {
@@ -1365,6 +1233,7 @@ ciscoRFProgressionNotif NOTIFICATION-TYPE
             activeExtraload"
    ::= { ciscoRFMIBNotifications 2 }
 
+
 ciscoRFIssuStateNotif NOTIFICATION-TYPE
     OBJECTS         {
                         cRFStatusUnitId,
@@ -1376,6 +1245,7 @@ ciscoRFIssuStateNotif NOTIFICATION-TYPE
         "An ISSU notification to indicate the new state of
         the system."
    ::= { ciscoRFMIBNotifications 3 }
+
 
 ciscoRFIssuStateNotifRev1 NOTIFICATION-TYPE
     OBJECTS         {
@@ -1390,7 +1260,6 @@ ciscoRFIssuStateNotifRev1 NOTIFICATION-TYPE
         the system."
    ::= { ciscoRFMIBNotifications 4 }
 -- Conformance
-
 ciscoRFMIBConformance  OBJECT IDENTIFIER
     ::= { ciscoRFMIB 3 }
 
@@ -1402,7 +1271,6 @@ ciscoRFMIBGroups  OBJECT IDENTIFIER
 
 
 -- compliance statements
-
 ciscoRFMIBCompliance MODULE-COMPLIANCE
     STATUS          deprecated
     DESCRIPTION
@@ -1499,7 +1367,6 @@ ciscoRFMIBComplianceRev5 MODULE-COMPLIANCE
     ::= { ciscoRFMIBCompliances 6 }
 
 -- Units of conformance
-
 ciscoRFStatusGroup OBJECT-GROUP
     OBJECTS         {
                         cRFStatusUnitId,
@@ -1512,8 +1379,7 @@ ciscoRFStatusGroup OBJECT-GROUP
                         cRFStatusLastSwactReasonCode
                     }
     STATUS          deprecated
-    DESCRIPTION
-        "The collection of global RF status objects."
+    DESCRIPTION     "The collection of global RF status objects."
     ::= { ciscoRFMIBGroups 1 }
 
 ciscoRFConfigGroup OBJECT-GROUP
@@ -1534,8 +1400,7 @@ ciscoRFConfigGroup OBJECT-GROUP
                         cRFCfgRedundancyModeDescr
                     }
     STATUS          deprecated
-    DESCRIPTION
-        "The collection of RF configuration objects."
+    DESCRIPTION     "The collection of RF configuration objects."
     ::= { ciscoRFMIBGroups 2 }
 
 ciscoRFNotifGroup NOTIFICATION-GROUP
@@ -1567,8 +1432,7 @@ ciscoRFConfigGroupRev1 OBJECT-GROUP
                         cRFCfgRedundancyModeDescr
                     }
     STATUS          current
-    DESCRIPTION
-        "The collection of RF configuration objects."
+    DESCRIPTION     "The collection of RF configuration objects."
     ::= { ciscoRFMIBGroups 4 }
 
 ciscoRFStatusGroupRev1 OBJECT-GROUP
@@ -1582,15 +1446,10 @@ ciscoRFStatusGroupRev1 OBJECT-GROUP
                         cRFStatusManualSwactInhibit,
                         cRFStatusLastSwactReasonCode,
                         cRFStatusFailoverTime,
-                        cRFStatusPeerStandByEntryTime,
-                        cRFStatusDomainInstanceActive,
-                        cRFStatusDomainInstancePeer,
-                        cRFStatusDomainInstance,
-                        cRFStatusDomainContext
+                        cRFStatusPeerStandByEntryTime
                     }
     STATUS          current
-    DESCRIPTION
-        "The collection of global RF Status objects."
+    DESCRIPTION     "The collection of global RF Status objects."
     ::= { ciscoRFMIBGroups 5 }
 
 ciscoRFHistoryGroup OBJECT-GROUP
@@ -1604,8 +1463,7 @@ ciscoRFHistoryGroup OBJECT-GROUP
                         cRFHistoryTableMaxLength
                     }
     STATUS          current
-    DESCRIPTION
-        "The collection of RF History objects."
+    DESCRIPTION     "The collection of RF History objects."
     ::= { ciscoRFMIBGroups 6 }
 
 ciscoRFConfigRFOperModeGroup OBJECT-GROUP

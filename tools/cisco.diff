@@ -186,3 +186,14 @@ index ccb4095..4722790 100644
                      }
      STATUS          current
      DESCRIPTION
+--- new/cisco/CISCO-ST-TC.my	2024-09-17 20:53:45.074101445 +0200
++++ ../cisco/CISCO-ST-TC.my	2024-09-17 20:38:03.058233072 +0200
+@@ -362,7 +362,7 @@
+           thirtyTwoG  (12) - 32GBit.
+           autoMaxThirtyTwoG (13) - Negotiate to determine the
+                              speed automatically upto a
+-                             maximum of 32Gbit."
++                             maximum of 32Gbit.
+           fiftyG      (14) - 50GBit.
+           sixtyFourG  (15) - 64GBit.
+           autoMaxSixtyFourG (16) - Negotiate to determine the

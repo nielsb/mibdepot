@@ -792,18 +792,6 @@ diff -ru tmp/cisco-mibs/v2/AIRESPACE-SWITCHING-MIB.my ../cisco-lwapp/AIRESPACE-S
          agentDhcpScopeRowStatus,
          agentSnmpTrapPortNumber,
          agentSnmpVersion1Status,
-diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-CLIENT-MIB.my ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my
---- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-03-27 16:00:52.159398393 +0200
-+++ ../cisco-lwapp/CISCO-LWAPP-DOT11-CLIENT-MIB.my	2023-07-26 12:23:38.133339987 +0200
-@@ -1189,7 +1189,7 @@
-                          wpa2(3),
-                          wpa2vff(4),
-                          notavailable(5),
--                         wpa2_3(6),
-+                         wpa2-3(6),
-                          wpaOsen(7),
-                          wpaOsenWithinRsn(8)
-                      }
 diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-MIB.my ../cisco-lwapp/CISCO-LWAPP-DOT11-MIB.my
 --- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-MIB.my	2024-04-11 15:47:22.543116031 +0200
 +++ ../cisco-lwapp/CISCO-LWAPP-DOT11-MIB.my	2024-04-15 15:30:41.503892275 +0200
