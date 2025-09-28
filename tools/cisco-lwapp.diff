@@ -792,34 +792,6 @@ diff -ru tmp/cisco-mibs/v2/AIRESPACE-SWITCHING-MIB.my ../cisco-lwapp/AIRESPACE-S
          agentDhcpScopeRowStatus,
          agentSnmpTrapPortNumber,
          agentSnmpVersion1Status,
-diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-MIB.my ../cisco-lwapp/CISCO-LWAPP-DOT11-MIB.my
---- tmp/cisco-mibs/v2/CISCO-LWAPP-DOT11-MIB.my	2024-04-11 15:47:22.543116031 +0200
-+++ ../cisco-lwapp/CISCO-LWAPP-DOT11-MIB.my	2024-04-15 15:30:41.503892275 +0200
-@@ -357,6 +357,7 @@
-         ciscoLwappDot11MIBNotifsGroup
-         ciscoLwappDot11MIBStatusGroup
-         Added ciscoLwappDot11MIBComplianceRev1 in 
-+        OBJECT-COMPLIANCE"
-     REVISION        "201803280000Z"
-     DESCRIPTION
-         "Added the following tables in cldConfig.
-@@ -374,7 +375,6 @@
-        cld11axMbssidTable
-        Added new group ciscoLwappDot11MIBHeStatusGroup."
-  
--        OBJECT-COMPLIANCE."
-     REVISION        "200701040000Z"
-     DESCRIPTION
-         "Initial version of this MIB module."
-@@ -1667,7 +1667,7 @@
-         "This attribute is used to configure neighbor
-         discovery mode for 802.11a radios."
-     DEFVAL          { 0 }
--    ::= { cldDot11dpMode 2 }
-+    ::= { cldDot11NdpMode 2 }
- 
- -- ********************************************************************
- -- *  Begin of cldDot116GHzPhy
 diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-MOBILITY-EXT-MIB.my ../cisco-lwapp/CISCO-LWAPP-MOBILITY-EXT-MIB.my
 --- tmp/cisco-mibs/v2/CISCO-LWAPP-MOBILITY-EXT-MIB.my	2023-03-27 16:00:52.164398336 +0200
 +++ ../cisco-lwapp/CISCO-LWAPP-MOBILITY-EXT-MIB.my	2024-04-15 15:55:12.624991530 +0200
@@ -947,18 +919,6 @@ diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-MOBILITY-EXT-MIB.my ../cisco-lwapp/CISCO-
 ---%DNP%  MTF -TRUE MTF
  
 ---%DNP%  NO REPLACEMENT =cLMobilityExtMOClientAssociationTime 
-diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-QOS-MIB.my ../cisco-lwapp/CISCO-LWAPP-QOS-MIB.my
---- tmp/cisco-mibs/v2/CISCO-LWAPP-QOS-MIB.my	2024-04-11 15:47:22.571115728 +0200
-+++ ../cisco-lwapp/CISCO-LWAPP-QOS-MIB.my	2024-04-11 16:20:19.489669297 +0200
-@@ -4476,7 +4476,7 @@
-      OBJECTS         {
-                          cLQCacIPLearnQStats,
-                          cLQCacOutstandingAAAReqQStats,
--                         cLQCacIPCHighStats,
-+                         cLQCacIPCHighStats
-                      }
-      STATUS          current
-      DESCRIPTION
 diff -ru tmp/cisco-mibs/v2/CISCO-LWAPP-RF-MIB.my ../cisco-lwapp/CISCO-LWAPP-RF-MIB.my
 --- tmp/cisco-mibs/v2/CISCO-LWAPP-RF-MIB.my	2024-04-11 15:47:22.578115653 +0200
 +++ ../cisco-lwapp/CISCO-LWAPP-RF-MIB.my	2024-04-11 16:17:50.687285986 +0200
