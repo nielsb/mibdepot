@@ -6,7 +6,8 @@ IMPORTS
     Unsigned32
         FROM SNMPv2-SMI
     TruthValue,
-    TEXTUAL-CONVENTION
+    TEXTUAL-CONVENTION,
+    MacAddress
         FROM SNMPv2-TC
     SnmpAdminString
         FROM SNMP-FRAMEWORK-MIB
@@ -26,10 +27,14 @@ IMPORTS
     VlanId
         FROM Q-BRIDGE-MIB
     IEEE8021PriorityValue 
-        FROM IEEE8021-TC-MIB;
+        FROM IEEE8021-TC-MIB
+    InetPortNumber
+        FROM INET-ADDRESS-MIB
+    AddressFamilyNumbers
+        FROM IANA-ADDRESS-FAMILY-NUMBERS-MIB;
 
 lldpV2Xdot1MIB MODULE-IDENTITY
-    LAST-UPDATED "202211080000Z" -- November 8, 2022
+    LAST-UPDATED "202306050000Z" -- June 5, 2023
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://www.ieee802.org/1/
@@ -54,12 +59,17 @@ lldpV2Xdot1MIB MODULE-IDENTITY
             http://standards.ieee.org/develop/regauth/oui/index.html
 
         Unless otherwise indicated, the references in this MIB
-        module are to IEEE Std 802.1Q-2022.
+        module are to IEEE Std 802.1Q-2022 as amended by IEEE Std 802.1Qcz-2023.
 
-        Copyright (C) IEEE (2022).
+        Copyright (C) IEEE (2023).
         This version of this MIB module is part of IEEE Std 802.1Q;
         see that standard for full legal notices."
         
+    REVISION "202306050000Z" -- June 5, 2023
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Qcz-2023.
+            Congestion Isolation objects added."
+
     REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
             "Published as part of IEEE Std 802.1Q-2022.
@@ -554,7 +564,7 @@ lldpV2Xdot1LocPortVlanId OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "The integer value used to identify the port's VLAN 
-            identifier associated with the local system.   A value 
+            Identifier associated with the local system.   A value 
             of zero shall be used if the system either does not know
             the PVID or does
             not support Port-based VLAN operation."
@@ -962,7 +972,7 @@ lldpV2Xdot1RemPortVlanId OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "The integer value used to identify the port's VLAN 
-            identifier associated with the remote system.  if the 
+            Identifier associated with the remote system.  if the 
             remote system either does not know the PVID or does not 
             support Port-based VLAN operation, the value of 
             lldpV2Xdot1RemPortVlanId should be zero."
@@ -1443,7 +1453,7 @@ lldpV2Xdot1RemLinkAggPortId OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "This object contains the IEEE 802.1 aggregated port
-            identifier, aAggPortID (IEEE Std 802.1AX, 6.3.2.1.1),
+            identifier, aAggPortID (IEEE Std 802.1AX, 7.3.2.1.1),
             derived from the ifNumber of the  ifIndex for the port
             component associated with the remote system.
 
@@ -1862,7 +1872,7 @@ lldpXdot1CnCompliance MODULE-COMPLIANCE
     DESCRIPTION
          "A compliance statement for SNMP entities that implement
          the IEEE 802.1 organizationally defined Congestion
-         Notification LLDP extension MIB.
+         Notification group in the LLDP extension MIB.
 
          This group is mandatory for agents that implement the 
          Congestion Notification cnSet TLV set."
@@ -2289,7 +2299,7 @@ lldpXdot1dcbxLocETSBasicConfigurationTable OBJECT-TYPE
     DESCRIPTION
         "This table contains one row per port for the IEEE 802.1
         organizationally defined LLDP ETS Configuration TLV on
-        the local system known to this agent"
+        the local system known to this agent."
     ::= { lldpXdot1dcbxLocETSConfiguration 1 }
 
 lldpXdot1dcbxLocETSBasicConfigurationEntry OBJECT-TYPE
@@ -2428,7 +2438,7 @@ lldpXdot1dcbxLocETSConTrafficClass OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Indicates the traffic class to
-        which this bandwidth applies"
+        which this bandwidth applies."
     REFERENCE
         "D.2.8.7"
     ::= { lldpXdot1dcbxLocETSConTrafficClassBandwidthEntry 1 }
@@ -2540,7 +2550,7 @@ lldpXdot1dcbxLocETSRecoTrafficClass OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Indicates the traffic class to
-        which this bandwidth applies"
+        which this bandwidth applies."
     REFERENCE
         "D.2.9.3"
     ::= { lldpXdot1dcbxLocETSRecoTrafficClassBandwidthEntry 1 }
@@ -2621,7 +2631,7 @@ lldpXdot1dcbxLocPFCBasicTable OBJECT-TYPE
     DESCRIPTION
         "This table contains one row per port for the IEEE 802.1
         organizationally defined LLDP PFC TLV on the local
-        system known to this agent"
+        system known to this agent."
     ::= { lldpXdot1dcbxLocPFC 1 }
 
 lldpXdot1dcbxLocPFCBasicEntry OBJECT-TYPE
@@ -2688,7 +2698,7 @@ lldpXdot1dcbxLocPFCEnableEntry OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Each entry indicates if PFC is enabled on the 
-        correponding priority"
+        corresponding priority"
     INDEX { 
         lldpV2LocPortIfIndex,
         lldpXdot1dcbxLocPFCEnablePriority 
@@ -2705,7 +2715,7 @@ lldpXdot1dcbxLocPFCEnablePriority OBJECT-TYPE
     MAX-ACCESS    not-accessible
     STATUS        current
     DESCRIPTION
-        "Prioity for which PFC is enabled / disabled"
+        "Priority for which PFC is enabled / disabled"
     ::= { lldpXdot1dcbxLocPFCEnableEntry 1 }
 
 lldpXdot1dcbxLocPFCEnableEnabled OBJECT-TYPE
@@ -2713,7 +2723,7 @@ lldpXdot1dcbxLocPFCEnableEnabled OBJECT-TYPE
     MAX-ACCESS    read-only
     STATUS        current
     DESCRIPTION
-        "Indicates if PFC is enabled on the corresponding priority"
+        "Indicates if PFC is enabled on the corresponding priority."
     REFERENCE
         "D.2.10.6"
     ::= { lldpXdot1dcbxLocPFCEnableEntry 2 }
@@ -2729,7 +2739,7 @@ lldpXdot1dcbxLocApplicationPriorityAppTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Table containing entries indicating the priority to be used
-        for a given application"
+        for a given application."
     ::= { lldpXdot1dcbxLocalData 4 }
 
 lldpXdot1dcbxLocApplicationPriorityAppEntry OBJECT-TYPE
@@ -2793,7 +2803,7 @@ lldpXdot1dcbxLocApplicationPriorityAEPriority OBJECT-TYPE
         "The priority code point that should be used in
         frames transporting the protocol indicated by
         lldpXdot1dcbxLocApplicationPriorityAESelector and
-        lldpXdot1dcbxLocApplicationPriorityAEProtocol"
+        lldpXdot1dcbxLocApplicationPriorityAEProtocol."
     REFERENCE
         "D.2.11.3"
     ::= { lldpXdot1dcbxLocApplicationPriorityAppEntry 3 }
@@ -2810,7 +2820,7 @@ lldpXdot1dcbxLocApplicationVlanAppTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Table containing entries indicating the VLAN to be used
-        for a given application"
+        for a given application."
     ::= { lldpXdot1dcbxLocalData 5 }
 
 lldpXdot1dcbxLocApplicationVlanAppEntry OBJECT-TYPE
@@ -2874,7 +2884,7 @@ lldpXdot1dcbxLocApplicationVlanAEVlanId OBJECT-TYPE
         "The VLAN Identifier that should be used in
         frames transporting the protocol indicated by
         lldpXdot1dcbxLocApplicationVlanAESelector and
-        lldpXdot1dcbxLocApplicationVlanAEProtocol"
+        lldpXdot1dcbxLocApplicationVlanAEProtocol."
     REFERENCE
         "D.2.14.3"
     ::= { lldpXdot1dcbxLocApplicationVlanAppEntry 3 }
@@ -2898,7 +2908,7 @@ lldpXdot1dcbxRemETSBasicConfigurationTable OBJECT-TYPE
     DESCRIPTION
         "This table contains one row per port for the IEEE 802.1
         organizationally defined LLDP ETS Configuration TLV on
-        the local system known to this agent"
+        the local system known to this agent."
     ::= { lldpXdot1dcbxRemETSConfiguration 1 }
 
 lldpXdot1dcbxRemETSBasicConfigurationEntry OBJECT-TYPE
@@ -3048,7 +3058,7 @@ lldpXdot1dcbxRemETSConTrafficClass OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Indicates the traffic class to
-        which this bandwidth applies"
+        which this bandwidth applies."
     REFERENCE
         "D.2.8.7"
     ::= { lldpXdot1dcbxRemETSConTrafficClassBandwidthEntry 1 }
@@ -3166,7 +3176,7 @@ lldpXdot1dcbxRemETSRecoTrafficClass OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Indicates the traffic class to
-        which this bandwidth applies"
+        which this bandwidth applies."
     REFERENCE
         "D.2.9.4"
     ::= { lldpXdot1dcbxRemETSRecoTrafficClassBandwidthEntry 1 }
@@ -3250,7 +3260,7 @@ lldpXdot1dcbxRemPFCBasicTable OBJECT-TYPE
     DESCRIPTION
         "This table contains one row per port for the IEEE 802.1
         organizationally defined LLDP PFC TLV on the local
-        system known to this agent"
+        system known to this agent."
     ::= { lldpXdot1dcbxRemPFC 1 }
 
 lldpXdot1dcbxRemPFCBasicEntry OBJECT-TYPE
@@ -3322,7 +3332,7 @@ lldpXdot1dcbxRemPFCEnableEntry OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Each entry indicates if PFC is enabled on the 
-        corresponding priority"
+        corresponding priority."
     INDEX         { 
                   lldpV2RemTimeMark,
                   lldpV2RemLocalIfIndex,
@@ -3342,7 +3352,7 @@ lldpXdot1dcbxRemPFCEnablePriority OBJECT-TYPE
     MAX-ACCESS    not-accessible
     STATUS        current
     DESCRIPTION
-        "Prioity for which PFC is enabled / disabled"
+        "Priority for which PFC is enabled / disabled"
     ::= { lldpXdot1dcbxRemPFCEnableEntry 1 }
 
 lldpXdot1dcbxRemPFCEnableEnabled OBJECT-TYPE
@@ -3350,7 +3360,7 @@ lldpXdot1dcbxRemPFCEnableEnabled OBJECT-TYPE
     MAX-ACCESS    read-only
     STATUS        current
     DESCRIPTION
-        "Indicates if PFC is enabled on the corresponding priority"
+        "Indicates if PFC is enabled on the corresponding priority."
     REFERENCE
         "D.2.10.6"
     ::= { lldpXdot1dcbxRemPFCEnableEntry 2 }
@@ -3367,7 +3377,7 @@ lldpXdot1dcbxRemApplicationPriorityAppTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Table containing entries indicating the priority to be used
-        for a given application"
+        for a given application."
     ::= { lldpXdot1dcbxRemoteData 4 }
 
 lldpXdot1dcbxRemApplicationPriorityAppEntry OBJECT-TYPE
@@ -3434,7 +3444,7 @@ lldpXdot1dcbxRemApplicationPriorityAEPriority OBJECT-TYPE
         "The priority code point that should be used in
         frames transporting the protocol indicated by
         lldpXdot1dcbxRemApplicationPriorityAESelector and
-        lldpXdot1dcbxRemApplicationPriorityAEProtocol"
+        lldpXdot1dcbxRemApplicationPriorityAEProtocol."
     REFERENCE
         "D.2.11.3"
     ::= { lldpXdot1dcbxRemApplicationPriorityAppEntry 3 }
@@ -3451,7 +3461,7 @@ lldpXdot1dcbxRemApplicationVlanAppTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Table containing entries indicating the VLAN to be used
-        for a given application"
+        for a given application."
     ::= { lldpXdot1dcbxRemoteData 5 }
 
 lldpXdot1dcbxRemApplicationVlanAppEntry OBJECT-TYPE
@@ -3518,7 +3528,7 @@ lldpXdot1dcbxRemApplicationVlanAEVlanId OBJECT-TYPE
         "The VLAN Identifier that should be used in
         frames transporting the protocol indicated by
         lldpXdot1dcbxRemApplicationVlanAESelector and
-        lldpXdot1dcbxRemApplicationVlanAEProtocol"
+        lldpXdot1dcbxRemApplicationVlanAEProtocol."
     REFERENCE
         "D.2.14.3"
     ::= { lldpXdot1dcbxRemApplicationVlanAppEntry 3 }
@@ -3543,7 +3553,7 @@ lldpXdot1dcbxAdminETSBasicConfigurationTable OBJECT-TYPE
     DESCRIPTION
         "This table contains one row per port for the IEEE 802.1
         organizationally defined LLDP ETS Configuration TLV
-        on the local system known to this agent"
+        on the local system known to this agent."
     ::= { lldpXdot1dcbxAdminETSConfiguration 1 }
 
 lldpXdot1dcbxAdminETSBasicConfigurationEntry OBJECT-TYPE
@@ -3684,7 +3694,7 @@ lldpXdot1dcbxAdminETSConTrafficClass OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Indicates the traffic class to
-        which this bandwidth applies"
+        which this bandwidth applies."
     REFERENCE
         "D.2.8.7"
     ::= { lldpXdot1dcbxAdminETSConTrafficClassBandwidthEntry 1 }
@@ -3808,7 +3818,7 @@ lldpXdot1dcbxAdminETSRecoTrafficClass OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Indicates the traffic class to
-        which this bandwidth applies"
+        which this bandwidth applies."
     REFERENCE
         "D.2.9.4"
     ::= { lldpXdot1dcbxAdminETSRecoTrafficClassBandwidthEntry 1 }
@@ -3902,7 +3912,7 @@ lldpXdot1dcbxAdminPFCBasicTable OBJECT-TYPE
     DESCRIPTION
         "This table contains one row per port for the IEEE 802.1
         organizationally defined LLDP PFC TLV on the local
-        system known to this agent"
+        system known to this agent."
     ::= { lldpXdot1dcbxAdminPFC 1 }
 
 lldpXdot1dcbxAdminPFCBasicEntry OBJECT-TYPE
@@ -3976,7 +3986,7 @@ lldpXdot1dcbxAdminPFCEnableEntry OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Each entry indicates if PFC is enabled on the 
-        corresponding priority"
+        corresponding priority."
     INDEX { 
         lldpV2LocPortIfIndex,
         lldpXdot1dcbxAdminPFCEnablePriority 
@@ -3993,7 +4003,7 @@ lldpXdot1dcbxAdminPFCEnablePriority OBJECT-TYPE
     MAX-ACCESS    not-accessible
     STATUS        current
     DESCRIPTION
-        "Prioity for which PFC is enabled / disabled"
+        "Priority for which PFC is enabled / disabled"
     ::= { lldpXdot1dcbxAdminPFCEnableEntry 1 }
 
 lldpXdot1dcbxAdminPFCEnableEnabled OBJECT-TYPE
@@ -4001,7 +4011,7 @@ lldpXdot1dcbxAdminPFCEnableEnabled OBJECT-TYPE
     MAX-ACCESS    read-write
     STATUS        current
     DESCRIPTION
-        "Indicates if PFC is enabled on the corresponding priority"
+        "Indicates if PFC is enabled on the corresponding priority."
     REFERENCE
         "D.2.10.6"
     DEFVAL      { false }
@@ -4018,8 +4028,8 @@ lldpXdot1dcbxAdminApplicationPriorityAppTable OBJECT-TYPE
     MAX-ACCESS    not-accessible
     STATUS        current
     DESCRIPTION
-        "Table containing entries indicating the priorty to be used
-        for a given application"
+        "Table containing entries indicating the priority to be used
+        for a given application."
     ::= { lldpXdot1dcbxAdminData 4 }
 
 lldpXdot1dcbxAdminApplicationPriorityAppEntry OBJECT-TYPE
@@ -4083,7 +4093,7 @@ lldpXdot1dcbxAdminApplicationPriorityAEPriority OBJECT-TYPE
         "The priority code point that should be used in
         frames transporting the protocol indicated by
         lldpXdot1dcbxAdminApplicationPriorityAESelector and
-        lldpXdot1dcbxAdminApplicationPriorityAEProtocol"
+        lldpXdot1dcbxAdminApplicationPriorityAEProtocol."
     REFERENCE
         "D.2.10.6"
     ::= { lldpXdot1dcbxAdminApplicationPriorityAppEntry 3 }
@@ -4100,7 +4110,7 @@ lldpXdot1dcbxAdminApplicationVlanAppTable OBJECT-TYPE
     STATUS        current
     DESCRIPTION
         "Table containing entries indicating the VLAN to be used
-        for a given application"
+        for a given application."
     ::= { lldpXdot1dcbxAdminData 5 }
 
 lldpXdot1dcbxAdminApplicationVlanAppEntry OBJECT-TYPE
@@ -4164,7 +4174,7 @@ lldpXdot1dcbxAdminApplicationVlanAEVlanId OBJECT-TYPE
         "The VLAN Identifier that should be used in
         frames transporting the protocol indicated by
         lldpXdot1dcbxAdminApplicationVlanAESelector and
-        lldpXdot1dcbxAdminApplicationVlanAEProtocol"
+        lldpXdot1dcbxAdminApplicationVlanAEProtocol."
     REFERENCE
         "D.2.14.3"
     ::= { lldpXdot1dcbxAdminApplicationVlanAppEntry 3 }
@@ -4186,8 +4196,8 @@ lldpXdot1dcbxCompliance MODULE-COMPLIANCE
     STATUS        current
     DESCRIPTION
          "A compliance statement for SNMP entities that implement
-         the IEEE 802.1 organizationally defined DCBX LLDP 
-         extension MIB.
+         the IEEE 802.1 organizationally defined DCBX group in the
+         LLDP extension MIB.
 
          This group is mandatory for agents that implement Enhanced
          Transmission Selection."
@@ -4286,5 +4296,846 @@ lldpXdot1dcbxApplicationVlanGroup  OBJECT-GROUP
         "The collection of objects used for Application
         VLAN."
     ::= { lldpXdot1dcbxGroups 4 }      
+
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+--
+-- Organizationally Defined Information Extension - IEEE 802.1
+-- Definitions to support the ciSet TLV set (Table D-1)
+-- for Congestion Isolation
+--
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+lldpXdot1CiMIB OBJECT IDENTIFIER ::= { lldpV2Xdot1MIB 8 }
+lldpXdot1CiObjects OBJECT IDENTIFIER ::= { lldpXdot1CiMIB 1 }
+
+-- CI 802.1 MIB Extension groups
+
+lldpXdot1CiConfig OBJECT IDENTIFIER ::= { lldpXdot1CiObjects 1 }
+lldpXdot1CiLocalData OBJECT IDENTIFIER ::= { lldpXdot1CiObjects 2 }
+lldpXdot1CiRemoteData OBJECT IDENTIFIER ::= { lldpXdot1CiObjects 3 }
+
+-------------------------------------------------------------------
+-- Textual conventions for Congestion Isolation
+-------------------------------------------------------------------
+
+CiQueueType ::= TEXTUAL-CONVENTION
+    STATUS    current
+    DESCRIPTION
+        "Indicates whether a queue is a monitored queue, a congesting 
+         queue or not participating in Congestion Isolation.  The 
+         queue type is used when building the queue map field of the 
+         Congestion Isolation TLV.
+         0: The queue is not participating in Congestion Isolation
+         1: The queue is a monitored queue
+         2: The queue is a congesting queue"
+    SYNTAX  INTEGER {
+         ciQNone(0),
+         ciQMonitor(1),
+         ciQCongesting(2)
+    }
+
+-------------------------------------------------------------------
+-- IEEE 802.1 - Congestion Isolation Configuration
+-------------------------------------------------------------------
+
+--
+--  lldpXdot1CiConfigCiTable : configure the 
+--  transmission of the Congestion Isolation TLV on a set of ports
+--
+
+lldpXdot1CiConfigCiTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF LldpXdot1CiConfigCiEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "A table that controls selection of Congestion Isolation
+         TLVs to be transmitted on individual ports."
+    ::= { lldpXdot1CiConfig 1 }
+
+lldpXdot1CiConfigCiEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1CiConfigCiEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "LLDP configuration information that controls the
+        transmission of IEEE 802.1 organizationally defined 
+        Congestion Isolation TLV on LLDP transmission-capable ports.
+
+        This configuration object augments the lldpV2PortConfigEntry of
+        the LLDP-MIB, therefore it is only present along with the port
+        configuration defined by the associated lldpV2PortConfigEntry
+        entry.
+
+        Each active lldpConfigEntry is restored from non-volatile
+        storage (along with the corresponding lldpV2PortConfigEntry)
+        after a re-initialization of the management system."
+    AUGMENTS      { lldpV2PortConfigEntry }
+    ::= { lldpXdot1CiConfigCiTable 1 }
+
+LldpXdot1CiConfigCiEntry ::= SEQUENCE {
+    lldpXdot1CiConfigCiTxEnable TruthValue
+}
+
+lldpXdot1CiConfigCiTxEnable OBJECT-TYPE
+    SYNTAX        TruthValue
+    MAX-ACCESS    read-write
+    STATUS        current
+    DESCRIPTION 
+        "The lldpXdot1CiConfigCiTxEnable, which is
+        defined as a truth value and configured by the network 
+        management, determines whether the IEEE 802.1 organizationally
+        defined Congestion Isolation TLV transmission is allowed 
+        on a given LLDP transmission-capable port.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system."
+    REFERENCE
+        "D.2.15"
+    DEFVAL         { false }
+    ::= { lldpXdot1CiConfigCiEntry 1 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - Congestion Isolation Local System Information
+------------------------------------------------------------------------
+
+---
+---
+--- lldpXdot1CiLocalData: Contains the information for the CI TLV
+---
+---
+lldpXdot1LocCiBasicTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpXdot1LocCiBasicEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains one row per port of basic Congestion Isolation 
+        information (as a part of the LLDP 802.1 organizational extension) 
+        on the local system known to this agent."
+    ::= { lldpXdot1CiLocalData 1 }
+
+lldpXdot1LocCiBasicEntry OBJECT-TYPE
+    SYNTAX      LldpXdot1LocCiBasicEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Basic Congestion Isolation information about a particular port 
+        component."
+    INDEX   { lldpV2LocPortIfIndex }
+    ::= { lldpXdot1LocCiBasicTable 1 }
+
+LldpXdot1LocCiBasicEntry ::= SEQUENCE {
+      lldpXdot1LocCiCIMEncapLen     Unsigned32,
+      lldpXdot1LocCiMacAddress      MacAddress,
+      lldpXdot1LocCiNetAddressType  AddressFamilyNumbers,
+      lldpXdot1LocCiNetAddress      OCTET STRING,
+      lldpXdot1LocCiUDPPort         InetPortNumber
+} 
+
+lldpXdot1LocCiCIMEncapLen OBJECT-TYPE
+    SYNTAX      Unsigned32 (60..512)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The requested length in octets of the data encapsulated into
+        a CIM by a peer. The default and minimum required value is 60. 
+        The maximum value is 512."
+    REFERENCE
+        "D.2.15.4"
+    ::= { lldpXdot1LocCiBasicEntry 1 }
+
+lldpXdot1LocCiMacAddress  OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The MAC address that is to be used as the destination MAC address 
+        for a CIM to the Bridge or end station."
+    REFERENCE
+        "D.2.15.5"
+    ::= { lldpXdot1LocCiBasicEntry 2 }
+
+lldpXdot1LocCiNetAddressType  OBJECT-TYPE
+    SYNTAX      AddressFamilyNumbers
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The type of network address identifier encoding used in the 
+        associated 'lldpXdot1LocCiNetAddress' object.  Only the IPv4
+        and IPv6 address type encodings enumerated in AddressFamilyNumbers 
+        are used in the Congestion Isolation TLV."
+    REFERENCE 
+        "D.2.15.7"
+    ::= { lldpXdot1LocCiBasicEntry 3 }
+
+lldpXdot1LocCiNetAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(1..31))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The string value used to identify the network address component 
+        associated with the local system. This address is to be used as
+        the destination network address of a layer-3 CIM."
+    REFERENCE 
+        "D.2.15.8"
+    ::= { lldpXdot1LocCiBasicEntry 4 }
+
+lldpXdot1LocCiUDPPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The UDP port number to be used in layer 3 CIMs sent by the peer."
+    REFERENCE
+       "D.2.15.6"
+    ::= { lldpXdot1LocCiBasicEntry 5 }
+
+--
+-- The table specifying, the queue map to advertise in the
+-- Congestion Isolation TLV.
+--
+
+lldpXdot1LocCiQueueMapTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpXdot1LocCiQueueMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table specifying whether the queue of a priority is to
+        be a monitored queue, congesting queue, or not participating.
+        For each participating queue there is a mapped queue.  This
+        information can be transmitted in the Congestion Isolation TLV.
+       "
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1CiLocalData 2 }
+
+lldpXdot1LocCiQueueMapEntry OBJECT-TYPE
+    SYNTAX      LldpXdot1LocCiQueueMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table specifying whether the queue of a priority is to
+        be a monitored queue, congesting queue, or not participating.
+        For each participating queue there is a mapped queue.  This
+        information can be transmitted in the Congestion Isolation TLV.
+       "
+    INDEX { lldpV2LocPortIfIndex,
+            lldpXdot1LocCiQueueId }
+    ::= { lldpXdot1LocCiQueueMapTable 1 }
+
+LldpXdot1LocCiQueueMapEntry ::= SEQUENCE {
+        lldpXdot1LocCiQueueId      IEEE8021PriorityValue,
+        lldpXdot1LocCiQueueType    CiQueueType,
+        lldpXdot1LocCiMappedQueue  IEEE8021PriorityValue
+    }
+
+lldpXdot1LocCiQueueId OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The priority for a frame received on this port."
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1LocCiQueueMapEntry 1 }
+
+lldpXdot1LocCiQueueType OBJECT-TYPE
+    SYNTAX      CiQueueType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "monitored, congesting, or not used
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1LocCiQueueMapEntry 2 }
+
+lldpXdot1LocCiMappedQueue OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "The remapped priority for frames received on this port
+        at the received priority.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1LocCiQueueMapEntry 3 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - Congestion Isolation Remote System Information
+------------------------------------------------------------------------
+
+---
+---
+--- lldpXdot1CiRemoteData: Contains the received information for the CI TLV
+---
+---
+lldpXdot1RemCiBasicTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpXdot1RemCiBasicEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains one row per port of basic Congestion Isolation 
+        information (as a part of the LLDP 802.1 organizational extension) 
+        of the remote system."
+    ::= { lldpXdot1CiRemoteData 1 }
+
+lldpXdot1RemCiBasicEntry OBJECT-TYPE
+    SYNTAX      LldpXdot1RemCiBasicEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Basic Congestion Isolation information about a particular port 
+        component."
+    INDEX   { lldpV2RemTimeMark,
+              lldpV2RemLocalIfIndex,
+              lldpV2RemLocalDestMACAddress,
+              lldpV2RemIndex }
+    ::= { lldpXdot1RemCiBasicTable 1 }
+
+LldpXdot1RemCiBasicEntry ::= SEQUENCE {
+      lldpXdot1RemCiCIMEncapLen     Unsigned32,
+      lldpXdot1RemCiMacAddress      MacAddress,
+      lldpXdot1RemCiNetAddressType  AddressFamilyNumbers,
+      lldpXdot1RemCiNetAddress      OCTET STRING,
+      lldpXdot1RemCiUDPPort         InetPortNumber
+} 
+
+lldpXdot1RemCiCIMEncapLen OBJECT-TYPE
+    SYNTAX      Unsigned32 (60..512)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The requested length in octets of the data encapsulated into
+        a CIM by a peer. The default and minimum required value is 60. 
+        The maximum value is 512."
+    REFERENCE
+        "D.2.15.4"
+    ::= { lldpXdot1RemCiBasicEntry 1 }
+
+lldpXdot1RemCiMacAddress  OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The MAC address that is to be used as the destination MAC address 
+        for a CIM to the Bridge or end station."
+    REFERENCE
+        "D.2.15.5"
+    ::= { lldpXdot1RemCiBasicEntry 2 }
+
+lldpXdot1RemCiNetAddressType  OBJECT-TYPE
+    SYNTAX      AddressFamilyNumbers
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The type of network address identifier encoding used in the 
+        associated 'lldpXdot1RemCiNetAddress' object.  Only the IPv4
+        and IPv6 address type encodings enumerated in AddressFamilyNumbers 
+        are used in the Congestion Isolation TLV."
+    REFERENCE 
+        "D.2.15.7"
+    ::= { lldpXdot1RemCiBasicEntry 3 }
+
+lldpXdot1RemCiNetAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(1..31))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The string value used to identify the network address component 
+        associated with the local system. This address is to be used as
+        the destination network address of a layer-3 CIM."
+    REFERENCE 
+        "D.2.15.8"
+    ::= { lldpXdot1RemCiBasicEntry 4 }
+
+lldpXdot1RemCiUDPPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+       "The UDP port number to be used in layer 3 CIMs sent by the peer."
+    REFERENCE
+       "D.2.15.6"
+    ::= { lldpXdot1RemCiBasicEntry 5 }
+
+--
+-- The table specifying, the queue map to advertise in the
+-- Congestion Isolation TLV.
+--
+
+lldpXdot1RemCiQueueMapTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpXdot1RemCiQueueMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table specifying whether the queue of a priority is to
+        be a monitored queue, congesting queue, or not participating.
+        For each participating queue there is a mapped queue.  This
+        information can be transmitted in the Congestion Isolation TLV.
+       "
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1CiRemoteData 2 }
+
+lldpXdot1RemCiQueueMapEntry OBJECT-TYPE
+    SYNTAX      LldpXdot1RemCiQueueMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "A table specifying whether the queue of a priority is to
+        be a monitored queue, congesting queue, or not participating.
+        For each participating queue there is a mapped queue.  This
+        information can be transmitted in the Congestion Isolation TLV.
+       "
+    INDEX   { lldpV2RemTimeMark,
+              lldpV2RemLocalIfIndex,
+              lldpV2RemLocalDestMACAddress,
+              lldpV2RemIndex,
+              lldpXdot1RemCiQueueId }
+    ::= { lldpXdot1RemCiQueueMapTable 1 }
+
+LldpXdot1RemCiQueueMapEntry ::= SEQUENCE {
+        lldpXdot1RemCiQueueId      IEEE8021PriorityValue,
+        lldpXdot1RemCiQueueType    CiQueueType,
+        lldpXdot1RemCiMappedQueue  IEEE8021PriorityValue
+    }
+
+lldpXdot1RemCiQueueId OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+       "The priority for a frame received on this port."
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1RemCiQueueMapEntry 1 }
+
+lldpXdot1RemCiQueueType OBJECT-TYPE
+    SYNTAX      CiQueueType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "monitored, congesting, or not used
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1RemCiQueueMapEntry 2 }
+
+lldpXdot1RemCiMappedQueue OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "The remapped priority for frames received on this port
+        at the received priority.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system.
+       "
+    REFERENCE
+       "D.2.15.3"
+    ::= { lldpXdot1RemCiQueueMapEntry 3 }
+
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - Congestion Isolation Conformance Information
+------------------------------------------------------------------------
+
+lldpXdot1CiConformance OBJECT IDENTIFIER ::= { lldpV2Xdot1MIB 9 }
+
+lldpXdot1CiCompliances 
+    OBJECT IDENTIFIER ::= { lldpXdot1CiConformance 1 }
+lldpXdot1CiGroups OBJECT IDENTIFIER ::= { lldpXdot1CiConformance 2 }
+
+--
+-- Congestion Isolation - Compliance Statements
+--
+
+lldpXdot1CiCompliance MODULE-COMPLIANCE
+    STATUS        current
+    DESCRIPTION
+         "A compliance statement for SNMP entities that implement
+         the IEEE 802.1 organizationally defined Congestion
+         Isolation group in the LLDP extension MIB.
+
+         This group is mandatory for agents that implement the 
+         Congestion Isolation cnSet TLV set."
+    MODULE        -- this module
+        MANDATORY-GROUPS  { lldpXdot1CiGroup, 
+                            ifGeneralInformationGroup }
+    ::= { lldpXdot1CiCompliances 1 }
+
+
+--
+-- Congestion Isolation - MIB groupings
+--
+
+lldpXdot1CiGroup  OBJECT-GROUP
+    OBJECTS {
+        lldpXdot1CiConfigCiTxEnable,
+        lldpXdot1LocCiCIMEncapLen,
+        lldpXdot1LocCiMacAddress,
+        lldpXdot1LocCiNetAddressType,
+        lldpXdot1LocCiNetAddress,
+        lldpXdot1LocCiUDPPort,
+        lldpXdot1LocCiQueueType,
+        lldpXdot1LocCiMappedQueue,
+        lldpXdot1RemCiCIMEncapLen,
+        lldpXdot1RemCiMacAddress,
+        lldpXdot1RemCiNetAddressType,
+        lldpXdot1RemCiNetAddress,
+        lldpXdot1RemCiUDPPort,
+        lldpXdot1RemCiQueueType,
+        lldpXdot1RemCiMappedQueue
+    }
+    STATUS  current
+    DESCRIPTION
+        "The collection of objects that support the
+        Congestion Isolation ciSet TLV set."
+    ::= { lldpXdot1CiGroups 1 }
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+--
+-- Organizationally Defined Information Extension - IEEE 802.1
+-- Definitions to support the trSet TLV set (Table D-1)
+-- for Topology Recognition
+--
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+lldpXdot1TrMIB OBJECT IDENTIFIER ::= { lldpV2Xdot1MIB 10 }
+lldpXdot1TrObjects OBJECT IDENTIFIER ::= { lldpXdot1TrMIB 1 }
+
+-- TR 802.1 MIB Extension groups
+
+lldpXdot1TrConfig OBJECT IDENTIFIER ::= { lldpXdot1TrObjects 1 }
+lldpXdot1TrLocalData OBJECT IDENTIFIER ::= { lldpXdot1TrObjects 2 }
+lldpXdot1TrRemoteData OBJECT IDENTIFIER ::= { lldpXdot1TrObjects 3 }
+
+-------------------------------------------------------------------
+-- Textual conventions for Topology Recognition
+-------------------------------------------------------------------
+
+LldpXdot1TrDeviceType ::= TEXTUAL-CONVENTION
+    STATUS    current
+    DESCRIPTION
+        "Indicates the type of device for the Topology Recognition
+         algorithm.  Used in the Device Type field of the Topology
+         Recognition TLV
+         0: End-station / Server
+         1: Bridge
+         2: Router
+         255: Unknown"
+    SYNTAX  INTEGER {
+         trEndStation(0),
+         trBridge(1),
+         trRouter(2),
+         trUnknown(255)
+    }
+
+LldpXdot1TrPortOrientation ::= TEXTUAL-CONVENTION
+    STATUS    current
+    DESCRIPTION
+        "Indicates the orientation of the port in the Topology Recognition
+         algorithm.  Used in the Port Orientation field of the Topology
+         Recognition TLV
+         0: uplink
+         1: downlink
+         2: crosslink
+         255: Unknown"
+    SYNTAX  INTEGER {
+         trPortUplink(0),
+         trPortDownlink(1),
+         trPortCrosslink(2),
+         trPortUnknown(255)
+    }
+
+-------------------------------------------------------------------
+-- IEEE 802.1 - Topology Recognition Configuration
+-------------------------------------------------------------------
+
+--
+--  lldpXdot1TrConfigTrTable : configure the 
+--  transmission of the Topology Recognition TLV on a set of ports
+--
+
+lldpXdot1TrConfigTrTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF LldpXdot1TrConfigTrEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "A table that controls selection of Topology Recognition
+         TLVs to be transmitted on individual ports."
+    ::= { lldpXdot1TrConfig 1 }
+
+lldpXdot1TrConfigTrEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1TrConfigTrEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "LLDP configuration information that controls the
+        transmission of IEEE 802.1 organizationally defined 
+        Topology Recognition TLV on LLDP transmission-capable ports.
+
+        This configuration object augments the lldpV2PortConfigEntry of
+        the LLDP-MIB, therefore it is only present along with the port
+        configuration defined by the associated lldpV2PortConfigEntry
+        entry.
+
+        Each active lldpConfigEntry is restored from non-volatile
+        storage (along with the corresponding lldpV2PortConfigEntry)
+        after a re-initialization of the management system."
+    AUGMENTS      { lldpV2PortConfigEntry }
+    ::= { lldpXdot1TrConfigTrTable 1 }
+
+LldpXdot1TrConfigTrEntry ::= SEQUENCE {
+    lldpXdot1TrConfigTrTxEnable TruthValue
+}
+
+lldpXdot1TrConfigTrTxEnable OBJECT-TYPE
+    SYNTAX        TruthValue
+    MAX-ACCESS    read-write
+    STATUS        current
+    DESCRIPTION 
+        "The lldpXdot1TrConfigTrTxEnable, which is
+        defined as a truth value and configured by the network 
+        management, determines whether the IEEE 802.1 organizationally
+        defined Topology Recognition TLV transmission is allowed 
+        on a given LLDP transmission-capable port.
+
+        The value of this object is restored from non-volatile
+        storage after a re-initialization of the management system."
+    REFERENCE
+        "D.2.16"
+    DEFVAL         { false }
+    ::= { lldpXdot1TrConfigTrEntry 1 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - Topology Recognition Local System Information
+------------------------------------------------------------------------
+
+---
+---
+--- lldpXdot1TrLocalData: Contains the information for the TR TLV
+---
+---
+lldpXdot1LocTrTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpXdot1LocTrEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains one row per port of Topology Recognition 
+        information (as a part of the LLDP 802.1 organizational extension) 
+        on the local system known to this agent."
+    ::= { lldpXdot1TrLocalData 1 }
+
+lldpXdot1LocTrEntry OBJECT-TYPE
+    SYNTAX      LldpXdot1LocTrEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Topology Recognition information about a particular port 
+        component."
+    INDEX   { lldpV2LocPortIfIndex }
+    ::= { lldpXdot1LocTrTable 1 }
+
+LldpXdot1LocTrEntry ::= SEQUENCE {
+      lldpXdot1LocTrDeviceType       LldpXdot1TrDeviceType,
+      lldpXdot1LocTrTopoLevel        Unsigned32,
+      lldpXdot1LocTrPortOrientation  LldpXdot1TrPortOrientation
+} 
+
+lldpXdot1LocTrDeviceType  OBJECT-TYPE
+    SYNTAX      LldpXdot1TrDeviceType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates the type of device sending the Topology Recognition TLV. 
+        End-stations or servers that are non-relay systems at the edge 
+        of the topology use the value trEndStation(0).  A layer-2 relay
+        system uses the value trBridge(1) and layer-3 relay systems use
+        the value trRouter(2)."
+    REFERENCE
+        "D.2.16.3"
+    ::= { lldpXdot1LocTrEntry 1 }
+
+lldpXdot1LocTrTopoLevel OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Indicates the system understanding of its current level in 
+        the topology. The value of 0 indicates the edge of the topology
+        and the value 255 indicates the level is currently unknown. Other
+        non-zero values between 1 and 254 indicate the minimum number 
+        of links between the system and the edge of the topology."
+    REFERENCE
+        "D.2.16.4"
+    ::= { lldpXdot1LocTrEntry 2 }
+
+lldpXdot1LocTrPortOrientation  OBJECT-TYPE
+    SYNTAX      LldpXdot1TrPortOrientation
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Indicates whether the port is facing a trUplink(0), trDownlink(1), 
+        trCrosslink(2), or the orientation is TrUnknown(255). An uplink is a 
+        port that is facing a system that is deeper in the topology (i.e., 
+        has a Topology Level greater than the sending system). A downlink 
+        is a port that is facing a system closer to the edge of the topology 
+        (i.e., has a Topology Level less than the sending system). A crosslink
+        is a port that is facing a system at the same level of the topology.
+        Systems that are end-stations initialize this value to trUplink(0).
+        Systems that are not end-stations initialize this value to
+        TrUnknown(255)."
+    REFERENCE 
+        "D.2.16.5"
+    ::= { lldpXdot1LocTrEntry 3 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - Topology Recognition Remote System Information
+------------------------------------------------------------------------
+
+---
+---
+--- lldpXdot1TrRemoteData: Contains the received information for the TR TLV
+---
+---
+lldpXdot1RemTrTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpXdot1RemTrEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains one row per port of basic Topology Recognition 
+        information (as a part of the LLDP 802.1 organizational extension) 
+        of the remote system."
+    ::= { lldpXdot1TrRemoteData 1 }
+
+lldpXdot1RemTrEntry OBJECT-TYPE
+    SYNTAX      LldpXdot1RemTrEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Basic Topology Recognition information about a particular port 
+        component."
+    INDEX   { lldpV2RemTimeMark,
+              lldpV2RemLocalIfIndex,
+              lldpV2RemLocalDestMACAddress,
+              lldpV2RemIndex }
+    ::= { lldpXdot1RemTrTable 1 }
+
+LldpXdot1RemTrEntry ::= SEQUENCE {
+      lldpXdot1RemTrDeviceType       LldpXdot1TrDeviceType,
+      lldpXdot1RemTrTopoLevel        Unsigned32,
+      lldpXdot1RemTrPortOrientation  LldpXdot1TrPortOrientation
+} 
+
+lldpXdot1RemTrDeviceType  OBJECT-TYPE
+    SYNTAX      LldpXdot1TrDeviceType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates the type of device sending the Topology Recognition TLV. 
+        End-stations or servers that are non-relay systems at the edge 
+        of the topology use the value trEndStation(0).  A layer-2 relay
+        system uses the value trBridge(1) and layer-3 relay systems use
+        the value trRouter(2)."
+    REFERENCE
+        "D.2.16.3"
+    ::= { lldpXdot1RemTrEntry 1 }
+
+lldpXdot1RemTrTopoLevel OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates the system understanding of its current level in 
+        the topology. The value of 0 indicates the edge of the topology
+        and the value 255 indicates the level is currently unknown. Other
+        non-zero values between 1 and 254 indicate the minimum number 
+        of links between the system and the edge of the topology."
+    REFERENCE
+        "D.2.16.4"
+    ::= { lldpXdot1RemTrEntry 2 }
+
+lldpXdot1RemTrPortOrientation  OBJECT-TYPE
+    SYNTAX      LldpXdot1TrPortOrientation
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates whether the port is facing a trUplink(0), trDownlink(1), 
+        trCrosslink(2), or the orientation is TrUnknown(255). An uplink is a 
+        port that is facing a system that is deeper in the topology (i.e., 
+        has a Topology Level greater than the sending system). A downlink 
+        is a port that is facing a system closer to the edge of the topology 
+        (i.e., has a Topology Level less than the sending system). A crosslink
+        is a port that is facing a system at the same level of the topology.
+        Systems that are end-stations initialize this value to trUplink(0).
+        Systems that are not end-stations initialize this value to
+        TrUnknown(255)."
+    REFERENCE 
+        "D.2.16.5"
+    ::= { lldpXdot1RemTrEntry 3 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - Topology Recognition Conformance Information
+------------------------------------------------------------------------
+
+lldpXdot1TrConformance OBJECT IDENTIFIER ::= { lldpV2Xdot1MIB 11 }
+
+lldpXdot1TrCompliances 
+    OBJECT IDENTIFIER ::= { lldpXdot1TrConformance 1 }
+lldpXdot1TrGroups OBJECT IDENTIFIER ::= { lldpXdot1TrConformance 2 }
+
+--
+-- Topology Recognition - Compliance Statements
+--
+
+lldpXdot1TrCompliance MODULE-COMPLIANCE
+    STATUS        current
+    DESCRIPTION
+         "A compliance statement for SNMP entities that implement
+         the IEEE 802.1 organizationally defined Topology
+         Recognition group in the LLDP extension MIB.
+
+         This group is mandatory for agents that implement the 
+         Topology Recognition cnSet TLV set."
+    MODULE        -- this module
+        MANDATORY-GROUPS  { lldpXdot1TrGroup, 
+                            ifGeneralInformationGroup }
+    ::= { lldpXdot1TrCompliances 1 }
+
+
+--
+-- Topology Recognition - MIB groupings
+--
+
+lldpXdot1TrGroup  OBJECT-GROUP
+    OBJECTS {
+        lldpXdot1TrConfigTrTxEnable,
+        lldpXdot1LocTrDeviceType,
+        lldpXdot1LocTrTopoLevel,
+        lldpXdot1LocTrPortOrientation,
+        lldpXdot1RemTrDeviceType,
+        lldpXdot1RemTrTopoLevel,
+        lldpXdot1RemTrPortOrientation
+    }
+    STATUS  current
+    DESCRIPTION
+        "The collection of objects that support the
+        Topology Recognition trSet TLV set."
+    ::= { lldpXdot1TrGroups 1 }
 END
 

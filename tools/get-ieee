@@ -18,4 +18,13 @@ do
     sed -e 's/\r//' $f | awk '{if(NR==1)sub(/^[\xef\xbb\xbf]*/,"");print}' >$DIR/$g
 done
 
+for f in $DIR/*.txt
+do
+    g=$(echo $f | sed s/.txt/.mib/)
+    if [ -r $g ]; then
+	rm $g
+    fi
+done
+rm -f $DIR/lldp.mib $DIR/lldp_dot1.mib $DIR/lldp_dot3.mib
+
 # patch -d $DIR <ieee.diff

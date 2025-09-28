@@ -23,7 +23,7 @@ IMPORTS
 
 -- Define the MIB module
         lldpXDot1EvbExtensions MODULE-IDENTITY
-    LAST-UPDATED "202211080000Z" -- November 8, 2022
+    LAST-UPDATED "202309210000Z" -- September 21, 2023
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://www.ieee802.org/1/
@@ -38,19 +38,26 @@ IMPORTS
     DESCRIPTION
             "The LLDP Management Information Base extension module for
             IEEE 802.1 organizationally defined discovery information
-            for the EVB extension objects.
+            for the EVB extension and PBBN Auto Attach objects.
 
             This MIB module is rooted under the lldpXdot1StandAloneExtensions
             OID arc, in order to allow it to be defined independently
             of other 802.1 LLDP extension MIBs.
 
-        Unless otherwise indicated, the references in this MIB
-        module are to IEEE Std 802.1Q-2022.
+        Unless otherwise indicated, the references in this MIB module are to
+        IEEE Std 802.1Q Bridges and Bridged Networks:
+        IEEE Std 802.1Q-2022 as amended by IEEE Std 802.1Qcz, IEEE Std 802.1Qcw, 
+        and IEEE Std 802.1Qcj.
 
-        Copyright (C) IEEE (2022).
+        Copyright (C) IEEE (2023).
         This version of this MIB module is part of IEEE Std 802.1Q;
         see that standard for full legal notices."
         
+    REVISION "202309210000Z" -- September 21, 2023
+    DESCRIPTION
+            "Published as part of IEEE Std 802.1Qcj.
+            Auto Attach objects added, references updated."
+
     REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
             "Published as part of IEEE Std 802.1Q-2022.
@@ -61,14 +68,12 @@ IMPORTS
             "Published as part of IEEE Std 802.1Q 2018 revision.
             Cross references updated and corrected."
 
-    REVISION "201412150000Z" -- December 15, 2014
-    
+    REVISION "201412150000Z" -- December 15, 2014    
     DESCRIPTION
             "Published as part of IEEE Std 802.1Q 2014 revision.
             Cross references updated and corrected."
             
     REVISION "201202150000Z" -- February 15, 2012
-
     DESCRIPTION
             "Initial version published as part of IEEE Std 802.1Qbg"
 
@@ -97,16 +102,13 @@ lldpXdot1EvbConfig OBJECT IDENTIFIER ::= { lldpXdot1EvbObjects 1 }
 lldpXdot1EvbLocalData OBJECT IDENTIFIER ::= { lldpXdot1EvbObjects 2 }
 lldpXdot1EvbRemoteData OBJECT IDENTIFIER ::= { lldpXdot1EvbObjects 3 }
 
-  
 -------------------------------------------------------------------
 -- IEEE 802.1 - EVB Configuration
 -------------------------------------------------------------------
-
 --
 --  lldpXdot1EvbConfigEvbTable : configure the 
 --  transmission of the EVB TLV on a set of ports
 --
-
 lldpXdot1EvbConfigEvbTable OBJECT-TYPE
     SYNTAX        SEQUENCE OF LldpXdot1EvbConfigEvbEntry
     MAX-ACCESS    not-accessible
@@ -157,12 +159,10 @@ lldpXdot1EvbConfigEvbTxEnable OBJECT-TYPE
         "D.2.12"
     DEFVAL         { false }
     ::= { lldpXdot1EvbConfigEvbEntry 1 }
-
 --
 --  lldpXdot1EvbConfigCdcpTable : configure the 
 --  transmission of the CDCP TLV on a set of ports
 --
-
 lldpXdot1EvbConfigCdcpTable OBJECT-TYPE
     SYNTAX        SEQUENCE OF LldpXdot1EvbConfigCdcpEntry
     MAX-ACCESS    not-accessible
@@ -217,13 +217,9 @@ lldpXdot1EvbConfigCdcpTxEnable OBJECT-TYPE
 ------------------------------------------------------------------------
 -- IEEE 802.1 - EVB Local System Information
 ------------------------------------------------------------------------
-
----
 ---
 --- lldpV2Xdot1LocEvbTlvTable: EVB TLV Information Table
 ---
----
-
 lldpV2Xdot1LocEvbTlvTable OBJECT-TYPE
     SYNTAX      SEQUENCE OF LldpV2Xdot1LocEvbTlvEntry
     MAX-ACCESS  not-accessible
@@ -255,7 +251,7 @@ lldpV2Xdot1LocEvbTlvString OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "This object contains the EVB TLV information string  
-            for the Port, as defined in D.2.13.
+            for the Port, as defined in D.2.12.
             As the elements within the string are not individually
             manipulated via SNMP (they are of concern only to the
             state machines), the sub-structure of the string
@@ -264,14 +260,9 @@ lldpV2Xdot1LocEvbTlvString OBJECT-TYPE
     REFERENCE 
             "D.2.12"
     ::= { lldpV2Xdot1LocEvbTlvEntry 1 }
-
-
----
 ---
 --- lldpV2Xdot1LocCdcpTlvTable: CDCP TLV Information Table
 ---
----
-
 lldpV2Xdot1LocCdcpTlvTable OBJECT-TYPE
     SYNTAX      SEQUENCE OF LldpV2Xdot1LocCdcpTlvEntry
     MAX-ACCESS  not-accessible
@@ -303,7 +294,7 @@ lldpV2Xdot1LocCdcpTlvString OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "This object contains the CDCP TLV information string  
-            for the Port, as defined in D.2.14.
+            for the Port, as defined in D.2.13.
             As the elements within the string are not individually
             manipulated via SNMP (they are of concern only to the
             state machines), the sub-structure of the string
@@ -316,13 +307,9 @@ lldpV2Xdot1LocCdcpTlvString OBJECT-TYPE
 ------------------------------------------------------------------------
 -- IEEE 802.1 - EVB Remote System Information
 ------------------------------------------------------------------------
-
----
 ---
 --- lldpV2Xdot1RemEvbTlvTable: EVB TLV Information Table
 ---
----
-
 lldpV2Xdot1RemEvbTlvTable OBJECT-TYPE
     SYNTAX      SEQUENCE OF LldpV2Xdot1RemEvbTlvEntry
     MAX-ACCESS  not-accessible
@@ -357,7 +344,7 @@ lldpV2Xdot1RemEvbTlvString OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "This object contains the EVB TLV information string  
-            for the Port, as defined in D.2.13.
+            for the Port, as defined in D.2.12.
             As the elements within the string are not individually
             manipulated via SNMP (they are of concern only to the
             state machines), the sub-structure of the string
@@ -366,14 +353,9 @@ lldpV2Xdot1RemEvbTlvString OBJECT-TYPE
     REFERENCE 
             "D.2.12"
     ::= { lldpV2Xdot1RemEvbTlvEntry 1 }
-
-
----
 ---
 --- lldpV2Xdot1RemCdcpTlvTable: CDCP TLV Information Table
 ---
----
-
 lldpV2Xdot1RemCdcpTlvTable OBJECT-TYPE
     SYNTAX      SEQUENCE OF LldpV2Xdot1RemCdcpTlvEntry
     MAX-ACCESS  not-accessible
@@ -408,7 +390,7 @@ lldpV2Xdot1RemCdcpTlvString OBJECT-TYPE
     STATUS      current
     DESCRIPTION
             "This object contains the CDCP TLV information string  
-            for the Port, as defined in D.2.14.
+            for the Port, as defined in D.2.13.
             As the elements within the string are not individually
             manipulated via SNMP (they are of concern only to the
             state machines), the sub-structure of the string
@@ -428,11 +410,9 @@ lldpXdot1EvbCompliances
     OBJECT IDENTIFIER ::= { lldpXdot1EvbConformance 1 }
 lldpXdot1EvbGroups 
     OBJECT IDENTIFIER ::= { lldpXdot1EvbConformance 2 }
-
 --
 -- EVB - Compliance Statements
 --
-
 lldpXdot1EvbCompliance MODULE-COMPLIANCE
     STATUS        current
     DESCRIPTION
@@ -446,12 +426,9 @@ lldpXdot1EvbCompliance MODULE-COMPLIANCE
         MANDATORY-GROUPS  { lldpXdot1EvbGroup, 
                             ifGeneralInformationGroup }
     ::= { lldpXdot1EvbCompliances 1 }
-
-
 --
 -- EVB - MIB groupings
 --
-
 lldpXdot1EvbGroup  OBJECT-GROUP
     OBJECTS {
       lldpXdot1EvbConfigEvbTxEnable,
@@ -466,5 +443,277 @@ lldpXdot1EvbGroup  OBJECT-GROUP
         "The collection of objects that support the
         EVB evbSet TLV set."
     ::= { lldpXdot1EvbGroups 1 }
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+--
+-- Organizationally Defined Information Extension - IEEE 802.1
+-- Definitions to support the aaSet TLV set (Table D-1)
+-- for PBBN Auto Attach
+--
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+lldpXdot1AaMIB OBJECT IDENTIFIER ::= { lldpXDot1EvbExtensions 3 }
+lldpXdot1AaObjects OBJECT IDENTIFIER ::= { lldpXdot1AaMIB 1 }
+
+-- Auto Attach MIB extension groups
+
+lldpXdot1AaConfig OBJECT IDENTIFIER ::= { lldpXdot1AaObjects 1 }
+lldpXdot1AaLocalData OBJECT IDENTIFIER ::= {lldpXdot1AaObjects 2 }
+lldpXdot1AaRemoteData OBJECT IDENTIFIER ::= { lldpXdot1AaObjects 3 }
+  
+-------------------------------------------------------------------
+-- IEEE 802.1 - PBBN Auto Attach configuration
+-------------------------------------------------------------------
+--
+--  lldpXdot1AaConfigAaTable : configure the 
+--  transmission of the PBBN Auto Attach TLVs on a set of ports
+--
+lldpXdot1AaConfigAaTable OBJECT-TYPE
+    SYNTAX        SEQUENCE OF LldpXdot1AaConfigAaEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "A table that controls selection of PBBN Auto Attach
+         TLVs to be transmitted on individual ports."
+    ::= { lldpXdot1AaConfig 1 }
+
+lldpXdot1AaConfigAaEntry OBJECT-TYPE
+    SYNTAX        LldpXdot1AaConfigAaEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION
+        "LLDP configuration information that controls the
+        transmission of IEEE 802.1 organizationally defined 
+        PBBN Auto Attach System and Assignment TLVs on LLDP
+        transmission-capable ports.
+
+        This configuration object augments the lldpV2PortConfigEntry of
+        the LLDP-MIB, therefore it is only present along with the port
+        configuration defined by the associated lldpV2PortConfigEntry
+        entry.
+
+        Each active lldpConfigEntry is restored from non-volatile
+        storage (along with the corresponding lldpV2PortConfigEntry)
+        after a re-initialization of the management system."
+    AUGMENTS      { lldpV2PortConfigEntry }
+    ::= { lldpXdot1AaConfigAaTable 1 }
+
+LldpXdot1AaConfigAaEntry ::= SEQUENCE {
+    lldpXdot1AaConfigSysTxEnable TruthValue,
+    lldpXdot1AaConfigAsgnsTxEnable TruthValue
+}
+
+lldpXdot1AaConfigSysTxEnable OBJECT-TYPE
+    SYNTAX        TruthValue
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION 
+        "The lldpXdot1AaConfigSysTxEnable, which is
+        defined as a truth value and configured by the PBBN Auto Attach
+        state machines, determines whether the IEEE 802.1 organizationally
+        defined PBBN Auto Attach System TLV transmission is allowed 
+        on a given LLDP transmission-capable port.
+
+        The value of this object is returned to FALSE after a re-initialization
+        of the management system."
+    REFERENCE
+        "D.2.17"
+    DEFVAL         { false }
+    ::= { lldpXdot1AaConfigAaEntry 1 }
+
+lldpXdot1AaConfigAsgnsTxEnable OBJECT-TYPE
+    SYNTAX        TruthValue
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION 
+        "The lldpXdot1AaConfigAsgnsTxEnable, which is
+        defined as a truth value and configured by the PBBN Auto Attach
+        state machines, determines whether the IEEE 802.1 organizationally
+        defined PBBN Auto Attach Assignment TLV transmission is allowed 
+        on a given LLDP transmission-capable port.
+
+        The value of this object is returned to FALSE after a re-initialization
+        of the management system."
+    REFERENCE
+        "D.2.18"
+    DEFVAL         { false }
+    ::= { lldpXdot1AaConfigAaEntry 2 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - PBBN Auto Attach local system information
+------------------------------------------------------------------------
+---
+--- lldpV2Xdot1LocAaTlvTable: PBBN Auto Attach TLVs information table
+---
+lldpV2Xdot1LocAaTlvTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2Xdot1LocAaTlvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains one row per port of PBBN Auto Attach
+            TLV information (as a part of the LLDP 
+            802.1 organizational extension) on the local system
+            known to this agent."
+    ::= { lldpXdot1AaLocalData 1 }
+
+lldpV2Xdot1LocAaTlvEntry OBJECT-TYPE
+    SYNTAX      LldpV2Xdot1LocAaTlvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "PBBN Auto Attach TLV information about a 
+            particular port component."
+    INDEX   { lldpV2LocPortIfIndex }
+    ::= { lldpV2Xdot1LocAaTlvTable 1 }
+
+LldpV2Xdot1LocAaTlvEntry ::= SEQUENCE {
+      lldpV2Xdot1LocAaSysTlvString     OCTET STRING,
+      lldpV2Xdot1LocAaAsgnsTlvString     OCTET STRING
+      } 
+
+lldpV2Xdot1LocAaSysTlvString OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..514))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object contains the PBBN Auto Attach System TLV information
+            string for the Port, as defined in D.2.17.
+            As the elements within the string are not individually
+            manipulated via SNMP (they are of concern only to the
+            state machines), the sub-structure of the string
+            is not visible as separate objects within the
+            local database."
+    REFERENCE 
+            "D.2.17"
+    ::= { lldpV2Xdot1LocAaTlvEntry 1 }
+
+lldpV2Xdot1LocAaAsgnsTlvString OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..514))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object contains the PBBN Auto Attach Assignment TLV
+            information string for the Port, as defined in D.2.18.
+            As the elements within the string are not individually
+            manipulated via SNMP (they are of concern only to the
+            state machines), the sub-structure of the string
+            is not visible as separate objects within the
+            local database."
+    REFERENCE 
+            "D.2.18"
+    ::= { lldpV2Xdot1LocAaTlvEntry 2 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - PBBN Auto Attach remote system information
+------------------------------------------------------------------------
+---
+--- lldpV2Xdot1RemAaTlvTable: PBBN Auto Attach TLV information table
+---
+lldpV2Xdot1RemAaTlvTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF LldpV2Xdot1RemAaTlvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table contains one row per port of PBBN Auto Attach
+            TLV information (as a part of the LLDP 
+            802.1 organizational extension) on the remote system
+            known to this agent."
+    ::= { lldpXdot1AaRemoteData 1 }
+
+lldpV2Xdot1RemAaTlvEntry OBJECT-TYPE
+    SYNTAX      LldpV2Xdot1RemAaTlvEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "PBBN Auto Attach TLV information about a 
+            particular port component."
+    INDEX   { lldpV2RemTimeMark,
+              lldpV2RemLocalIfIndex,
+              lldpV2RemLocalDestMACAddress,
+              lldpV2RemIndex }
+    ::= { lldpV2Xdot1RemAaTlvTable 1 }
+
+LldpV2Xdot1RemAaTlvEntry ::= SEQUENCE {
+      lldpV2Xdot1RemAaSysTlvString     OCTET STRING,
+      lldpV2Xdot1RemAaAsgnsTlvString   OCTET STRING
+      } 
+
+lldpV2Xdot1RemAaSysTlvString OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..514))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object contains the PBBN Auto Attach System TLV
+            information string for the Port, as defined in D.2.17.
+            As the elements within the string are not individually
+            manipulated via SNMP (they are of concern only to the
+            state machines), the sub-structure of the string
+            is not visible as separate objects within the
+            local database."
+    REFERENCE 
+            "D.2.17"
+    ::= { lldpV2Xdot1RemAaTlvEntry 1 }
+
+lldpV2Xdot1RemAaAsgnsTlvString OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE (0..514))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "This object contains the PBBN Auto Attach Assignment TLV
+            information string for the Port, as defined in D.2.18.
+            As the elements within the string are not individually
+            manipulated via SNMP (they are of concern only to the
+            state machines), the sub-structure of the string
+            is not visible as separate objects within the
+            local database."
+    REFERENCE 
+            "D.2.18"
+    ::= { lldpV2Xdot1RemAaTlvEntry 2 }
+
+------------------------------------------------------------------------
+-- IEEE 802.1 - PBBN Auto Attach conformance information
+------------------------------------------------------------------------
+
+lldpXdot1AaConformance OBJECT IDENTIFIER ::= { lldpXDot1EvbExtensions 4 }
+
+lldpXdot1AaCompliances 
+    OBJECT IDENTIFIER ::= { lldpXdot1AaConformance 1 }
+lldpXdot1AaGroups 
+    OBJECT IDENTIFIER ::= { lldpXdot1AaConformance 2 }
+--
+-- PBBN Auto Attach - compliance statements
+--
+lldpXdot1AaCompliance MODULE-COMPLIANCE
+    STATUS        current
+    DESCRIPTION
+         "A compliance statement for SNMP entities that implement
+         the IEEE 802.1 organizationally defined PBBN Auto Attach LLDP
+         MIB extensions.
+
+         This group is mandatory for agents that implement the 
+         PBBN Auto Attach aaSet TLV set."
+    MODULE        -- this module
+        MANDATORY-GROUPS  { lldpXdot1AaGroup, 
+                            ifGeneralInformationGroup }
+    ::= { lldpXdot1AaCompliances 1 }
+--
+-- PBBN Auto Attach - MIB groupings
+--
+lldpXdot1AaGroup  OBJECT-GROUP
+    OBJECTS {
+      lldpXdot1AaConfigSysTxEnable,
+      lldpXdot1AaConfigAsgnsTxEnable,
+      lldpV2Xdot1LocAaSysTlvString,
+      lldpV2Xdot1LocAaAsgnsTlvString,
+      lldpV2Xdot1RemAaSysTlvString,
+      lldpV2Xdot1RemAaAsgnsTlvString
+      }
+    STATUS  current
+    DESCRIPTION
+        "The collection of objects that support the
+        PBBN Auto Attach aaSet TLV set."
+    ::= { lldpXdot1AaGroups 1 }
 
 END

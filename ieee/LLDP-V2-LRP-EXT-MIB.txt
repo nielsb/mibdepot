@@ -28,7 +28,7 @@ IMPORTS
         FROM LRP-TC-MIB;
 
 lldpXDot1LrpExtensions MODULE-IDENTITY
-    LAST-UPDATED "202012030000Z" -- December 3, 2020
+    LAST-UPDATED "202402150000Z" -- February 15, 2024
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO 
        "WG-URL: http://www.ieee802.org/1/
@@ -69,10 +69,14 @@ lldpXDot1LrpExtensions MODULE-IDENTITY
         Unless otherwise indicated, the references in this MIB module
         are to IEEE Std 802.1CS-2020.
 
-        Copyright (C) IEEE (2020). This version of this MIB module is
-        included in clause 13 of IEEE Std 802.1CS-2020; see the
+        Copyright (C) IEEE (2024). This version of this MIB module is
+        included in Clause 13 of IEEE Std 802.1CS-2020/Cor 1-2024; see the
         standard itself for full legal notices."
 
+    REVISION "202402150000Z" -- February 15, 2024
+    DESCRIPTION
+       "Description of lldpV2LocLrpTcpAddress1 corrected.
+       "
     REVISION "202012030000Z" -- December 3, 2020
     DESCRIPTION
        "This MIB module included in IEEE Std 802.1CS-2020.
@@ -653,7 +657,7 @@ lldpV2LocLrpTcpAddress1 OBJECT-TYPE
     DESCRIPTION
        "The contents of the first Address field in the transmitted
         Application descriptor.  If lldpV2LocLrpTcpAddressInfo1 has the
-        value notPresent(256) or noAddress(0), lldpV2LocLrpTcpAddress1
+        value noAddress(0), lldpV2LocLrpTcpAddress1
         SHALL contain a zero-length octet string.  Otherwise,
         lldpV2LocLrpTcpAddress1 SHALL contain an IPv4 or IPv6 address,
         as specified by lldpV2LocLrpTcpAddressInfo1.
@@ -968,8 +972,7 @@ lldpV2RemLrpTcpAddressInfo1 OBJECT-TYPE
     STATUS      current
     DESCRIPTION
        "The contents of the first Address info field in the received
-        Application descriptor.  lldpV2RemLrpTcpAddressInfo1 SHALL NOT
-        contain the value, notPresent(256).
+        Application descriptor.
        "
     REFERENCE "C.2.2.6"
     ::= { lldpV2RemLrpTcpEntry 8 }
@@ -1109,3 +1112,4 @@ lldpV2ExtLrpTcpTlvGroup    OBJECT-GROUP
     ::= { lldpV2ExtLrpGroups 3 }
 
 END
+

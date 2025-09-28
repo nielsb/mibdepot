@@ -1,0 +1,606 @@
+IEEE8021-PBBN-AA-MIB DEFINITIONS ::= BEGIN
+
+-- =============================================================
+-- MIB for support of PBBN Auto Attach to Provider Backbone 
+-- Bridging (PBB) services.
+-- =============================================================
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Integer32, Gauge32, Unsigned32, Counter32,
+    NOTIFICATION-TYPE
+        FROM SNMPv2-SMI
+    SnmpAdminString
+            FROM SNMP-FRAMEWORK-MIB
+    RowStatus, TruthValue, MacAddress
+            FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+            FROM SNMPv2-CONF;
+
+ieee8021PbbnAutoAttachMib MODULE-IDENTITY
+    LAST-UPDATED "202309210000Z" -- September 21, 2023
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO    
+        "  WG-URL: http://www.ieee802.org/1/
+         WG-EMail: stds-802-1-l@ieee.org
+          Contact: IEEE 802.1 Working Group Chair
+           Postal: C/O IEEE 802.1 Working Group
+                   IEEE Standards Association
+                   445 Hoes Lane
+                   Piscataway, NJ 08854
+                   USA
+           E-mail: stds-802-1-chairs@ieee.org"
+    DESCRIPTION
+        "The PBBN Auto Attach MIB module for configuration and statistics support.
+
+        Unless otherwise indicated, the references in this MIB module are to
+        IEEE Std 802.1Q Bridges and Bridged Networks:
+        IEEE Std 802.1Q-2022 as amended by IEEE Std 802.1Qcz, IEEE Std 802.1Qcw,
+        and IEEE Std 802.1Qcj.
+
+        Copyright (C) IEEE (2023).
+        This version of this MIB module is part of IEEE Std 802.1Q;
+        see that standard for full legal notices."
+        
+    REVISION    "202309210000Z" -- September 21, 2023
+    DESCRIPTION
+        "Initial version published as part of IEEE Std 802.1Qcj."
+        
+    ::= { iso (1) iso-identified-organization (3) ieee (111) 
+            standards-association-numbered-series-standard1s (2)
+            lan-man-stds (802) ieee802dot1(1) 
+            ieee802dot1mibs(1)  ieee8021PbbnAutoAttachMib(37) }
+
+ieee8021AaNotifications OBJECT IDENTIFIER ::= { ieee8021PbbnAutoAttachMib 0 }
+ieee8021AaObjects       OBJECT IDENTIFIER ::= { ieee8021PbbnAutoAttachMib 1 }
+ieee8021AaNotifyObjects OBJECT IDENTIFIER ::= { ieee8021PbbnAutoAttachMib 2 }
+
+ieee8021AaConfig    OBJECT IDENTIFIER ::= { ieee8021AaObjects 1 }
+ieee8021AaStats     OBJECT IDENTIFIER ::= { ieee8021AaObjects 2 }
+
+-- ===============================================================
+-- Auto Attach scalar attributes
+-- ===============================================================
+
+ieee8021AaSystemEnable OBJECT-TYPE
+    SYNTAX         INTEGER {
+                       enabled(1),
+                       disabled(2)
+                   }
+    MAX-ACCESS     read-write
+    STATUS         current
+    DESCRIPTION
+        "Exports the status of the Auto Attach service on this system."
+    ::= { ieee8021AaConfig 1 }
+
+ieee8021AaSystemType OBJECT-TYPE
+    SYNTAX         INTEGER {
+                       aaBeb(1),
+                       aaDeviceVlanAware(2),
+                       aaDeviceVlanUnaware(3)
+                   }
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION
+        "Defines the AAS type indicating the services supported by the system.
+        May be read-only on platforms that only support a single system type."
+    ::= { ieee8021AaConfig 2 }
+
+ieee8021AaSystemMAC OBJECT-TYPE
+    SYNTAX         MacAddress
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION
+        "Defines the Auto Attach System MAC Address used to uniquely identify
+        this system."
+    ::= { ieee8021AaConfig 3 }
+
+ieee8021AaSystemResetTime OBJECT-TYPE
+    SYNTAX         Integer32 (1..1200)
+    MAX-ACCESS     read-write
+    STATUS         current
+    DESCRIPTION
+        "AAP reset time delay used to re-synchronize the associated AASs"
+    ::= { ieee8021AaConfig 4 }
+
+-- ===============================================================
+-- Auto Attach VID/I-SID assignment table support        
+-- ===============================================================
+
+ieee8021AaVidIsidAsgnsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021AaVidIsidAsgnsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains the VID <-> I-SID assignments for the
+        Auto Attach application."
+    ::= { ieee8021AaConfig 5 }
+
+ieee8021AaVidIsidAsgnsEntry OBJECT-TYPE
+    SYNTAX      Ieee8021AaVidIsidAsgnsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Information about the I-SID <-> VID assignments for the
+        Auto Attach application."
+    INDEX { ieee8021AaVidIsidAsgnsIfIndex, 
+            ieee8021AaVidIsidAsgnsIsid, 
+            ieee8021AaVidIsidAsgnsVid }
+    ::= { ieee8021AaVidIsidAsgnsTable 1 }
+
+Ieee8021AaVidIsidAsgnsEntry ::= SEQUENCE {
+    ieee8021AaVidIsidAsgnsIfIndex    Integer32,
+    ieee8021AaVidIsidAsgnsIsid       Integer32,
+    ieee8021AaVidIsidAsgnsVid       Integer32,
+    ieee8021AaVidIsidAsgnsStatus     INTEGER,
+    ieee8021AaVidIsidAsgnsRowStatus  RowStatus }
+
+ieee8021AaVidIsidAsgnsIfIndex OBJECT-TYPE
+    SYNTAX         Integer32 (0..65535)
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION
+        "Interface identifier component of the I-SID <-> VID assignment."
+    ::= { ieee8021AaVidIsidAsgnsEntry 1 }
+
+ieee8021AaVidIsidAsgnsIsid OBJECT-TYPE
+    SYNTAX         Integer32 (1256..16777214)
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION
+        "I-SID component of the I-SID <-> VID assignment."
+    ::= { ieee8021AaVidIsidAsgnsEntry 2 }
+
+ieee8021AaVidIsidAsgnsVid OBJECT-TYPE
+    SYNTAX         Integer32 (1..4094)
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION
+        "VLAN ID component of the I-SID <-> VID assignment."
+    ::= { ieee8021AaVidIsidAsgnsEntry 3 }
+
+ieee8021AaVidIsidAsgnsStatus OBJECT-TYPE
+    SYNTAX         INTEGER {
+                       pending(1),
+                       accepted(2),
+                       rejected(3),
+                       rejectedAutoAttachResourcesUnavailable(4),
+                       rejectedInvalidVLANID(5),
+                       rejectedVLANResourcesUnavailable(6),
+                       rejectedInvalidISID(7),
+                       rejectedISIDResourcesUnavailable(8),
+                       rejectedApplicationInteractionIssue(9),
+                       rejectedAssignmentNotAllowed(10)
+                   }
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION  
+        "The current state of the Auto Attach I-SID <-> VID assignment.
+        Rejections can be from multiple causes including resources
+        unavailable, duplicate, application interaction, etc."
+    ::= { ieee8021AaVidIsidAsgnsEntry 4 }
+
+ieee8021AaVidIsidAsgnsRowStatus OBJECT-TYPE
+    SYNTAX         RowStatus
+    MAX-ACCESS     read-write
+    STATUS         current
+    DESCRIPTION
+        "This object allows entries to be created and deleted in the
+        ieee8021AaVidIsidAsgnsTable."
+    ::= { ieee8021AaVidIsidAsgnsEntry 5 }
+
+-- ===============================================================
+-- Auto Attach port table support
+-- ===============================================================
+
+ieee8021AaPortTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021AaPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains port-specific data for the
+        Auto Attach application."
+    ::= { ieee8021AaConfig 6 }
+
+ieee8021AaPortEntry OBJECT-TYPE
+    SYNTAX      Ieee8021AaPortEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Port-specific data related to the Auto Attach application."
+    INDEX { ieee8021AaPortIfIndex,
+            ieee8021AaPortNetId }
+    ::= { ieee8021AaPortTable 1 }
+
+Ieee8021AaPortEntry ::= SEQUENCE {
+    ieee8021AaPortIfIndex        Integer32,
+    ieee8021AaPortNetId          OCTET STRING,
+    ieee8021AaPortEnable         INTEGER,
+    ieee8021AaPortRowStatus      RowStatus }
+
+ieee8021AaPortIfIndex OBJECT-TYPE
+    SYNTAX         Integer32 (0..65535)
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION
+        "IfIndex on the interface (port) identifier attribute."
+    ::= { ieee8021AaPortEntry 1 }
+    
+ieee8021AaPortNetId OBJECT-TYPE
+    SYNTAX         OCTET STRING (SIZE (0..12))
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION
+        "Identifies an AAS port uniquely within the administrative domain.
+        The object is the concatenation of the ieee8021AaSystemMAC and
+        ieee8021AaPortIfIndex. The identified port can be simple, a LAG,
+        or a DRNI."
+    ::= { ieee8021AaPortEntry 2 }
+
+ieee8021AaPortEnable OBJECT-TYPE
+    SYNTAX         INTEGER {
+                       enabled(1),
+                       disabled(2)
+                   }
+    MAX-ACCESS     read-create
+    STATUS         current
+    DESCRIPTION
+        "The current port Auto Attach Protocol enable. Indicates whether
+        Auto Attach TLVs will be included in LLDPDUs generated on 
+        the port (enabled) or not (disabled)."
+    ::= { ieee8021AaPortEntry 3 }
+
+ieee8021AaPortRowStatus OBJECT-TYPE
+    SYNTAX         RowStatus
+    MAX-ACCESS     read-create
+    STATUS         current
+    DESCRIPTION
+        "This object allows entries to be created, deleted, and modified in the
+        ieee8021AaPortTable, if the operation is supported by the agent."
+    ::= { ieee8021AaPortEntry 4 }
+
+-- ===============================================================
+-- Discovered Auto Attach Systems table support
+-- ===============================================================
+
+ieee8021AaDiscSystemsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021AaDiscSystemsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table contains details about locally connected AASs that have 
+        been discovered."
+    ::= { ieee8021AaConfig 7 }
+
+ieee8021AaDiscSystemsEntry OBJECT-TYPE
+    SYNTAX      Ieee8021AaDiscSystemsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Contains details about a locally connected AAS."
+    INDEX { ieee8021AaDiscLocPortIfIndex,
+            ieee8021AaDiscRemPortNetId }
+    ::= { ieee8021AaDiscSystemsTable 1 }
+
+Ieee8021AaDiscSystemsEntry ::= SEQUENCE {
+    ieee8021AaDiscLocPortIfIndex       Integer32,
+    ieee8021AaDiscRemSystemType        INTEGER,
+    ieee8021AaDiscRemPortNetId         OCTET STRING,
+    ieee8021AaDiscRemPortTagging       BITS,
+    ieee8021AaDiscRemPortAssocState    INTEGER,
+    ieee8021AaDiscLocPortAssocState    INTEGER }
+
+ieee8021AaDiscLocPortIfIndex OBJECT-TYPE
+    SYNTAX         Integer32 (0..65535)
+    MAX-ACCESS     not-accessible
+    STATUS         current
+    DESCRIPTION
+        "Identifies the interface through which the AAS 
+    represented by this entry was discovered."
+    ::= { ieee8021AaDiscSystemsEntry 1 }
+
+ieee8021AaDiscRemSystemType OBJECT-TYPE
+    SYNTAX         INTEGER {
+                       aaBeb(1),
+                       aaDeviceCVlanAware(2),
+                       aaDeviceVlanUnaware(3),
+                       aaDeviceSVlanAware(4)
+                   }
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION
+        "Identifies the AAS type as advertised through LLDP." 
+    ::= { ieee8021AaDiscSystemsEntry 2 }
+
+ieee8021AaDiscRemPortNetId OBJECT-TYPE
+    SYNTAX         OCTET STRING (SIZE (0..12))
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION
+        "Identifies an AAS port uniquely within the administrative domain.
+        The object is the concatenation of the ieee8021AaSystemMAC and
+        port IfIndex. The identified port can be simple, a LAG, or a DRNI."
+    ::= { ieee8021AaDiscSystemsEntry 3 }
+
+ieee8021AaDiscRemPortTagging OBJECT-TYPE
+    SYNTAX         BITS {
+                       trafficTagged(0),
+                       trafficTaggedAndUntagged(1),
+                       trafficUntaggedOnly(2)
+                   }
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION
+        "Exports the tagging data associated with the discovered
+        Auto Attach System as advertised through LLDP. When bit 0 is set
+        to 0, all traffic is tagged on the link; when bit 0 is set to 1,
+        the link supports both tagged and untagged traffic. When bit 2 is
+        set to 1, the link supports only untagged traffic."
+    ::= { ieee8021AaDiscSystemsEntry 4 }
+
+ieee8021AaDiscRemPortAssocState OBJECT-TYPE
+    SYNTAX         INTEGER {
+                notReady(0), -- initializing, not ready
+                readyToAssoc(1), -- ready to associate
+                readyToAttach(2), -- viable partner
+                assocAttached(3), -- port is active
+                assocFailTypes(18), -- System type mismatched
+                assocStandby(19), -- at AAD, active elsewhere
+                assocFailTags(34), -- Tagging mismatched
+                assocInvalid(35), -- at AAB, AAD active elsewhere 
+                assocFailTopo(50), -- Multipoint link detected
+                assocFailOther(66) -- Parsing or resourcing error
+                   }
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION    
+        "The current remote operational status for the associated interface."
+    ::= { ieee8021AaDiscSystemsEntry 5 }
+
+ieee8021AaDiscLocPortAssocState OBJECT-TYPE
+    SYNTAX      INTEGER {
+                notReady(0), -- initializing, not ready
+                readyToAssoc(1), -- advertising ready to associate
+                readyToAttach(2), -- viable partner
+                assocAttached(3), -- port is active
+                assocFailTypes(18), -- System type mismatched
+                assocStandby(19), -- at AAD, active elsewhere
+                assocFailTags(34), -- Tagging mismatched
+                assocInvalid(35), -- at AAB, AAD active elsewhere
+                assocFailTopo(50), -- Multipoint link detected
+                assocFailOther(66) -- Parsing or resourcing error
+                   }
+    MAX-ACCESS     read-only
+    STATUS         current
+    DESCRIPTION    
+        "The current local operational status for the associated interface."
+    ::= { ieee8021AaDiscSystemsEntry 6 }
+
+-- ===============================================================
+-- AAS statistics and error counters table
+-- ===============================================================
+
+ieee8021AaStatsTable  OBJECT-TYPE
+    SYNTAX        SEQUENCE OF Ieee8021AaStatsEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   
+        "This table contains Auto Attach port statistics data."
+    ::= { ieee8021AaStats 1 }
+
+ieee8021AaStatsEntry OBJECT-TYPE
+    SYNTAX        Ieee8021AaStatsEntry
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   
+        "Each entry contains Auto Attach operational statistics for a 
+    specific Auto Attach System port. Ports are identified by their MIB II 
+    ifIndex value."
+    INDEX         { ieee8021AaStatsPortIfIndex }
+    ::= { ieee8021AaStatsTable 1 }
+
+Ieee8021AaStatsEntry ::= SEQUENCE {
+    ieee8021AaStatsPortIfIndex            Integer32,
+    ieee8021AaStatsAssocAttached          Counter32,
+    ieee8021AaStatsAsgnsRequested         Counter32,
+    ieee8021AaStatsAsgnsAccepted          Counter32,
+    ieee8021AaStatsAsgnRejected           Counter32,
+    ieee8021AaStatsAssocFailed            Counter32,
+    ieee8021AaStatsAsgnsWithdrawn         Counter32,
+    ieee8021AaStatsAssocReset             Counter32,
+    ieee8021AaStatsAssocStandby           Counter32 }
+
+ieee8021AaStatsPortIfIndex OBJECT-TYPE
+    SYNTAX        Integer32 (0..65535)
+    MAX-ACCESS    not-accessible
+    STATUS        current
+    DESCRIPTION   
+        "An index value that uniquely identifies a port. This value 
+    corresponds to a MIB II ifIndex."
+    ::= { ieee8021AaStatsEntry 1 }
+
+ieee8021AaStatsAssocAttached OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of PBBN Auto Attach System TLVs received on the 
+        identified port."
+    ::= { ieee8021AaStatsEntry 2 }
+
+ieee8021AaStatsAsgnsRequested OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of I-SID/VID bindings received in 
+        PBBN Auto Attach Assignment TLVs on the identified port."
+    ::= { ieee8021AaStatsEntry 3 }
+
+ieee8021AaStatsAsgnsAccepted OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of I-SID/VID bindings from received
+        PBBN Auto Attach Assignment TLVs that are accepted (activated)
+        on the identified port. Counter is incremented when the binding
+        transitions from a non-accepted state (e.g., 'pending', 'rejected')
+        to the accepted state. The AAD counts the number received from the
+        AAB while the AAB counts the number transmitted to the AAD."
+    ::= { ieee8021AaStatsEntry 4 }
+
+ieee8021AaStatsAsgnRejected OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of I-SID/VID bindings from received Auto Attach 
+        Assignment TLVs that are rejected on the identified port. Counter is
+        incremented when the binding transitions from a non-rejected state
+        (e.g., 'pending', 'accepted') to the rejected state. The AAD counts
+        the number received from the AAB while the AAB counts the number
+        transmitted to the AAD."
+    ::= { ieee8021AaStatsEntry 5 }
+
+ieee8021AaStatsAssocFailed OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of discovered AAS from received AA System TLVs
+        that have failed association or attachment due to errors such as
+        system mismatches, multi-point link, incompatible tagging, etc." 
+    ::= { ieee8021AaStatsEntry 6 }
+
+ieee8021AaStatsAsgnsWithdrawn OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of I-SID/VID bindings from received PBBN
+        Auto Attach Assignment TLVs that have been deleted on the identified
+        port. Counter is only incremented when bindings are deleted for 
+        reasons other than expiration." 
+    ::= { ieee8021AaStatsEntry 7 }
+    
+ieee8021AaStatsAssocReset OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of discovered AAS from received AA System TLVs
+        that have reset an association or attachment due deleted
+        discovered system TLVs, etc. This condition is most commonly a result
+        of an AAS being reset or powered down." 
+    ::= { ieee8021AaStatsEntry 8 }
+
+ieee8021AaStatsAssocStandby OBJECT-TYPE
+    SYNTAX        Counter32
+    MAX-ACCESS    read-only
+    STATUS        current
+    DESCRIPTION   
+        "Indicates the number of discovered AAS from received AA System TLVs
+        that have had an association in standby." 
+    ::= { ieee8021AaStatsEntry 9 }  
+
+-- ===============================================================
+-- Auto Attach notification objects
+-- ===============================================================
+
+ieee8021AaDiscSystemsDescr OBJECT-TYPE
+    SYNTAX         SnmpAdminString (SIZE(0..255))
+    MAX-ACCESS     accessible-for-notify
+    STATUS         current
+    DESCRIPTION    
+        "The string value used to identify the LLDP system description of the 
+        remote system distributed through LLDPDUs." 
+    REFERENCE
+        "IEEE 802.1AB-2016 8.5.7.2"
+    ::= { ieee8021AaNotifyObjects 1 }
+
+ieee8021AaDiscSystemsMgmtOid OBJECT-TYPE
+    SYNTAX         OBJECT IDENTIFIER
+    MAX-ACCESS     accessible-for-notify
+    STATUS         current
+    DESCRIPTION
+        "The OID value used to identify the type of hardware component or 
+        protocol entity associated with the management address advertised by 
+        the remote system agent distributed through LLDP."
+    REFERENCE
+        "IEEE 802.1AB-2016 8.5.9.8"
+    ::= { ieee8021AaNotifyObjects 2 }
+
+-- ===============================================================
+-- Auto Attach notifications
+-- ===============================================================
+
+ieee8021AaDiscoveredSystem NOTIFICATION-TYPE
+    OBJECTS        {
+                       ieee8021AaDiscRemSystemType,
+                       ieee8021AaDiscRemPortNetId,
+                       ieee8021AaDiscSystemsDescr,  
+                       ieee8021AaDiscSystemsMgmtOid 
+                   }
+    STATUS         current
+    DESCRIPTION
+        "This notification is generated when an AAS is discovered."
+    ::= { ieee8021AaNotifications  1 }
+    
+    
+-- =====================================================================
+-- IEEE 802.1 - Auto Attach conformance information
+-- =====================================================================
+
+ieee8021AaConformance OBJECT IDENTIFIER ::= { ieee8021PbbnAutoAttachMib 4 }
+
+ieee8021AaCompliances 
+    OBJECT IDENTIFIER ::= { ieee8021AaConformance 1 }
+ieee8021AaGroups 
+    OBJECT IDENTIFIER ::= { ieee8021AaConformance 2 }
+
+    
+-- 
+-- Auto Attach - compliance statements
+-- 
+
+ieee8021AaCompliance MODULE-COMPLIANCE
+    STATUS        current
+    DESCRIPTION
+         "A compliance statement for SNMP entities that implement
+         the IEEE 802.1Qcj Auto Attach MIB.
+
+         This group is mandatory for agents that implement the 
+         Auto Attach aaSet TLV set."
+    MODULE        -- this module
+        MANDATORY-GROUPS  { ieee8021AaGroup }
+    ::= { ieee8021AaCompliances 1 }
+
+
+--
+-- Auto Attach - MIB groupings
+--
+
+ieee8021AaGroup  OBJECT-GROUP
+    OBJECTS {
+        ieee8021AaSystemEnable,
+        ieee8021AaSystemType,
+        ieee8021AaSystemMAC,    
+        ieee8021AaVidIsidAsgnsStatus,       
+        ieee8021AaVidIsidAsgnsRowStatus,
+        ieee8021AaPortNetId,
+        ieee8021AaPortEnable,
+        ieee8021AaDiscRemPortNetId,
+        ieee8021AaStatsAssocAttached,
+        ieee8021AaStatsAsgnsRequested,
+        ieee8021AaStatsAsgnsAccepted,
+        ieee8021AaStatsAsgnRejected,
+        ieee8021AaDiscSystemsDescr,
+        ieee8021AaDiscSystemsMgmtOid
+      }
+    STATUS  current
+    DESCRIPTION
+        "The collection of objects that support configuration of the PBBN
+        Auto Attach service"
+    ::= { ieee8021AaGroups 1 }
+
+END

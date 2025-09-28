@@ -26,7 +26,7 @@ IMPORTS
     ;
 
 ieee8021STMib MODULE-IDENTITY
-    LAST-UPDATED "202211080000Z" -- November 8, 2022
+    LAST-UPDATED "202309260000Z" -- September 26, 2023
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://www.ieee802.org/1/
@@ -44,11 +44,18 @@ ieee8021STMib MODULE-IDENTITY
         for IEEE 802.1Q Bridges.
 
         Unless otherwise indicated, the references in this MIB
-        module are to IEEE Std 802.1Q-2022.
+        module are to IEEE Std 802.1Q-2022 as amended by 
+        IEEE Std 802.1Qcz and IEEE Std 802.1Qcw.
 
-        Copyright (C) IEEE (2022).
+        Copyright (C) IEEE (2023).
         This version of this MIB module is part of IEEE Std 802.1Q;
         see that standard for full legal notices."
+
+    REVISION "202309260000Z" -- September 26, 2023
+    DESCRIPTION
+            "Update to include SupportedCycleMax and
+            SupportedIntervalMax parameters.
+            Published as part of IEEE Std 802.1Qcw-2023."
 
     REVISION "202211080000Z" -- November 8, 2022
     DESCRIPTION
@@ -300,6 +307,12 @@ Ieee8021STParametersEntry ::=
         ieee8021STConfigChangeError
             Counter64,
         ieee8021STSupportedListMax
+            Unsigned32,
+        ieee8021STSupportedCycleMaxNumerator
+            Unsigned32,
+        ieee8021STSupportedCycleMaxDenominator
+            Unsigned32,
+        ieee8021STSupportedIntervalMax
             Unsigned32
             }
 
@@ -561,7 +574,7 @@ ieee8021STOperBaseTime OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-        "The operationsl value of the BaseTime parameter for the Port.
+        "The operational value of the BaseTime parameter for the Port.
         The value is a representation of a PTPtime value, 
         consisting of a 48-bit integer
         number of seconds and a 32-bit integer number of nanoseconds."
@@ -656,9 +669,42 @@ ieee8021STSupportedListMax OBJECT-TYPE
     REFERENCE   "12.29.1.5"
     ::= { ieee8021STParametersEntry 22 }
 
-    
+ieee8021STSupportedCycleMaxNumerator OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The numerator of the SupportedCycleMax parameter for 
+    the Port. The numerator and denominator together 
+    represent the maximum value supported by this Port of 
+    the AdminCycleTime and OperCycleTime parameters"
+    REFERENCE   "12.29.1.6"
+    ::= { ieee8021STParametersEntry 23 }
+
+ieee8021STSupportedCycleMaxDenominator OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The denominator of the SupportedCycleMax parameter for 
+    the Port. The numerator and denominator together 
+    represent the maximum value supported by this Port of 
+    the AdminCycleTime and OperCycleTime parameters"
+    REFERENCE   "12.29.1.6"
+    ::= { ieee8021STParametersEntry 24 }
+
+ieee8021STSupportedIntervalMax OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The maximum value supported by this Port of the 
+    TimeIntervalValue parameter."
+    REFERENCE   "12.29.1.7"
+    ::= { ieee8021STParametersEntry 25 }
+
 -- =============================================================
--- IEEE8021 FQTSS MIB - Conformance Information
+-- IEEE8021 ST MIB - Conformance Information
 -- =============================================================
 
 ieee8021STCompliances
@@ -699,7 +745,10 @@ ieee8021STObjectsGroup OBJECT-GROUP
         ieee8021STCurrentTime,
         ieee8021STConfigPending,
         ieee8021STConfigChangeError,
-        ieee8021STSupportedListMax
+        ieee8021STSupportedListMax,
+        ieee8021STSupportedCycleMaxNumerator,
+        ieee8021STSupportedCycleMaxDenominator,
+        ieee8021STSupportedIntervalMax
     }
     STATUS      current
     DESCRIPTION

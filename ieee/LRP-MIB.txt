@@ -28,7 +28,7 @@ IMPORTS
         FROM LRP-TC-MIB;
 
 ieee8021LrpMIB MODULE-IDENTITY
-    LAST-UPDATED "202012030000Z" -- December 3, 2020
+    LAST-UPDATED "202402150000Z" -- February 15, 2024
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO 
             "WG-URL:   http://1.ieee802.org
@@ -47,21 +47,24 @@ ieee8021LrpMIB MODULE-IDENTITY
             Link-local Registration Protocol.
 
             This MIB module supports the managed objects described in
-            clause 11.
+            Clause 11.
 
             Unless otherwise indicated, the references in this
             MIB module are to IEEE Std 802.1CS-2020.
 
-            Copyright (C) IEEE (2021). This version of this MIB module
-            is included in clause 13 of IEEE Std 802.1CS-2020;
+            Copyright (C) IEEE (2024). This version of this MIB module
+            is included in Clause 13 of IEEE Std 802.1CS-2020/Cor 1-2024;
             see the standard itself for full legal notices."
 
+    REVISION    "202402150000Z" -- February 15, 2024
+    DESCRIPTION "OID changed to avoid conflict with a MIB defined in
+                 IEEE Std 802.1CBcv-2021.
+                "
     REVISION    "202012030000Z" -- December 3, 2020
     DESCRIPTION "This MIB module included in IEEE Std 802.1CS-2020.
                 "
 
-
-   ::= { ieee802dot1mibs 35 }
+   ::= { ieee802dot1mibs 39 }
 
 lrpObjects              OBJECT IDENTIFIER ::= { ieee8021LrpMIB 1 }
 lrpConformance          OBJECT IDENTIFIER ::= { ieee8021LrpMIB 2 } 
@@ -287,7 +290,7 @@ lrpPortalDtInstanceIndex OBJECT-TYPE
         Portal is attached.
        "
     REFERENCE
-       "8.2.2.1"
+       "8.2.1"
     ::= { lrpPortalEntry 3 }
 
 lrpPortalAppId OBJECT-TYPE
@@ -353,7 +356,7 @@ lrpPortalNbrChassisIdType OBJECT-TYPE
        "The Neighbor Chassis ID TLV type field used for this Portal.
        "
     REFERENCE
-       "8.2.2.2"
+       "8.2.2.4"
     ::= { lrpPortalEntry 9 }
 
 lrpPortalNbrChassisId OBJECT-TYPE
@@ -365,7 +368,7 @@ lrpPortalNbrChassisId OBJECT-TYPE
         Portal.
        "
     REFERENCE
-       "8.2.2.2"
+       "8.2.2.4"
     ::= { lrpPortalEntry 10 }
 
 lrpPortalNbrPortIdType OBJECT-TYPE
@@ -376,7 +379,7 @@ lrpPortalNbrPortIdType OBJECT-TYPE
        "The Neighbor Port ID TLV type field used for this Portal.
        "
     REFERENCE
-       "8.2.2.3"
+       "8.2.2.5"
     ::= { lrpPortalEntry 11 }
 
 lrpPortalNbrPortId OBJECT-TYPE
@@ -387,7 +390,7 @@ lrpPortalNbrPortId OBJECT-TYPE
        "The Neighbor Port ID TLV Port ID field used for this Portal.
        "
     REFERENCE
-       "8.2.2.3"
+       "8.2.2.5"
     ::= { lrpPortalEntry 12 }
 
 lrpPortalLocalOverflow OBJECT-TYPE
@@ -760,3 +763,4 @@ lrpDsDtGroup    OBJECT-GROUP
     ::= { lrpGroups 1 }
 
 END
+

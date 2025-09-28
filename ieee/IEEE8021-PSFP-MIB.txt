@@ -26,7 +26,7 @@ IMPORTS
     ;
 
 ieee8021PSFPMib MODULE-IDENTITY
-    LAST-UPDATED "202201130000Z" -- January 13, 2022
+    LAST-UPDATED "202309260000Z" -- September 26, 2023
     ORGANIZATION "IEEE 802.1 Working Group"
     CONTACT-INFO
         "  WG-URL: http://www.ieee802.org/1/
@@ -46,9 +46,15 @@ ieee8021PSFPMib MODULE-IDENTITY
         Unless otherwise indicated, the references in this MIB
         module are to IEEE Std 802.1Q-2022.
 
-        Copyright (C) IEEE (2022).
+        Copyright (C) IEEE (2023).
         This version of this MIB module is part of IEEE Std 802.1Q;
         see that standard for full legal notices."
+
+    REVISION "202309260000Z" -- September 26, 2023
+    DESCRIPTION
+            "Update to include SupportedCycleMax and 
+            SupportedIntervalMax parameters. 
+            Published as part of IEEE Std 802.1Qcw-2023."
 
     REVISION "202201130000Z" -- January 13, 2022
     DESCRIPTION
@@ -580,8 +586,11 @@ ieee8021PSFPAdminControlList OBJECT-TYPE
         
         The third through (3 + length -1)th octets encode the 
         parameters of the gate operation, in the order that they 
-        appear in the definition of the operation
-        in Table 8-4. Three parameter types are defined:
+        appear in the definition of the operation in Table 8-4.
+        The first parameter is a StreamGateState value; the second 
+        parameter is an IPV value; the third parameter is a 
+        TimeInterval value; and the fourth parameter is an 
+        IntervalOctetMax value. IntervalOctetMax is optional.
         
         - StreamGateState:
             A GateState parameter is encoded in a single octet, and
@@ -601,7 +610,7 @@ ieee8021PSFPAdminControlList OBJECT-TYPE
             significant 8 bits.
         - IntervalOctetMax:
             An integer representing the maximum number of MSDU octets 
-            that are permitted to pas the gate during the specified
+            that are permitted to pass the gate during the specified
             TimeInterval. If this parameter is omitted, there is
             no maximum.
         
@@ -631,8 +640,11 @@ ieee8021PSFPOperControlList OBJECT-TYPE
         
         The third through (3 + length -1)th octets encode the 
         parameters of the gate operation, in the order that they 
-        appear in the definition of the operation
-        in Table 8-4. Three parameter types are defined:
+        appear in the definition of the operation in Table 8-4.
+        The first parameter is a StreamGateState value; the second 
+        parameter is an IPV value; the third parameter is a 
+        TimeInterval value; and the fourth parameter is an 
+        IntervalOctetMax value. IntervalOctetMax is optional.
         
         - StreamGateState:
             A GateState parameter is encoded in a single octet, and
@@ -652,7 +664,7 @@ ieee8021PSFPOperControlList OBJECT-TYPE
             octet encodes the least significant 8 bits.
         - IntervalOctetMax:
             An integer representing the maximum number of MSDU octets 
-            that are permitted to pas the gate during the specified
+            that are permitted to pass the gate during the specified
             TimeInterval. If this parameter is omitted, there is
             no maximum.
         "
@@ -762,7 +774,7 @@ ieee8021PSFPOperBaseTime OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-        "The operationsl value of the BaseTime parameter for the gate.
+        "The operational value of the BaseTime parameter for the gate.
         The value is a representation of a PTPtime value, 
         consisting of a 48-bit integer
         number of seconds and a 32-bit integer number of nanoseconds."
@@ -1211,6 +1223,12 @@ Ieee8021PSFPStreamParameterEntry ::=
         ieee8021PSFPMaxFlowMeterInstances
             Unsigned32,
         ieee8021PSFPSupportedListMax
+            Unsigned32,
+        ieee8021PSFPSupportedCycleMaxNumerator
+            Unsigned32,
+        ieee8021PSFPSupportedCycleMaxDenominator
+            Unsigned32,
+        ieee8021PSFPSupportedIntervalMax
             Unsigned32
              }
 
@@ -1258,6 +1276,40 @@ ieee8021PSFPSupportedListMax OBJECT-TYPE
         OperControlListLength parameters."
     REFERENCE   "8.6.5.4, 12.31.3"
     ::= { ieee8021PSFPStreamParameterEntry 4}
+
+ieee8021PSFPSupportedCycleMaxNumerator OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The numerator of the SupportedCycleMax parameter for 
+        the Bridge component. The numerator and denominator 
+        together represent the maximum value supported of 
+        the AdminCycleTime and OperCycleTime parameters"
+    REFERENCE   "12.31.1.7"
+    ::= { ieee8021PSFPStreamParameterEntry 5}
+
+ieee8021PSFPSupportedCycleMaxDenominator OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The denominator of the SupportedCycleMax parameter for 
+        the Bridge component. The numerator and denominator 
+        together represent the maximum value supported of 
+        the AdminCycleTime and OperCycleTime parameters"
+    REFERENCE   "12.31.1.7"
+    ::= { ieee8021PSFPStreamParameterEntry 6}
+
+ieee8021PSFPSupportedIntervalMax OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The maximum value supported by this Bridge component 
+        of the TimeIntervalValue parameter."
+    REFERENCE   "12.31.1.8"
+    ::= { ieee8021PSFPStreamParameterEntry 7}
 
 
 -- =============================================================
@@ -1333,7 +1385,10 @@ ieee8021PSFPObjectsGroup OBJECT-GROUP
         ieee8021PSFPMaxStreamFilterInstances,
         ieee8021PSFPMaxStreamGateInstances,
         ieee8021PSFPMaxFlowMeterInstances,
-        ieee8021PSFPSupportedListMax
+        ieee8021PSFPSupportedListMax,
+        ieee8021PSFPSupportedCycleMaxNumerator,
+        ieee8021PSFPSupportedCycleMaxDenominator,
+        ieee8021PSFPSupportedIntervalMax
         }
 
     STATUS      current

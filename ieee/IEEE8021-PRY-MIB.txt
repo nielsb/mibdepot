@@ -1,0 +1,1068 @@
+IEEE8021-PRY-MIB DEFINITIONS ::= BEGIN
+
+-- =============================================================================
+-- IEEE802.1AE MAC Privacy protection Entity (PrY) MIB
+-- =============================================================================
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE,
+    Integer32, Unsigned32, Counter64
+        FROM SNMPv2-SMI
+--  SnmpAdminString
+--      FROM SNMP-FRAMEWORK-MIB
+    MODULE-COMPLIANCE, OBJECT-GROUP
+        FROM SNMPv2-CONF
+    MacAddress, TruthValue, RowStatus
+        FROM SNMPv2-TC
+    InterfaceIndex
+        FROM IF-MIB
+    IEEE8021PriorityValue
+        FROM IEEE8021-TC-MIB
+;
+ieee8021PryMIB MODULE-IDENTITY
+    LAST-UPDATED "202210310000Z" -- October 31, 2022
+    ORGANIZATION "IEEE 802.1 Working Group"
+    CONTACT-INFO
+       "WG-URL: http://www.ieee802.org/1
+        WG-EMail: stds-802-1-L@ieee.org/1/                
+         Contact: IEEE 802.1 Working Group Chair
+          Postal: C/O IEEE 802.1 Working Group
+                  IEEE Standards Association
+                  445 Hoes Lane
+                  Piscataway, NJ 08854
+                  USA
+          E-mail: stds-802-1-chairs@ieee.org"
+    DESCRIPTION 
+       "The MAC Privacy protection Entity (PrY) MIB module.
+        
+        Unless otherwise indicated, the references in this MIB module are to 
+        IEEE Std 802.1AE-2018 as amended by IEEE Std 802.1AEdk-2023.
+        
+        Copyright (C) IEEE (2022).
+        This MIB module is part of IEEE Std 802.1AE; see that standard and its 
+        amendments for full legal notices.     
+        
+        A MAC Privacy protection Entity (PrY) is a protocol shim in an 
+        interface stack that encapsulates user data frames in MAC Privacy 
+        protection Data Units (MPPDUs). Once those MPPDUs are confidentiality 
+        protected by MACsec, the ability of potential adversaries to draw 
+        conclusions from the source and destination MAC addresses, sizes, and 
+        transmission timing and frequency of user data frames is reduced or 
+        eliminated.
+        
+        Each PrY in a system and its managed objects is indexed by the 
+        InterfaceIndex(ifIndex) of its upper interface (Private Port), which 
+        provides a privacy protected service to its user, typically a Bridge 
+        Port(IEEE Std 802.1Q) or an end station protocol stack. Object names 
+        can be conveniently pronounced by rendering 'Pry' as 'Privacy ', and 
+        'If' as 'Interface '.
+        "
+    REVISION "202210310000Z" -- October 31, 2022
+    DESCRIPTION "Initial Revision"
+    ::= { iso (1) iso-identified-organization (3) ieee (111) 
+    standards-association-numbered-series-standards (2) lan-man-stds (802) 
+    ieee802dot1(1) ieee802dot1mibs(1) 36 }
+-- =============================================================================
+-- subtrees in the PrY MIB
+
+ieee8021PryMIBNotifications OBJECT IDENTIFIER ::= { ieee8021PryMIB 1 }
+ieee8021PryMIBObjects       OBJECT IDENTIFIER ::= { ieee8021PryMIB 2 }
+ieee8021PryMIBConformance   OBJECT IDENTIFIER ::= { ieee8021PryMIB 3 }
+-- =============================================================================
+--ieee8021PryMIBObjects
+--  ieee8021PryIfTable
+--  ieee8021PrySelectionTable
+--  ieee8021PryFrameTable
+--  ieee8021PryChannelTable
+--  ieee8021PryPeerTable
+--  ieee8021PryOutTable
+--  ieee8021PryChannelOutTable
+--  ieee8021PryInTable
+-- =============================================================================
+--ieee8021PryIfTable
+ieee8021PryIfTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryIfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+    "A table with entries for each MAC Privacy protection capable interface in 
+    the system. Configured values of writable objects in table entries MUST be 
+    persistent and remain unchanged across re-initialization of the system's 
+    management entity."
+    REFERENCE "20.14, "
+    ::= { ieee8021PryMIBObjects 1 }
+
+--ieee8021PryIfEntry
+ieee8021PryIfEntry OBJECT-TYPE
+    SYNTAX     Ieee8021PryIfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "A table entry with privacy controls for a particular PrY."
+    INDEX { ieee8021PryIfIndex }
+        ::= { ieee8021PryIfTable 1 }
+
+--Ieee8021PryIfEntry
+Ieee8021PryIfEntry ::=
+   SEQUENCE {
+        ieee8021PryIfIndex                  InterfaceIndex,
+        ieee8021PryIfRxProtection           TruthValue,
+        ieee8021PryIfTxProtection           TruthValue,
+        ieee8021PryIfSecySupport            TruthValue,
+        ieee8021PryIfAddr                   MacAddress,
+        ieee8021PryIfMppduDA                MacAddress,
+        ieee8021PryIfDefaultReassembly      TruthValue,
+        ieee8021PryIfMaxPeers               Integer32,
+        ieee8021PryIfNumPeers               Integer32
+    }
+
+--ieee8021PryIfIndex 
+ieee8021PryIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "The Interface Index for this PrY's Private Port."
+    REFERENCE   "20.14"
+    ::= { ieee8021PryIfEntry 1 }
+
+--ieee8021PryIfRxProtection
+ieee8021PryIfRxProtection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "When true(1), the PrY processes received MPPDUs addressed to 
+                 ieee8021PryAddr and ieee8021IfMppduDA (if that is a Group 
+                 address). When false(2) they are passed directly to the PrY's 
+                 Private Port. All other  MPPDUs are passed to the Private 
+                 Port, unprocessed, irrespective of this control's value."
+    REFERENCE   "20.11"
+    DEFVAL      { true }
+    ::= { ieee8021PryIfEntry 2 }
+    
+--ieee8021PryIfTxProtection
+ieee8021PryIfTxProtection OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "When true(1), the PrY protects transmitted user data frames 
+                 as configured in the Privacy Selection Table. When false(2), 
+                 all user data frames are passed directly to the PrY's 
+                 Controlled Port."
+    REFERENCE   "20.5"
+    DEFVAL      { true }
+    ::= { ieee8021PryIfEntry 3 }
+    
+--ieee8021PryIfSecySupport
+ieee8021PryIfSecySupport OBJECT-TYPE
+  SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Set true(1) by the system if the PrY is directly supported by 
+                 a SecY and MKA, and false(2) otherwise. When true, the value 
+                 of ieee8021PryIfMppduDA and the entries in the PrY's peer 
+                 address table (ieee8021PryPeerTable) are determined by the 
+                 Key Agreement Entity (KaY) operating MKA, and are not 
+                 writable by network management."
+    REFERENCE   "18.1, 20.11"
+    DEFVAL      { true }
+    ::= { ieee8021PryIfEntry 4 }
+    
+--ieee8021PryIfAddr
+ieee8021PryIfAddr OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The individual MAC address associated with the PrY and other 
+                 components of the PrY's interface stack. Allocated by the 
+                 system. Used by PrY as the source address of MPPDUs and by a 
+                 supporting SecY (if present) for SCI assignment. The PrY 
+                 receives and processes MPPDUs with this destination address."
+    REFERENCE   "18.1"
+    ::= { ieee8021PryIfEntry 5 }
+    
+--ieee8021PryIfMppduDA
+ieee8021PryIfMppduDA OBJECT-TYPE
+    SYNTAX      MacAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The destination MAC address used to transmit MPPDUs.
+                 Also used to receive MPPDUs (if a Group address) when 
+                 ieee8021PryIfRxProtection is true. Set by the KaY if 
+                 ieee8021PryIfSecySupport is true, otherwise writable. If 
+                 ieee8021PryIfSecySupport transitions from true to false, 
+                 defaults to the Nearest non-TPMR Bridge Group address."
+    REFERENCE   "18.1, 20.11"
+    ::= { ieee8021PryIfEntry 6 }
+    
+--ieee8021PryIfDefaultReassembly
+ieee8021PryIfDefaultReassembly OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Set true(1) by the system to indicate that the default 
+                 reassembly algorithm is used. Set false(2), otherwise. If 
+                 the system supports additional reassembly algorithms it shall 
+                 also support selection of the default algorithm. The maximum 
+                 size of the user data frame (DA, SA, MSDU) that can be 
+                 reassembled for delivery to the Private Port is the value of 
+                 ifMtu (as provided by the IF-MIB plus 22 octets."
+    REFERENCE   "20.13, 20.13.1"
+    ::= { ieee8021PryIfEntry 7 }
+    
+--ieee8021PryIfMaxPeers
+ieee8021PryIfMaxPeers OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The maximum number of peer PrYs supported by the configured 
+                 reassembly algorithm."
+    REFERENCE   "20.13"
+    ::= { ieee8021PryIfEntry 8 }
+
+--ieee8021PryIfNumPeers
+ieee8021PryIfNumPeers OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The number of peer PrYs detected by the system."
+    REFERENCE   "20.13"
+    ::= { ieee8021PryIfEntry 9 }
+
+-- =============================================================================
+--ieee8021PrySelectionTable
+ieee8021PrySelectionTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PrySelectionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "A table for Privacy selection by transmit request priority"
+    REFERENCE   "17.4, 17.4.3, 20.5"
+    ::= { ieee8021PryMIBObjects 2 }
+
+--ieee8021PrySelectionEntry
+ieee8021PrySelectionEntry OBJECT-TYPE
+    SYNTAX      Ieee8021PrySelectionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Privacy type selection for a given user priority"
+    REFERENCE   "17.4.3, 20.5"
+    INDEX { ieee8021PryIfIndex, ieee8021PrySelectionPriority }
+      ::= { ieee8021PrySelectionTable 1 }
+
+--Ieee8021PrySelectionEntry
+Ieee8021PrySelectionEntry ::=
+    SEQUENCE {
+        ieee8021PrySelectionPriority    IEEE8021PriorityValue,
+        ieee8021PrySelectionPrivacyType INTEGER
+    }
+
+--ieee8021PrySelectionPriority
+ieee8021PrySelectionPriority OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Transmit request user priority."
+    REFERENCE   "17.4.3, 20.5"
+    ::= { ieee8021PrySelectionEntry 1 }
+
+--ieee8021PrySelectionPrivacyType
+ieee8021PrySelectionPrivacyType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    none (1),
+                    privacyFrame (2),
+                    preemptableChannel (3),
+                    expressChannel (4)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Privacy protection: none, privacyFrame, preemptableChannel, 
+                 or expressChannel."
+    REFERENCE   "17.4.3, 20.5"
+    ::= { ieee8021PrySelectionEntry 2 }
+
+-- =============================================================================
+--ieee8021PryFrameTable
+ieee8021PryFrameTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryFrameEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "A table of Privacy Frame parameters for each possible value 
+                 of Controlled Port transmission priority (PrY user priority). 
+                 Each table entry can be configured even if Privacy Frame 
+                 transmission is not currently selected for user data frames 
+                 of that user priority."
+    REFERENCE   "17.4.3, 20.7"
+    ::= { ieee8021PryMIBObjects 3 }
+
+--ieee8021PryFrameEntry
+ieee8021PryFrameEntry OBJECT-TYPE
+    SYNTAX      Ieee8021PryFrameEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Privacy Frame parameters for a given user priority."
+    REFERENCE   "20.14.4"
+    AUGMENTS { ieee8021PrySelectionEntry }
+         ::= { ieee8021PryFrameTable 1 }
+
+--Ieee8021PryFrameEntry
+Ieee8021PryFrameEntry ::=
+    SEQUENCE {
+        ieee8021PryFrameAccessPriority   IEEE8021PriorityValue,
+        ieee8021PryFrameRevealDE         TruthValue,
+        ieee8021PryFramePadding          INTEGER
+    }
+
+--ieee8021PryFrameAccessPriority
+ieee8021PryFrameAccessPriority OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The Controlled Port priority (access priority) used to 
+                 transmit Privacy Frames with the Private Port transmission 
+                 priority (user priority) that selects this table entry."
+    REFERENCE   "17.4.3, 20.7"
+    ::= { ieee8021PryFrameEntry 1 }
+
+--ieee8021PryFrameRevealDE
+ieee8021PryFrameRevealDE OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "When true(1), the drop_eligible parameter value for 
+                 Controlled Port transmission of a Privacy Frame of the 
+                 specified user priority matches that used for the 
+                 encapsulated user data frame’s Private Port transmit request.
+                 Otherwise the Controlled Port transmit request has 
+                 drop_eligible false, and the DEI bit of a VLAN tag added as a 
+                 consequence of that transmit request (e.g., by the network 
+                 component of an EDE-CC) will be clear."
+    REFERENCE   "20.7"
+    ::= { ieee8021PryFrameEntry 2 }
+
+--ieee8021PryFramePadding
+ieee8021PryFramePadding OBJECT-TYPE
+    SYNTAX      INTEGER {
+                  one (1),
+                  sixteen (16),
+                  thirtyTwo(32),
+                  sixtyFour(64)
+                 }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "Specifies padding of the Privacy Frame MPPDU (excluding 
+                 its source and destination MAC addresses) to four octets 
+                 (to allow for the MAC Privacy protection EtherType and the 
+                 MPPCI for an Encapsulated Frame) plus the nearest 
+                 multiple of one(1) (for no padding), sixteen(16), 
+                 thirtyTwo(32), or sixtyFour (64) octets. The specified size 
+                 excludes any octets to be added by supporting components 
+                 lower in the interface stack (e.g. a MACsec SecTAG and ICV, 
+                 and the Ethernet FCS) or other bridge components (e.g. an 
+                 outer VLAN tag added by an EDE's network component)."
+    REFERENCE   "17.4.3, 20.7"
+    ::= { ieee8021PryFrameEntry 3 }
+
+-- =============================================================================
+--ieee8021PryChannelTable
+ieee8021PryChannelTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryChannelEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "A table with entries for the Express and the Preemptable 
+                 Privacy Channel's parameters."
+    REFERENCE   "20.8, 20.9, 20.10"
+    ::= { ieee8021PryMIBObjects 4 }
+
+--ieee8021PryChannelEntry
+ieee8021PryChannelEntry OBJECT-TYPE
+    SYNTAX      Ieee8021PryChannelEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Parameters for a given Privacy Channel."
+    INDEX { ieee8021PryIfIndex, ieee8021PryChType }
+        ::= { ieee8021PryChannelTable 1 }
+
+--Ieee8021PryChannelEntry
+Ieee8021PryChannelEntry ::=
+    SEQUENCE {
+        ieee8021PryChType              INTEGER,
+        ieee8021PryChEnable            TruthValue,
+        ieee8021PryChFragmentEnable    TruthValue,
+        ieee8021PryChAccessPriority    IEEE8021PriorityValue,
+        ieee8021PryChUserDataFrameSize Integer32,
+        ieee8021PryChMppduGeneration   INTEGER,
+        ieee8021PryChRequestedKbitRate      Unsigned32,
+        ieee8021PryChMppduBitsOnWire   Unsigned32,
+        ieee8021PryChMppduInterval     Unsigned32,
+        ieee8021PryChUserBurstOctets   Unsigned32
+    }
+
+--ieee8021PryChType
+ieee8021PryChType OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    express (1), 
+                    preemptable (2)
+                }
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Privacy Channel Type, express(1) or preemptable(2)."
+    REFERENCE   "20.8"
+    ::= { ieee8021PryChannelEntry 1 }
+
+--ieee8021PryChEnable
+ieee8021PryChEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "When true(1), user data frames assigned to this Privacy 
+                 Channel by a ieee8021PrySelectionEntry are transmitted using 
+                 this channel's parameters. When false(2), they are 
+                 transmitted using the other channel if ieee8021PryChEnable 
+                 is true for that channel and transmitted as Privacy Frames 
+                 using the relevant ieee8021PryFrameEntry otherwise."
+    REFERENCE   "20.8"
+    ::= { ieee8021PryChannelEntry 2 }
+
+--ieee8021PryChFragmentEnable
+ieee8021PryChFragmentEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "When true(1) permits user data frame fragmentation in this 
+                 Privacy Channel. Should be true, for bandwidth efficiency and 
+                 delay minimization. Provided to allow simple performance 
+                 testing and fragmentation benefit analysis."
+    REFERENCE   "20.10"
+    ::= { ieee8021PryChannelEntry 3 }
+
+--ieee8021PryChAccessPriority
+ieee8021PryChAccessPriority OBJECT-TYPE
+    SYNTAX      IEEE8021PriorityValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The Controlled Port priority (access priority) used to 
+                 transmit MPPDUs for this Privacy Channel."
+    REFERENCE   "20.8, 20.9.3"
+    ::= { ieee8021PryChannelEntry 4 }
+
+--ieee8021PryChUserDataFrameSize
+ieee8021PryChUserDataFrameSize OBJECT-TYPE
+    SYNTAX      Integer32 (128 .. 32768)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "User specification of MPPDU size. The largest user data 
+                 frame, at the Private Port interface (i.e. prior to MAC 
+                 Privacy protection)that can be transmitted as an MPPDU 
+                 Encapsulated Frame without fragmentation. Includes the user 
+                 data frame DA, SA, MSDU with EtherType, and a four octet FCS 
+                 allowance.  Excludes octets subsequently added by MACsec, or 
+                 other supporting interface stack components. Physical media, 
+                 and the configuration of other system components can impose 
+                 an upper bound lower than the configured value of this 
+                 parameter."
+    REFERENCE   "20.9.3"
+    ::= { ieee8021PryChannelEntry 5 }
+
+--ieee8021PryChMppduGeneration
+ieee8021PryChMppduGeneration OBJECT-TYPE
+    SYNTAX      INTEGER { default (1), transmissionGate (2), other (3)}
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The MPPDU generation algorithm for this Privacy Channel. When 
+                 default(1), the (maximum) bandwidth is requested, with 
+                 a catch up (burst)parameter to recovers lost bandwidth if 
+                 an MPPDU transmission has been delayed by another frame sent 
+                 with higher access priority or by another component of the 
+                 same interface stack. When transmissionGate(2), MPPDU 
+                 transmission timing is gated, see 20.9.5 and IEEE Std 802.1Q."
+    REFERENCE   "20.9, 20.9.4, 20.9.5"
+    ::= { ieee8021PryChannelEntry 6 }
+
+--ieee8021PryChRequestedKbitRate
+ieee8021PryChRequestedKbitRate OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The physical medium bit rate (kilobits per second) to be 
+                 used by this Privacy Channel and the default MPPDU generation 
+                 algorithm in the absence of higher priority traffic or other 
+                 resource competition."
+    REFERENCE   "20.9.4"
+    ::= { ieee8021PryChannelEntry 7 }
+
+--ieee8021PryChMppduBitsOnWire
+ieee8021PryChMppduBitsOnWire OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The number of bit times required to transmit an MPPDU that 
+                 conveys a single, Private Port transmitted, user data frame 
+                 of ieee8021PryChUserDataFrameSize encoded as an Encapsulated 
+                 Frame(19.5.1). Calculated by the system, including all fields 
+                 added by the interface stack."
+    REFERENCE   "20.9.4"
+    ::= { ieee8021PryChannelEntry 8 }
+
+--ieee8021PryChMppduInterval
+ieee8021PryChMppduInterval OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "The approximate interval (as calculated by the system) in 
+                 nanoseconds between the transmission of MPPDUs for this 
+                 Privacy Channel, in the absence of competing higher priority 
+                 traffic or other resource competition.
+"
+    REFERENCE   "20.9.4"
+    ::= { ieee8021PryChannelEntry 9 }
+
+--ieee8021PryChUserBurstOctets
+ieee8021PryChUserBurstOctets OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "The number of additional user data frame burst for use by the 
+                 default MPPDU generation algorithm to recover channel 
+                 bandwidth lost to competing higher priority traffic."
+    REFERENCE   "20.9.4"
+    ::= { ieee8021PryChannelEntry 10 }
+
+-- =============================================================================
+--ieee8021PryPeerTable
+ieee8021PryPeerTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryPeerEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "A table of peer PrYs. Frame Fragments received in MPPDUs with 
+                source MAC addresses not in this table are discarded. When 
+                ieee8021PryIfSecySupport is true, table entries are created 
+                and deleted by the supporting Key Agreement Entity. When false 
+                the system automatically creates an entry for 
+                ieee8021PryIfMppduDA if that is not a Group address, and other 
+                entries can be created by management."
+    REFERENCE   "20.13"
+    ::= { ieee8021PryMIBObjects 5 }
+
+--ieee8021PryPeerEntry
+ieee8021PryPeerEntry OBJECT-TYPE
+    SYNTAX     Ieee8021PryPeerEntry 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "An entry in the peer PrY table for one peer."
+    INDEX { ieee8021PryIfIndex, ieee8021PryPeerAddr }
+    ::= { ieee8021PryPeerTable 1 }
+
+--Ieee8021PryPeerEntry
+Ieee8021PryPeerEntry ::= 
+    SEQUENCE {
+        ieee8021PryPeerAddr       MacAddress,
+        ieee8021PryPeerRowStatus  RowStatus
+    }
+
+--ieee8021PryPeerAddr
+ieee8021PryPeerAddr OBJECT-TYPE
+    SYNTAX      MacAddress 
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "MAC address of a peer PrY."
+    REFERENCE   "20.13"
+    ::= { ieee8021PryPeerEntry 1 }
+
+--ieee8021PryPeerRowStatus
+ieee8021PryPeerRowStatus OBJECT-TYPE
+    SYNTAX      RowStatus 
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION "Indicates the status of an entry in the ieee8021PryPeerTable, 
+                 can be used to create entries if ieee8021PryIfSecySupport 
+                 is false."
+    REFERENCE   "20.13"
+    ::= { ieee8021PryPeerEntry 2 }
+
+-- =============================================================================
+--ieee8021PryOutTable
+ieee8021PryOutTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryOutEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Transmission statistics for Private Port user data frames 
+                 transmitted as Privacy Frames or unprotected."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryMIBObjects 6 }
+
+--ieee8021PryOutEntry
+ieee8021PryOutEntry OBJECT-TYPE
+    SYNTAX      Ieee8021PryOutEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Transmission statistics, for frames not in a Privacy Channel."
+    AUGMENTS { ieee8021PryIfEntry }
+        ::= { ieee8021PryOutTable 1 }
+
+--Ieee8021PryOutEntry
+Ieee8021PryOutEntry ::=
+    SEQUENCE {
+        ieee8021PryOutPrivacyFrames Counter64,
+        ieee8021PryOutPfUserOctets  Counter64,
+        ieee8021PryOutPfPadOctets   Counter64,
+        ieee8021PryOutUnprtFrames   Counter64,
+        ieee8021PryOutUnprtOctets   Counter64
+    }
+
+--ieee8021PryOutPrivacyFrames
+ieee8021PryOutPrivacyFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of user data frames sent as Privacy Frames (each 
+                 in a separate MPPDU)."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryOutEntry 1 }
+
+--ieee8021PryOutPfUserOctets
+ieee8021PryOutPfUserOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of user data octets sent in Privacy Frames (each 
+                 user data frame in a separate MPPDU). Not counting pad octets." 
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryOutEntry 2 }
+
+--ieee8021PryOutPfPadOctets
+ieee8021PryOutPfPadOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of pad octets sent in Privacy Frames (each 
+                 conveying a single Private Port user data frame)."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryOutEntry 3 }
+
+--ieee8021PryOutUnprtFrames
+ieee8021PryOutUnprtFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of MAC Privacy PDUs sent."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryOutEntry 4 }
+
+--ieee8021PryOutUnprtOctets
+ieee8021PryOutUnprtOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of MAC Privacy PDUs sent."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryOutEntry 5 }
+
+-- =============================================================================
+--ieee8021PryChannelOutTable
+ieee8021PryChannelOutTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryChannelOutEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Transmission statistics for the Express and Preemptable 
+                 Privacy Channels."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryMIBObjects 7 }
+
+--ieee8021PryChannelOutEntry
+ieee8021PryChannelOutEntry OBJECT-TYPE
+    SYNTAX      Ieee8021PryChannelOutEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Transmission statistics for a Privacy Channel."
+    AUGMENTS { ieee8021PryChannelEntry }
+        ::= { ieee8021PryChannelOutTable 1 }
+
+--Ieee8021PryChannelOutEntry
+Ieee8021PryChannelOutEntry ::=
+    SEQUENCE {
+        ieee8021PryChOutUserFrames      Counter64,
+        ieee8021PryChOutUserOctets      Counter64,
+        ieee8021PryChOutPadOctets       Counter64,
+        ieee8021PryChOutMppdus          Counter64,
+        ieee8021PryChOutEncapFrames     Counter64,
+        ieee8021PryChOutExpFragments    Counter64,
+        ieee8021PryChOutPreFragments    Counter64
+    }
+
+--ieee8021PryChOutUserFrames
+ieee8021PryChOutUserFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of user data frames sent in this Privacy Channel."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 1 }
+
+--ieee8021PryChOutUserOctets
+ieee8021PryChOutUserOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of user data octets sent in this Privacy Channel. 
+                 Not counting pad octets."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 2 }
+
+--ieee8021PryChOutPadOctets
+ieee8021PryChOutPadOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of pad octets sent in this Privacy Channel."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 3 }
+
+--ieee8021PryChOutMppdus
+ieee8021PryChOutMppdus OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of MPPDUs sent in this Privacy Channel."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 4 }
+
+--ieee8021PryChOutEncapFrames
+ieee8021PryChOutEncapFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of Encapsulated Frames encoded for this Privacy 
+                 Channel."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 5 }
+
+--ieee8021PryChOutExpFragments
+ieee8021PryChOutExpFragments OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of Express Fragments encoded for this Privacy Channel."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 6 }
+
+--ieee8021PryChOutPreFragments
+ieee8021PryChOutPreFragments OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of Preemptable Fragments encoded for this Privacy 
+                 Channel."
+    REFERENCE   "20.14.1"
+    ::= { ieee8021PryChannelOutEntry 7 }
+
+-- =============================================================================
+--ieee8021PryInTable
+ieee8021PryInTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Ieee8021PryInEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Reception statistics for all user data frames, MPPDUs, their 
+                 components,and fragmented user data frame reassembly."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryMIBObjects 8 }
+
+--ieee8021PryInEntry
+ieee8021PryInEntry OBJECT-TYPE
+    SYNTAX      Ieee8021PryInEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Transmission statistics, for frames not in a Privacy Channel."
+    AUGMENTS { ieee8021PryIfEntry }
+        ::= { ieee8021PryInTable 1 }
+
+
+--Ieee8021PryInEntry
+Ieee8021PryInEntry ::=
+    SEQUENCE {
+        ieee8021PryInUserFrames       Counter64,
+        ieee8021PryInUserOctets       Counter64,
+        ieee8021PryInPadOctets        Counter64,
+        ieee8021PryInMppdus           Counter64,
+        ieee8021PryInEncapFrames      Counter64,
+        ieee8021PryInExpFragments     Counter64,
+        ieee8021PryInPreFragments     Counter64,
+        ieee8021PryInExpDiscards      Counter64,
+        ieee8021PryInPreDiscards      Counter64,
+        ieee8021PryInUnknownMppcis     Counter64,
+        ieee8021PryInErroredMppdus      Counter64,
+        ieee8021PryInUnprtFrames      Counter64,
+        ieee8021PryInUnprtOctets      Counter64
+    }
+
+--ieee8021PryInUserFrames
+ieee8021PryInUserFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of protected user data frames received in 
+                 MPPDUs, encoded as Encapsulated Frames or reassembled from 
+                 Frame Fragments."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 1 }
+
+--ieee8021PryInUserOctets
+ieee8021PryInUserOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of user data frame octets received. Excludes 
+                 padding."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 2 }
+
+--ieee8021PryInPadOctets
+ieee8021PryInPadOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of pad octets received in MPPDUs."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 3 }
+
+--ieee8021PryInMppdus
+ieee8021PryInMppdus OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of MAC Privacy protection PDUs received."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 4 }
+
+--ieee8021PryInEncapFrames
+ieee8021PryInEncapFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of Encapsulated Frame components received in MPPDUs."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 5 }
+
+--ieee8021PryInExpFragments
+ieee8021PryInExpFragments OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of correctly encoded Express Frame Fragments
+                 received in MPPDUs. Includes fragments discarded by 
+                 reassembly (unknown peer, too many peers, out of order, 
+                 reassembled frame too large)."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 6 }
+
+--ieee8021PryInPreFragments
+ieee8021PryInPreFragments OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of correctly encoded Preemptable Frame Fragments 
+                 received in MPPDUs. Includes fragments discarded by 
+                 reassembly (unknown peer, too many peers, out of order, 
+                 reassembled frame too large)."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 7 }
+
+--ieee8021PryInExpDiscards
+ieee8021PryInExpDiscards OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of Express Frame Fragment discard events (discarding a 
+                 fragment and/or a partially reassembled user data frame)."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 8 }
+
+--ieee8021PryInPreDiscards
+ieee8021PryInPreDiscards OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of Preemptable Frame Fragment discard events 
+                 (discarding a fragment and/or a partially reassembled 
+                 user data frame)."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 9 }
+
+--ieee8021PryInUnknownMppcis
+ieee8021PryInUnknownMppcis OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of of unknown MPPDU components received."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 10 }
+
+--ieee8021PryInErroredMppdus
+ieee8021PryInErroredMppdus OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Number of received MPPDUs containing an incorrectly 
+                 encoded component."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 11 }
+
+--ieee8021PryInUnprtFrames
+ieee8021PryInUnprtFrames OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of MAC Privacy user frames received."
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 12 }
+
+--ieee8021PryInUnprtOctets
+ieee8021PryInUnprtOctets OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION "Total number of MAC Privacy user octets received. Does not 
+                 include padding"
+    REFERENCE   "20.14.2"
+    ::= { ieee8021PryInEntry 13 }
+
+-- =============================================================================
+--ieee8021PryMIBConformance
+
+ieee8021PryMIBCompliances  OBJECT IDENTIFIER ::= { ieee8021PryMIBConformance 1 }
+ieee8021PryMIBGroups       OBJECT IDENTIFIER ::= { ieee8021PryMIBConformance 2 }
+
+-- =============================================================================
+--ieee8021PryMIBCompliances
+
+--ieee8021PryMIBCompliance
+ieee8021PryMIBCompliance MODULE-COMPLIANCE
+    STATUS current
+    DESCRIPTION "IEEE8021-PRY-MIB compliance statement, IEEE Std 802.1AEdk."
+    MODULE  -- this module
+        MANDATORY-GROUPS {
+            ieee8021PryIfGroup,
+            ieee8021PrySelectionGroup,
+            ieee8021PryFrameGroup,
+            ieee8021PryChannelGroup,
+            ieee8021PryPeerGroup,
+            ieee8021PryOutGroup,
+            ieee8021PryChOutGroup,
+            ieee8021PryInGroup
+        }
+    ::= { ieee8021PryMIBCompliances 1 }
+
+-- =============================================================================
+--ieee8021PryMIBGroups
+--ieee8021PryIfGroup
+ieee8021PryIfGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryIfRxProtection,
+        ieee8021PryIfTxProtection,
+        ieee8021PryIfSecySupport,
+        ieee8021PryIfAddr,
+        ieee8021PryIfMppduDA,
+        ieee8021PryIfDefaultReassembly,
+        ieee8021PryIfMaxPeers,
+        ieee8021PryIfNumPeers,
+        ieee8021PryIfNumPeers
+    }
+    STATUS      current
+    DESCRIPTION "PrY service management (mandatory ieee8021PryIfTable objects)."
+    ::= { ieee8021PryMIBGroups 1 }
+
+--ieee8021PrySelectionGroup
+ieee8021PrySelectionGroup    OBJECT-GROUP
+    OBJECTS {
+        ieee8021PrySelectionPrivacyType
+    }
+    STATUS      current
+    DESCRIPTION "Privacy type selection, by Private Port transmitted frame 
+                 priority." 
+    ::= { ieee8021PryMIBGroups 2 }
+
+--ieee8021PryFrameGroup
+ieee8021PryFrameGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryFrameAccessPriority,
+        ieee8021PryFrameRevealDE,
+        ieee8021PryFramePadding
+    }
+    STATUS      current
+    DESCRIPTION "Parameters for individual Privacy Frame transmission." 
+    ::= { ieee8021PryMIBGroups 3 }
+
+--ieee8021PryChannelGroup
+ieee8021PryChannelGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryChEnable,
+        ieee8021PryChFragmentEnable,
+        ieee8021PryChAccessPriority,
+        ieee8021PryChUserDataFrameSize,
+        ieee8021PryChMppduGeneration,
+        ieee8021PryChRequestedKbitRate,
+        ieee8021PryChMppduBitsOnWire,
+        ieee8021PryChMppduInterval,
+        ieee8021PryChUserBurstOctets
+    }
+    STATUS      current
+    DESCRIPTION "PrY service management Group"
+    ::= { ieee8021PryMIBGroups 4 }
+
+--ieee8021PryPeerGroup
+ieee8021PryPeerGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryPeerRowStatus
+    }
+    STATUS      current
+    DESCRIPTION "PrY peer addresses."
+    ::= { ieee8021PryMIBGroups 5 }
+
+--ieee8021PryOutGroup
+ieee8021PryOutGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryOutPrivacyFrames,
+        ieee8021PryOutPfUserOctets,
+        ieee8021PryOutPfPadOctets,
+        ieee8021PryOutUnprtFrames,
+        ieee8021PryOutUnprtOctets
+    }
+    STATUS      current
+    DESCRIPTION "PrY service management Group"
+    ::= { ieee8021PryMIBGroups 6 }
+
+--ieee8021PryChOutGroup
+ieee8021PryChOutGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryChOutUserFrames,
+        ieee8021PryChOutUserOctets,
+        ieee8021PryChOutPadOctets,
+        ieee8021PryChOutMppdus,
+        ieee8021PryChOutEncapFrames,
+        ieee8021PryChOutExpFragments,
+        ieee8021PryChOutPreFragments
+    }
+    STATUS      current
+    DESCRIPTION "PrY service management Group"
+    ::= { ieee8021PryMIBGroups 7 }
+
+--ieee8021PryInGroup
+ieee8021PryInGroup OBJECT-GROUP
+    OBJECTS {
+        ieee8021PryInUserFrames,
+        ieee8021PryInUserOctets,
+        ieee8021PryInPadOctets,
+        ieee8021PryInMppdus,
+        ieee8021PryInEncapFrames,
+        ieee8021PryInExpFragments,
+        ieee8021PryInPreFragments,
+        ieee8021PryInExpDiscards,
+        ieee8021PryInPreDiscards,
+        ieee8021PryInUnknownMppcis,
+        ieee8021PryInErroredMppdus,
+        ieee8021PryInUnprtFrames,
+        ieee8021PryInUnprtOctets
+    }
+    STATUS      current
+    DESCRIPTION "PrY service management Group"
+    ::= { ieee8021PryMIBGroups 8 }
+
+END
+
