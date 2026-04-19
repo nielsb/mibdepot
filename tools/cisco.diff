@@ -1,6 +1,39 @@
-diff -ru auto/mibs/v2/CISCO-IDSL-LINE-MIB.my cisco/CISCO-IDSL-LINE-MIB.my
---- auto/mibs/v2/CISCO-IDSL-LINE-MIB.my	2000-07-01 09:00:00.000000000 +0200
-+++ cisco/CISCO-IDSL-LINE-MIB.my	2016-06-07 13:15:04.000000000 +0200
+diff -ru tmp/cisco-mibs/v2/CISCO-ENTITY-VENDORTYPE-OID-MIB.my new/cisco/CISCO-ENTITY-VENDORTYPE-OID-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-ENTITY-VENDORTYPE-OID-MIB.my	2026-04-19 17:36:13.407318480 +0200
++++ new/cisco/CISCO-ENTITY-VENDORTYPE-OID-MIB.my	2026-04-19 20:30:10.449570398 +0200
+@@ -5485,7 +5485,7 @@
+ cevMAs5800Dspm6c549	OBJECT IDENTIFIER ::= { cevModuleAS5800Type 9 }		-- Digital Signal Processor Module with 6 C549's Voice Feature Card
+ cevMAs5800Dsp		OBJECT IDENTIFIER ::= { cevModuleAS5800Type 10 }	-- Digital Signal Processor Module Voice Feature Card
+ 
+-cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	-- Catalyst 9300 Argon 8 Port switch
++-- cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	-- Catalyst 9300 Argon 8 Port switch
+ 
+ cevModuleFabricType		OBJECT IDENTIFIER ::= { cevModule 14 }
+ cev12012Sfc	OBJECT IDENTIFIER ::= { cevModuleFabricType 3 }  -- 12012 Switch Fabric Card
+diff -ru tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my new/cisco/CISCO-FC-FE-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my	2026-04-19 17:36:13.419318350 +0200
++++ new/cisco/CISCO-FC-FE-MIB.my	2026-04-19 20:29:23.868076042 +0200
+@@ -7334,7 +7334,7 @@
+     DESCRIPTION
+         "Write access is not required."
+ 
+-    OBJECT          TransceiverPowerControl
++    OBJECT          fcIfTransceiverPowerControl
+     MIN-ACCESS      read-only
+     DESCRIPTION
+         "Write access is not required."
+@@ -7936,7 +7936,7 @@
+                         fcIfTransceiverPower,
+                         fcIfTransceiverPowerControl,
+                         fcIfSysTransceiverPowerControlCapability,
+-                        fcIfSysTransceiverPowerControl,
++                        fcIfSysTransceiverPowerControl
+                     }
+     STATUS          current
+     DESCRIPTION
+diff -ru tmp/cisco-mibs/v2/CISCO-IDSL-LINE-MIB.my new/cisco/CISCO-IDSL-LINE-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-IDSL-LINE-MIB.my	2023-03-27 16:00:52.083399258 +0200
++++ new/cisco/CISCO-IDSL-LINE-MIB.my	2026-04-19 17:36:18.600262345 +0200
 @@ -26,7 +26,6 @@
      PerfCurrentCount,
      PerfIntervalCount                   FROM PerfHist-TC-MIB
@@ -38,9 +71,21 @@ diff -ru auto/mibs/v2/CISCO-IDSL-LINE-MIB.my cisco/CISCO-IDSL-LINE-MIB.my
      MAX-ACCESS  read-write
      STATUS      current
      DESCRIPTION
-diff -ru auto/mibs/v2/CISCO-NAT-CGN-EXT-MIB.my cisco/CISCO-NAT-CGN-EXT-MIB.my
---- auto/mibs/v2/CISCO-NAT-CGN-EXT-MIB.my	2016-02-17 10:23:13.000000000 +0100
-+++ cisco/CISCO-NAT-CGN-EXT-MIB.my	2016-06-07 13:42:45.000000000 +0200
+diff -ru tmp/cisco-mibs/v2/CISCO-IEEE-CFM-MIB.my new/cisco/CISCO-IEEE-CFM-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-IEEE-CFM-MIB.my	2023-03-27 16:00:52.084399246 +0200
++++ new/cisco/CISCO-IEEE-CFM-MIB.my	2026-04-19 17:36:18.603262313 +0200
+@@ -19,7 +19,7 @@
+ -- this MIB.
+ 
+ 
+-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
++CISCO-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
+ 
+ -- ******************************************************************
+ -- IEEE P802.1ag(TM) CFM MIB
+diff -ru tmp/cisco-mibs/v2/CISCO-NAT-CGN-EXT-MIB.my new/cisco/CISCO-NAT-CGN-EXT-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-NAT-CGN-EXT-MIB.my	2023-03-27 16:00:52.215397755 +0200
++++ new/cisco/CISCO-NAT-CGN-EXT-MIB.my	2026-04-19 17:36:18.601262334 +0200
 @@ -32,7 +32,7 @@
      natInstanceIndex,
      natInstanceEntry,
@@ -50,21 +95,21 @@ diff -ru auto/mibs/v2/CISCO-NAT-CGN-EXT-MIB.my cisco/CISCO-NAT-CGN-EXT-MIB.my
      ciscoMgmt
          FROM CISCO-SMI;
  
-diff -ru auto/mibs/v2/CISCO-RTTMON-TC-MIB.my cisco/CISCO-RTTMON-TC-MIB.my
---- auto/mibs/v2/CISCO-RTTMON-TC-MIB.my	2012-06-01 23:06:31.000000000 +0200
-+++ cisco/CISCO-RTTMON-TC-MIB.my	2016-06-07 13:35:05.000000000 +0200
-@@ -428,7 +425,7 @@
-
+diff -ru tmp/cisco-mibs/v2/CISCO-RTTMON-TC-MIB.my new/cisco/CISCO-RTTMON-TC-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-RTTMON-TC-MIB.my	2023-03-27 16:00:52.296396834 +0200
++++ new/cisco/CISCO-RTTMON-TC-MIB.my	2026-04-19 17:36:18.601262334 +0200
+@@ -428,7 +428,7 @@
+ 
          The value 'fabricPathEcho' will cause the RTT application to
          perform delay performance measurment and verify connectivity in
 -        a Fabric Path Network."
 +        a Fabric Path Network.
-
+ 
          NOTE:  The 'pathJitter' time delay operation is a heuristic
                 measurement because an intermediate hop may forward
-diff -ru auto/mibs/v2/CISCO-SDSL-LINE-MIB.my cisco/CISCO-SDSL-LINE-MIB.my
---- auto/mibs/v2/CISCO-SDSL-LINE-MIB.my	2001-12-04 02:11:06.000000000 +0100
-+++ cisco/CISCO-SDSL-LINE-MIB.my	2016-06-07 13:15:27.000000000 +0200
+diff -ru tmp/cisco-mibs/v2/CISCO-SDSL-LINE-MIB.my new/cisco/CISCO-SDSL-LINE-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-SDSL-LINE-MIB.my	2023-03-27 16:00:52.298396811 +0200
++++ new/cisco/CISCO-SDSL-LINE-MIB.my	2026-04-19 17:36:18.602262323 +0200
 @@ -22,7 +22,6 @@
      MODULE-COMPLIANCE,
      OBJECT-GROUP                        FROM SNMPv2-CONF
@@ -102,24 +147,38 @@ diff -ru auto/mibs/v2/CISCO-SDSL-LINE-MIB.my cisco/CISCO-SDSL-LINE-MIB.my
      MAX-ACCESS  read-write
      STATUS      current
      DESCRIPTION
-diff --git a/cisco/CISCO-IEEE-CFM-MIB.my b/cisco/CISCO-IEEE-CFM-MIB.my
-index 698f7b9..188ea68 100644
---- a/cisco/CISCO-IEEE-CFM-MIB.my
-+++ b/cisco/CISCO-IEEE-CFM-MIB.my
-@@ -19,7 +19,7 @@
- -- this MIB.
+diff -ru tmp/cisco-mibs/v2/CISCO-SIP-UA-MIB.my new/cisco/CISCO-SIP-UA-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-SIP-UA-MIB.my	2023-10-27 09:23:45.433984413 +0200
++++ new/cisco/CISCO-SIP-UA-MIB.my	2026-04-19 17:36:18.607262269 +0200
+@@ -4591,12 +4591,6 @@
+                not provide any timer configuration and simply adhere to
+                what is prescribed in the standard."
  
- 
--IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
-+CISCO-IEEE8021-CFM-MIB DEFINITIONS ::= BEGIN
- 
- -- ******************************************************************
- -- IEEE P802.1ag(TM) CFM MIB
-diff --git a/cisco/CISCO-SWITCH-QOS-MIB.my b/cisco/CISCO-SWITCH-QOS-MIB.my
-index 28b1b63..ddc51f1 100644
---- a/cisco/CISCO-SWITCH-QOS-MIB.my
-+++ b/cisco/CISCO-SWITCH-QOS-MIB.my
-@@ -3032,12 +3032,12 @@ csqHwSharedPoolUsageInstNo OBJECT-TYPE
+-         GROUP ciscoSipRetryConfigGroupRev5
+-         DESCRIPTION
+-              "This group is optional. A SIP user agent can elect to
+-               not provide any timer configuration and simply adhere to
+-               what is prescribed in the standard."
+-
+          GROUP ciscoSipRetryStatsGroupRev4
+          DESCRIPTION
+               "This group is optional.  If implemented, the
+diff -ru tmp/cisco-mibs/v2/CISCO-ST-TC.my new/cisco/CISCO-ST-TC.my
+--- tmp/cisco-mibs/v2/CISCO-ST-TC.my	2024-09-17 20:14:11.515621698 +0200
++++ new/cisco/CISCO-ST-TC.my	2026-04-19 17:36:18.610262237 +0200
+@@ -362,7 +362,7 @@
+           thirtyTwoG  (12) - 32GBit.
+           autoMaxThirtyTwoG (13) - Negotiate to determine the
+                              speed automatically upto a
+-                             maximum of 32Gbit."
++                             maximum of 32Gbit.
+           fiftyG      (14) - 50GBit.
+           sixtyFourG  (15) - 64GBit.
+           autoMaxSixtyFourG (16) - Negotiate to determine the
+diff -ru tmp/cisco-mibs/v2/CISCO-SWITCH-QOS-MIB.my new/cisco/CISCO-SWITCH-QOS-MIB.my
+--- tmp/cisco-mibs/v2/CISCO-SWITCH-QOS-MIB.my	2023-03-27 16:00:52.380395877 +0200
++++ new/cisco/CISCO-SWITCH-QOS-MIB.my	2026-04-19 17:36:18.604262302 +0200
+@@ -3032,12 +3032,12 @@
  
  csqHwSharedPoolStatsDirection OBJECT-TYPE
      SYNTAX          INTEGER  {
@@ -138,62 +197,3 @@ index 28b1b63..ddc51f1 100644
                      }
      MAX-ACCESS      not-accessible
      STATUS          current
---- a/cisco/XXX-NAT-MIB.my    2015-03-26 00:00:00.000000000 +0100
-+++ b/cisco/XXX-NAT-MIB.my    2020-11-25 14:54:12.939062699 +0100
-@@ -1,6 +1,6 @@
-
-
--   NAT-MIB DEFINITIONS ::= BEGIN
-+   XXX-NAT-MIB DEFINITIONS ::= BEGIN
-
-    IMPORTS
-         MODULE-IDENTITY,
-
-diff --git a/cisco/CISCO-SIP-UA-MIB.my b/cisco/CISCO-SIP-UA-MIB.my
-index ccb4095..4722790 100644
---- a/cisco/CISCO-SIP-UA-MIB.my
-+++ b/cisco/CISCO-SIP-UA-MIB.my
-@@ -4591,12 +4591,6 @@ ciscoSipComplianceRev6 MODULE-COMPLIANCE
-                not provide any timer configuration and simply adhere to
-                what is prescribed in the standard."
- 
--         GROUP ciscoSipRetryConfigGroupRev5
--         DESCRIPTION
--              "This group is optional. A SIP user agent can elect to
--               not provide any timer configuration and simply adhere to
--               what is prescribed in the standard."
--
-          GROUP ciscoSipRetryStatsGroupRev4
-          DESCRIPTION
-               "This group is optional.  If implemented, the
---- new/cisco/CISCO-FC-FE-MIB.my	2024-02-06 16:38:47.526136866 +0100
-+++ ../cisco/CISCO-FC-FE-MIB.my	2024-02-06 16:53:27.126212398 +0100
-@@ -7049,7 +7049,7 @@
-     DESCRIPTION
-         "Write access is not required."
- 
--    OBJECT          TransceiverPowerControl
-+    OBJECT          fcIfTransceiverPowerControl
-     MIN-ACCESS      read-only
-     DESCRIPTION
-         "Write access is not required."
-@@ -7651,7 +7651,7 @@
-         				fcIfTransceiverPower,
-         				fcIfTransceiverPowerControl,
-         				fcIfSysTransceiverPowerControlCapability,
--        				fcIfSysTransceiverPowerControl,
-+        				fcIfSysTransceiverPowerControl
-                     }
-     STATUS          current
-     DESCRIPTION
---- new/cisco/CISCO-ST-TC.my	2024-09-17 20:53:45.074101445 +0200
-+++ ../cisco/CISCO-ST-TC.my	2024-09-17 20:38:03.058233072 +0200
-@@ -362,7 +362,7 @@
-           thirtyTwoG  (12) - 32GBit.
-           autoMaxThirtyTwoG (13) - Negotiate to determine the
-                              speed automatically upto a
--                             maximum of 32Gbit."
-+                             maximum of 32Gbit.
-           fiftyG      (14) - 50GBit.
-           sixtyFourG  (15) - 64GBit.
-           autoMaxSixtyFourG (16) - Negotiate to determine the
