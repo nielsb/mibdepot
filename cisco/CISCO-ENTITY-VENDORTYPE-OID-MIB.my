@@ -5486,7 +5486,7 @@ cevMAs5800Vcc		OBJECT IDENTIFIER ::= { cevModuleAS5800Type 8 }		-- Voice Carrier
 cevMAs5800Dspm6c549	OBJECT IDENTIFIER ::= { cevModuleAS5800Type 9 }		-- Digital Signal Processor Module with 6 C549's Voice Feature Card
 cevMAs5800Dsp		OBJECT IDENTIFIER ::= { cevModuleAS5800Type 10 }	-- Digital Signal Processor Module Voice Feature Card
 
--- cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	-- Catalyst 9300 Argon 8 Port switch
+-- cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	--	-- Catalyst 9300 Argon 8 Port switch
 
 cevModuleFabricType		OBJECT IDENTIFIER ::= { cevModule 14 }
 cev12012Sfc	OBJECT IDENTIFIER ::= { cevModuleFabricType 3 }  -- 12012 Switch Fabric Card

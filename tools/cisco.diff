@@ -6,7 +6,7 @@ diff -ru tmp/cisco-mibs/v2/CISCO-ENTITY-VENDORTYPE-OID-MIB.my new/cisco/CISCO-EN
  cevMAs5800Dsp		OBJECT IDENTIFIER ::= { cevModuleAS5800Type 10 }	-- Digital Signal Processor Module Voice Feature Card
  
 -cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	-- Catalyst 9300 Argon 8 Port switch
-+-- cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	-- Catalyst 9300 Argon 8 Port switch
++-- cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 } --	-- Catalyst 9300 Argon 8 Port switch
  
  cevModuleFabricType		OBJECT IDENTIFIER ::= { cevModule 14 }
  cev12012Sfc	OBJECT IDENTIFIER ::= { cevModuleFabricType 3 }  -- 12012 Switch Fabric Card
