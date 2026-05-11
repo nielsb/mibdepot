@@ -10,10 +10,20 @@ diff -ru tmp/cisco-mibs/v2/CISCO-ENTITY-VENDORTYPE-OID-MIB.my new/cisco/CISCO-EN
  
  cevModuleFabricType		OBJECT IDENTIFIER ::= { cevModule 14 }
  cev12012Sfc	OBJECT IDENTIFIER ::= { cevModuleFabricType 3 }  -- 12012 Switch Fabric Card
-diff -ru tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my new/cisco/CISCO-FC-FE-MIB.my
---- tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my	2026-04-19 17:36:13.419318350 +0200
-+++ new/cisco/CISCO-FC-FE-MIB.my	2026-04-19 20:29:23.868076042 +0200
-@@ -7334,7 +7334,7 @@
+--- tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my	2026-05-11 10:52:32.132080743 +0200
++++ new/cisco/CISCO-FC-FE-MIB.my	2026-05-11 11:06:50.368658292 +0200
+@@ -97,8 +97,8 @@
+         - Added the following new group:
+         fcIfErrorGroupRev8
+         - Deprecated cffFcFeMIBComplianceRev18 compliance statement
+-        - Added cffFcFeMIBComplianceRev19 compliance statement."
+-        "-Added the following object to FcIfEntry:
++        - Added cffFcFeMIBComplianceRev19 compliance statement.
++        - Added the following object to FcIfEntry:
+         fcIfNbrWwn
+         - Added the following new group:
+         fcIfGroupRev7
+@@ -7367,7 +7367,7 @@
      DESCRIPTION
          "Write access is not required."
  
@@ -22,7 +32,25 @@ diff -ru tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my new/cisco/CISCO-FC-FE-MIB.my
      MIN-ACCESS      read-only
      DESCRIPTION
          "Write access is not required."
-@@ -7936,7 +7936,7 @@
+@@ -7566,7 +7566,7 @@
+     DESCRIPTION
+         "Write access is not required."
+ 
+-    OBJECT          TransceiverPowerControl
++    OBJECT          fcIfTransceiverPowerControl
+     MIN-ACCESS      read-only
+     DESCRIPTION
+         "Write access is not required."
+@@ -7769,7 +7769,7 @@
+     DESCRIPTION
+         "Write access is not required."
+ 
+-    OBJECT          TransceiverPowerControl
++    OBJECT          fcIfTransceiverPowerControl
+     MIN-ACCESS      read-only
+     DESCRIPTION
+         "Write access is not required."
+@@ -8371,7 +8371,7 @@
                          fcIfTransceiverPower,
                          fcIfTransceiverPowerControl,
                          fcIfSysTransceiverPowerControlCapability,
