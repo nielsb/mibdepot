@@ -1,15 +1,3 @@
-diff -ru tmp/cisco-mibs/v2/CISCO-ENTITY-VENDORTYPE-OID-MIB.my new/cisco/CISCO-ENTITY-VENDORTYPE-OID-MIB.my
---- tmp/cisco-mibs/v2/CISCO-ENTITY-VENDORTYPE-OID-MIB.my	2026-04-19 17:36:13.407318480 +0200
-+++ new/cisco/CISCO-ENTITY-VENDORTYPE-OID-MIB.my	2026-04-19 20:30:10.449570398 +0200
-@@ -5485,7 +5485,7 @@
- cevMAs5800Dspm6c549	OBJECT IDENTIFIER ::= { cevModuleAS5800Type 9 }		-- Digital Signal Processor Module with 6 C549's Voice Feature Card
- cevMAs5800Dsp		OBJECT IDENTIFIER ::= { cevModuleAS5800Type 10 }	-- Digital Signal Processor Module Voice Feature Card
- 
--cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 }	-- Catalyst 9300 Argon 8 Port switch
-+-- cevModuleC9KVA100L8P        OBJECT IDENTIFIER ::= { cevModuleCat9000Type 6 } --	-- Catalyst 9300 Argon 8 Port switch
- 
- cevModuleFabricType		OBJECT IDENTIFIER ::= { cevModule 14 }
- cev12012Sfc	OBJECT IDENTIFIER ::= { cevModuleFabricType 3 }  -- 12012 Switch Fabric Card
 --- tmp/cisco-mibs/v2/CISCO-FC-FE-MIB.my	2026-05-11 10:52:32.132080743 +0200
 +++ new/cisco/CISCO-FC-FE-MIB.my	2026-05-11 11:06:50.368658292 +0200
 @@ -97,8 +97,8 @@
